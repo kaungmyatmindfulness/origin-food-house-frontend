@@ -8,26 +8,26 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-	/* A minimal, slightly bluish off-white for backgrounds */
-	--background: oklch(0.98 0.01 230);
-	--foreground: oklch(0.15 0.02 250);
+	/* Slightly red off-white for backgrounds */
+	--background: oklch(0.98 0.02 20);
+	--foreground: oklch(0.15 0.02 25);
 
-	--card: oklch(0.98 0.01 230);
-	--card-foreground: oklch(0.15 0.02 250);
+	--card: oklch(0.98 0.02 20);
+	--card-foreground: oklch(0.15 0.02 25);
 
-	--popover: oklch(0.98 0.01 230);
-	--popover-foreground: oklch(0.15 0.02 250);
+	--popover: oklch(0.98 0.02 20);
+	--popover-foreground: oklch(0.15 0.02 25);
 
-	/* A modern blue primary accent */
-	--primary: oklch(0.68 0.2 245);
-	/* White or near-white for foreground text on primary */
+	/* Re-mahogany primary accent (deeper red) */
+	--primary: oklch(0.55 0.24 29);
+	/* Near-white or white for the foreground text on primary */
 	--primary-foreground: oklch(0.98 0 0);
 
-	/* A slightly lighter background for secondary elements */
+	/* Slightly lighter background for secondary elements */
 	--secondary: oklch(0.94 0.01 230);
 	--secondary-foreground: oklch(0.15 0.02 250);
 
-	/* Similarly minimal accent color – can match primary or be slightly different */
+	/* Minimal accent color – can remain near your original choice */
 	--accent: oklch(0.72 0.18 245);
 	--accent-foreground: oklch(0.98 0 0);
 
@@ -42,7 +42,7 @@
 	/* Slightly more saturated ring color for focus outlines */
 	--ring: oklch(0.7 0.01 240);
 
-	/* Chart colors (various blues and complementary hues) */
+	/* Chart colors (various complementary hues) */
 	--chart-1: oklch(0.65 0.2 245);
 	--chart-2: oklch(0.8 0.15 245);
 	--chart-3: oklch(0.5 0.02 240);
@@ -53,9 +53,9 @@
 	--radius: 0.625rem;
 
 	/* Sidebar can match the card or a slightly different hue */
-	--sidebar: oklch(0.98 0.01 230);
-	--sidebar-foreground: oklch(0.15 0.02 250);
-	--sidebar-primary: oklch(0.68 0.2 245);
+	--sidebar: oklch(0.98 0.02 20);
+	--sidebar-foreground: oklch(0.15 0.02 25);
+	--sidebar-primary: oklch(0.55 0.24 29);
 	--sidebar-primary-foreground: oklch(0.98 0 0);
 	--sidebar-accent: oklch(0.72 0.18 245);
 	--sidebar-accent-foreground: oklch(0.98 0 0);
@@ -64,18 +64,18 @@
 }
 
 .dark {
-	/* For dark mode, you can pick your own minimal dark blues or grays. */
-	--background: oklch(0.15 0.02 250);
+	/* Dark mode with a more red-tinted background for consistency */
+	--background: oklch(0.2 0.03 20);
 	--foreground: oklch(0.98 0 0);
 
-	--card: oklch(0.15 0.02 250);
+	--card: oklch(0.2 0.03 20);
 	--card-foreground: oklch(0.98 0 0);
 
-	--popover: oklch(0.15 0.02 250);
+	--popover: oklch(0.2 0.03 20);
 	--popover-foreground: oklch(0.98 0 0);
 
 	--primary: oklch(0.98 0 0);
-	--primary-foreground: oklch(0.15 0.02 250);
+	--primary-foreground: oklch(0.2 0.03 20);
 
 	--secondary: oklch(0.28 0.01 230);
 	--secondary-foreground: oklch(0.98 0 0);
@@ -96,7 +96,7 @@
 	--chart-4: oklch(0.72 0.15 185);
 	--chart-5: oklch(0.7 0.15 290);
 
-	--sidebar: oklch(0.2 0.02 250);
+	--sidebar: oklch(0.2 0.03 20);
 	--sidebar-foreground: oklch(0.98 0 0);
 	--sidebar-primary: oklch(0.65 0.2 245);
 	--sidebar-primary-foreground: oklch(0.98 0 0);
