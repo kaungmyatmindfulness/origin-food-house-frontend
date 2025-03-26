@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,7 +19,11 @@ import {
 import { Input } from "@repo/ui/components/input";
 import { Button } from "@repo/ui/components/button";
 
-import { useAuthStore } from "@pos/features/auth/store/auth.store";
+import { useAuthStore } from "@/features/auth/store/auth.store";
+import { login } from "@/features/auth/services/auth.service";
+import { getCurrentUser } from "@/features/user/services/user.service";
+
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 const loginSchema = z.object({
 	email: z.string().email("Please enter a valid email address."),
@@ -29,9 +33,26 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
 	const router = useRouter();
-	const { loginAction, isAuthenticated, loading, error } = useAuthStore();
+	const { accessToken, setAuth } = useAuthStore();
 
-	// Initialize React Hook Form with Zod
+	// React Query: fetch current user data when token exists
+	const {
+		data: user,
+		isLoading: isUserLoading,
+		error: userError,
+	} = useQuery({
+		queryKey: ["user", "me"],
+		queryFn: () => getCurrentUser(),
+		enabled: !!accessToken,
+	});
+	console.log("📝 -> LoginPage -> user:", user);
+
+	// React Query: login mutation
+	const loginMutation = useMutation({
+		mutationFn: login,
+	});
+
+	// Form setup using React Hook Form + Zod
 	const form = useForm<LoginFormValues>({
 		resolver: zodResolver(loginSchema),
 		defaultValues: {
@@ -40,21 +61,43 @@ export default function LoginPage() {
 		},
 	});
 
-	// If already authenticated, redirect to choose shop
-	// useEffect(() => {
-	// 	if (isAuthenticated) {
-	// 		router.replace("/choose-shop");
-	// 	}
-	// }, [isAuthenticated, router]);
-
-	async function onSubmit(data: LoginFormValues) {
-		await loginAction(data.email, data.password);
+	// Handle login submission
+	async function onSubmit(values: LoginFormValues) {
+		try {
+			const response = await loginMutation.mutateAsync(values);
+			// Set the auth token; if your response includes additional user data, pass it along
+			setAuth(response.data.access_token);
+		} catch (error) {
+			console.error("Login failed:", error);
+			// Optionally, you could use a toast or set a local error state here.
+		}
 	}
+
+	// Redirect based on authentication and user data
+	useEffect(() => {
+		if (!accessToken) return;
+		if (isUserLoading) return; // wait until the user query finishes
+		if (userError) return; // handle error separately if needed
+
+		// Once user data is available, redirect accordingly:
+		// If user has currentStore defined, go to "/sale"
+		// Else if user has userStores available, go to "/choose-store"
+		// Otherwise, redirect to "/create-store"
+		if (user?.currentStore) {
+			router.replace("/sale");
+		} else if (user?.userStores?.length) {
+			router.replace("/choose-store");
+		} else {
+			router.replace("/create-store");
+		}
+	}, [accessToken, isUserLoading, user, userError, router]);
+
+	// Determine button loading state
+	const isLoading = loginMutation.isPending || isUserLoading;
 
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-				{/* Email Field */}
 				<FormField
 					control={form.control}
 					name="email"
@@ -69,7 +112,6 @@ export default function LoginPage() {
 					)}
 				/>
 
-				{/* Password Field */}
 				<FormField
 					control={form.control}
 					name="password"
@@ -84,14 +126,17 @@ export default function LoginPage() {
 					)}
 				/>
 
-				{/* Display store error if any (e.g., invalid credentials) */}
-				{error && <p className="text-sm text-red-600">{error}</p>}
+				{/* Show mutation error if any */}
+				{loginMutation.error && (
+					<p className="text-sm text-red-600">
+						{(loginMutation.error as Error).message}
+					</p>
+				)}
 
-				<Button type="submit" disabled={loading} className="w-full mt-2">
-					{loading ? "Logging in..." : "Login"}
+				<Button type="submit" disabled={isLoading} className="w-full mt-2">
+					{isLoading ? "Logging in..." : "Login"}
 				</Button>
 
-				{/* Forgot password link */}
 				<p className="mt-4 text-sm text-center text-gray-600">
 					Forgot your password?{" "}
 					<Link

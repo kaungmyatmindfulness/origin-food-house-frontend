@@ -1,5 +1,5 @@
-import { useAuthStore } from "@pos/features/auth/store/auth.store";
-import { ApiResponse } from "@pos/common/types/api";
+import { ApiResponse } from "@/common/types/api.types";
+import { useAuthStore } from "@/features/auth/store/auth.store";
 import { toast } from "sonner";
 
 export async function apiFetch<T>(
@@ -42,10 +42,19 @@ export async function apiFetch<T>(
 	if (!response.ok) {
 		// If 401, token might be invalid or expired -> logout
 		if (response.status === 401) {
-			const { logout } = useAuthStore.getState();
-			logout();
+			const { clearAuth } = useAuthStore.getState();
+			clearAuth();
 		}
 
+		// Show a toast for any error
+		const errMsg =
+			json.error?.message || json.message || `Request failed: ${url}`;
+		toast.error(`Error: ${errMsg}`);
+
+		throw new Error(errMsg);
+	}
+
+	if (json.status === "error") {
 		// Show a toast for any error
 		const errMsg =
 			json.error?.message || json.message || `Request failed: ${url}`;

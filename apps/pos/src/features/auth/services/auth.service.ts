@@ -1,61 +1,74 @@
-import { ApiResponse } from "@pos/common/types/api";
-import { apiFetch } from "@pos/utils/apiFetch"; // or "@pos/utils/apiFetch" if you set that path
-
+// auth.service.ts
+import { apiFetch } from "@/utils/apiFetch";
+import { ApiResponse } from "@/common/types/api.types";
 import {
-	AccessTokenData,
-	ChooseShopDto,
-	CreateUserDto,
 	LoginDto,
-	RegisteredUserData,
-} from "../types";
+	ChooseStoreDto,
+	ForgotPasswordDto,
+	ResetPasswordDto,
+	ChangePasswordDto,
+	AccessTokenData,
+} from "../types/auth.types";
 
-/** Step 1: Login with email/password -> returns { access_token } */
+/** POST /auth/login (Step 1) */
 export async function login(
 	data: LoginDto
 ): Promise<ApiResponse<AccessTokenData>> {
-	return apiFetch<AccessTokenData>("/auth/login", {
+	const res = await apiFetch<AccessTokenData>("/auth/login", {
 		method: "POST",
 		body: JSON.stringify(data),
 	});
+	return res; // The entire { status, data, message, error }
 }
 
-/** Step 2: Choose a shop -> returns new token with { shopId, role } inside access_token */
-export async function chooseShop(
-	data: ChooseShopDto
+/** POST /auth/login/store (Step 2) */
+export async function loginWithStore(
+	data: ChooseStoreDto
 ): Promise<ApiResponse<AccessTokenData>> {
-	return apiFetch<AccessTokenData>("/auth/login/shop", {
+	const res = await apiFetch<AccessTokenData>("/auth/login/store", {
 		method: "POST",
 		body: JSON.stringify(data),
 	});
+	return res;
 }
 
-/** Register -> returns { id, email } */
-export async function registerUser(
-	data: CreateUserDto
-): Promise<ApiResponse<RegisteredUserData>> {
-	return apiFetch<RegisteredUserData>("/user/register", {
-		method: "POST",
-		body: JSON.stringify(data),
-	});
+/** GET /auth/verify?token=xyz */
+export async function verifyEmail(token: string): Promise<ApiResponse<null>> {
+	const res = await apiFetch<null>(
+		`/auth/verify?token=${encodeURIComponent(token)}`
+	);
+	return res;
 }
 
-/** Forgot password -> returns success/fail with data = null */
+/** POST /auth/forgot-password */
 export async function forgotPassword(
-	email: string
+	data: ForgotPasswordDto
 ): Promise<ApiResponse<null>> {
-	return apiFetch<null>("/auth/forgot-password", {
+	const res = await apiFetch<null>("/auth/forgot-password", {
 		method: "POST",
-		body: JSON.stringify({ email }),
+		body: JSON.stringify(data),
 	});
+	return res;
 }
 
-/** Reset password -> returns success/fail with data = null */
+/** POST /auth/reset-password */
 export async function resetPassword(
-	token: string,
-	newPassword: string
+	data: ResetPasswordDto
 ): Promise<ApiResponse<null>> {
-	return apiFetch<null>("/auth/reset-password", {
+	const res = await apiFetch<null>("/auth/reset-password", {
 		method: "POST",
-		body: JSON.stringify({ token, newPassword }),
+		body: JSON.stringify(data),
 	});
+	return res;
+}
+
+/** POST /auth/change-password (logged in) */
+export async function changePassword(
+	data: ChangePasswordDto
+): Promise<ApiResponse<null>> {
+	const res = await apiFetch<null>("/auth/change-password", {
+		method: "POST",
+		body: JSON.stringify(data),
+	});
+	return res;
 }
