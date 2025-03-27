@@ -1,26 +1,26 @@
 export interface LoginDto {
-	email: string;
-	password: string;
+  email: string;
+  password: string;
 }
 
 export interface ChooseStoreDto {
-	storeId: number;
+  storeId: number;
 }
 
 export interface ForgotPasswordDto {
-	email: string;
+  email: string;
 }
 
 export interface ResetPasswordDto {
-	token: string;
-	newPassword: string;
+  token: string;
+  newPassword: string;
 }
 
 export interface ChangePasswordDto {
-	oldPassword: string;
-	newPassword: string;
+  oldPassword: string;
+  newPassword: string;
 }
 
 export interface AccessTokenData {
-	access_token: string;
+  access_token: string;
 }

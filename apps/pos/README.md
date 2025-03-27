@@ -88,70 +88,70 @@ apps/pos/
 A custom fetch wrapper that merges default headers, reads an auth token from Zustand, and returns an `ApiResponse<T>`.
 
 ```ts
-import { ApiResponse } from "@/common/types/api.types";
-import { useAuthStore } from "@/features/auth/store/auth.store";
-import { toast } from "sonner";
+import { ApiResponse } from '@/common/types/api.types';
+import { useAuthStore } from '@/features/auth/store/auth.store';
+import { toast } from 'sonner';
 
 export async function apiFetch<T>(
-	path: string,
-	options?: RequestInit
+  path: string,
+  options?: RequestInit
 ): Promise<ApiResponse<T>> {
-	const token = useAuthStore.getState().accessToken;
+  const token = useAuthStore.getState().accessToken;
 
-	const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
-	const url = baseUrl + path;
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? '';
+  const url = baseUrl + path;
 
-	const headers: HeadersInit = {
-		"Content-Type": "application/json",
-		...(options?.headers || {}),
-	};
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+    ...(options?.headers || {}),
+  };
 
-	if (token) {
-		(headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
-	}
+  if (token) {
+    (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+  }
 
-	const response = await fetch(url, { ...options, headers });
-	let json: ApiResponse<T>;
+  const response = await fetch(url, { ...options, headers });
+  let json: ApiResponse<T>;
 
-	try {
-		json = (await response.json()) as ApiResponse<T>;
-	} catch {
-		toast.error(`Failed to parse JSON from ${url}`);
-		throw new Error(`Failed to parse JSON from ${url}`);
-	}
+  try {
+    json = (await response.json()) as ApiResponse<T>;
+  } catch {
+    toast.error(`Failed to parse JSON from ${url}`);
+    throw new Error(`Failed to parse JSON from ${url}`);
+  }
 
-	if (!response.ok || json.status === "error") {
-		if (response.status === 401) {
-			// Possibly clear auth state if 401
-			useAuthStore.getState().clearAuth();
-		}
-		const errMsg =
-			json.error?.message || json.message || `Request failed: ${url}`;
-		toast.error(errMsg);
-		throw new Error(errMsg);
-	}
+  if (!response.ok || json.status === 'error') {
+    if (response.status === 401) {
+      // Possibly clear auth state if 401
+      useAuthStore.getState().clearAuth();
+    }
+    const errMsg =
+      json.error?.message || json.message || `Request failed: ${url}`;
+    toast.error(errMsg);
+    throw new Error(errMsg);
+  }
 
-	return json;
+  return json;
 }
 ```
 
 ### 3.2 Example Service Function
 
 ```ts
-import { apiFetch } from "@/utils/apiFetch";
+import { apiFetch } from '@/utils/apiFetch';
 import {
-	CreateUserDto,
-	RegisterUserData,
-} from "@/features/user/types/user.types";
+  CreateUserDto,
+  RegisterUserData,
+} from '@/features/user/types/user.types';
 
 export async function registerUser(
-	data: CreateUserDto
+  data: CreateUserDto
 ): Promise<RegisterUserData> {
-	const res = await apiFetch<RegisterUserData>("/user/register", {
-		method: "POST",
-		body: JSON.stringify(data),
-	});
-	return res.data;
+  const res = await apiFetch<RegisterUserData>('/user/register', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+  return res.data;
 }
 ```
 
@@ -166,43 +166,43 @@ export async function registerUser(
 Use **Zustand** for global states like the auth token and user. For instance:
 
 ```ts
-import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
-import { CurrentUserData } from "@/features/user/types/user.types";
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
+import { CurrentUserData } from '@/features/user/types/user.types';
 
 interface AuthState {
-	accessToken: string | null;
-	user: CurrentUserData | null;
-	isAuthenticated: boolean;
+  accessToken: string | null;
+  user: CurrentUserData | null;
+  isAuthenticated: boolean;
 
-	setAuth: (token: string) => void;
-	setUser: (user: CurrentUserData) => void;
-	clearAuth: () => void;
+  setAuth: (token: string) => void;
+  setUser: (user: CurrentUserData) => void;
+  clearAuth: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
-	devtools(
-		persist(
-			(set) => ({
-				accessToken: null,
-				user: null,
-				isAuthenticated: false,
+  devtools(
+    persist(
+      (set) => ({
+        accessToken: null,
+        user: null,
+        isAuthenticated: false,
 
-				setAuth: (token) =>
-					set(() => ({ accessToken: token, isAuthenticated: true })),
+        setAuth: (token) =>
+          set(() => ({ accessToken: token, isAuthenticated: true })),
 
-				setUser: (user) => set(() => ({ user })),
+        setUser: (user) => set(() => ({ user })),
 
-				clearAuth: () =>
-					set(() => ({
-						accessToken: null,
-						user: null,
-						isAuthenticated: false,
-					})),
-			}),
-			{ name: "auth-storage" }
-		)
-	)
+        clearAuth: () =>
+          set(() => ({
+            accessToken: null,
+            user: null,
+            isAuthenticated: false,
+          })),
+      }),
+      { name: 'auth-storage' }
+    )
+  )
 );
 ```
 
@@ -216,81 +216,81 @@ export const useAuthStore = create<AuthState>()(
 ### 5.1 Example: `app/(auth)/login/page.tsx`
 
 ```tsx
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
 
-import { login } from "@/features/auth/services/auth.service";
-import { useAuthStore } from "@/features/auth/store/auth.store";
-import { getCurrentUser } from "@/features/user/services/user.service";
+import { login } from '@/features/auth/services/auth.service';
+import { useAuthStore } from '@/features/auth/store/auth.store';
+import { getCurrentUser } from '@/features/user/services/user.service';
 
 const loginSchema = z.object({
-	email: z.string().email(),
-	password: z.string().min(6),
+  email: z.string().email(),
+  password: z.string().min(6),
 });
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-	const router = useRouter();
-	const { accessToken, setAuth } = useAuthStore();
+  const router = useRouter();
+  const { accessToken, setAuth } = useAuthStore();
 
-	// If we want to fetch user data once we have a token
-	const {
-		mutate: loginMutate,
-		isLoading,
-		error,
-	} = useMutation(login, {
-		onSuccess: (res) => {
-			setAuth(res.access_token);
-		},
-	});
+  // If we want to fetch user data once we have a token
+  const {
+    mutate: loginMutate,
+    isLoading,
+    error,
+  } = useMutation(login, {
+    onSuccess: (res) => {
+      setAuth(res.access_token);
+    },
+  });
 
-	const form = useForm<LoginFormValues>({
-		resolver: zodResolver(loginSchema),
-	});
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+  });
 
-	const onSubmit = (data: LoginFormValues) => {
-		loginMutate(data);
-	};
+  const onSubmit = (data: LoginFormValues) => {
+    loginMutate(data);
+  };
 
-	useEffect(() => {
-		if (accessToken) {
-			// Possibly fetch user or redirect
-			router.replace("/store/choose");
-		}
-	}, [accessToken, router]);
+  useEffect(() => {
+    if (accessToken) {
+      // Possibly fetch user or redirect
+      router.replace('/store/choose');
+    }
+  }, [accessToken, router]);
 
-	return (
-		<div className="p-4 max-w-md mx-auto">
-			<h1 className="text-xl mb-4">Login</h1>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-				<input
-					placeholder="Email"
-					{...form.register("email")}
-					className="border p-2 w-full"
-				/>
-				<input
-					type="password"
-					placeholder="Password"
-					{...form.register("password")}
-					className="border p-2 w-full"
-				/>
+  return (
+    <div className="mx-auto max-w-md p-4">
+      <h1 className="mb-4 text-xl">Login</h1>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <input
+          placeholder="Email"
+          {...form.register('email')}
+          className="w-full border p-2"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          {...form.register('password')}
+          className="w-full border p-2"
+        />
 
-				{error && (
-					<p className="text-red-600">Error: {(error as Error).message}</p>
-				)}
+        {error && (
+          <p className="text-red-600">Error: {(error as Error).message}</p>
+        )}
 
-				<button type="submit" disabled={isLoading}>
-					{isLoading ? "Logging in..." : "Login"}
-				</button>
-			</form>
-		</div>
-	);
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Logging in...' : 'Login'}
+        </button>
+      </form>
+    </div>
+  );
 }
 ```
 
@@ -304,22 +304,22 @@ export default function LoginPage() {
 
    ```tsx
    // store-card-skeleton.tsx
-   import { motion } from "framer-motion";
-   import { Skeleton } from "@repo/ui/components/skeleton";
+   import { motion } from 'framer-motion';
+   import { Skeleton } from '@repo/ui/components/skeleton';
 
    export function StoreCardSkeleton() {
-   	return (
-   		<motion.li className="list-none">
-   			<div className="border rounded-lg p-4 bg-white" aria-hidden="true">
-   				<Skeleton className="h-6 w-3/4 mb-2" />
-   				<Skeleton className="h-4 w-5/6 mb-1" />
-   				<Skeleton className="h-4 w-1/2" />
-   				<div className="mt-4">
-   					<Skeleton className="h-4 w-1/3" />
-   				</div>
-   			</div>
-   		</motion.li>
-   	);
+     return (
+       <motion.li className="list-none">
+         <div className="rounded-lg border bg-white p-4" aria-hidden="true">
+           <Skeleton className="mb-2 h-6 w-3/4" />
+           <Skeleton className="mb-1 h-4 w-5/6" />
+           <Skeleton className="h-4 w-1/2" />
+           <div className="mt-4">
+             <Skeleton className="h-4 w-1/3" />
+           </div>
+         </div>
+       </motion.li>
+     );
    }
    ```
 
@@ -327,25 +327,25 @@ export default function LoginPage() {
 
    ```tsx
    // store-list-skeleton.tsx
-   import { AnimatePresence, motion } from "framer-motion";
-   import { StoreCardSkeleton } from "./store-card-skeleton";
+   import { AnimatePresence, motion } from 'framer-motion';
+   import { StoreCardSkeleton } from './store-card-skeleton';
 
    export function StoreListSkeleton() {
-   	return (
-   		<AnimatePresence>
-   			<motion.ul
-   				role="list"
-   				className="grid grid-cols-1 sm:grid-cols-2 gap-6"
-   				initial={{ opacity: 0.5, scale: 0.95 }}
-   				animate={{ opacity: 1, scale: 1 }}
-   				exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.3 } }}
-   			>
-   				{Array.from({ length: 4 }).map((_, idx) => (
-   					<StoreCardSkeleton key={idx} />
-   				))}
-   			</motion.ul>
-   		</AnimatePresence>
-   	);
+     return (
+       <AnimatePresence>
+         <motion.ul
+           role="list"
+           className="grid grid-cols-1 gap-6 sm:grid-cols-2"
+           initial={{ opacity: 0.5, scale: 0.95 }}
+           animate={{ opacity: 1, scale: 1 }}
+           exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.3 } }}
+         >
+           {Array.from({ length: 4 }).map((_, idx) => (
+             <StoreCardSkeleton key={idx} />
+           ))}
+         </motion.ul>
+       </AnimatePresence>
+     );
    }
    ```
 
@@ -355,59 +355,59 @@ In your **Choose Store** page, you might have:
 
 ```tsx
 // app/store/choose/page.tsx
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 
-import { StoreListSkeleton } from "@/components/store-list-skeleton";
-import { StoreCard } from "@/components/store-card";
-import { getCurrentUser } from "@/features/user/services/user.service";
+import { StoreListSkeleton } from '@/components/store-list-skeleton';
+import { StoreCard } from '@/components/store-card';
+import { getCurrentUser } from '@/features/user/services/user.service';
 
 export default function ChooseStorePage() {
-	const router = useRouter();
-	const {
-		data: user,
-		isLoading,
-		error,
-	} = useQuery(["user", "me"], getCurrentUser);
+  const router = useRouter();
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useQuery(['user', 'me'], getCurrentUser);
 
-	useEffect(() => {
-		if (!isLoading && !error && user) {
-			if (user.currentStore) router.push("/dashboard");
-			else if (!user.userStores?.length) router.push("/store/create");
-		}
-	}, [isLoading, error, user, router]);
+  useEffect(() => {
+    if (!isLoading && !error && user) {
+      if (user.currentStore) router.push('/dashboard');
+      else if (!user.userStores?.length) router.push('/store/create');
+    }
+  }, [isLoading, error, user, router]);
 
-	if (isLoading) {
-		// Render skeleton while loading
-		return (
-			<main className="min-h-screen bg-gradient-to-r from-blue-200 to-indigo-200 p-4">
-				<section className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow">
-					<h1 className="text-2xl font-bold mb-4">Choose Store</h1>
-					<StoreListSkeleton />
-				</section>
-			</main>
-		);
-	}
+  if (isLoading) {
+    // Render skeleton while loading
+    return (
+      <main className="min-h-screen bg-gradient-to-r from-blue-200 to-indigo-200 p-4">
+        <section className="mx-auto max-w-3xl rounded-lg bg-white p-6 shadow">
+          <h1 className="mb-4 text-2xl font-bold">Choose Store</h1>
+          <StoreListSkeleton />
+        </section>
+      </main>
+    );
+  }
 
-	if (error) {
-		return <p className="text-center text-red-600">Error loading stores.</p>;
-	}
+  if (error) {
+    return <p className="text-center text-red-600">Error loading stores.</p>;
+  }
 
-	return (
-		<main className="min-h-screen bg-gradient-to-r from-blue-200 to-indigo-200 p-4">
-			<section className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow">
-				<h1 className="text-2xl font-bold mb-4">Choose Store</h1>
-				<ul className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-					{user?.userStores?.map((storeObj: any) => (
-						<StoreCard key={storeObj.id} userStore={storeObj} />
-					))}
-				</ul>
-			</section>
-		</main>
-	);
+  return (
+    <main className="min-h-screen bg-gradient-to-r from-blue-200 to-indigo-200 p-4">
+      <section className="mx-auto max-w-3xl rounded-lg bg-white p-6 shadow">
+        <h1 className="mb-4 text-2xl font-bold">Choose Store</h1>
+        <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          {user?.userStores?.map((storeObj: any) => (
+            <StoreCard key={storeObj.id} userStore={storeObj} />
+          ))}
+        </ul>
+      </section>
+    </main>
+  );
 }
 ```
 
