@@ -1,6 +1,6 @@
 import { Store } from '@/features/store/types/store.types';
 
-export type UserRole = 'OWNER' | 'ADMIN' | 'SALE' | 'CHEF';
+export type UserRole = 'OWNER' | 'ADMIN' | 'CASHIER' | 'CHEF';
 
 export interface UserStore {
   id: number;

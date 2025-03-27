@@ -57,7 +57,7 @@ export default function ChooseStorePage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-r p-4">
+    <main className="min-h-screen p-4">
       <section
         className="mx-auto max-w-3xl rounded-lg p-8 shadow-lg"
         aria-labelledby="choose-store-heading"

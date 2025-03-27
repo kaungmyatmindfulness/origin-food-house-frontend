@@ -12,7 +12,7 @@ export interface UpdateStoreDto {
 
 export interface InviteOrAssignRoleDto {
   email: string;
-  role: 'OWNER' | 'ADMIN' | 'SALE' | 'CHEF';
+  role: 'OWNER' | 'ADMIN' | 'CASHIER' | 'CHEF';
 }
 
 /** Represents a store returned by the backend */

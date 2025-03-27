@@ -41,7 +41,7 @@ export async function updateStore(
 }
 
 /** POST /stores/{id}/invite-by-email:
- * Invite/assign role by email; OWNER can assign any role, ADMIN can assign SALE/CHEF.
+ * Invite/assign role by email; OWNER can assign any role, ADMIN can assign CASHIER/CHEF.
  */
 export async function inviteOrAssignRoleByEmail(
   id: number,
