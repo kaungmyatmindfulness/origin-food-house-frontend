@@ -8,102 +8,95 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-	/* Slightly red off-white for backgrounds */
-	--background: oklch(0.98 0.02 20);
-	--foreground: oklch(0.15 0.02 25);
+	/* Warm, off‑white background */
+	--background: #fff5f5;
+	--foreground: #3a1414;
 
-	--card: oklch(0.98 0.02 20);
-	--card-foreground: oklch(0.15 0.02 25);
+	--card: var(--background);
+	--card-foreground: var(--foreground);
 
-	--popover: oklch(0.98 0.02 20);
-	--popover-foreground: oklch(0.15 0.02 25);
+	--popover: var(--background);
+	--popover-foreground: var(--foreground);
 
-	/* Re-mahogany primary accent (deeper red) */
-	--primary: oklch(0.55 0.24 29);
-	/* Near-white or white for the foreground text on primary */
-	--primary-foreground: oklch(0.98 0 0);
+	/* Primary = vivid food‑red */
+	--primary: #e63946;
+	--primary-foreground: #ffffff;
 
-	/* Slightly lighter background for secondary elements */
-	--secondary: oklch(0.94 0.01 230);
-	--secondary-foreground: oklch(0.15 0.02 250);
+	/* Soft, light red for secondary surfaces */
+	--secondary: #fad9d9;
+	--secondary-foreground: #3a1414;
 
-	/* Minimal accent color – can remain near your original choice */
-	--accent: oklch(0.72 0.18 245);
-	--accent-foreground: oklch(0.98 0 0);
+	/* Stronger red accent */
+	--accent: #d62828;
+	--accent-foreground: #ffffff;
 
-	/* A red tone for destructive actions (e.g., delete) */
-	--destructive: oklch(0.5 0.2 29);
-	--destructive-foreground: oklch(0.98 0 0);
+	/* Destructive = deep tomato red */
+	--destructive: #b00020;
+	--destructive-foreground: #ffffff;
 
-	/* Light gray border and input backgrounds */
-	--border: oklch(0.9 0 240);
-	--input: oklch(0.9 0 240);
+	/* Neutral borders/inputs */
+	--border: #e2e2e2;
+	--input: #ffffff;
+	--ring: #e63946;
 
-	/* Slightly more saturated ring color for focus outlines */
-	--ring: oklch(0.7 0.01 240);
+	--chart-1: #ef233c;
+	--chart-2: #d90429;
+	--chart-3: #9d0208;
+	--chart-4: #8d0801;
+	--chart-5: #6a040f;
 
-	/* Chart colors (various complementary hues) */
-	--chart-1: oklch(0.65 0.2 245);
-	--chart-2: oklch(0.8 0.15 245);
-	--chart-3: oklch(0.5 0.02 240);
-	--chart-4: oklch(0.72 0.15 185);
-	--chart-5: oklch(0.7 0.15 290);
-
-	/* Border radius and additional variables */
 	--radius: 0.625rem;
 
-	/* Sidebar can match the card or a slightly different hue */
-	--sidebar: oklch(0.98 0.02 20);
-	--sidebar-foreground: oklch(0.15 0.02 25);
-	--sidebar-primary: oklch(0.55 0.24 29);
-	--sidebar-primary-foreground: oklch(0.98 0 0);
-	--sidebar-accent: oklch(0.72 0.18 245);
-	--sidebar-accent-foreground: oklch(0.98 0 0);
-	--sidebar-border: oklch(0.9 0 240);
-	--sidebar-ring: oklch(0.7 0.01 240);
+	--sidebar: var(--background);
+	--sidebar-foreground: var(--foreground);
+	--sidebar-primary: var(--primary);
+	--sidebar-primary-foreground: var(--primary-foreground);
+	--sidebar-accent: var(--accent);
+	--sidebar-accent-foreground: var(--accent-foreground);
+	--sidebar-border: var(--border);
+	--sidebar-ring: var(--ring);
 }
 
 .dark {
-	/* Dark mode with a more red-tinted background for consistency */
-	--background: oklch(0.2 0.03 20);
-	--foreground: oklch(0.98 0 0);
+	--background: #3a1414;
+	--foreground: #fff5f5;
 
-	--card: oklch(0.2 0.03 20);
-	--card-foreground: oklch(0.98 0 0);
+	--card: var(--background);
+	--card-foreground: var(--foreground);
 
-	--popover: oklch(0.2 0.03 20);
-	--popover-foreground: oklch(0.98 0 0);
+	--popover: var(--background);
+	--popover-foreground: var(--foreground);
 
-	--primary: oklch(0.98 0 0);
-	--primary-foreground: oklch(0.2 0.03 20);
+	--primary: #ff6b6b;
+	--primary-foreground: #3a1414;
 
-	--secondary: oklch(0.28 0.01 230);
-	--secondary-foreground: oklch(0.98 0 0);
+	--secondary: #662626;
+	--secondary-foreground: #fff5f5;
 
-	--accent: oklch(0.28 0.01 230);
-	--accent-foreground: oklch(0.98 0 0);
+	--accent: #ff4c4c;
+	--accent-foreground: #fff5f5;
 
-	--destructive: oklch(0.5 0.2 29);
-	--destructive-foreground: oklch(0.98 0 0);
+	--destructive: #b00020;
+	--destructive-foreground: #fff5f5;
 
-	--border: oklch(0.28 0 230);
-	--input: oklch(0.28 0 230);
-	--ring: oklch(0.56 0 240);
+	--border: #662626;
+	--input: #662626;
+	--ring: #ff6b6b;
 
-	--chart-1: oklch(0.65 0.2 245);
-	--chart-2: oklch(0.8 0.15 245);
-	--chart-3: oklch(0.5 0.02 240);
-	--chart-4: oklch(0.72 0.15 185);
-	--chart-5: oklch(0.7 0.15 290);
+	--chart-1: #ef233c;
+	--chart-2: #d90429;
+	--chart-3: #9d0208;
+	--chart-4: #8d0801;
+	--chart-5: #6a040f;
 
-	--sidebar: oklch(0.2 0.03 20);
-	--sidebar-foreground: oklch(0.98 0 0);
-	--sidebar-primary: oklch(0.65 0.2 245);
-	--sidebar-primary-foreground: oklch(0.98 0 0);
-	--sidebar-accent: oklch(0.28 0.01 230);
-	--sidebar-accent-foreground: oklch(0.98 0 0);
-	--sidebar-border: oklch(0.28 0 230);
-	--sidebar-ring: oklch(0.44 0 0);
+	--sidebar: var(--background);
+	--sidebar-foreground: var(--foreground);
+	--sidebar-primary: var(--primary);
+	--sidebar-primary-foreground: var(--primary-foreground);
+	--sidebar-accent: var(--accent);
+	--sidebar-accent-foreground: var(--accent-foreground);
+	--sidebar-border: var(--border);
+	--sidebar-ring: var(--ring);
 }
 
 @theme inline {
@@ -150,6 +143,6 @@
 		@apply border-border outline-ring/50;
 	}
 	body {
-		@apply bg-background text-foreground;
+		@apply bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-foreground;
 	}
 }

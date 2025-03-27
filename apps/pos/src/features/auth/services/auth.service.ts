@@ -1,4 +1,3 @@
-// auth.service.ts
 import { apiFetch } from "@/utils/apiFetch";
 import { ApiResponse } from "@/common/types/api.types";
 import {

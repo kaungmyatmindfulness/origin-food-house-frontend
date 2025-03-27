@@ -1,4 +1,3 @@
-import { apiFetch } from "@/utils/apiFetch";
 import {
 	CreateUserDto,
 	AddUserToStoreDto,
@@ -6,7 +5,8 @@ import {
 	AddUserToStoreData,
 	UserStoreRole,
 	CurrentUserData,
-} from "../types/user.types";
+} from "@/features/user/types/user.types";
+import { apiFetch } from "@/utils/apiFetch";
 
 /** POST /user/register */
 export async function registerUser(

@@ -1,11 +1,14 @@
+import { Store } from "@/features/store/types/store.types";
+
 export type UserRole = "OWNER" | "ADMIN" | "SALE" | "CHEF";
 
-export type Store = {
+export interface UserStore {
 	id: number;
-	name: string;
-	address: string;
-	phoneNumber: string;
-};
+	userId: number;
+	storeId: number;
+	role: UserRole;
+	store: Store;
+}
 
 export interface CreateUserDto {
 	email: string;
@@ -46,11 +49,7 @@ export interface CurrentUserData {
 	id: number;
 	email: string;
 	name: string;
-	userStores: {
-		id: number;
-		role: string;
-		store: Store;
-	}[];
+	userStores: UserStore[];
 	currentStore: Store;
 	currentRole: UserRole;
 }

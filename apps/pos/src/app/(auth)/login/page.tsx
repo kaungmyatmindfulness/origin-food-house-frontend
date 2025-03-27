@@ -45,7 +45,6 @@ export default function LoginPage() {
 		queryFn: () => getCurrentUser(),
 		enabled: !!accessToken,
 	});
-	console.log("📝 -> LoginPage -> user:", user);
 
 	// React Query: login mutation
 	const loginMutation = useMutation({
@@ -81,14 +80,14 @@ export default function LoginPage() {
 
 		// Once user data is available, redirect accordingly:
 		// If user has currentStore defined, go to "/sale"
-		// Else if user has userStores available, go to "/choose-store"
-		// Otherwise, redirect to "/create-store"
+		// Else if user has userStores available, go to "/store/choose"
+		// Otherwise, redirect to "/store/create"
 		if (user?.currentStore) {
 			router.replace("/sale");
 		} else if (user?.userStores?.length) {
-			router.replace("/choose-store");
+			router.replace("/store/choose");
 		} else {
-			router.replace("/create-store");
+			router.replace("/store/create");
 		}
 	}, [accessToken, isUserLoading, user, userError, router]);
 
