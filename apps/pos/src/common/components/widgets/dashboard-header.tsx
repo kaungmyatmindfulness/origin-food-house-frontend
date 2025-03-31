@@ -34,7 +34,7 @@ export function DashboardHeader() {
     <header className="flex items-center justify-between border-b bg-white p-4">
       {/* Logo */}
       <div>
-        <Link href="/dashboard" className="text-lg font-bold text-gray-800">
+        <Link href="/hub-sales" className="text-lg font-bold text-gray-800">
           <Image src="/logo.svg" alt="Logo" width={64} height={32} />
         </Link>
       </div>

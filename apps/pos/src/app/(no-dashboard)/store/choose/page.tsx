@@ -29,9 +29,9 @@ export default function ChooseStorePage() {
   // Mutation to choose store
   const chooseStoreMutation = useMutation({
     mutationFn: (storeId: number) => loginWithStore({ storeId }),
-    onSuccess: (res) => {
-      setAuth(res.data.access_token);
-    },
+    // onSuccess: (res) => {
+    //   setAuth(res.data.access_token);
+    // },
   });
 
   // After fetching user, decide route
@@ -44,7 +44,11 @@ export default function ChooseStorePage() {
     }
     // If store is chosen, redirect
     if (user?.currentStore) {
-      router.push('/dashboard');
+      if (user.currentRole !== 'CHEF') {
+        router.push('/hub/sales');
+      } else {
+        router.push('/hub/kds');
+      }
     }
     // If no stores, go create store
     else if (!user?.userStores || user.userStores.length === 0) {
@@ -52,8 +56,18 @@ export default function ChooseStorePage() {
     }
   }, [accessToken, isUserLoading, user, userError, router]);
 
-  const handleStoreSelect = (storeId: number) => {
-    chooseStoreMutation.mutate(storeId);
+  const handleStoreSelect = async (storeId: number) => {
+    try {
+      const res = await chooseStoreMutation.mutateAsync(storeId);
+      setAuth(res.data.access_token);
+      if (user?.currentRole !== 'CHEF') {
+        router.push('/hub/sales');
+      } else {
+        router.push('/hub/kds');
+      }
+    } catch (error) {
+      console.error('Error selecting store:', error);
+    }
   };
 
   return (

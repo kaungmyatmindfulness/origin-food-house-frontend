@@ -78,7 +78,11 @@ export default function LoginPage() {
 
     // Once user data is available, decide route
     if (user?.currentStore) {
-      router.replace('/sale');
+      if (user.currentRole !== 'CHEF') {
+        router.replace('/hub/sales');
+      } else {
+        router.replace('/hub/kds');
+      }
     } else if (user?.userStores?.length) {
       router.replace('/store/choose');
     } else {
