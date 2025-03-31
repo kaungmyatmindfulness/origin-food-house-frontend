@@ -304,7 +304,7 @@ export default function LoginPage() {
 
    ```tsx
    // store-card-skeleton.tsx
-   import { motion } from 'framer-motion';
+   import { motion } from 'motion/react';
    import { Skeleton } from '@repo/ui/components/skeleton';
 
    export function StoreCardSkeleton() {
@@ -327,7 +327,7 @@ export default function LoginPage() {
 
    ```tsx
    // store-list-skeleton.tsx
-   import { AnimatePresence, motion } from 'framer-motion';
+   import { AnimatePresence, motion } from 'motion/react';
    import { StoreCardSkeleton } from './store-card-skeleton';
 
    export function StoreListSkeleton() {

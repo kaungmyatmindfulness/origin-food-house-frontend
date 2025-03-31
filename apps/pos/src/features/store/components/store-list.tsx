@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { StoreCard } from '@/features/store/components/store-card';
 import { UserStore } from '@/features/user/types/user.types';
 

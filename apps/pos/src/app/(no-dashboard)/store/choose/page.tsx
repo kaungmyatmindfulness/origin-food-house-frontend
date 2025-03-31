@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'motion/react';
 
 import { getCurrentUser } from '@/features/user/services/user.service';
 import { loginWithStore } from '@/features/auth/services/auth.service';
