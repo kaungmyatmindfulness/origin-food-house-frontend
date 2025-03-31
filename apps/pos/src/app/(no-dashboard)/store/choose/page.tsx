@@ -45,7 +45,7 @@ export default function ChooseStorePage() {
     // If store is chosen, redirect
     if (user?.currentStore) {
       if (user.currentRole !== 'CHEF') {
-        router.push('/hub/sales');
+        router.push('/hub/sale');
       } else {
         router.push('/hub/kds');
       }
@@ -61,7 +61,7 @@ export default function ChooseStorePage() {
       const res = await chooseStoreMutation.mutateAsync(storeId);
       setAuth(res.data.access_token);
       if (user?.currentRole !== 'CHEF') {
-        router.push('/hub/sales');
+        router.push('/hub/sale');
       } else {
         router.push('/hub/kds');
       }

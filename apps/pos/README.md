@@ -375,7 +375,7 @@ export default function ChooseStorePage() {
 
   useEffect(() => {
     if (!isLoading && !error && user) {
-      if (user.currentStore) router.push('/hub/sales');
+      if (user.currentStore) router.push('/hub/sale');
       else if (!user.userStores?.length) router.push('/store/create');
     }
   }, [isLoading, error, user, router]);
