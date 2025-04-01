@@ -1,14 +1,11 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Search, Bell, User } from 'lucide-react';
+import { Bell, User } from 'lucide-react';
 import { useAuthStore } from '@/features/auth/store/auth.store';
-import { AppSearchPopover } from './app-search-popover';
 import { NotificationPopover } from './notification-popover';
 import { AccountPopover } from './account-popover';
-import { Input } from '@repo/ui/components/input';
 import { Popover, PopoverTrigger } from '@repo/ui/components/popover';
 import { Button } from '@repo/ui/components/button';
 
@@ -31,29 +28,12 @@ export function DashboardHeader() {
   }
 
   return (
-    <header className="flex items-center justify-between border-b bg-white p-4">
+    <header className="fixed top-0 right-0 left-0 z-10 flex h-15 items-center justify-between border-b bg-white p-4 shadow-sm">
       {/* Logo */}
       <div>
         <Link href="/hub-sales" className="text-lg font-bold text-gray-800">
           <Image src="/logo.svg" alt="Logo" width={64} height={32} />
         </Link>
-      </div>
-
-      {/* Center: Search input & icon */}
-      <div className="relative hidden items-center space-x-2 md:flex">
-        <Input placeholder="Search..." className="w-72" />
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="ghost"
-              className="p-2"
-              aria-label="Open search popover"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
-          </PopoverTrigger>
-          <AppSearchPopover />
-        </Popover>
       </div>
 
       {/* Right: Notification & Account */}

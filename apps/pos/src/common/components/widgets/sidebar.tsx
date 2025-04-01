@@ -316,7 +316,7 @@ export function DashboardSidebar() {
 
   return (
     <motion.aside
-      className="flex h-[calc(100vh-64px)] flex-col border-r bg-white"
+      className="fixed top-15 bottom-0 left-0 flex h-[calc(100vh-64px)] flex-col border-r bg-white"
       variants={sidebarVariants}
       animate={collapsed ? 'collapsed' : 'expanded'}
       initial={collapsed ? 'collapsed' : 'expanded'}

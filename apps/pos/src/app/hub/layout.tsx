@@ -12,19 +12,18 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="flex min-h-screen flex-col">
-      {/* Header */}
       <DashboardHeader />
 
-      {/* Main content area */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
         <DashboardSidebar />
 
-        {/* Page content */}
-        <main className="flex-1 overflow-auto bg-gray-50 p-6">{children}</main>
+        {/* Main content area */}
+        <main className="mt-15 flex-1 overflow-auto bg-gray-50 p-4 sm:p-6">
+          {/* Centered container with max width */}
+          <div className="mx-auto w-full max-w-7xl">{children}</div>
+        </main>
       </div>
 
-      {/* Footer */}
       <DashboardFooter />
     </div>
   );
