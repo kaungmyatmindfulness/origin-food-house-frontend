@@ -52,18 +52,7 @@ const navSections: NavItem[][] = [
     {
       label: 'Menu',
       icon: <MenuIcon className="h-4 w-4" />,
-      subItems: [
-        {
-          label: 'Items',
-          href: '/hub/menu/items',
-          icon: <List className="mr-2 h-3 w-3 text-gray-500" />,
-        },
-        {
-          label: 'Categories',
-          href: '/hub/menu/categories',
-          icon: <Layers className="mr-2 h-3 w-3 text-gray-500" />,
-        },
-      ],
+      href: '/hub/menu',
     },
     {
       label: 'Store',
@@ -349,7 +338,7 @@ export function DashboardSidebar() {
       </nav>
 
       <div className="border-t p-2 text-center text-xs text-gray-400">
-        v1.0.0
+        v0.0.1
       </div>
     </motion.aside>
   );
