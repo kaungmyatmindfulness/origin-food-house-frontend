@@ -33,10 +33,11 @@ interface CategoryCardProps {
   isLastCategory?: boolean;
 }
 
-// Zod schema disallowing empty category name
 const renameSchema = z.object({
   name: z.string().min(1, 'Category name cannot be empty.'),
 });
+
+type RenameSchema = z.infer<typeof renameSchema>;
 
 export function CategoryCard({
   category,
@@ -48,7 +49,7 @@ export function CategoryCard({
   const [editingName, setEditingName] = React.useState(false);
 
   // Set up RHF form with Zod
-  const renameForm = useForm<z.infer<typeof renameSchema>>({
+  const renameForm = useForm<RenameSchema>({
     resolver: zodResolver(renameSchema),
     defaultValues: { name: category.name },
   });
@@ -59,7 +60,7 @@ export function CategoryCard({
     renameForm.reset({ name: category.name });
   }
 
-  function handleSubmit(values: z.infer<typeof renameSchema>) {
+  function handleSubmit(values: RenameSchema) {
     // If valid, call parent
     onEditCategory(category.id, values.name);
     setEditingName(false);
