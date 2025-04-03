@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { motion, Variants } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -13,13 +14,11 @@ import {
   ChevronRight,
   ChevronLeft,
   Info,
-  Layers,
   List,
   LayoutGrid,
   DollarSign,
   History,
 } from 'lucide-react';
-import { motion, Variants } from 'motion/react';
 import { cn } from '@repo/ui/lib/utils';
 
 interface NavSubItem {
@@ -35,6 +34,7 @@ interface NavItem {
   subItems?: NavSubItem[];
 }
 
+// Sample nav structure
 const navSections: NavItem[][] = [
   [
     {
@@ -107,10 +107,13 @@ const navSections: NavItem[][] = [
 ];
 
 function isItemActive(item: NavItem, pathname: string): boolean {
-  if (item.href && pathname.startsWith(item.href)) return true;
+  if (item.href && pathname.startsWith(item.href)) {
+    return true;
+  }
   return item.subItems?.some((sub) => pathname.startsWith(sub.href)) || false;
 }
 
+// Matches the Layout approach: 4rem collapsed, 16rem expanded
 const sidebarVariants: Variants = {
   collapsed: {
     width: '4rem',
@@ -122,216 +125,105 @@ const sidebarVariants: Variants = {
   },
 };
 
-const sectionVariants: Variants = {
-  initial: {},
-  animate: {
-    transition: {
-      staggerChildren: 0.07,
-    },
-  },
-};
-
-const itemVariants: Variants = {
-  initial: { opacity: 0, y: 5 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.2 },
-  },
-};
-
-const subItemsContainer: Variants = {
-  hidden: { height: 0, opacity: 0, transition: { duration: 0.25 } },
-  visible: {
-    height: 'auto',
-    opacity: 1,
-    transition: { duration: 0.25, staggerChildren: 0.05, delayChildren: 0.1 },
-  },
-};
-
-const subItemVariant: Variants = {
-  hidden: { opacity: 0, y: -3 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.2 } },
-};
-
-function SidebarToggle({
+export function DashboardSidebar({
   collapsed,
   setCollapsed,
 }: {
   collapsed: boolean;
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  return (
-    <div className="flex items-center justify-center border-b p-2">
-      <button
-        onClick={() => setCollapsed((prev) => !prev)}
-        className={cn(
-          'flex items-center rounded px-2 py-1 text-sm transition-colors hover:bg-gray-50',
-          collapsed ? 'w-auto' : 'w-full'
-        )}
-        aria-label="Toggle sidebar collapse"
-      >
-        {collapsed ? (
-          <ChevronRight className="h-4 w-4" />
-        ) : (
-          <>
-            <ChevronLeft className="mr-1 h-4 w-4" />
-            <span>Collapse</span>
-          </>
-        )}
-      </button>
-    </div>
-  );
-}
-
-function SidebarItem({
-  item,
-  collapsed,
-  active,
-  pathname,
-}: {
-  item: NavItem;
-  collapsed: boolean;
-  active: boolean;
-  pathname: string;
-}) {
-  if (!item.subItems?.length) {
-    return (
-      <motion.div
-        layout
-        variants={itemVariants}
-        initial="initial"
-        animate="animate"
-      >
-        <Link
-          href={item.href ?? '#'}
-          className={cn(
-            'flex items-center rounded p-2 hover:bg-gray-50',
-            active && 'bg-gray-200 font-medium',
-            collapsed ? 'justify-center' : ''
-          )}
-        >
-          {item.icon}
-          {!collapsed && (
-            <span className="ml-2 overflow-hidden text-ellipsis whitespace-nowrap">
-              {item.label}
-            </span>
-          )}
-        </Link>
-      </motion.div>
-    );
-  }
-
-  return (
-    <motion.div
-      layout
-      variants={itemVariants}
-      initial="initial"
-      animate="animate"
-    >
-      <div
-        className={cn(
-          'flex items-center rounded p-2 hover:bg-gray-50',
-          active && 'bg-gray-200 font-medium',
-          collapsed ? 'justify-center' : ''
-        )}
-      >
-        {item.icon}
-        {!collapsed && (
-          <span className="ml-2 overflow-hidden text-ellipsis whitespace-nowrap">
-            {item.label}
-          </span>
-        )}
-      </div>
-
-      <motion.ul
-        variants={subItemsContainer}
-        initial="hidden"
-        animate={!collapsed ? 'visible' : 'hidden'}
-        className="mt-1 overflow-hidden pl-8"
-      >
-        {item.subItems.map((sub) => {
-          const subActive = pathname.startsWith(sub.href);
-          return (
-            <motion.li
-              key={sub.href}
-              variants={subItemVariant}
-              className="list-none"
-            >
-              <Link
-                href={sub.href}
-                className={cn(
-                  'mb-1 flex items-center rounded px-2 py-1 hover:bg-gray-100',
-                  subActive && 'bg-gray-200 font-medium'
-                )}
-              >
-                {sub.icon}
-                {sub.label}
-              </Link>
-            </motion.li>
-          );
-        })}
-      </motion.ul>
-    </motion.div>
-  );
-}
-
-function SidebarSection({
-  section,
-  collapsed,
-  pathname,
-}: {
-  section: NavItem[];
-  collapsed: boolean;
-  pathname: string;
-}) {
-  return (
-    <motion.div
-      layout
-      variants={sectionVariants}
-      initial="initial"
-      animate="animate"
-      className="py-2"
-    >
-      {section.map((item) => {
-        const active = isItemActive(item, pathname);
-        return (
-          <div key={item.label} className="px-2 py-1">
-            <SidebarItem
-              item={item}
-              collapsed={collapsed}
-              active={active}
-              pathname={pathname}
-            />
-          </div>
-        );
-      })}
-    </motion.div>
-  );
-}
-
-export function DashboardSidebar() {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = React.useState(true);
 
   return (
     <motion.aside
-      className="fixed top-15 bottom-0 left-0 flex h-[calc(100vh-64px)] flex-col border-r bg-white"
+      className="fixed top-[64px] bottom-0 left-0 z-20 flex flex-col border-r bg-white"
       variants={sidebarVariants}
       animate={collapsed ? 'collapsed' : 'expanded'}
       initial={collapsed ? 'collapsed' : 'expanded'}
-      layout
     >
-      <SidebarToggle collapsed={collapsed} setCollapsed={setCollapsed} />
+      {/* Collapse Toggle */}
+      <div className="flex items-center justify-center border-b p-2">
+        <button
+          onClick={() => setCollapsed((prev) => !prev)}
+          className={cn(
+            'flex items-center rounded px-2 py-1 text-sm transition-colors hover:bg-gray-50',
+            collapsed ? 'w-auto' : 'w-full'
+          )}
+          aria-label="Toggle sidebar collapse"
+        >
+          {collapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <>
+              <ChevronLeft className="mr-1 h-4 w-4" />
+              <span>Collapse</span>
+            </>
+          )}
+        </button>
+      </div>
 
+      {/* Nav sections */}
       <nav className="flex-1 overflow-y-auto text-sm">
         {navSections.map((section, idx) => (
           <React.Fragment key={idx}>
-            <SidebarSection
-              section={section}
-              collapsed={collapsed}
-              pathname={pathname}
-            />
+            <div className="py-2">
+              {section.map((item) => {
+                const active = isItemActive(item, pathname);
+                if (!item.subItems) {
+                  return (
+                    <Link
+                      key={item.label}
+                      href={item.href ?? '#'}
+                      className={cn(
+                        'flex items-center rounded p-2 hover:bg-gray-50',
+                        active && 'bg-gray-200 font-medium',
+                        collapsed ? 'justify-center' : 'pl-2'
+                      )}
+                    >
+                      {item.icon}
+                      {!collapsed && <span className="ml-2">{item.label}</span>}
+                    </Link>
+                  );
+                }
+                // sub items
+                const subActive = active && !collapsed;
+                return (
+                  <div key={item.label} className="px-2 py-1">
+                    <div
+                      className={cn(
+                        'flex items-center rounded p-2 hover:bg-gray-50',
+                        active && 'bg-gray-200 font-medium',
+                        collapsed ? 'justify-center' : ''
+                      )}
+                    >
+                      {item.icon}
+                      {!collapsed && <span className="ml-2">{item.label}</span>}
+                    </div>
+                    {!collapsed && (
+                      <ul className="mt-1 space-y-1 pl-6">
+                        {item.subItems.map((sub) => {
+                          const subPath = pathname.startsWith(sub.href);
+                          return (
+                            <li key={sub.href}>
+                              <Link
+                                href={sub.href}
+                                className={cn(
+                                  'flex items-center rounded px-2 py-1 hover:bg-gray-100',
+                                  subPath && 'bg-gray-200 font-medium'
+                                )}
+                              >
+                                {sub.icon}
+                                {sub.label}
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
             {idx < navSections.length - 1 && <hr className="my-2 border-t" />}
           </React.Fragment>
         ))}
