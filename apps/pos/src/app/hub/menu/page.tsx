@@ -1,14 +1,15 @@
 'use client';
 
 import React from 'react';
-import {
-  CreateCategoryDialog,
-  CreateItemDialog,
-} from '@/features/menu/ui/create-forms';
-import { CategoryCard } from '@/features/menu/ui/category-card';
-import { ItemModal } from '@/features/menu/ui/item-modal';
 import { Category } from '@/features/menu/types/category.types';
 import { MenuItem } from '@/features/menu/types/menu-item.types';
+import { CategoryCard } from '@/features/menu/ui/category-card';
+import { ItemModal } from '@/features/menu/ui/item-modal';
+import {
+  MenuItemFormDialog,
+  MenuItemFormData,
+} from '@/features/menu/ui/menu-item-form-dialog';
+import { CategoryFormDialog } from '@/features/menu/ui/category-form-dialog';
 
 export default function MenuPage() {
   const [categories, setCategories] = React.useState<Category[]>([
@@ -325,30 +326,39 @@ export default function MenuPage() {
     },
   ]);
 
-  const [createItemOpen, setCreateItemOpen] = React.useState(false);
-  const [createCategoryOpen, setCreateCategoryOpen] = React.useState(false);
+  // Local UI state for the item creation dialog
+  const [itemFormOpen, setItemFormOpen] = React.useState(false);
+
+  // Local UI state for the category creation dialog
+  const [categoryFormOpen, setCategoryFormOpen] = React.useState(false);
+
+  // For viewing an existing item in a modal
   const [viewItem, setViewItem] = React.useState<MenuItem | null>(null);
 
-  function onCreateItemSubmit(data: {
-    name: string;
-    description: string;
-    price: number;
-  }) {
+  // Called after the user submits the new item form
+  function handleCreateItem(data: MenuItemFormData) {
     console.log('Creating item with data:', data);
-    setCreateItemOpen(false);
+    // 1) You might POST to your backend
+    // 2) Then update local state if needed
+    setItemFormOpen(false);
   }
 
-  function onCreateCategorySubmit(data: { name: string }) {
+  // Called after the user submits the new category form
+  function handleCreateCategory(data: { name: string }) {
     console.log('Creating category with data:', data);
-    setCreateCategoryOpen(false);
+    // 1) Possibly POST to your backend
+    // 2) Then update local categories
+    setCategoryFormOpen(false);
   }
 
   function handleEditCategory(categoryId: number) {
     console.log('Editing category:', categoryId);
+    // Possibly open a CategoryFormDialog in "edit" mode
   }
 
   function handleDeleteCategory(categoryId: number) {
     console.log('Deleting category:', categoryId);
+    // Possibly delete from backend, then remove from local state
   }
 
   function handleSelectItem(item: MenuItem) {
@@ -357,24 +367,28 @@ export default function MenuPage() {
 
   return (
     <div className="space-y-6 p-4">
+      {/* Simple breadcrumb */}
       <nav className="mb-4 text-sm text-gray-500">
         Home &gt; <span className="text-gray-800">Menu</span>
       </nav>
 
+      {/* Create item & create category buttons */}
       <div className="flex items-center space-x-2">
-        <CreateItemDialog
-          open={createItemOpen}
-          onOpenChange={setCreateItemOpen}
-          onSubmit={onCreateItemSubmit}
+        <MenuItemFormDialog
+          mode="create"
+          open={itemFormOpen}
+          onOpenChange={setItemFormOpen}
+          onSubmit={handleCreateItem}
         />
-        <CreateCategoryDialog
-          open={createCategoryOpen}
-          onOpenChange={setCreateCategoryOpen}
-          onSubmit={onCreateCategorySubmit}
+        <CategoryFormDialog
+          open={categoryFormOpen}
+          onOpenChange={setCategoryFormOpen}
+          onSubmit={handleCreateCategory}
         />
       </div>
 
-      <div>
+      {/* Render categories with their items */}
+      <div className="space-y-4">
         {categories.map((cat) => (
           <CategoryCard
             key={cat.id}
@@ -386,6 +400,7 @@ export default function MenuPage() {
         ))}
       </div>
 
+      {/* If an item is selected, show the view modal */}
       {viewItem && (
         <ItemModal item={viewItem} onClose={() => setViewItem(null)} />
       )}

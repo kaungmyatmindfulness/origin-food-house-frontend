@@ -9,7 +9,7 @@
 
 :root {
   /* Warm, off‑white background */
-  --background: #fff5f5;
+  --background: #ffffff;
   --foreground: #3a1414;
 
   --card: var(--background);
@@ -36,7 +36,7 @@
 
   /* Neutral borders/inputs */
   --border: #e2e2e2;
-  --input: #ffffff;
+  --input: #e2e2e2;
   --ring: #e63946;
 
   --chart-1: #ef233c;
