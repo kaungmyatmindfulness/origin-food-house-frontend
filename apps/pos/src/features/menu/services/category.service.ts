@@ -14,7 +14,7 @@ export async function createCategory(
     body: JSON.stringify(data),
   });
   if (res.status === 'error')
-    throw new Error(res.error?.message || 'Create category failed');
+    throw new Error(res.errors?.[0]?.message || 'Create category failed');
   return res.data;
 }
 
@@ -22,7 +22,7 @@ export async function createCategory(
 export async function getCategories(): Promise<Category[]> {
   const res = await apiFetch<Category[]>('/category');
   if (res.status === 'error')
-    throw new Error(res.error?.message || 'Get categories failed');
+    throw new Error(res.errors?.[0]?.message || 'Get categories failed');
   return res.data;
 }
 
@@ -30,7 +30,7 @@ export async function getCategories(): Promise<Category[]> {
 export async function getCategoryById(id: number): Promise<Category> {
   const res = await apiFetch<Category>(`/category/${id}`);
   if (res.status === 'error')
-    throw new Error(res.error?.message || 'Get category failed');
+    throw new Error(res.errors?.[0]?.message || 'Get category failed');
   return res.data;
 }
 
@@ -44,7 +44,7 @@ export async function updateCategory(
     body: JSON.stringify(data),
   });
   if (res.status === 'error')
-    throw new Error(res.error?.message || 'Update category failed');
+    throw new Error(res.errors?.[0]?.message || 'Update category failed');
   return res.data;
 }
 
@@ -54,6 +54,6 @@ export async function deleteCategory(id: number): Promise<Category> {
     method: 'DELETE',
   });
   if (res.status === 'error')
-    throw new Error(res.error?.message || 'Delete category failed');
+    throw new Error(res.errors?.[0]?.message || 'Delete category failed');
   return res.data;
 }

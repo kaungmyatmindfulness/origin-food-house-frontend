@@ -1,18 +1,19 @@
 /**
  * Common error shape for failed API responses.
  */
-export interface ApiError {
+export interface ErrorDetail {
   code?: string; // e.g., "VALIDATION_ERROR", "BAD_REQUEST"
   message: string; // e.g., "Email is required"
+  field?: string | null; // e.g., "email"
 }
 
 /**
  * Common structure for successful/failed responses.
  * T is the data payload type (can be null if none).
  */
-export interface ApiResponse<T> {
+export interface BaseApiResponse<T> {
   status: 'success' | 'error';
-  data: T;
+  data: T | null;
   message: string | null;
-  error: ApiError | null;
+  errors: ErrorDetail[] | null;
 }

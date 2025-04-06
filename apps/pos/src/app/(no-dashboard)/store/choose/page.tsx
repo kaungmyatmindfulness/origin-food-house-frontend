@@ -1,15 +1,16 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useQuery, useMutation } from '@tanstack/react-query';
 import { AnimatePresence } from 'motion/react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
+import { toast } from 'sonner';
 
-import { getCurrentUser } from '@/features/user/services/user.service';
 import { loginWithStore } from '@/features/auth/services/auth.service';
 import { useAuthStore } from '@/features/auth/store/auth.store';
-import { StoreListSkeleton } from '@/features/store/components/store-list-skeleton';
 import { StoreList } from '@/features/store/components/store-list';
+import { StoreListSkeleton } from '@/features/store/components/store-list-skeleton';
+import { getCurrentUser } from '@/features/user/services/user.service';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export default function ChooseStorePage() {
   const router = useRouter();
@@ -59,21 +60,26 @@ export default function ChooseStorePage() {
   const handleStoreSelect = async (storeId: number) => {
     try {
       const res = await chooseStoreMutation.mutateAsync(storeId);
-      setAuth(res.data.access_token);
+      const accessToken = res.data?.access_token;
+      if (!accessToken) {
+        toast.error('Failed to select store. Please try again.');
+        return;
+      }
+      setAuth(accessToken);
       if (user?.currentRole !== 'CHEF') {
         router.push('/hub/sale');
       } else {
         router.push('/hub/kds');
       }
-    } catch (error) {
-      console.error('Error selecting store:', error);
+    } catch {
+      toast.error('An unexpected error occurred. Please try again later.');
     }
   };
 
   return (
     <main className="min-h-screen p-4">
       <section
-        className="mx-auto max-w-3xl rounded-lg p-8 shadow-lg"
+        className="max-w-3xl p-8 mx-auto rounded-lg shadow-lg"
         aria-labelledby="choose-store-heading"
       >
         <header className="mb-8 text-center">
@@ -106,7 +112,7 @@ export default function ChooseStorePage() {
           )}
         </AnimatePresence>
 
-        <footer className="mt-8 text-center text-sm text-gray-500">
+        <footer className="mt-8 text-sm text-center text-gray-500">
           <p>Need help? Contact support.</p>
         </footer>
       </section>

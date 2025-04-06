@@ -7,7 +7,7 @@ import { CategoryCard } from '@/features/menu/ui/category-card';
 import { ItemModal } from '@/features/menu/ui/item-modal';
 import {
   MenuItemFormDialog,
-  MenuItemFormData,
+  SubmitMenuItemData,
 } from '@/features/menu/ui/menu-item-form-dialog';
 import { CategoryFormDialog } from '@/features/menu/ui/category-form-dialog';
 
@@ -326,39 +326,30 @@ export default function MenuPage() {
     },
   ]);
 
-  // Local UI state for the item creation dialog
   const [itemFormOpen, setItemFormOpen] = React.useState(false);
 
-  // Local UI state for the category creation dialog
   const [categoryFormOpen, setCategoryFormOpen] = React.useState(false);
 
-  // For viewing an existing item in a modal
   const [viewItem, setViewItem] = React.useState<MenuItem | null>(null);
 
-  // Called after the user submits the new item form
-  function handleCreateItem(data: MenuItemFormData) {
+  function handleCreateItem(data: SubmitMenuItemData) {
     console.log('Creating item with data:', data);
-    // 1) You might POST to your backend
-    // 2) Then update local state if needed
+
     setItemFormOpen(false);
   }
 
-  // Called after the user submits the new category form
   function handleCreateCategory(data: { name: string }) {
     console.log('Creating category with data:', data);
-    // 1) Possibly POST to your backend
-    // 2) Then update local categories
+
     setCategoryFormOpen(false);
   }
 
   function handleEditCategory(categoryId: number) {
     console.log('Editing category:', categoryId);
-    // Possibly open a CategoryFormDialog in "edit" mode
   }
 
   function handleDeleteCategory(categoryId: number) {
     console.log('Deleting category:', categoryId);
-    // Possibly delete from backend, then remove from local state
   }
 
   function handleSelectItem(item: MenuItem) {
@@ -366,7 +357,7 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="space-y-6 p-4">
+    <div className="p-4 space-y-6">
       {/* Simple breadcrumb */}
       <nav className="mb-4 text-sm text-gray-500">
         Home &gt; <span className="text-gray-800">Menu</span>
