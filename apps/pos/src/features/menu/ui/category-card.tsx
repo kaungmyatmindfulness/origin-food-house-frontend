@@ -79,11 +79,11 @@ export function CategoryCard({
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-semibold">{category.name}</h2>
           <button
-            className="rounded p-1 text-gray-600 hover:bg-gray-100"
+            className="p-1 text-gray-600 rounded hover:bg-gray-100"
             onClick={handleStartEditing}
             aria-label="Edit category name"
           >
-            <Edit className="h-4 w-4" />
+            <Edit className="w-4 h-4" />
           </button>
         </div>
       );
@@ -118,17 +118,17 @@ export function CategoryCard({
 
             <button
               type="submit"
-              className="rounded p-1 text-green-600 hover:bg-gray-100"
+              className="p-1 text-green-600 rounded hover:bg-gray-100"
               aria-label="Confirm rename"
             >
-              <Check className="h-4 w-4" />
+              <Check className="w-4 h-4" />
             </button>
             <button
               type="reset"
-              className="rounded p-1 text-red-600 hover:bg-gray-100"
+              className="p-1 text-red-600 rounded hover:bg-gray-100"
               aria-label="Cancel rename"
             >
-              <X className="h-4 w-4" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </form>
@@ -151,7 +151,7 @@ export function CategoryCard({
               className="p-1"
               aria-label="Category actions"
             >
-              <MoreVertical className="h-4 w-4" />
+              <MoreVertical className="w-4 h-4" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-32 p-1">
@@ -160,7 +160,7 @@ export function CategoryCard({
                 className="flex items-center px-2 py-1 text-red-600 hover:bg-gray-100"
                 onClick={() => onDeleteCategory(category.id)}
               >
-                <Trash2 className="mr-1 h-4 w-4" />
+                <Trash2 className="w-4 h-4 mr-1" />
                 Delete
               </button>
             </div>
@@ -169,8 +169,8 @@ export function CategoryCard({
       </div>
 
       {/* Items grid */}
-      <div className="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-        {category.menuItems.map((item) => (
+      <div className="grid grid-cols-2 gap-4 mt-2 sm:grid-cols-3 md:grid-cols-4">
+        {category.menuItems?.map((item) => (
           <ItemCard key={item.id} item={item} onSelect={onSelectItem} />
         ))}
       </div>

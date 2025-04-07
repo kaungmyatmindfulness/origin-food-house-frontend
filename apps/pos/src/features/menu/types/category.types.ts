@@ -4,12 +4,12 @@ export interface Category {
   storeId: number;
   createdAt?: string;
   updatedAt?: string;
-  menuItems: Array<{
+  menuItems?: Array<{
     id: number;
     name: string;
     description: string;
-    basePrice: number;
-    imageKey: string;
+    basePrice: string;
+    imageUrl: string;
     categoryId: number;
     storeId: number;
     createdAt: string;

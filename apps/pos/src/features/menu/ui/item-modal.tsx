@@ -9,6 +9,7 @@ interface ItemModalProps {
 }
 
 export function ItemModal({ item, onClose }: ItemModalProps) {
+  console.log('📝 -> ItemModal -> item:', item);
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
@@ -25,7 +26,7 @@ export function ItemModal({ item, onClose }: ItemModalProps) {
           X
         </button>
         <h2 className="mb-2 text-lg font-semibold">{item.name}</h2>
-        {item.imageKey && (
+        {item.imageUrl && (
           <img
             // src={item.imageUrl}
             // TODO: Uncomment when imageUrl is available

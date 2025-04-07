@@ -66,7 +66,7 @@ export interface CreateMenuItemDto {
   name: string;
   description?: string;
   basePrice: number;
-  imageKey?: string;
+  imageUrl?: string;
   category: UpsertCategoryDto;
   customizationGroups?: UpsertCustomizationGroupDto[];
 }
@@ -80,7 +80,7 @@ export interface UpdateMenuItemDto {
   name?: string;
   description?: string;
   basePrice?: number;
-  imageKey?: string;
+  imageUrl?: string;
   category?: UpsertCategoryDto;
   customizationGroups?: UpsertCustomizationGroupDto[];
 }
@@ -93,7 +93,7 @@ export interface MenuItemDto {
   name: string;
   description?: string | null;
   basePrice: number;
-  imageKey?: string | null;
+  imageUrl?: string | null;
   category: CategoryDto;
   customizationGroups: CustomizationGroupDto[];
 }
@@ -104,7 +104,7 @@ export interface MenuItemDto {
 //   description:
 //     'A succulent turkey steak, encased in a spicy ajwan seed crust, served with a side of garlic mashed sweet potato.',
 //   basePrice: 13.09,
-//   imageKey: 'uploads/fd9d6802-095b-4d4c-95f7-79e9aa6d9125-original',
+//   imageUrl: 'uploads/fd9d6802-095b-4d4c-95f7-79e9aa6d9125-original',
 //   categoryId: 10,
 //   storeId: 1,
 //   createdAt: '2025-03-26T21:03:34.504Z',
@@ -115,8 +115,8 @@ export interface MenuItem {
   id: number;
   name: string;
   description?: string | null;
-  basePrice: number;
-  imageKey?: string | null;
+  basePrice: string;
+  imageUrl?: string | null;
   categoryId: number;
   storeId: number;
   createdAt: string;

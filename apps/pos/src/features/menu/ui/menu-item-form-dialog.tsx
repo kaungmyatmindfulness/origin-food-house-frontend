@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogTrigger,
@@ -22,7 +22,7 @@ import {
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Plus, Trash2, Upload, X } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { Separator } from '@repo/ui/components/separator';
 import { Checkbox } from '@repo/ui/components/checkbox';
 import { Input } from '@repo/ui/components/input';
@@ -31,8 +31,6 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@repo/ui/components/tooltip';
-import Dropzone, { DropzoneState } from 'react-dropzone';
-import { cn } from '@repo/ui/lib/utils';
 import { Combobox } from '@repo/ui/components/combobox';
 import { ImageUpload } from '@/common/components/widgets/image-upload';
 
@@ -46,7 +44,7 @@ const menuItemSchema = z
     basePrice: z
       .number({ invalid_type_error: 'Base price required' })
       .min(0, 'Must be >= 0'),
-    imageKey: z.string().optional(),
+    imageUrl: z.string().optional(),
 
     categoryId: z.string().optional(),
     newCategoryName: z
@@ -126,7 +124,7 @@ export interface SubmitMenuItemData {
   name: string;
   description: string;
   basePrice: number;
-  imageKey?: string;
+  imageUrl?: string;
   category: { id?: number; name: string };
   customizationGroups: Array<{
     name: string;
@@ -160,7 +158,6 @@ export interface MenuItemFormDialogProps {
   mode: MenuFormMode;
   open: boolean;
   onOpenChange: (val: boolean) => void;
-  onSubmit: (data: SubmitMenuItemData) => void;
   /** initialValues for "edit" mode if desired (should match NEW DTO structure). */
   initialValues?: Partial<SubmitMenuItemData>;
 }
@@ -174,11 +171,8 @@ export function MenuItemFormDialog({
   mode,
   open,
   onOpenChange,
-  onSubmit,
   initialValues,
 }: MenuItemFormDialogProps) {
-  const [uploadLoading, setUploadLoading] = useState(false);
-  const [localFilePreview, setLocalFilePreview] = useState<string>('');
   const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([
     ...MOCK_CATEGORIES,
     { label: 'Add New Category', value: 'add_new' },
@@ -192,7 +186,7 @@ export function MenuItemFormDialog({
       name: initial.name,
       description: initial.description,
       basePrice: initial.basePrice,
-      imageKey: initial.imageKey,
+      imageUrl: initial.imageUrl,
 
       categoryId: initial.category?.id
         ? String(initial.category.id)
@@ -220,7 +214,7 @@ export function MenuItemFormDialog({
       name: '',
       description: '',
       basePrice: 0,
-      imageKey: '',
+      imageUrl: '',
       categoryId: '',
       newCategoryName: '',
       isNewCategory: false,
@@ -232,22 +226,19 @@ export function MenuItemFormDialog({
   useEffect(() => {
     if (initialValues) {
       form.reset(mapInitialValuesToFormData(initialValues));
-
-      setLocalFilePreview('');
     } else {
       form.reset({
         name: '',
         description: '',
         basePrice: 0,
-        imageKey: '',
+        imageUrl: '',
         categoryId: '',
         newCategoryName: '',
         isNewCategory: false,
         customizationGroups: [],
       });
-      setLocalFilePreview('');
     }
-  }, [initialValues, form.reset]);
+  }, [initialValues, form.reset, form]);
 
   const {
     fields: groupFields,
@@ -306,39 +297,7 @@ export function MenuItemFormDialog({
         );
       }
     });
-  }, [watchedGroups, form.setValue]);
-
-  function handleDrop(acceptedFiles: File[]) {
-    if (!acceptedFiles?.length) return;
-    const file = acceptedFiles[0];
-    if (!file) return;
-
-    setUploadLoading(true);
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result as string;
-      setLocalFilePreview(dataUrl);
-
-      setTimeout(() => {
-        const mockS3Key = `uploads/item-images/${Date.now()}-${file.name}`;
-        form.setValue('imageKey', mockS3Key, {
-          shouldValidate: true,
-          shouldDirty: true,
-        });
-        setUploadLoading(false);
-      }, 1200);
-    };
-    reader.onerror = () => {
-      console.error('Error reading file');
-      setUploadLoading(false);
-    };
-    reader.readAsDataURL(file);
-  }
-
-  function handleRemoveImage() {
-    setLocalFilePreview('');
-    form.setValue('imageKey', '', { shouldValidate: true, shouldDirty: true });
-  }
+  }, [watchedGroups, form.setValue, form]);
 
   function handleFormSubmit(values: MenuItemFormData) {
     let submitCategory: { id?: number; name: string };
@@ -366,7 +325,7 @@ export function MenuItemFormDialog({
       name: values.name,
       description: values.description,
       basePrice: values.basePrice,
-      imageKey: values.imageKey || undefined,
+      imageUrl: values.imageUrl || undefined,
       category: submitCategory,
       customizationGroups:
         values.customizationGroups?.map((group) => ({
@@ -381,7 +340,7 @@ export function MenuItemFormDialog({
         })) ?? [],
     };
 
-    onSubmit(submitData);
+    // TODO: API Integration
     onOpenChange(false);
   }
 
@@ -397,7 +356,7 @@ export function MenuItemFormDialog({
           {mode === 'create' ? (
             <>
               {' '}
-              <Plus className="w-4 h-4 mr-1" /> Create Menu Item{' '}
+              <Plus className="mr-1 h-4 w-4" /> Create Menu Item{' '}
             </>
           ) : (
             'Edit Menu Item'
@@ -445,6 +404,7 @@ export function MenuItemFormDialog({
                 name="basePrice"
                 render={({ field }) => (
                   <FormItem>
+                    {/* TODO: Replace currency sign with actual value bound in store setting */}
                     <FormLabel>Base Price ($)</FormLabel>
                     <FormControl>
                       <Input
@@ -489,7 +449,7 @@ export function MenuItemFormDialog({
             {/* --- Image --- */}
             <FormField
               control={form.control}
-              name="imageKey"
+              name="imageUrl"
               render={({ field }) => (
                 <FormItem>
                   {/* FormLabel provided by ImageUpload component via prop */}
@@ -501,7 +461,7 @@ export function MenuItemFormDialog({
                     />
                   </FormControl>
                   <FormMessage />{' '}
-                  {/* Show validation errors for imageKey if any */}
+                  {/* Show validation errors for imageUrl if any */}
                 </FormItem>
               )}
             />
@@ -571,7 +531,7 @@ export function MenuItemFormDialog({
                     })
                   }
                 >
-                  <Plus className="w-4 h-4 mr-1" /> Add Group
+                  <Plus className="mr-1 h-4 w-4" /> Add Group
                 </Button>
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -580,7 +540,7 @@ export function MenuItemFormDialog({
               </p>
 
               {groupFields.length === 0 && (
-                <p className="text-sm italic text-gray-400">
+                <p className="text-sm text-gray-400 italic">
                   No customization groups added yet.
                 </p>
               )}
@@ -650,8 +610,8 @@ function CustomizationGroupField({
     form.watch(`customizationGroups.${groupIndex}.options`)?.length ?? 0;
 
   return (
-    <div className="p-4 border rounded-md bg-gray-50 dark:border-gray-700 dark:bg-gray-800/30">
-      <div className="flex items-center justify-between mb-3">
+    <div className="rounded-md border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/30">
+      <div className="mb-3 flex items-center justify-between">
         {/* Group Name */}
         <FormField
           control={control}
@@ -678,18 +638,18 @@ function CustomizationGroupField({
           className="ml-2 text-red-500 hover:text-red-700"
           aria-label="Remove group"
         >
-          <Trash2 className="w-4 h-4" />
+          <Trash2 className="h-4 w-4" />
         </Button>
       </div>
 
       {/* Group Settings: Required, Min/Max Selectable */}
-      <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
+      <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {/* Required Checkbox */}
         <FormField
           control={control}
           name={`customizationGroups.${groupIndex}.required`}
           render={({ field }) => (
-            <FormItem className="flex items-center gap-2 p-2 mt-auto border rounded-md">
+            <FormItem className="mt-auto flex items-center gap-2 rounded-md border p-2">
               <FormControl>
                 <Checkbox
                   checked={field.value}
@@ -699,7 +659,7 @@ function CustomizationGroupField({
               </FormControl>
               <FormLabel
                 htmlFor={`required-${groupIndex}`}
-                className="mb-0 text-sm font-normal cursor-pointer"
+                className="mb-0 cursor-pointer text-sm font-normal"
               >
                 Required?
                 <Tooltip>
@@ -765,14 +725,14 @@ function CustomizationGroupField({
       {/* Validation hint for min/max */}
       {form.formState.errors.customizationGroups?.[groupIndex]
         ?.maxSelectable && (
-        <p className="mb-2 -mt-2 text-xs text-red-500">
+        <p className="-mt-2 mb-2 text-xs text-red-500">
           Max choices cannot exceed the number of options ({optionsCount}) and
           must be &gt; min choices.
         </p>
       )}
       {form.formState.errors.customizationGroups?.[groupIndex]
         ?.minSelectable && (
-        <p className="mb-2 -mt-2 text-xs text-red-500">
+        <p className="-mt-2 mb-2 text-xs text-red-500">
           Min choices must be less than or equal to max choices.
         </p>
       )}
@@ -781,7 +741,7 @@ function CustomizationGroupField({
       <div className="space-y-3">
         <FormLabel className="text-sm font-medium">Options</FormLabel>
         {optionFields.length === 0 && (
-          <p className="text-xs italic text-gray-400">
+          <p className="text-xs text-gray-400 italic">
             Add at least one option.
           </p>
         )}
@@ -835,10 +795,10 @@ function CustomizationGroupField({
               variant="ghost"
               size="icon"
               onClick={() => removeOption(optionIndex)}
-              className="w-8 h-8 text-red-500 shrink-0 hover:bg-red-100 dark:hover:bg-red-900/50"
+              className="h-8 w-8 shrink-0 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50"
               aria-label="Remove option"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         ))}

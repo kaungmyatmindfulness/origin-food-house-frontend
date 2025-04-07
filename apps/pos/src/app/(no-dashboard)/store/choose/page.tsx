@@ -6,7 +6,10 @@ import React, { useEffect } from 'react';
 import { toast } from 'sonner';
 
 import { loginWithStore } from '@/features/auth/services/auth.service';
-import { useAuthStore } from '@/features/auth/store/auth.store';
+import {
+  selectAccessToken,
+  useAuthStore,
+} from '@/features/auth/store/auth.store';
 import { StoreList } from '@/features/store/components/store-list';
 import { StoreListSkeleton } from '@/features/store/components/store-list-skeleton';
 import { getCurrentUser } from '@/features/user/services/user.service';
@@ -14,67 +17,55 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 export default function ChooseStorePage() {
   const router = useRouter();
-  const { accessToken, setAuth } = useAuthStore();
 
-  // Query to fetch user data
+  const accessToken = useAuthStore(selectAccessToken);
+  const selectedStoreId = useAuthStore((state) => state.selectedStoreId);
+  const setAuth = useAuthStore((state) => state.setAuth);
+  const setSelectedStore = useAuthStore((state) => state.setSelectedStore);
+
   const {
     data: user,
     isLoading: isUserLoading,
     error: userError,
   } = useQuery({
-    queryKey: ['user', 'me'],
-    queryFn: () => getCurrentUser(),
-    enabled: !!accessToken,
+    queryKey: ['user', { accessToken, selectedStoreId }],
+    queryFn: () => getCurrentUser(selectedStoreId!),
+    enabled: !!accessToken && !!selectedStoreId,
   });
 
-  // Mutation to choose store
   const chooseStoreMutation = useMutation({
     mutationFn: (storeId: number) => loginWithStore({ storeId }),
-    // onSuccess: (res) => {
-    //   setAuth(res.data.access_token);
-    // },
   });
-
-  // After fetching user, decide route
-  useEffect(() => {
-    if (!accessToken) return;
-    if (isUserLoading) return;
-    if (userError) {
-      console.error('Error fetching user data:', userError);
-      return;
-    }
-    // If store is chosen, redirect
-    if (user?.currentStore) {
-      if (user.currentRole !== 'CHEF') {
-        router.push('/hub/sale');
-      } else {
-        router.push('/hub/kds');
-      }
-    }
-    // If no stores, go create store
-    else if (!user?.userStores || user.userStores.length === 0) {
-      router.push('/store/create');
-    }
-  }, [accessToken, isUserLoading, user, userError, router]);
 
   const handleStoreSelect = async (storeId: number) => {
     try {
       const res = await chooseStoreMutation.mutateAsync(storeId);
-      const accessToken = res.data?.access_token;
-      if (!accessToken) {
-        toast.error('Failed to select store. Please try again.');
+
+      const newAccessToken = res.data?.access_token;
+      if (!newAccessToken) {
+        toast.error('Authentication failed. Please try again.');
         return;
       }
-      setAuth(accessToken);
-      if (user?.currentRole !== 'CHEF') {
-        router.push('/hub/sale');
+
+      setAuth(newAccessToken);
+      setSelectedStore(storeId);
+
+      const role = user?.userStores.find((store) => store.id === storeId)?.role;
+
+      if (role === 'CHEF') {
+        router.replace(`/hub/kds`);
       } else {
-        router.push('/hub/kds');
+        router.replace('/hub/menu');
       }
-    } catch {
-      toast.error('An unexpected error occurred. Please try again later.');
+    } catch (error) {
+      console.error('Error caught during handleStoreSelect:', error);
     }
   };
+
+  const pageTitle = selectedStoreId ? 'Change Your Store' : 'Choose Your Store';
+  const pageDescription = selectedStoreId
+    ? 'Select a different store to manage.'
+    : 'Select one of your associated stores to continue.';
 
   return (
     <main className="min-h-screen p-4">
@@ -87,23 +78,19 @@ export default function ChooseStorePage() {
             id="choose-store-heading"
             className="text-3xl font-bold text-gray-800"
           >
-            Choose Your Store
+            {pageTitle}
           </h1>
-          <p className="mt-2 text-gray-600">
-            Select one of your stores to continue.
-          </p>
+          <p className="mt-2 text-gray-600">{pageDescription}</p>
         </header>
 
         <AnimatePresence mode="wait">
           {isUserLoading ? (
-            // Skeleton
             <StoreListSkeleton key="loading" />
           ) : userError ? (
             <div key="error" className="text-center text-red-600">
               Error loading your stores.
             </div>
           ) : (
-            // Render final store list
             <StoreList
               key="stores"
               userStores={user?.userStores || []}

@@ -1,27 +1,26 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
+import { login } from '@/features/auth/services/auth.service';
+import { useAuthStore } from '@/features/auth/store/auth.store';
+import { getCurrentUser } from '@/features/user/services/user.service';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@repo/ui/components/button';
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from '@repo/ui/components/form';
 import { Input } from '@repo/ui/components/input';
-import { Button } from '@repo/ui/components/button';
-
-import { useAuthStore } from '@/features/auth/store/auth.store';
-import { login } from '@/features/auth/services/auth.service';
-import { getCurrentUser } from '@/features/user/services/user.service';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 const loginSchema = z.object({
@@ -34,13 +33,17 @@ export default function LoginPage() {
   const router = useRouter();
   const { accessToken, setAuth } = useAuthStore();
 
-  // React Query: fetch current user data when token exists
   const {
     data: user,
     isLoading: isUserLoading,
     error: userError,
   } = useQuery({
-    queryKey: ['user', 'me'],
+    queryKey: [
+      'user',
+      {
+        accessToken,
+      },
+    ],
     queryFn: () => getCurrentUser(),
     enabled: !!accessToken,
   });
@@ -63,6 +66,12 @@ export default function LoginPage() {
   async function onSubmit(values: LoginFormValues) {
     try {
       const response = await loginMutation.mutateAsync(values);
+      if (!response.data?.access_token) {
+        toast.error(
+          'Login failed: No access token received. Please check your credentials.'
+        );
+        return;
+      }
       setAuth(response.data.access_token);
     } catch (error) {
       console.error('Login failed:', error);
@@ -107,7 +116,7 @@ export default function LoginPage() {
         </header>
 
         {/* Login form card */}
-        <div className="rounded bg-white p-6 shadow-sm">
+        <div className="p-6 bg-white rounded shadow-sm">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
@@ -152,12 +161,12 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="mt-2 w-full"
+                className="w-full mt-2"
               >
                 {isLoading ? 'Logging in...' : 'Login'}
               </Button>
 
-              <p className="mt-4 text-center text-sm text-gray-600">
+              <p className="mt-4 text-sm text-center text-gray-600">
                 Forgot your password?{' '}
                 <Link
                   href="/(auth)/forgot-password"

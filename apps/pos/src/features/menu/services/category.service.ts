@@ -1,59 +1,24 @@
-import { apiFetch } from '@/utils/apiFetch'; // or your custom fetch wrapper
-import {
-  Category,
-  CreateCategoryDto,
-  UpdateCategoryDto,
-} from '../types/category.types';
+import { apiFetch } from '@/utils/apiFetch';
+import { Category } from '../types/category.types';
 
-// POST /category
-export async function createCategory(
-  data: CreateCategoryDto
-): Promise<Category> {
-  const res = await apiFetch<Category>('/category', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
-  if (res.status === 'error')
-    throw new Error(res.errors?.[0]?.message || 'Create category failed');
-  return res.data;
-}
+const CATEGORY_ENDPOINT = '/categories';
 
-// GET /category => returns categories for the current store
-export async function getCategories(): Promise<Category[]> {
-  const res = await apiFetch<Category[]>('/category');
-  if (res.status === 'error')
-    throw new Error(res.errors?.[0]?.message || 'Get categories failed');
-  return res.data;
-}
+/**
+ * Retrieves categories for a specific store.
+ *
+ * @param storeId - The ID of the store whose categories are to be fetched.
+ * @returns A promise resolving to an array of Category objects.
+ * @throws {NetworkError | ApiError} - Throws on fetch/API errors. Throws Error if data is null on success.
+ */
+export async function getCategories(storeId: number): Promise<Category[]> {
+  const params = new URLSearchParams({ storeId: String(storeId) });
+  const url = `${CATEGORY_ENDPOINT}?${params.toString()}`;
 
-// GET /category/{id}
-export async function getCategoryById(id: number): Promise<Category> {
-  const res = await apiFetch<Category>(`/category/${id}`);
-  if (res.status === 'error')
-    throw new Error(res.errors?.[0]?.message || 'Get category failed');
-  return res.data;
-}
+  const res = await apiFetch<Category[]>(url);
 
-// PATCH /category/{id}
-export async function updateCategory(
-  id: number,
-  data: UpdateCategoryDto
-): Promise<Category> {
-  const res = await apiFetch<Category>(`/category/${id}`, {
-    method: 'PATCH',
-    body: JSON.stringify(data),
-  });
-  if (res.status === 'error')
-    throw new Error(res.errors?.[0]?.message || 'Update category failed');
-  return res.data;
-}
+  if (res.data == null) {
+    throw new Error('Failed to retrieve categories: No data returned by API.');
+  }
 
-// DELETE /category/{id}
-export async function deleteCategory(id: number): Promise<Category> {
-  const res = await apiFetch<Category>(`/category/${id}`, {
-    method: 'DELETE',
-  });
-  if (res.status === 'error')
-    throw new Error(res.errors?.[0]?.message || 'Delete category failed');
   return res.data;
 }

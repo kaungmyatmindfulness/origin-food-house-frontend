@@ -48,7 +48,7 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
                 className="p-1"
                 onClick={(e) => e.stopPropagation()}
               >
-                <MoreVertical className="h-4 w-4" />
+                <MoreVertical className="w-4 h-4" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-32 p-1">
@@ -57,14 +57,14 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
                   className="flex items-center px-2 py-1 hover:bg-gray-100"
                   onClick={handleEdit}
                 >
-                  <Edit className="mr-1 h-4 w-4" />
+                  <Edit className="w-4 h-4 mr-1" />
                   Edit
                 </button>
                 <button
                   className="flex items-center px-2 py-1 text-red-600 hover:bg-gray-100"
                   onClick={handleDelete}
                 >
-                  <Trash2 className="mr-1 h-4 w-4" />
+                  <Trash2 className="w-4 h-4 mr-1" />
                   Delete
                 </button>
               </div>
@@ -73,21 +73,21 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
         </div>
 
         {/* Image, no padding */}
-        {item.imageKey && (
+        {item.imageUrl && (
           <img
-            src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=900&auto=format&fit=crop&q=60"
+            src={item.imageUrl}
             alt={item.name}
-            className="h-32 w-full object-cover"
+            className="object-cover w-full h-32"
           />
         )}
 
         {/* Description + Price */}
         <div className="px-3 py-2">
-          <p className="line-clamp-2 text-xs text-gray-600">
+          <p className="text-xs text-gray-600 line-clamp-2">
             {item.description}
           </p>
           <p className="mt-2 text-sm font-medium text-gray-800">
-            ${item.basePrice.toFixed(2)}
+            ${item.basePrice}
           </p>
         </div>
       </Card>

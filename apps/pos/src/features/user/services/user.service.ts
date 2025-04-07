@@ -5,8 +5,8 @@ import {
   AddUserToStoreData,
   UserStoreRole,
   CurrentUserData,
-} from '@/features/user/types/user.types'; // Adjust path as needed
-import { apiFetch } from '@/utils/apiFetch'; // Assuming improved apiFetch exists here
+} from '@/features/user/types/user.types';
+import { apiFetch } from '@/utils/apiFetch';
 
 /**
  * Register a new user.
@@ -18,13 +18,11 @@ import { apiFetch } from '@/utils/apiFetch'; // Assuming improved apiFetch exist
 export async function registerUser(
   data: CreateUserDto
 ): Promise<RegisterUserData> {
-  // apiFetch handles errors (network, http status, api status: 'error') and returns BaseApiResponse<T>
   const res = await apiFetch<RegisterUserData>('/users/register', {
     method: 'POST',
     body: JSON.stringify(data),
   });
 
-  // If apiFetch succeeded, check for data existence
   if (!res.data) {
     console.error('API Error: registerUser succeeded but returned null data.');
     throw new Error('Registration failed: No data returned by API.');
@@ -42,13 +40,11 @@ export async function registerUser(
 export async function addUserToStore(
   data: AddUserToStoreDto
 ): Promise<AddUserToStoreData> {
-  // apiFetch handles errors
   const res = await apiFetch<AddUserToStoreData>('/users/add-to-store', {
     method: 'POST',
     body: JSON.stringify(data),
   });
 
-  // If apiFetch succeeded, check for data existence
   if (!res.data) {
     console.error(
       'API Error: addUserToStore succeeded but returned null data.'
@@ -66,13 +62,9 @@ export async function addUserToStore(
  * @throws {NetworkError | ApiError | UnauthorizedError} - Throws on fetch/API errors. Throws Error if data is null on success.
  */
 export async function getUserStores(userId: number): Promise<UserStoreRole[]> {
-  // apiFetch handles errors
   const res = await apiFetch<UserStoreRole[]>(`/users/${userId}/stores`);
 
-  // If apiFetch succeeded, check for data existence.
-  // Note: An empty array [] is valid data, but null/undefined usually indicates an issue.
   if (res.data == null) {
-    // Check for null or undefined specifically
     console.error(
       `API Error: getUserStores(${userId}) succeeded but returned null/undefined data.`
     );
@@ -87,15 +79,14 @@ export async function getUserStores(userId: number): Promise<UserStoreRole[]> {
  * @returns A promise resolving to the CurrentUserData object.
  * @throws {NetworkError | ApiError | UnauthorizedError} - Throws on fetch/API errors. Throws Error if data is null on success.
  */
-export async function getCurrentUser(): Promise<CurrentUserData> {
-  // apiFetch handles errors
+export async function getCurrentUser(
+  storeId: number
+): Promise<CurrentUserData> {
+  const params = new URLSearchParams({ storeId: String(storeId) });
+  const url = `/users/me?${params.toString()}`;
   const res = await apiFetch<CurrentUserData>('/users/me');
 
-  // If apiFetch succeeded, check for data existence
   if (!res.data) {
-    console.error(
-      'API Error: getCurrentUser succeeded but returned null data.'
-    );
     throw new Error('Failed to get current user: No data returned by API.');
   }
   return res.data;
