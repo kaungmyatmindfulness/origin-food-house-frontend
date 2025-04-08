@@ -1,7 +1,7 @@
 // apps/pos/features/store/services/store.service.ts
 
 import { apiFetch } from '@/utils/apiFetch';
-import { BaseApiResponse } from '@/common/types/api.types';
+import { StandardApiResponse } from '@/common/types/api.types';
 import {
   CreateStoreDto,
   UpdateStoreDto,
@@ -11,7 +11,7 @@ import {
 
 /** POST /stores: Create a store (creator is OWNER) */
 export async function createStore(data: CreateStoreDto): Promise<Store> {
-  const res: BaseApiResponse<Store> = await apiFetch<Store>('/stores', {
+  const res: StandardApiResponse<Store> = await apiFetch<Store>('/stores', {
     method: 'POST',
     body: JSON.stringify(data),
   });
@@ -28,10 +28,13 @@ export async function updateStore(
   id: number,
   data: UpdateStoreDto
 ): Promise<Store> {
-  const res: BaseApiResponse<Store> = await apiFetch<Store>(`/stores/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(data),
-  });
+  const res: StandardApiResponse<Store> = await apiFetch<Store>(
+    `/stores/${id}`,
+    {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }
+  );
   if (res.status === 'error' || !res.data) {
     throw new Error(
       res.errors?.[0]?.message || res.message || 'Failed to update store'
@@ -47,7 +50,7 @@ export async function inviteOrAssignRoleByEmail(
   id: number,
   data: InviteOrAssignRoleDto
 ): Promise<Store> {
-  const res: BaseApiResponse<Store> = await apiFetch<Store>(
+  const res: StandardApiResponse<Store> = await apiFetch<Store>(
     `/stores/${id}/invite-by-email`,
     {
       method: 'POST',

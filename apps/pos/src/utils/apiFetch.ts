@@ -1,114 +1,149 @@
-import { BaseApiResponse, ErrorDetail } from '@/common/types/api.types';
-import { useAuthStore } from '@/features/auth/store/auth.store';
+import qs from 'qs';
 import { toast } from 'sonner';
 
-/** Base class for API related errors */
+import type {
+  ErrorDetail,
+  StandardApiResponse,
+} from '@/common/types/api.types';
+import { useAuthStore } from '@/features/auth/store/auth.store';
+
 export class FetchError extends Error {
   constructor(message: string) {
     super(message);
     this.name = 'FetchError';
   }
 }
-
-/** Error during network request (fetch failed) or response parsing */
 export class NetworkError extends FetchError {
   constructor(message: string) {
     super(message);
     this.name = 'NetworkError';
   }
 }
-
-/** Error indicating a non-2xx HTTP status or API status: 'error' */
 export class ApiError extends FetchError {
   public status: number;
   public errors: ErrorDetail[] | null;
-
-  public responseJson: BaseApiResponse<unknown> | null;
+  public responseJson: StandardApiResponse<unknown> | null;
 
   constructor(
     message: string,
     status: number,
-
-    responseJson: BaseApiResponse<unknown> | null = null
+    responseJson: StandardApiResponse<unknown> | null = null
   ) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
     this.responseJson = responseJson;
-
     this.errors = responseJson?.errors ?? null;
   }
 }
-
-/** Specific API error for 401 Unauthorized */
 export class UnauthorizedError extends ApiError {
   constructor(
     message: string = 'Unauthorized',
-
-    responseJson: BaseApiResponse<unknown> | null = null
+    responseJson: StandardApiResponse<unknown> | null = null
   ) {
     super(message, 401, responseJson);
     this.name = 'UnauthorizedError';
   }
 }
 
-/** Safely extracts an error message from the API response */
 function getErrorMessage(
-  json: BaseApiResponse<unknown> | null,
+  json: StandardApiResponse<unknown> | null,
   defaultMessage: string
 ): string {
-  return json?.errors?.[0]?.message || json?.message || defaultMessage;
+  const apiMessage = typeof json?.message === 'string' ? json.message : null;
+  return json?.errors?.[0]?.message || apiMessage || defaultMessage;
 }
 
+type ApiPath =
+  | string
+  | {
+      path: string;
+      query?: Record<string, unknown>;
+    };
+
 export async function apiFetch<T>(
-  path: string,
+  pathInput: ApiPath,
   options: RequestInit = {}
-): Promise<BaseApiResponse<T>> {
+): Promise<StandardApiResponse<T>> {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   if (!baseUrl) {
     const configErrorMsg = 'API configuration error: Base URL is not set.';
+    console.error(configErrorMsg);
     toast.error(configErrorMsg);
+
     throw new Error(configErrorMsg);
+  }
+
+  let fullPath: string;
+  try {
+    if (typeof pathInput === 'string') {
+      fullPath = pathInput;
+    } else if (typeof pathInput === 'object' && pathInput.path) {
+      const { path, query } = pathInput;
+
+      if (query && Object.keys(query).length > 0) {
+        const queryString = qs.stringify(query, {
+          addQueryPrefix: true,
+          arrayFormat: 'brackets',
+          encodeValuesOnly: true,
+          skipNulls: true,
+          allowDots: true,
+        });
+        fullPath = path + queryString;
+      } else {
+        fullPath = path;
+      }
+    } else {
+      throw new Error('Invalid path input provided.');
+    }
+  } catch (error) {
+    const pathErrorMsg = `Failed to process path/query: ${error instanceof Error ? error.message : 'Unknown error'}`;
+    console.error('apiFetch Path/Query Error:', { pathInput, error });
+    toast.error(pathErrorMsg);
+    throw new Error(pathErrorMsg);
   }
 
   let requestUrl: URL;
   try {
-    requestUrl = new URL(path, baseUrl);
-  } catch {
-    const invalidUrlMsg = `Invalid URL constructed: ${path}`;
+    requestUrl = new URL(fullPath, baseUrl);
+  } catch (error) {
+    const invalidUrlMsg = `Invalid URL: ${fullPath} (relative to ${baseUrl})`;
+    console.error('apiFetch URL Construction Error:', {
+      fullPath,
+      baseUrl,
+      error,
+    });
     toast.error(invalidUrlMsg);
     throw new Error(invalidUrlMsg);
   }
 
   const token = useAuthStore.getState().accessToken;
-
   const headers = new Headers(options.headers);
 
   if (!headers.has('Accept')) {
     headers.set('Accept', 'application/json');
   }
-
   const isFormData = options.body instanceof FormData;
   const method = options.method?.toUpperCase() ?? 'GET';
-  const methodsNeedingContentType = ['POST', 'PUT', 'PATCH'];
-
   if (
     !isFormData &&
     options.body != null &&
-    methodsNeedingContentType.includes(method) &&
+    ['POST', 'PUT', 'PATCH'].includes(method) &&
     !headers.has('Content-Type')
   ) {
     headers.set('Content-Type', 'application/json');
   }
-
   if (token) {
     headers.set('Authorization', `Bearer ${token}`);
   }
 
   const finalOptions: RequestInit = { ...options, headers };
   let response: Response;
-
   try {
+    console.debug(
+      `apiFetch Request: ${method} ${requestUrl.pathname}${requestUrl.search}`,
+      finalOptions
+    );
     response = await fetch(requestUrl.toString(), finalOptions);
   } catch (error) {
     const networkMsg = `Network error: ${error instanceof Error ? error.message : 'Request failed'}`;
@@ -117,53 +152,47 @@ export async function apiFetch<T>(
     throw new NetworkError(networkMsg);
   }
 
-  let json: BaseApiResponse<T> | null = null;
+  let json: StandardApiResponse<T> | null = null;
   const responseContentType = response.headers.get('content-type');
-
-  if (
+  const canParseJson =
     response.status !== 204 &&
-    responseContentType?.includes('application/json')
-  ) {
+    responseContentType?.includes('application/json');
+
+  if (canParseJson) {
     try {
       json = await response.json();
     } catch (error) {
       const parseMsg = `API Error: Failed to parse JSON response from ${requestUrl.pathname}`;
       console.error('apiFetch JSON Parsing Error:', error);
       toast.error(parseMsg);
-
       throw new NetworkError(parseMsg);
     }
   }
 
-  if (!response.ok) {
-    const defaultHttpErrorMsg = `API Error: Request failed (${response.status}) for ${requestUrl.pathname}`;
-    const errMsg = getErrorMessage(json, defaultHttpErrorMsg);
-    console.error(`apiFetch HTTP Error ${response.status}:`, errMsg, json);
+  if (!response.ok || (json && json.status === 'error')) {
+    const status = response.status;
+    const defaultMessage =
+      json?.status === 'error'
+        ? `API Error: Operation failed for ${requestUrl.pathname}`
+        : `API Error: Request failed (${status}) for ${requestUrl.pathname}`;
+    const errMsg = getErrorMessage(json, defaultMessage);
+
+    console.error(`apiFetch Error ${status}:`, errMsg, { jsonResponse: json });
     toast.error(errMsg);
 
-    if (response.status === 401) {
+    if (status === 401) {
       throw new UnauthorizedError(errMsg, json);
     } else {
-      throw new ApiError(errMsg, response.status, json);
+      throw new ApiError(errMsg, status, json);
     }
   }
 
-  if (json && json.status === 'error') {
-    const defaultApiErrorMsg = `API Error: Operation failed for ${requestUrl.pathname}`;
-    const errMsg = getErrorMessage(json, defaultApiErrorMsg);
-    console.error('apiFetch API Error:', errMsg, json);
-    toast.error(errMsg);
+  if (response.ok && json === null && response.status !== 204) {
+    const nullErrorMsg = `API Error: Received successful status ${response.status} but invalid/null JSON body from ${requestUrl.pathname}`;
+    console.error(nullErrorMsg);
 
-    throw new ApiError(errMsg, response.status, json);
+    throw new ApiError(nullErrorMsg, response.status, null);
   }
 
-  if (json === null && response.ok) {
-    return {
-      status: 'success',
-      data: null,
-      errors: null,
-    } as BaseApiResponse<T>;
-  }
-
-  return json as BaseApiResponse<T>;
+  return json as StandardApiResponse<T>;
 }

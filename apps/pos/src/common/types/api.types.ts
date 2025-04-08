@@ -11,7 +11,7 @@ export interface ErrorDetail {
  * Common structure for successful/failed responses.
  * T is the data payload type (can be null if none).
  */
-export interface BaseApiResponse<T> {
+export interface StandardApiResponse<T> {
   status: 'success' | 'error';
   data: T | null;
   message: string | null;

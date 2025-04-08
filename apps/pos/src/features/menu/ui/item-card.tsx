@@ -48,7 +48,7 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
                 className="p-1"
                 onClick={(e) => e.stopPropagation()}
               >
-                <MoreVertical className="w-4 h-4" />
+                <MoreVertical className="h-4 w-4" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-32 p-1">
@@ -57,14 +57,14 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
                   className="flex items-center px-2 py-1 hover:bg-gray-100"
                   onClick={handleEdit}
                 >
-                  <Edit className="w-4 h-4 mr-1" />
+                  <Edit className="mr-1 h-4 w-4" />
                   Edit
                 </button>
                 <button
                   className="flex items-center px-2 py-1 text-red-600 hover:bg-gray-100"
                   onClick={handleDelete}
                 >
-                  <Trash2 className="w-4 h-4 mr-1" />
+                  <Trash2 className="mr-1 h-4 w-4" />
                   Delete
                 </button>
               </div>
@@ -72,18 +72,15 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
           </Popover>
         </div>
 
-        {/* Image, no padding */}
-        {item.imageUrl && (
-          <img
-            src={item.imageUrl}
-            alt={item.name}
-            className="object-cover w-full h-32"
-          />
-        )}
+        <img
+          src={item.imageUrl || '/no-image.svg'}
+          alt={item.name}
+          className="h-32 w-full border-t border-b border-gray-200 object-cover"
+        />
 
         {/* Description + Price */}
         <div className="px-3 py-2">
-          <p className="text-xs text-gray-600 line-clamp-2">
+          <p className="line-clamp-2 text-xs text-gray-600">
             {item.description}
           </p>
           <p className="mt-2 text-sm font-medium text-gray-800">

@@ -1,38 +1,47 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Plus, PlusIcon, Trash2 } from 'lucide-react';
+import { useEffect } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+import { ImageUpload } from '@/common/components/widgets/image-upload';
+import {
+  selectSelectedStoreId,
+  useAuthStore,
+} from '@/features/auth/store/auth.store';
+import { getCategories } from '@/features/menu/services/category.service';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@repo/ui/components/button';
+import { Checkbox } from '@repo/ui/components/checkbox';
+import { Combobox } from '@repo/ui/components/combobox';
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
+  DialogTrigger,
 } from '@repo/ui/components/dialog';
-import { Button } from '@repo/ui/components/button';
-import { Textarea } from '@repo/ui/components/textarea';
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
-  FormControl,
   FormLabel,
   FormMessage,
 } from '@repo/ui/components/form';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Plus, Trash2 } from 'lucide-react';
-import { Separator } from '@repo/ui/components/separator';
-import { Checkbox } from '@repo/ui/components/checkbox';
 import { Input } from '@repo/ui/components/input';
+import { Separator } from '@repo/ui/components/separator';
+import { Textarea } from '@repo/ui/components/textarea';
 import {
   Tooltip,
-  TooltipTrigger,
   TooltipContent,
+  TooltipTrigger,
 } from '@repo/ui/components/tooltip';
-import { Combobox } from '@repo/ui/components/combobox';
-import { ImageUpload } from '@/common/components/widgets/image-upload';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { createMenuItem } from '@/features/menu/services/menu-item.service';
+import { CreateMenuItemDto } from '@/features/menu/types/menu-item.types';
 
 /**
  * Zod schema for the new menu item form structure.
@@ -40,10 +49,10 @@ import { ImageUpload } from '@/common/components/widgets/image-upload';
 const menuItemSchema = z
   .object({
     name: z.string().min(1, 'Name is required').max(70),
-    description: z.string().min(1, 'Description is required').max(255),
+    description: z.string().max(255),
     basePrice: z
       .number({ invalid_type_error: 'Base price required' })
-      .min(0, 'Must be >= 0'),
+      .min(0.01, 'Must be at least 0.01'),
     imageUrl: z.string().optional(),
 
     categoryId: z.string().optional(),
@@ -74,7 +83,7 @@ const menuItemSchema = z
                   .string()
                   .max(70, 'Max 70 chars')
                   .nonempty('Option name required'),
-                additionalPrice: z.number().min(0, 'Must be >= 0'),
+                additionalPrice: z.number().min(0.01, 'Must be at least 0.01'),
               })
             )
             .min(1, 'At least one option is required per group'),
@@ -116,14 +125,12 @@ const menuItemSchema = z
     }
   );
 
-/** Final typed shape after zod parse (for form state). */
 export type MenuItemFormData = z.infer<typeof menuItemSchema>;
 
-/** Type for the data passed to the onSubmit prop (matching the *new* DTO). */
 export interface SubmitMenuItemData {
   name: string;
   description: string;
-  basePrice: number;
+  basePrice: string;
   imageUrl?: string;
   category: { id?: number; name: string };
   customizationGroups: Array<{
@@ -138,45 +145,51 @@ export interface SubmitMenuItemData {
   }>;
 }
 
-/** Available modes for the form dialog. */
 export type MenuFormMode = 'create' | 'edit';
 
-/** Mock Category Data Type for Combobox */
 interface CategoryOption {
   label: string;
   value: string;
 }
 
-const MOCK_CATEGORIES: CategoryOption[] = [
-  { label: 'Main Dishes', value: '1' },
-  { label: 'Beverages', value: '2' },
-  { label: 'Desserts', value: '3' },
-];
-
-/** Props for the MenuItemFormDialog. */
 export interface MenuItemFormDialogProps {
   mode: MenuFormMode;
   open: boolean;
   onOpenChange: (val: boolean) => void;
-  /** initialValues for "edit" mode if desired (should match NEW DTO structure). */
   initialValues?: Partial<SubmitMenuItemData>;
 }
 
-/**
- * MenuItemFormDialog:
- * A single form supporting create or edit mode for the NEW DTO.
- * Uses Shadcn UI + react-hook-form + zod.
- */
 export function MenuItemFormDialog({
   mode,
   open,
   onOpenChange,
   initialValues,
 }: MenuItemFormDialogProps) {
-  const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([
-    ...MOCK_CATEGORIES,
+  const selectedStoreId = useAuthStore(selectSelectedStoreId);
+
+  const { data: categories = [] } = useQuery({
+    queryKey: [
+      'categories',
+      {
+        storeId: selectedStoreId,
+      },
+    ],
+    queryFn: () => getCategories(selectedStoreId!),
+    enabled: !!selectedStoreId,
+  });
+
+  const categoryOptions: CategoryOption[] = [
+    ...categories.map((cat) => ({
+      label: cat.name,
+      value: String(cat.id),
+    })),
     { label: 'Add New Category', value: 'add_new' },
-  ]);
+  ];
+
+  const mutateCreateMenuItem = useMutation({
+    mutationFn: (dto: CreateMenuItemDto) =>
+      createMenuItem(selectedStoreId!, dto),
+  });
 
   const mapInitialValuesToFormData = (
     initial?: Partial<SubmitMenuItemData>
@@ -185,7 +198,7 @@ export function MenuItemFormDialog({
     return {
       name: initial.name,
       description: initial.description,
-      basePrice: initial.basePrice,
+      basePrice: Number(initial.basePrice),
       imageUrl: initial.imageUrl,
 
       categoryId: initial.category?.id
@@ -299,7 +312,7 @@ export function MenuItemFormDialog({
     });
   }, [watchedGroups, form.setValue, form]);
 
-  function handleFormSubmit(values: MenuItemFormData) {
+  async function handleFormSubmit(values: MenuItemFormData) {
     let submitCategory: { id?: number; name: string };
     if (values.isNewCategory && values.newCategoryName) {
       submitCategory = { name: values.newCategoryName.trim() };
@@ -324,7 +337,7 @@ export function MenuItemFormDialog({
     const submitData: SubmitMenuItemData = {
       name: values.name,
       description: values.description,
-      basePrice: values.basePrice,
+      basePrice: String(values.basePrice),
       imageUrl: values.imageUrl || undefined,
       category: submitCategory,
       customizationGroups:
@@ -340,7 +353,7 @@ export function MenuItemFormDialog({
         })) ?? [],
     };
 
-    // TODO: API Integration
+    await mutateCreateMenuItem.mutateAsync(submitData);
     onOpenChange(false);
   }
 
@@ -350,7 +363,6 @@ export function MenuItemFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {/* Keep trigger the same, or adjust as needed */}
       <DialogTrigger asChild>
         <Button variant="default" className="flex items-center">
           {mode === 'create' ? (
@@ -366,7 +378,6 @@ export function MenuItemFormDialog({
 
       <DialogContent className="max-h-[90dvh] max-w-3xl overflow-y-auto p-6">
         {' '}
-        {/* Increased height/width */}
         <DialogHeader>
           <DialogTitle>
             {mode === 'create' ? 'Create New Menu Item' : 'Edit Menu Item'}
@@ -378,13 +389,11 @@ export function MenuItemFormDialog({
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          {/* Add noValidate to prevent browser validation interfering with RHF/Zod */}
           <form
             onSubmit={form.handleSubmit(handleFormSubmit)}
             className="space-y-6"
             noValidate
           >
-            {/* --- Basic Info --- */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
@@ -404,7 +413,6 @@ export function MenuItemFormDialog({
                 name="basePrice"
                 render={({ field }) => (
                   <FormItem>
-                    {/* TODO: Replace currency sign with actual value bound in store setting */}
                     <FormLabel>Base Price ($)</FormLabel>
                     <FormControl>
                       <Input
@@ -446,13 +454,11 @@ export function MenuItemFormDialog({
               )}
             />
 
-            {/* --- Image --- */}
             <FormField
               control={form.control}
               name="imageUrl"
               render={({ field }) => (
                 <FormItem>
-                  {/* FormLabel provided by ImageUpload component via prop */}
                   <FormControl>
                     <ImageUpload
                       label="Image (Optional)"
@@ -461,14 +467,12 @@ export function MenuItemFormDialog({
                     />
                   </FormControl>
                   <FormMessage />{' '}
-                  {/* Show validation errors for imageUrl if any */}
                 </FormItem>
               )}
             />
 
             <Separator />
 
-            {/* --- Category --- */}
             <div>
               <FormField
                 control={form.control}
@@ -485,11 +489,11 @@ export function MenuItemFormDialog({
                         searchable
                       />
                     </FormControl>
-                    <FormMessage /> {/* Shows Zod error if selection invalid */}
+                    <FormMessage />
                   </FormItem>
                 )}
               />
-              {/* Show input for new category name only if 'add_new' is selected */}
+
               {form.watch('isNewCategory') && (
                 <FormField
                   control={form.control}
@@ -513,7 +517,6 @@ export function MenuItemFormDialog({
 
             <Separator />
 
-            {/* --- Customization Groups --- */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">Customization Groups</h3>
@@ -545,7 +548,6 @@ export function MenuItemFormDialog({
                 </p>
               )}
 
-              {/* Loop through customization groups */}
               <div className="space-y-6">
                 {groupFields.map((groupItem, groupIndex) => (
                   <CustomizationGroupField
@@ -559,7 +561,6 @@ export function MenuItemFormDialog({
               </div>
             </div>
 
-            {/* --- Action Buttons --- */}
             <Separator />
             <div className="flex justify-end gap-3 pt-4">
               <Button type="button" variant="outline" onClick={handleCancel}>
@@ -612,7 +613,6 @@ function CustomizationGroupField({
   return (
     <div className="rounded-md border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/30">
       <div className="mb-3 flex items-center justify-between">
-        {/* Group Name */}
         <FormField
           control={control}
           name={`customizationGroups.${groupIndex}.name`}
@@ -642,9 +642,7 @@ function CustomizationGroupField({
         </Button>
       </div>
 
-      {/* Group Settings: Required, Min/Max Selectable */}
       <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        {/* Required Checkbox */}
         <FormField
           control={control}
           name={`customizationGroups.${groupIndex}.required`}
@@ -674,7 +672,7 @@ function CustomizationGroupField({
             </FormItem>
           )}
         />
-        {/* Min Selectable */}
+
         <FormField
           control={control}
           name={`customizationGroups.${groupIndex}.minSelectable`}
@@ -697,7 +695,7 @@ function CustomizationGroupField({
             </FormItem>
           )}
         />
-        {/* Max Selectable */}
+
         <FormField
           control={control}
           name={`customizationGroups.${groupIndex}.maxSelectable`}
@@ -722,7 +720,7 @@ function CustomizationGroupField({
           )}
         />
       </div>
-      {/* Validation hint for min/max */}
+
       {form.formState.errors.customizationGroups?.[groupIndex]
         ?.maxSelectable && (
         <p className="-mt-2 mb-2 text-xs text-red-500">
@@ -737,7 +735,6 @@ function CustomizationGroupField({
         </p>
       )}
 
-      {/* Options List */}
       <div className="space-y-3">
         <FormLabel className="text-sm font-medium">Options</FormLabel>
         {optionFields.length === 0 && (
@@ -747,7 +744,6 @@ function CustomizationGroupField({
         )}
         {optionFields.map((optionItem, optionIndex) => (
           <div key={optionItem.id} className="flex items-center gap-2">
-            {/* Option Name */}
             <FormField
               control={control}
               name={`customizationGroups.${groupIndex}.options.${optionIndex}.name`}
@@ -761,14 +757,13 @@ function CustomizationGroupField({
                 </FormItem>
               )}
             />
-            {/* Option Additional Price */}
+
             <FormField
               control={control}
               name={`customizationGroups.${groupIndex}.options.${optionIndex}.additionalPrice`}
               render={({ field }) => (
                 <FormItem className="w-28">
                   {' '}
-                  {/* Fixed width */}
                   <FormLabel className="sr-only">Additional Price</FormLabel>
                   <FormControl>
                     <Input
@@ -809,9 +804,10 @@ function CustomizationGroupField({
           onClick={() => appendOption({ name: '', additionalPrice: 0 })}
           className="mt-2"
         >
-          + Add Option
+          <PlusIcon className="h-4 w-4" aria-hidden="true" />
+          Add Option
         </Button>
-        {/* Show group-level error if less than one option */}
+
         {form.formState.errors.customizationGroups?.[groupIndex]?.options
           ?.type === 'too_small' && (
           <p className="mt-1 text-xs text-red-500">

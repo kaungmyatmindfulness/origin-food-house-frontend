@@ -85,17 +85,17 @@ apps/pos/
 
 ### 3.1 `apiFetch` Utility
 
-A custom fetch wrapper that merges default headers, reads an auth token from Zustand, and returns an `BaseApiResponse<T>`.
+A custom fetch wrapper that merges default headers, reads an auth token from Zustand, and returns an `StandardApiResponse<T>`.
 
 ```ts
-import { BaseApiResponse } from '@/common/types/api.types';
+import { StandardApiResponse } from '@/common/types/api.types';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { toast } from 'sonner';
 
 export async function apiFetch<T>(
   path: string,
   options?: RequestInit
-): Promise<BaseApiResponse<T>> {
+): Promise<StandardApiResponse<T>> {
   const token = useAuthStore.getState().accessToken;
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? '';
@@ -111,10 +111,10 @@ export async function apiFetch<T>(
   }
 
   const response = await fetch(url, { ...options, headers });
-  let json: BaseApiResponse<T>;
+  let json: StandardApiResponse<T>;
 
   try {
-    json = (await response.json()) as BaseApiResponse<T>;
+    json = (await response.json()) as StandardApiResponse<T>;
   } catch {
     toast.error(`Failed to parse JSON from ${url}`);
     throw new Error(`Failed to parse JSON from ${url}`);

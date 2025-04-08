@@ -1,14 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Category } from '@/features/menu/types/category.types';
 import { MenuItem } from '@/features/menu/types/menu-item.types';
 import { CategoryCard } from '@/features/menu/ui/category-card';
 import { ItemModal } from '@/features/menu/ui/item-modal';
-import {
-  MenuItemFormDialog,
-  SubmitMenuItemData,
-} from '@/features/menu/ui/menu-item-form-dialog';
+import { MenuItemFormDialog } from '@/features/menu/ui/menu-item-form-dialog';
 import { CategoryFormDialog } from '@/features/menu/ui/category-form-dialog';
 import { useQuery } from '@tanstack/react-query';
 import { getCategories } from '@/features/menu/services/category.service';
@@ -20,12 +16,11 @@ import {
 export default function MenuPage() {
   const [itemFormOpen, setItemFormOpen] = React.useState(false);
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
-  console.log('📝 -> MenuPage -> selectedStoreId:', selectedStoreId);
   const [categoryFormOpen, setCategoryFormOpen] = React.useState(false);
 
   const [viewItem, setViewItem] = React.useState<MenuItem | null>(null);
 
-  const { data: categories = [], isLoading } = useQuery({
+  const { data: categories = [] } = useQuery({
     queryKey: [
       'categories',
       {
@@ -55,7 +50,7 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="p-4 space-y-6">
+    <div className="space-y-6 p-4">
       {/* Simple breadcrumb */}
       <nav className="mb-4 text-sm text-gray-500">
         Home &gt; <span className="text-gray-800">Menu</span>

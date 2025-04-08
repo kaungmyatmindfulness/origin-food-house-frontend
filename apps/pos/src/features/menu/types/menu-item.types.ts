@@ -65,7 +65,7 @@ export interface CustomizationGroupDto {
 export interface CreateMenuItemDto {
   name: string;
   description?: string;
-  basePrice: number;
+  basePrice: string;
   imageUrl?: string;
   category: UpsertCategoryDto;
   customizationGroups?: UpsertCustomizationGroupDto[];

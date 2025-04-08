@@ -16,11 +16,11 @@ export function ItemModal({ item, onClose }: ItemModalProps) {
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-md rounded bg-white p-4 shadow"
+        className="relative w-full max-w-md p-4 bg-white rounded shadow"
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          className="absolute top-2 right-2 text-gray-600"
+          className="absolute text-gray-600 top-2 right-2"
           onClick={onClose}
         >
           X
@@ -32,11 +32,11 @@ export function ItemModal({ item, onClose }: ItemModalProps) {
             // TODO: Uncomment when imageUrl is available
             src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YnVyZ2VyfGVufDB8fDB8fHww"
             alt={item.name}
-            className="h-40 w-full rounded object-cover"
+            className="object-cover w-full h-40 rounded"
           />
         )}
         <p className="mt-2 text-sm text-gray-700">{item.description}</p>
-        <p className="mt-1 font-medium">${item.basePrice.toFixed(2)}</p>
+        <p className="mt-1 font-medium">${item.basePrice}</p>
       </div>
     </div>
   );

@@ -11,10 +11,12 @@ const CATEGORY_ENDPOINT = '/categories';
  * @throws {NetworkError | ApiError} - Throws on fetch/API errors. Throws Error if data is null on success.
  */
 export async function getCategories(storeId: number): Promise<Category[]> {
-  const params = new URLSearchParams({ storeId: String(storeId) });
-  const url = `${CATEGORY_ENDPOINT}?${params.toString()}`;
-
-  const res = await apiFetch<Category[]>(url);
+  const res = await apiFetch<Category[]>({
+    path: CATEGORY_ENDPOINT,
+    query: {
+      storeId,
+    },
+  });
 
   if (res.data == null) {
     throw new Error('Failed to retrieve categories: No data returned by API.');
