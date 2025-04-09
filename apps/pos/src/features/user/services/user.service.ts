@@ -80,11 +80,12 @@ export async function getUserStores(userId: number): Promise<UserStoreRole[]> {
  * @throws {NetworkError | ApiError | UnauthorizedError} - Throws on fetch/API errors. Throws Error if data is null on success.
  */
 export async function getCurrentUser(
-  storeId: number
+  storeId?: number
 ): Promise<CurrentUserData> {
-  const params = new URLSearchParams({ storeId: String(storeId) });
-  const url = `/users/me?${params.toString()}`;
-  const res = await apiFetch<CurrentUserData>('/users/me');
+  const res = await apiFetch<CurrentUserData>({
+    path: '/users/me',
+    query: { storeId },
+  });
 
   if (!res.data) {
     throw new Error('Failed to get current user: No data returned by API.');

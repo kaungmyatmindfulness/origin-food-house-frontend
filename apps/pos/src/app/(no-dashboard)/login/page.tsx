@@ -8,7 +8,11 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { login } from '@/features/auth/services/auth.service';
-import { useAuthStore } from '@/features/auth/store/auth.store';
+import {
+  selectAccessToken,
+  selectSelectedStoreId,
+  useAuthStore,
+} from '@/features/auth/store/auth.store';
 import { getCurrentUser } from '@/features/user/services/user.service';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@repo/ui/components/button';
@@ -31,7 +35,10 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
-  const { accessToken, setAuth } = useAuthStore();
+
+  const selectedStoreId = useAuthStore(selectSelectedStoreId);
+  const accessToken = useAuthStore(selectAccessToken);
+  const setAuth = useAuthStore((state) => state.setAuth);
 
   const {
     data: user,
@@ -85,9 +92,8 @@ export default function LoginPage() {
     if (isUserLoading) return;
     if (userError) return;
 
-    // Once user data is available, decide route
-    if (user?.currentStore) {
-      if (user.currentRole !== 'CHEF') {
+    if (selectedStoreId) {
+      if (user?.currentRole !== 'CHEF') {
         router.replace('/hub/sale');
       } else {
         router.replace('/hub/kds');
@@ -97,7 +103,7 @@ export default function LoginPage() {
     } else {
       router.replace('/store/create');
     }
-  }, [accessToken, isUserLoading, user, userError, router]);
+  }, [accessToken, isUserLoading, user, userError, router, selectedStoreId]);
 
   // Combined loading state
   const isLoading = loginMutation.isPending || isUserLoading;
@@ -116,7 +122,7 @@ export default function LoginPage() {
         </header>
 
         {/* Login form card */}
-        <div className="p-6 bg-white rounded shadow-sm">
+        <div className="rounded bg-white p-6 shadow-sm">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
@@ -161,12 +167,12 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full mt-2"
+                className="mt-2 w-full"
               >
                 {isLoading ? 'Logging in...' : 'Login'}
               </Button>
 
-              <p className="mt-4 text-sm text-center text-gray-600">
+              <p className="mt-4 text-center text-sm text-gray-600">
                 Forgot your password?{' '}
                 <Link
                   href="/(auth)/forgot-password"

@@ -2,7 +2,6 @@
 
 import { AnimatePresence } from 'motion/react';
 import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
 import { toast } from 'sonner';
 
 import { loginWithStore } from '@/features/auth/services/auth.service';
@@ -30,7 +29,7 @@ export default function ChooseStorePage() {
   } = useQuery({
     queryKey: ['user', { accessToken, selectedStoreId }],
     queryFn: () => getCurrentUser(selectedStoreId!),
-    enabled: !!accessToken && !!selectedStoreId,
+    enabled: !!accessToken,
   });
 
   const chooseStoreMutation = useMutation({
@@ -70,7 +69,7 @@ export default function ChooseStorePage() {
   return (
     <main className="min-h-screen p-4">
       <section
-        className="max-w-3xl p-8 mx-auto rounded-lg shadow-lg"
+        className="mx-auto max-w-3xl rounded-lg p-8 shadow-lg"
         aria-labelledby="choose-store-heading"
       >
         <header className="mb-8 text-center">
@@ -99,7 +98,7 @@ export default function ChooseStorePage() {
           )}
         </AnimatePresence>
 
-        <footer className="mt-8 text-sm text-center text-gray-500">
+        <footer className="mt-8 text-center text-sm text-gray-500">
           <p>Need help? Contact support.</p>
         </footer>
       </section>

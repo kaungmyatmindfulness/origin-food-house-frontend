@@ -1,5 +1,4 @@
 import qs from 'qs';
-import { toast } from 'sonner';
 
 import type {
   ErrorDetail,
@@ -69,7 +68,6 @@ export async function apiFetch<T>(
   if (!baseUrl) {
     const configErrorMsg = 'API configuration error: Base URL is not set.';
     console.error(configErrorMsg);
-    toast.error(configErrorMsg);
 
     throw new Error(configErrorMsg);
   }
@@ -99,7 +97,7 @@ export async function apiFetch<T>(
   } catch (error) {
     const pathErrorMsg = `Failed to process path/query: ${error instanceof Error ? error.message : 'Unknown error'}`;
     console.error('apiFetch Path/Query Error:', { pathInput, error });
-    toast.error(pathErrorMsg);
+
     throw new Error(pathErrorMsg);
   }
 
@@ -113,11 +111,12 @@ export async function apiFetch<T>(
       baseUrl,
       error,
     });
-    toast.error(invalidUrlMsg);
+
     throw new Error(invalidUrlMsg);
   }
 
   const token = useAuthStore.getState().accessToken;
+  const clearAuth = useAuthStore.getState().clearAuth;
   const headers = new Headers(options.headers);
 
   if (!headers.has('Accept')) {
@@ -148,7 +147,7 @@ export async function apiFetch<T>(
   } catch (error) {
     const networkMsg = `Network error: ${error instanceof Error ? error.message : 'Request failed'}`;
     console.error(`apiFetch Network Error for ${requestUrl.pathname}:`, error);
-    toast.error(networkMsg);
+
     throw new NetworkError(networkMsg);
   }
 
@@ -164,7 +163,7 @@ export async function apiFetch<T>(
     } catch (error) {
       const parseMsg = `API Error: Failed to parse JSON response from ${requestUrl.pathname}`;
       console.error('apiFetch JSON Parsing Error:', error);
-      toast.error(parseMsg);
+
       throw new NetworkError(parseMsg);
     }
   }
@@ -178,9 +177,9 @@ export async function apiFetch<T>(
     const errMsg = getErrorMessage(json, defaultMessage);
 
     console.error(`apiFetch Error ${status}:`, errMsg, { jsonResponse: json });
-    toast.error(errMsg);
 
     if (status === 401) {
+      clearAuth();
       throw new UnauthorizedError(errMsg, json);
     } else {
       throw new ApiError(errMsg, status, json);

@@ -1,25 +1,33 @@
 'use client';
 
-import React from 'react';
+import { Plus } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+
+import {
+  selectSelectedStoreId,
+  useAuthStore,
+} from '@/features/auth/store/auth.store';
+import { createCategory } from '@/features/menu/services/category.service';
 import { Button } from '@repo/ui/components/button';
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
+  DialogTrigger,
 } from '@repo/ui/components/dialog';
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
-  FormControl,
   FormLabel,
 } from '@repo/ui/components/form';
-import { useForm } from 'react-hook-form';
 import { Input } from '@repo/ui/components/input';
-import { Plus } from 'lucide-react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface CategoryFormFormData {
   name: string;
@@ -27,21 +35,36 @@ interface CategoryFormFormData {
 interface CategoryFormDialogProps {
   open: boolean;
   onOpenChange: (val: boolean) => void;
-  onSubmit: (data: CategoryFormFormData) => void;
 }
 
 export function CategoryFormDialog({
   open,
   onOpenChange,
-  onSubmit,
 }: CategoryFormDialogProps) {
+  const queryClient = useQueryClient();
+  const selectedStoreId = useAuthStore(selectSelectedStoreId);
+
   const form = useForm<CategoryFormFormData>({ defaultValues: { name: '' } });
 
-  function handleSubmit(values: CategoryFormFormData) {
-    onSubmit(values);
-    form.reset();
+  const mutateCreateCategory = useMutation({
+    mutationFn: (data: CategoryFormFormData) =>
+      createCategory(selectedStoreId!, data),
+  });
+
+  const handleSubmit = async (values: CategoryFormFormData) => {
+    await mutateCreateCategory.mutateAsync(values);
+    toast.success(`Category "${values.name}" created successfully!`);
+    queryClient.invalidateQueries({
+      queryKey: ['categories'],
+    });
     onOpenChange(false);
-  }
+  };
+
+  useEffect(() => {
+    if (open) {
+      form.reset();
+    }
+  }, [open, form]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

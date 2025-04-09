@@ -24,28 +24,18 @@ export default function MenuPage() {
     queryKey: [
       'categories',
       {
-        storeId: selectedStoreId,
+        selectedStoreId,
       },
     ],
     queryFn: () => getCategories(selectedStoreId!),
     enabled: !!selectedStoreId,
   });
 
-  function handleCreateCategory(data: { name: string }) {
-    console.log('Creating category with data:', data);
-
-    setCategoryFormOpen(false);
-  }
-
-  function handleEditCategory(categoryId: number) {
-    console.log('Editing category:', categoryId);
-  }
-
-  function handleDeleteCategory(categoryId: number) {
-    console.log('Deleting category:', categoryId);
-  }
-
   function handleSelectItem(item: MenuItem) {
+    setViewItem(item);
+  }
+
+  function handleEditItem(item: MenuItem) {
     setViewItem(item);
   }
 
@@ -66,7 +56,6 @@ export default function MenuPage() {
         <CategoryFormDialog
           open={categoryFormOpen}
           onOpenChange={setCategoryFormOpen}
-          onSubmit={handleCreateCategory}
         />
       </div>
 
@@ -76,9 +65,8 @@ export default function MenuPage() {
           <CategoryCard
             key={cat.id}
             category={cat}
-            onEditCategory={handleEditCategory}
-            onDeleteCategory={handleDeleteCategory}
             onSelectItem={handleSelectItem}
+            onEditItem={handleEditItem}
           />
         ))}
       </div>

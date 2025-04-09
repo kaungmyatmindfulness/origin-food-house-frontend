@@ -82,8 +82,15 @@ export async function updateMenuItem(
   return res.data;
 }
 
-export async function deleteMenuItem(id: number): Promise<void> {
-  await apiFetch<null>(`${MENU_ENDPOINT}/${id}`, {
-    method: 'DELETE',
-  });
+export async function deleteMenuItem(
+  storeId: number,
+  id: number
+): Promise<unknown> {
+  const res = await apiFetch<unknown>(
+    { path: `${MENU_ENDPOINT}/${id}`, query: { storeId } },
+    {
+      method: 'DELETE',
+    }
+  );
+  return res.data;
 }

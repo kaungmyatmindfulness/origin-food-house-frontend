@@ -18,9 +18,9 @@ export interface Category {
 }
 
 export interface CreateCategoryDto {
-  name: string; // required
+  name: string;
 }
 
 export interface UpdateCategoryDto {
-  name?: string; // optional
+  name?: string;
 }

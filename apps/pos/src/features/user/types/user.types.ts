@@ -50,6 +50,5 @@ export interface CurrentUserData {
   email: string;
   name: string;
   userStores: UserStore[];
-  currentStore: Store;
-  currentRole: UserRole;
+  currentRole: UserRole | null;
 }

@@ -1,179 +1,312 @@
 'use client';
 
+import { isEmpty } from 'lodash-es';
+import { Check, Edit, MoreVertical, Trash2, X, Loader2 } from 'lucide-react';
 import React from 'react';
-import { z } from 'zod';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { MoreVertical, Trash2, Check, X, Edit } from 'lucide-react';
+import { z } from 'zod';
+import { toast } from 'sonner';
 
-import { Category } from '@/features/menu/types/category.types';
-import { MenuItem } from '@/features/menu/types/menu-item.types';
+import {
+  selectSelectedStoreId,
+  useAuthStore,
+} from '@/features/auth/store/auth.store';
+
+import {
+  updateCategory,
+  deleteCategory,
+} from '@/features/menu/services/category.service';
+import type {
+  Category,
+  UpdateCategoryDto,
+} from '@/features/menu/types/category.types';
+import type { MenuItem } from '@/features/menu/types/menu-item.types';
+
 import { ItemCard } from '@/features/menu/ui/item-card';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@repo/ui/components/button';
 import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from '@repo/ui/components/popover';
-import {
   Form,
+  FormControl,
   FormField,
   FormItem,
-  FormControl,
   FormMessage,
 } from '@repo/ui/components/form';
 import { Input } from '@repo/ui/components/input';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@repo/ui/components/popover';
 import { cn } from '@repo/ui/lib/utils';
+
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import type { ApiError } from '@/utils/apiFetch';
 
 interface CategoryCardProps {
   category: Category;
-  onEditCategory: (catId: number, newName: string) => void;
-  onDeleteCategory: (catId: number) => void;
   onSelectItem: (item: MenuItem) => void;
+  onEditItem: (item: MenuItem) => void;
   isLastCategory?: boolean;
 }
 
 const renameSchema = z.object({
-  name: z.string().min(1, 'Category name cannot be empty.'),
+  name: z
+    .string()
+    .min(1, 'Category name cannot be empty.')
+    .max(70, 'Max 70 chars'),
 });
-
-type RenameSchema = z.infer<typeof renameSchema>;
+type RenameFormData = z.infer<typeof renameSchema>;
 
 export function CategoryCard({
   category,
-  onEditCategory,
-  onDeleteCategory,
   onSelectItem,
+  onEditItem,
   isLastCategory = false,
 }: CategoryCardProps) {
-  const [editingName, setEditingName] = React.useState(false);
+  const [isEditingName, setIsEditingName] = React.useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
 
-  // Set up RHF form with Zod
-  const renameForm = useForm<RenameSchema>({
+  const queryClient = useQueryClient();
+  const selectedStoreId = useAuthStore(selectSelectedStoreId);
+
+  const renameForm = useForm<RenameFormData>({
     resolver: zodResolver(renameSchema),
     defaultValues: { name: category.name },
   });
 
+  const renameCategoryMutation = useMutation({
+    mutationFn: async (data: UpdateCategoryDto) => {
+      return updateCategory(selectedStoreId!, category.id, data);
+    },
+    onSuccess: () => {
+      toast.success(`Category renamed to "${renameForm.getValues('name')}".`);
+
+      queryClient.invalidateQueries({
+        queryKey: ['categories'],
+      });
+
+      setIsEditingName(false);
+    },
+    onError: (error) => {
+      toast.error(
+        (error as ApiError).responseJson?.message ||
+          'Failed to rename category.'
+      );
+      renameForm.reset({ name: category.name });
+    },
+  });
+
+  const deleteCategoryMutation = useMutation({
+    mutationFn: async () => {
+      return deleteCategory(selectedStoreId!, category.id);
+    },
+    onSuccess: () => {
+      toast.success(`Category "${category.name}" deleted.`);
+
+      queryClient.invalidateQueries({
+        queryKey: ['categories'],
+      });
+    },
+    onError: (error) => {
+      toast.error(
+        (error as ApiError).responseJson?.message ||
+          'Failed to delete category.'
+      );
+      setIsPopoverOpen(false);
+    },
+  });
+
   function handleStartEditing() {
-    setEditingName(true);
-    // Reset form to current category name
     renameForm.reset({ name: category.name });
+    setIsEditingName(true);
   }
 
-  function handleSubmit(values: RenameSchema) {
-    // If valid, call parent
-    onEditCategory(category.id, values.name);
-    setEditingName(false);
+  function handleRenameSubmit(values: RenameFormData) {
+    renameCategoryMutation.mutate({ name: values.name });
   }
 
-  function handleCancel() {
+  function handleCancelEdit() {
     renameForm.reset({ name: category.name });
-    setEditingName(false);
+    setIsEditingName(false);
   }
 
-  // Renders the category title row (non-editing or editing)
-  function renderTitleRow() {
-    if (!editingName) {
-      // Not editing
+  function handleDelete() {
+    if (
+      window.confirm(
+        `Are you sure you want to delete the category "${category.name}"? This cannot be undone.`
+      )
+    ) {
+      deleteCategoryMutation.mutate();
+    } else {
+      setIsPopoverOpen(false);
+    }
+  }
+
+  function renderTitleContent() {
+    if (!isEditingName) {
       return (
-        <div className="flex items-center gap-2">
-          <h2 className="text-lg font-semibold">{category.name}</h2>
-          <button
-            className="p-1 text-gray-600 rounded hover:bg-gray-100"
+        <>
+          <h2 className="truncate text-lg font-semibold" title={category.name}>
+            {category.name}
+          </h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 shrink-0 text-gray-500 hover:text-gray-800"
             onClick={handleStartEditing}
-            aria-label="Edit category name"
+            aria-label={`Edit name for category ${category.name}`}
+            disabled={
+              !selectedStoreId ||
+              renameCategoryMutation.isPending ||
+              deleteCategoryMutation.isPending
+            }
           >
-            <Edit className="w-4 h-4" />
-          </button>
-        </div>
+            <Edit className="h-4 w-4" />
+          </Button>
+        </>
       );
     }
 
-    // Editing
     return (
       <Form {...renameForm}>
         <form
-          onSubmit={renameForm.handleSubmit(handleSubmit)}
-          onReset={handleCancel}
-          className="flex flex-col gap-1"
+          onSubmit={renameForm.handleSubmit(handleRenameSubmit)}
+          onReset={handleCancelEdit}
+          className="flex flex-grow items-start gap-2"
         >
-          <div className="flex items-center gap-2">
-            <FormField
-              control={renameForm.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormControl>
-                    <Input
-                      {...field}
-                      autoFocus
-                      className="text-sm"
-                      placeholder="Category name"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-xs text-red-600" />
-                </FormItem>
-              )}
-            />
-
-            <button
-              type="submit"
-              className="p-1 text-green-600 rounded hover:bg-gray-100"
-              aria-label="Confirm rename"
-            >
-              <Check className="w-4 h-4" />
-            </button>
-            <button
-              type="reset"
-              className="p-1 text-red-600 rounded hover:bg-gray-100"
-              aria-label="Cancel rename"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
+          <FormField
+            control={renameForm.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem className="flex-grow">
+                {' '}
+                {/* Use flex-grow */}
+                <FormControl>
+                  <Input
+                    {...field}
+                    autoFocus
+                    className="h-8 text-base"
+                    placeholder="Category name"
+                    disabled={renameCategoryMutation.isPending}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Escape') handleCancelEdit();
+                    }}
+                  />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 shrink-0 text-green-600 hover:bg-green-100"
+            aria-label="Confirm rename"
+            disabled={renameCategoryMutation.isPending}
+          >
+            {renameCategoryMutation.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Check className="h-4 w-4" />
+            )}
+          </Button>
+          {/* Cancel Button */}
+          <Button
+            type="reset"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 shrink-0 text-red-600 hover:bg-red-100"
+            aria-label="Cancel rename"
+            disabled={renameCategoryMutation.isPending}
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </form>
       </Form>
     );
   }
 
   return (
-    <div className={cn('pt-4 pb-6', !isLastCategory && 'border-b')}>
-      <div className="flex items-center justify-between">
-        {renderTitleRow()}
+    <section
+      aria-labelledby={`category-title-${category.id}`}
+      className={cn(
+        'pt-4 pb-6',
+        !isLastCategory && 'border-b border-gray-200 dark:border-gray-700'
+      )}
+    >
+      {/* Header Row */}
+      <div className="flex items-center justify-between gap-2">
+        {/* Title / Edit Form */}
+        <div
+          className={cn(
+            'flex flex-grow items-center gap-2',
+            isEditingName && 'flex-grow-[2]'
+          )}
+        >
+          {renderTitleContent()}
+        </div>
 
-        <div className="flex-1" />
-
-        {/* Popover for delete only */}
-        <Popover>
+        {/* Actions Popover */}
+        <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="ghost"
-              className="p-1"
+              size="icon"
+              className="h-7 w-7 shrink-0"
               aria-label="Category actions"
+              disabled={
+                !selectedStoreId ||
+                deleteCategoryMutation.isPending ||
+                renameCategoryMutation.isPending
+              }
             >
-              <MoreVertical className="w-4 h-4" />
+              {deleteCategoryMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <MoreVertical className="h-4 w-4" />
+              )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-32 p-1">
-            <div className="flex flex-col text-sm">
-              <button
-                className="flex items-center px-2 py-1 text-red-600 hover:bg-gray-100"
-                onClick={() => onDeleteCategory(category.id)}
-              >
-                <Trash2 className="w-4 h-4 mr-1" />
-                Delete
-              </button>
-            </div>
+          <PopoverContent className="w-auto p-1">
+            {' '}
+            {/* Adjust width */}
+            {/* Delete Action */}
+            <Button
+              variant="ghost"
+              className="flex w-full items-center justify-start px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/50"
+              onClick={handleDelete}
+              disabled={deleteCategoryMutation.isPending}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete Category
+            </Button>
+            {/* Add other actions here if needed */}
           </PopoverContent>
         </Popover>
       </div>
 
-      {/* Items grid */}
-      <div className="grid grid-cols-2 gap-4 mt-2 sm:grid-cols-3 md:grid-cols-4">
-        {category.menuItems?.map((item) => (
-          <ItemCard key={item.id} item={item} onSelect={onSelectItem} />
-        ))}
-      </div>
-    </div>
+      {/* Items Grid or Empty Message */}
+      {isEmpty(category.menuItems) ? (
+        <div className="mt-3 px-2 py-4 text-center text-sm text-gray-500 italic dark:text-gray-400">
+          No menu items in this category yet.
+        </div>
+      ) : (
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {' '}
+          {/* Adjusted gap/margins */}
+          {category.menuItems?.map((item) => (
+            <ItemCard
+              key={item.id}
+              item={item}
+              onSelect={onSelectItem}
+              onEdit={onEditItem}
+            />
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
