@@ -180,8 +180,6 @@ export function CategoryCard({
             name="name"
             render={({ field }) => (
               <FormItem className="flex-grow">
-                {' '}
-                {/* Use flex-grow */}
                 <FormControl>
                   <Input
                     {...field}
@@ -198,7 +196,7 @@ export function CategoryCard({
               </FormItem>
             )}
           />
-          {/* Submit Button */}
+
           <Button
             type="submit"
             variant="ghost"
@@ -213,7 +211,7 @@ export function CategoryCard({
               <Check className="h-4 w-4" />
             )}
           </Button>
-          {/* Cancel Button */}
+
           <Button
             type="reset"
             variant="ghost"
@@ -237,9 +235,7 @@ export function CategoryCard({
         !isLastCategory && 'border-b border-gray-200 dark:border-gray-700'
       )}
     >
-      {/* Header Row */}
       <div className="flex items-center justify-between gap-2">
-        {/* Title / Edit Form */}
         <div
           className={cn(
             'flex flex-grow items-center gap-2',
@@ -249,7 +245,6 @@ export function CategoryCard({
           {renderTitleContent()}
         </div>
 
-        {/* Actions Popover */}
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -271,9 +266,6 @@ export function CategoryCard({
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-1">
-            {' '}
-            {/* Adjust width */}
-            {/* Delete Action */}
             <Button
               variant="ghost"
               className="flex w-full items-center justify-start px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/50"
@@ -283,20 +275,16 @@ export function CategoryCard({
               <Trash2 className="mr-2 h-4 w-4" />
               Delete Category
             </Button>
-            {/* Add other actions here if needed */}
           </PopoverContent>
         </Popover>
       </div>
 
-      {/* Items Grid or Empty Message */}
       {isEmpty(category.menuItems) ? (
         <div className="mt-3 px-2 py-4 text-center text-sm text-gray-500 italic dark:text-gray-400">
           No menu items in this category yet.
         </div>
       ) : (
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {' '}
-          {/* Adjusted gap/margins */}
           {category.menuItems?.map((item) => (
             <ItemCard
               key={item.id}
