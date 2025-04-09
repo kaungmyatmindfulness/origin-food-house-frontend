@@ -5,6 +5,7 @@ import type {
   StandardApiResponse,
 } from '@/common/types/api.types';
 import { useAuthStore } from '@/features/auth/store/auth.store';
+import { toast } from 'sonner';
 
 export class FetchError extends Error {
   constructor(message: string) {
@@ -96,7 +97,6 @@ export async function apiFetch<T>(
     }
   } catch (error) {
     const pathErrorMsg = `Failed to process path/query: ${error instanceof Error ? error.message : 'Unknown error'}`;
-    console.error('apiFetch Path/Query Error:', { pathInput, error });
 
     throw new Error(pathErrorMsg);
   }
@@ -104,13 +104,8 @@ export async function apiFetch<T>(
   let requestUrl: URL;
   try {
     requestUrl = new URL(fullPath, baseUrl);
-  } catch (error) {
+  } catch {
     const invalidUrlMsg = `Invalid URL: ${fullPath} (relative to ${baseUrl})`;
-    console.error('apiFetch URL Construction Error:', {
-      fullPath,
-      baseUrl,
-      error,
-    });
 
     throw new Error(invalidUrlMsg);
   }
@@ -139,14 +134,9 @@ export async function apiFetch<T>(
   const finalOptions: RequestInit = { ...options, headers };
   let response: Response;
   try {
-    console.debug(
-      `apiFetch Request: ${method} ${requestUrl.pathname}${requestUrl.search}`,
-      finalOptions
-    );
     response = await fetch(requestUrl.toString(), finalOptions);
   } catch (error) {
     const networkMsg = `Network error: ${error instanceof Error ? error.message : 'Request failed'}`;
-    console.error(`apiFetch Network Error for ${requestUrl.pathname}:`, error);
 
     throw new NetworkError(networkMsg);
   }
@@ -176,7 +166,9 @@ export async function apiFetch<T>(
         : `API Error: Request failed (${status}) for ${requestUrl.pathname}`;
     const errMsg = getErrorMessage(json, defaultMessage);
 
-    console.error(`apiFetch Error ${status}:`, errMsg, { jsonResponse: json });
+    toast.error(errMsg, {
+      description: `Status: ${status} - ${requestUrl.pathname}`,
+    });
 
     if (status === 401) {
       clearAuth();
@@ -188,7 +180,6 @@ export async function apiFetch<T>(
 
   if (response.ok && json === null && response.status !== 204) {
     const nullErrorMsg = `API Error: Received successful status ${response.status} but invalid/null JSON body from ${requestUrl.pathname}`;
-    console.error(nullErrorMsg);
 
     throw new ApiError(nullErrorMsg, response.status, null);
   }

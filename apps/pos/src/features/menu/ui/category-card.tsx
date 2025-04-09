@@ -1,30 +1,24 @@
 'use client';
 
 import { isEmpty } from 'lodash-es';
-import { Check, Edit, MoreVertical, Trash2, X, Loader2 } from 'lucide-react';
+import { Check, Edit, Loader2, MoreVertical, Trash2, X } from 'lucide-react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { toast } from 'sonner';
+import { z } from 'zod';
 
 import {
   selectSelectedStoreId,
   useAuthStore,
 } from '@/features/auth/store/auth.store';
-
 import {
-  updateCategory,
   deleteCategory,
+  updateCategory,
 } from '@/features/menu/services/category.service';
-import type {
-  Category,
-  UpdateCategoryDto,
-} from '@/features/menu/types/category.types';
-import type { MenuItem } from '@/features/menu/types/menu-item.types';
-
 import { ItemCard } from '@/features/menu/ui/item-card';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@repo/ui/components/button';
+import { ConfirmationDialog } from '@repo/ui/components/confirmation-dialog';
 import {
   Form,
   FormControl,
@@ -39,8 +33,14 @@ import {
   PopoverTrigger,
 } from '@repo/ui/components/popover';
 import { cn } from '@repo/ui/lib/utils';
-
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import type {
+  Category,
+  UpdateCategoryDto,
+} from '@/features/menu/types/category.types';
+import type { MenuItem } from '@/features/menu/types/menu-item.types';
+
 import type { ApiError } from '@/utils/apiFetch';
 
 interface CategoryCardProps {
@@ -66,6 +66,8 @@ export function CategoryCard({
 }: CategoryCardProps) {
   const [isEditingName, setIsEditingName] = React.useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
+  const [isConfirmDeleteDialogOpen, setIsConfirmDeleteDialogOpen] =
+    React.useState(false);
 
   const queryClient = useQueryClient();
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
@@ -75,45 +77,46 @@ export function CategoryCard({
     defaultValues: { name: category.name },
   });
 
-  const renameCategoryMutation = useMutation({
+  const renameCategoryMutation = useMutation<
+    void,
+    ApiError | Error,
+    UpdateCategoryDto
+  >({
     mutationFn: async (data: UpdateCategoryDto) => {
-      return updateCategory(selectedStoreId!, category.id, data);
+      if (!selectedStoreId) throw new Error('Store not selected');
+      await updateCategory(selectedStoreId, category.id, data);
     },
     onSuccess: () => {
       toast.success(`Category renamed to "${renameForm.getValues('name')}".`);
-
       queryClient.invalidateQueries({
         queryKey: ['categories'],
       });
-
+      renameForm.reset({ name: category.name });
       setIsEditingName(false);
     },
-    onError: (error) => {
-      toast.error(
-        (error as ApiError).responseJson?.message ||
-          'Failed to rename category.'
-      );
+    onError: () => {
       renameForm.reset({ name: category.name });
     },
   });
 
-  const deleteCategoryMutation = useMutation({
+  const deleteCategoryMutation = useMutation<void, ApiError | Error, void>({
     mutationFn: async () => {
-      return deleteCategory(selectedStoreId!, category.id);
+      if (!selectedStoreId) throw new Error('Store not selected');
+
+      if (!isEmpty(category.menuItems)) {
+        throw new Error('Category not empty');
+      }
+      await deleteCategory(selectedStoreId, category.id);
     },
     onSuccess: () => {
       toast.success(`Category "${category.name}" deleted.`);
-
       queryClient.invalidateQueries({
         queryKey: ['categories'],
       });
+      setIsConfirmDeleteDialogOpen(false);
     },
-    onError: (error) => {
-      toast.error(
-        (error as ApiError).responseJson?.message ||
-          'Failed to delete category.'
-      );
-      setIsPopoverOpen(false);
+    onError: () => {
+      setIsConfirmDeleteDialogOpen(false);
     },
   });
 
@@ -131,17 +134,22 @@ export function CategoryCard({
     setIsEditingName(false);
   }
 
-  function handleDelete() {
-    if (
-      window.confirm(
-        `Are you sure you want to delete the category "${category.name}"? This cannot be undone.`
-      )
-    ) {
-      deleteCategoryMutation.mutate();
+  const handleDeleteRequest = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsPopoverOpen(false);
+
+    if (!isEmpty(category.menuItems)) {
+      toast.error(
+        'Cannot delete category: Please remove all menu items first.'
+      );
     } else {
-      setIsPopoverOpen(false);
+      setIsConfirmDeleteDialogOpen(true);
     }
-  }
+  };
+
+  const handleConfirmDelete = () => {
+    deleteCategoryMutation.mutate();
+  };
 
   function renderTitleContent() {
     if (!isEditingName) {
@@ -196,7 +204,6 @@ export function CategoryCard({
               </FormItem>
             )}
           />
-
           <Button
             type="submit"
             variant="ghost"
@@ -211,7 +218,6 @@ export function CategoryCard({
               <Check className="h-4 w-4" />
             )}
           </Button>
-
           <Button
             type="reset"
             variant="ghost"
@@ -228,73 +234,104 @@ export function CategoryCard({
   }
 
   return (
-    <section
-      aria-labelledby={`category-title-${category.id}`}
-      className={cn(
-        'pt-4 pb-6',
-        !isLastCategory && 'border-b border-gray-200 dark:border-gray-700'
-      )}
-    >
-      <div className="flex items-center justify-between gap-2">
-        <div
-          className={cn(
-            'flex flex-grow items-center gap-2',
-            isEditingName && 'flex-grow-[2]'
-          )}
-        >
-          {renderTitleContent()}
+    <>
+      {' '}
+      {/* Added Fragment to contain section + dialog */}
+      <section
+        aria-labelledby={`category-title-${category.id}`}
+        className={cn(
+          'pt-4 pb-6',
+          !isLastCategory && 'border-b border-gray-200 dark:border-gray-700'
+        )}
+      >
+        {/* Header Row */}
+        <div className="flex items-center justify-between gap-2">
+          {/* Title / Edit Form */}
+          <div
+            className={cn(
+              'flex flex-grow items-center gap-2',
+              isEditingName && 'flex-grow-[2]'
+            )}
+          >
+            {renderTitleContent()}
+          </div>
+
+          {/* Actions Popover */}
+          <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 shrink-0"
+                aria-label="Category actions"
+                disabled={
+                  !selectedStoreId ||
+                  deleteCategoryMutation.isPending ||
+                  renameCategoryMutation.isPending
+                }
+              >
+                {/* Show loader if either mutation is pending */}
+                {deleteCategoryMutation.isPending ||
+                renameCategoryMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <MoreVertical className="h-4 w-4" />
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-1">
+              {/* Delete Button */}
+              <Button
+                variant="ghost"
+                className="flex w-full items-center justify-start px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/50"
+                onClick={handleDeleteRequest}
+                disabled={
+                  deleteCategoryMutation.isPending ||
+                  renameCategoryMutation.isPending
+                }
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Category
+              </Button>
+              {/* Add other actions like Move Up/Down if needed */}
+            </PopoverContent>
+          </Popover>
         </div>
 
-        <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 shrink-0"
-              aria-label="Category actions"
-              disabled={
-                !selectedStoreId ||
-                deleteCategoryMutation.isPending ||
-                renameCategoryMutation.isPending
-              }
-            >
-              {deleteCategoryMutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <MoreVertical className="h-4 w-4" />
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-1">
-            <Button
-              variant="ghost"
-              className="flex w-full items-center justify-start px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/50"
-              onClick={handleDelete}
-              disabled={deleteCategoryMutation.isPending}
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete Category
-            </Button>
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      {isEmpty(category.menuItems) ? (
-        <div className="mt-3 px-2 py-4 text-center text-sm text-gray-500 italic dark:text-gray-400">
-          No menu items in this category yet.
-        </div>
-      ) : (
-        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {category.menuItems?.map((item) => (
-            <ItemCard
-              key={item.id}
-              item={item}
-              onSelect={onSelectItem}
-              onEdit={onEditItem}
-            />
-          ))}
-        </div>
-      )}
-    </section>
+        {/* Items Grid or Empty Message */}
+        {isEmpty(category.menuItems) ? (
+          <div className="mt-3 px-2 py-4 text-center text-sm text-gray-500 italic dark:text-gray-400">
+            No menu items in this category yet.
+          </div>
+        ) : (
+          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {category.menuItems?.map((item) => (
+              <ItemCard
+                key={item.id}
+                item={item}
+                onSelect={onSelectItem}
+                onEdit={onEditItem}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+      {/* --- Confirmation Dialog (Rendered conditionally based on state) --- */}
+      <ConfirmationDialog
+        open={isConfirmDeleteDialogOpen}
+        onOpenChange={setIsConfirmDeleteDialogOpen}
+        title={`Delete Category: ${category.name}`}
+        description={
+          <>
+            Are you sure you want to permanently delete the category{' '}
+            <strong>{category.name}</strong>? This action cannot be undone.
+          </>
+        }
+        confirmText="Delete"
+        confirmVariant="destructive"
+        onConfirm={handleConfirmDelete}
+        isConfirming={deleteCategoryMutation.isPending}
+      />
+    </>
   );
 }
