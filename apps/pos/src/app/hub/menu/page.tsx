@@ -19,6 +19,7 @@ import { ItemModal } from '@/features/menu/ui/item-modal';
 import { MenuItemFormDialog } from '@/features/menu/ui/menu-item-form-dialog';
 import { Button } from '@repo/ui/components/button';
 import { useQuery } from '@tanstack/react-query';
+import { isEmpty } from 'lodash-es';
 
 export default function MenuPage() {
   const [itemFormOpen, setItemFormOpen] = React.useState(false);
@@ -28,7 +29,8 @@ export default function MenuPage() {
   const editMenuItemId = useMenuStore(selectEditMenuItemId);
   const setEditMenuItemId = useMenuStore((state) => state.setEditMenuItemId);
 
-  const [viewItem, setViewItem] = React.useState<MenuItem | null>(null);
+  // const [viewItem, setViewItem] = React.useState<MenuItem | null>(null);
+  const [viewItemId, setViewItemId] = React.useState<number | null>(null);
 
   const { data: categories = [] } = useQuery({
     queryKey: [
@@ -42,7 +44,7 @@ export default function MenuPage() {
   });
 
   function handleSelectItem(item: MenuItem) {
-    setViewItem(item);
+    setViewItemId(item.id);
   }
 
   function closeEditMenuItemDialog() {
@@ -87,9 +89,11 @@ export default function MenuPage() {
           ))}
         </div>
 
-        {viewItem && (
-          <ItemModal item={viewItem} onClose={() => setViewItem(null)} />
-        )}
+        <ItemModal
+          id={viewItemId}
+          open={viewItemId !== null}
+          onClose={() => setViewItemId(null)}
+        />
       </div>
       <MenuItemFormDialog
         mode="edit"
