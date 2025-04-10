@@ -2,6 +2,7 @@ import { apiFetch } from '@/utils/apiFetch';
 import {
   Category,
   CreateCategoryDto,
+  SortCategoriesPayloadDto,
   UpdateCategoryDto,
 } from '../types/category.types';
 
@@ -89,4 +90,30 @@ export async function deleteCategory(
   }
 
   return res.data;
+}
+
+/**
+ * Updates the sort order of categories and their contained menu items for a store.
+ * Requires OWNER/ADMIN permissions.
+ * Maps to: PATCH /categories/sort?storeId={storeId}
+ *
+ * @param storeId - The ID of the store whose categories are being sorted.
+ * @param payload - The sorting payload containing the ordered list of categories and items.
+ * @returns A promise resolving to void upon successful reordering.
+ * @throws {NetworkError | ApiError | UnauthorizedError | ForbiddenError} - Throws on fetch/API errors (e.g., invalid payload, permissions).
+ */
+export async function sortCategories(
+  storeId: number,
+  payload: SortCategoriesPayloadDto
+): Promise<void> {
+  await apiFetch<unknown>(
+    {
+      path: `${CATEGORY_ENDPOINT}/sort`,
+      query: { storeId },
+    },
+    {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    }
+  );
 }

@@ -200,7 +200,6 @@ export function MenuItemFormDialog({
 
   useEffect(() => {
     if (mode === 'edit' && itemToEdit) {
-      console.log('📝 -> useEffect -> itemToEdit:', itemToEdit);
       const mappedData: Partial<MenuItemFormData> = {
         name: itemToEdit.name,
         description: itemToEdit.description ?? '',
@@ -408,7 +407,6 @@ export function MenuItemFormDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90dvh] max-w-3xl overflow-y-auto p-6">
-        {' '}
         <DialogHeader>
           <DialogTitle>
             {mode === 'create' ? 'Create New Menu Item' : 'Edit Menu Item'}
@@ -497,7 +495,7 @@ export function MenuItemFormDialog({
                       onChange={field.onChange}
                     />
                   </FormControl>
-                  <FormMessage />{' '}
+                  <FormMessage />
                 </FormItem>
               )}
             />

@@ -1,6 +1,6 @@
 'use client';
 
-import { Plus } from 'lucide-react';
+import { GripVertical, Plus } from 'lucide-react';
 import React from 'react';
 
 import {
@@ -19,11 +19,12 @@ import { ItemModal } from '@/features/menu/ui/item-modal';
 import { MenuItemFormDialog } from '@/features/menu/ui/menu-item-form-dialog';
 import { Button } from '@repo/ui/components/button';
 import { useQuery } from '@tanstack/react-query';
-import { isEmpty } from 'lodash-es';
+import { ReorderMenuDialog } from '@/features/menu/ui/reorder-menu-dialog';
 
 export default function MenuPage() {
   const [itemFormOpen, setItemFormOpen] = React.useState(false);
   const [categoryFormOpen, setCategoryFormOpen] = React.useState(false);
+  const [reorderMenuOpen, setReorderMenuOpen] = React.useState(false);
 
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
   const editMenuItemId = useMenuStore(selectEditMenuItemId);
@@ -72,10 +73,20 @@ export default function MenuPage() {
             onOpenChange={setItemFormOpen}
             editItemId={null}
           />
-
           <CategoryFormDialog
             open={categoryFormOpen}
             onOpenChange={setCategoryFormOpen}
+          />
+          <Button
+            variant="default"
+            className="flex items-center"
+            onClick={() => setReorderMenuOpen(true)}
+          >
+            <GripVertical className="w-4 h-4 mr-1" /> Reorder Menu
+          </Button>
+          <ReorderMenuDialog
+            open={reorderMenuOpen}
+            onOpenChange={setReorderMenuOpen}
           />
         </div>
 
