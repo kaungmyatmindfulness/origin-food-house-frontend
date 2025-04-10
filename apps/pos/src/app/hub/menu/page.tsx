@@ -1,22 +1,32 @@
 'use client';
 
+import { Plus } from 'lucide-react';
 import React from 'react';
-import { MenuItem } from '@/features/menu/types/menu-item.types';
-import { CategoryCard } from '@/features/menu/ui/category-card';
-import { ItemModal } from '@/features/menu/ui/item-modal';
-import { MenuItemFormDialog } from '@/features/menu/ui/menu-item-form-dialog';
-import { CategoryFormDialog } from '@/features/menu/ui/category-form-dialog';
-import { useQuery } from '@tanstack/react-query';
-import { getCategories } from '@/features/menu/services/category.service';
+
 import {
   selectSelectedStoreId,
   useAuthStore,
 } from '@/features/auth/store/auth.store';
+import { getCategories } from '@/features/menu/services/category.service';
+import {
+  selectEditMenuItemId,
+  useMenuStore,
+} from '@/features/menu/store/menu.store';
+import { MenuItem } from '@/features/menu/types/menu-item.types';
+import { CategoryCard } from '@/features/menu/ui/category-card';
+import { CategoryFormDialog } from '@/features/menu/ui/category-form-dialog';
+import { ItemModal } from '@/features/menu/ui/item-modal';
+import { MenuItemFormDialog } from '@/features/menu/ui/menu-item-form-dialog';
+import { Button } from '@repo/ui/components/button';
+import { useQuery } from '@tanstack/react-query';
 
 export default function MenuPage() {
   const [itemFormOpen, setItemFormOpen] = React.useState(false);
-  const selectedStoreId = useAuthStore(selectSelectedStoreId);
   const [categoryFormOpen, setCategoryFormOpen] = React.useState(false);
+
+  const selectedStoreId = useAuthStore(selectSelectedStoreId);
+  const editMenuItemId = useMenuStore(selectEditMenuItemId);
+  const setEditMenuItemId = useMenuStore((state) => state.setEditMenuItemId);
 
   const [viewItem, setViewItem] = React.useState<MenuItem | null>(null);
 
@@ -35,46 +45,58 @@ export default function MenuPage() {
     setViewItem(item);
   }
 
-  function handleEditItem(item: MenuItem) {
-    setViewItem(item);
+  function closeEditMenuItemDialog() {
+    setEditMenuItemId(null);
   }
 
   return (
-    <div className="space-y-6 p-4">
-      {/* Simple breadcrumb */}
-      <nav className="mb-4 text-sm text-gray-500">
-        Home &gt; <span className="text-gray-800">Menu</span>
-      </nav>
+    <>
+      <div className="p-4 space-y-6">
+        <nav className="mb-4 text-sm text-gray-500">
+          Home &gt; <span className="text-gray-800">Menu</span>
+        </nav>
 
-      {/* Create item & create category buttons */}
-      <div className="flex items-center space-x-2">
-        <MenuItemFormDialog
-          mode="create"
-          open={itemFormOpen}
-          onOpenChange={setItemFormOpen}
-        />
-        <CategoryFormDialog
-          open={categoryFormOpen}
-          onOpenChange={setCategoryFormOpen}
-        />
-      </div>
-
-      {/* Render categories with their items */}
-      <div className="space-y-4">
-        {categories.map((cat) => (
-          <CategoryCard
-            key={cat.id}
-            category={cat}
-            onSelectItem={handleSelectItem}
-            onEditItem={handleEditItem}
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="default"
+            className="flex items-center"
+            onClick={() => setItemFormOpen(true)}
+          >
+            <Plus className="w-4 h-4 mr-1" /> Create Menu Item
+          </Button>
+          <MenuItemFormDialog
+            mode="create"
+            open={itemFormOpen}
+            onOpenChange={setItemFormOpen}
+            editItemId={null}
           />
-        ))}
-      </div>
 
-      {/* If an item is selected, show the view modal */}
-      {viewItem && (
-        <ItemModal item={viewItem} onClose={() => setViewItem(null)} />
-      )}
-    </div>
+          <CategoryFormDialog
+            open={categoryFormOpen}
+            onOpenChange={setCategoryFormOpen}
+          />
+        </div>
+
+        <div className="space-y-4">
+          {categories.map((cat) => (
+            <CategoryCard
+              key={cat.id}
+              category={cat}
+              onSelectItem={handleSelectItem}
+            />
+          ))}
+        </div>
+
+        {viewItem && (
+          <ItemModal item={viewItem} onClose={() => setViewItem(null)} />
+        )}
+      </div>
+      <MenuItemFormDialog
+        mode="edit"
+        open={editMenuItemId !== null}
+        onOpenChange={closeEditMenuItemDialog}
+        editItemId={editMenuItemId}
+      />
+    </>
   );
 }

@@ -1,10 +1,9 @@
 'use client';
 
-import { PlusIcon, Trash2 } from 'lucide-react';
+import { HelpCircle, PlusIcon, Trash2 } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 import { Button } from '@repo/ui/components/button';
-import { Checkbox } from '@repo/ui/components/checkbox';
 import {
   FormControl,
   FormField,
@@ -46,8 +45,8 @@ export function CustomizationGroupField({
     form.watch(`customizationGroups.${groupIndex}.options`)?.length ?? 0;
 
   return (
-    <div className="rounded-md border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/30">
-      <div className="mb-3 flex items-center justify-between">
+    <div className="p-4 border rounded-md bg-gray-50 dark:border-gray-700 dark:bg-gray-800/30">
+      <div className="flex items-center justify-between mb-3">
         <FormField
           control={control}
           name={`customizationGroups.${groupIndex}.name`}
@@ -73,99 +72,20 @@ export function CustomizationGroupField({
           className="ml-2 text-red-500 hover:text-red-700"
           aria-label="Remove group"
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className="w-4 h-4" />
         </Button>
-      </div>
-
-      <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <FormField
-          control={control}
-          name={`customizationGroups.${groupIndex}.required`}
-          render={({ field }) => (
-            <FormItem className="mt-auto flex items-center gap-2 rounded-md border p-2">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                  id={`required-${groupIndex}`}
-                />
-              </FormControl>
-              <FormLabel
-                htmlFor={`required-${groupIndex}`}
-                className="mb-0 cursor-pointer text-sm font-normal"
-              >
-                Required?
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="ml-1 text-xs text-gray-400">[?]</span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    Customer must choose from this group.
-                  </TooltipContent>
-                </Tooltip>
-              </FormLabel>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
-          name={`customizationGroups.${groupIndex}.minSelectable`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-sm">Min Choices</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  min="0"
-                  {...field}
-                  onChange={(e) =>
-                    field.onChange(parseInt(e.target.value, 10) || 0)
-                  }
-                  value={field.value ?? 0}
-                  className="w-full"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
-          name={`customizationGroups.${groupIndex}.maxSelectable`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-sm">Max Choices</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  min="0"
-                  max={optionsCount}
-                  {...field}
-                  onChange={(e) =>
-                    field.onChange(parseInt(e.target.value, 10) || 0)
-                  }
-                  value={field.value ?? 0}
-                  className="w-full"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
       </div>
 
       {form.formState.errors.customizationGroups?.[groupIndex]
         ?.maxSelectable && (
-        <p className="-mt-2 mb-2 text-xs text-red-500">
+        <p className="mb-2 -mt-2 text-xs text-red-500">
           Max choices cannot exceed the number of options ({optionsCount}) and
           must be &gt; min choices.
         </p>
       )}
       {form.formState.errors.customizationGroups?.[groupIndex]
         ?.minSelectable && (
-        <p className="-mt-2 mb-2 text-xs text-red-500">
+        <p className="mb-2 -mt-2 text-xs text-red-500">
           Min choices must be less than or equal to max choices.
         </p>
       )}
@@ -173,7 +93,7 @@ export function CustomizationGroupField({
       <div className="space-y-3">
         <FormLabel className="text-sm font-medium">Options</FormLabel>
         {optionFields.length === 0 && (
-          <p className="text-xs text-gray-400 italic">
+          <p className="text-xs italic text-gray-400">
             Add at least one option.
           </p>
         )}
@@ -198,7 +118,6 @@ export function CustomizationGroupField({
               name={`customizationGroups.${groupIndex}.options.${optionIndex}.additionalPrice`}
               render={({ field }) => (
                 <FormItem className="w-28">
-                  {' '}
                   <FormLabel className="sr-only">Additional Price</FormLabel>
                   <FormControl>
                     <Input
@@ -225,10 +144,10 @@ export function CustomizationGroupField({
               variant="ghost"
               size="icon"
               onClick={() => removeOption(optionIndex)}
-              className="h-8 w-8 shrink-0 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50"
+              className="w-8 h-8 text-red-500 shrink-0 hover:bg-red-100 dark:hover:bg-red-900/50"
               aria-label="Remove option"
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="w-4 h-4" />
             </Button>
           </div>
         ))}
@@ -239,7 +158,7 @@ export function CustomizationGroupField({
           onClick={() => appendOption({ name: '', additionalPrice: 0 })}
           className="mt-2"
         >
-          <PlusIcon className="h-4 w-4" aria-hidden="true" />
+          <PlusIcon className="w-4 h-4" aria-hidden="true" />
           Add Option
         </Button>
 
@@ -252,6 +171,101 @@ export function CustomizationGroupField({
             }
           </p>
         )}
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2">
+        <FormField
+          control={control}
+          name={`customizationGroups.${groupIndex}.minSelectable`}
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center gap-1 mb-1">
+                <FormLabel className="text-sm">Min Choices</FormLabel>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                    >
+                      <HelpCircle className="w-3 h-3" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p>
+                      The minimum number of options the customer must select
+                      from this group (e.g., 0, 1). Must be less than or equal
+                      to 'Max Choices'.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              <FormControl>
+                <Input
+                  type="number"
+                  min="0"
+                  {...field}
+                  onChange={(e) =>
+                    field.onChange(parseInt(e.target.value, 10) || 0)
+                  }
+                  value={field.value ?? 0}
+                  className="w-full"
+                  placeholder="e.g., 0 or 1"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name={`customizationGroups.${groupIndex}.maxSelectable`}
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center gap-1 mb-1">
+                <FormLabel className="text-sm">Max Choices</FormLabel>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                    >
+                      <HelpCircle className="w-3 h-3" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p>
+                      The maximum number of different options the customer can
+                      select (e.g., 1 for Size, 3 for Toppings). Must be equal
+                      to or greater than 'Min Choices' and cannot exceed the
+                      total number of options available ({optionsCount}).
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              <FormControl>
+                <Input
+                  type="number"
+                  min="0"
+                  max={optionsCount > 0 ? optionsCount : undefined}
+                  {...field}
+                  onChange={(e) =>
+                    field.onChange(
+                      e.target.value === ''
+                        ? 0
+                        : parseInt(e.target.value, 10) || 0
+                    )
+                  }
+                  value={field.value ?? 0}
+                  className="w-full"
+                  placeholder="e.g., 1 or 3"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </div>
     </div>
   );

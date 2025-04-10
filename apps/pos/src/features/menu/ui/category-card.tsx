@@ -46,7 +46,6 @@ import type { ApiError } from '@/utils/apiFetch';
 interface CategoryCardProps {
   category: Category;
   onSelectItem: (item: MenuItem) => void;
-  onEditItem: (item: MenuItem) => void;
   isLastCategory?: boolean;
 }
 
@@ -61,7 +60,6 @@ type RenameFormData = z.infer<typeof renameSchema>;
 export function CategoryCard({
   category,
   onSelectItem,
-  onEditItem,
   isLastCategory = false,
 }: CategoryCardProps) {
   const [isEditingName, setIsEditingName] = React.useState(false);
@@ -306,12 +304,7 @@ export function CategoryCard({
         ) : (
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {category.menuItems?.map((item) => (
-              <ItemCard
-                key={item.id}
-                item={item}
-                onSelect={onSelectItem}
-                onEdit={onEditItem}
-              />
+              <ItemCard key={item.id} item={item} onSelect={onSelectItem} />
             ))}
           </div>
         )}

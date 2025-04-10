@@ -64,6 +64,7 @@ export async function getMenuItemById(id: number): Promise<MenuItemDto> {
 
 export async function updateMenuItem(
   id: number,
+  storeId: number,
   data: UpdateMenuItemDto
 ): Promise<MenuItemDto> {
   const res = await apiFetch<MenuItemDto>(`${MENU_ENDPOINT}/${id}`, {

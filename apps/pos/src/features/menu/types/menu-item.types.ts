@@ -14,7 +14,7 @@ export interface UpsertCategoryDto {
 export interface UpsertCustomizationOptionDto {
   id?: number;
   name: string;
-  additionalPrice?: number;
+  additionalPrice?: string;
 }
 
 /**
@@ -24,7 +24,6 @@ export interface UpsertCustomizationOptionDto {
 export interface UpsertCustomizationGroupDto {
   id?: number;
   name: string;
-  required?: boolean;
   minSelectable?: number;
   maxSelectable?: number;
   options: UpsertCustomizationOptionDto[];
@@ -44,7 +43,7 @@ export interface CategoryDto {
 export interface CustomizationOptionDto {
   id: number;
   name: string;
-  additionalPrice: number;
+  additionalPrice: string;
 }
 
 /**
@@ -56,7 +55,7 @@ export interface CustomizationGroupDto {
   required: boolean;
   minSelectable: number;
   maxSelectable: number;
-  options: CustomizationOptionDto[];
+  customizationOptions: CustomizationOptionDto[];
 }
 
 /**
@@ -69,21 +68,10 @@ export interface CreateMenuItemDto {
   imageUrl?: string;
   category: UpsertCategoryDto;
   customizationGroups?: UpsertCustomizationGroupDto[];
+  isHidden?: boolean;
 }
 
-/**
- * DTO for updating an existing menu item (request body for PUT /menu/{id}).
- * Note: Sending customizationGroups here is a *full replacement*.
- * Existing groups/options NOT included (by ID) WILL BE DELETED.
- */
-export interface UpdateMenuItemDto {
-  name?: string;
-  description?: string;
-  basePrice?: number;
-  imageUrl?: string;
-  category?: UpsertCategoryDto;
-  customizationGroups?: UpsertCustomizationGroupDto[];
-}
+export type UpdateMenuItemDto = CreateMenuItemDto;
 
 /**
  * Represents a full MenuItem object as returned by the API (e.g., in GET responses).
@@ -92,24 +80,12 @@ export interface MenuItemDto {
   id: number;
   name: string;
   description?: string | null;
-  basePrice: number;
+  basePrice: string;
   imageUrl?: string | null;
   category: CategoryDto;
   customizationGroups: CustomizationGroupDto[];
+  isHidden: boolean;
 }
-
-// {
-//   id: 13,
-//   name: 'Apricot-glazed Emu Skewers',
-//   description:
-//     'A succulent turkey steak, encased in a spicy ajwan seed crust, served with a side of garlic mashed sweet potato.',
-//   basePrice: 13.09,
-//   imageUrl: 'uploads/fd9d6802-095b-4d4c-95f7-79e9aa6d9125-original',
-//   categoryId: 10,
-//   storeId: 1,
-//   createdAt: '2025-03-26T21:03:34.504Z',
-//   updatedAt: '2025-03-26T21:03:34.504Z',
-// },
 
 export interface MenuItem {
   id: number;

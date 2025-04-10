@@ -1,8 +1,9 @@
 'use client';
 
-import { Plus, PlusIcon, Trash2 } from 'lucide-react';
-import { useEffect } from 'react';
+import { Loader2, Plus } from 'lucide-react';
+import { useEffect, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { ImageUpload } from '@/common/components/widgets/image-upload';
@@ -11,6 +12,16 @@ import {
   useAuthStore,
 } from '@/features/auth/store/auth.store';
 import { getCategories } from '@/features/menu/services/category.service';
+import {
+  createMenuItem,
+  getMenuItemById,
+  updateMenuItem,
+} from '@/features/menu/services/menu-item.service';
+import {
+  CreateMenuItemDto,
+  UpdateMenuItemDto,
+} from '@/features/menu/types/menu-item.types';
+import { CustomizationGroupField } from '@/features/menu/ui/customization-group-field';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@repo/ui/components/button';
 import { Checkbox } from '@repo/ui/components/checkbox';
@@ -21,11 +32,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@repo/ui/components/dialog';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -34,15 +45,7 @@ import {
 import { Input } from '@repo/ui/components/input';
 import { Separator } from '@repo/ui/components/separator';
 import { Textarea } from '@repo/ui/components/textarea';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@repo/ui/components/tooltip';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createMenuItem } from '@/features/menu/services/menu-item.service';
-import { CreateMenuItemDto } from '@/features/menu/types/menu-item.types';
-import { CustomizationGroupField } from '@/features/menu/ui/customization-group-field';
 
 /**
  * Zod schema for the new menu item form structure.
@@ -74,7 +77,6 @@ const menuItemSchema = z
             .string()
             .max(70, 'Max 70 chars')
             .nonempty('Group name required'),
-          required: z.boolean().default(false),
           minSelectable: z.number().min(0).default(0),
           maxSelectable: z.number().min(0).default(1),
           options: z
@@ -84,13 +86,15 @@ const menuItemSchema = z
                   .string()
                   .max(70, 'Max 70 chars')
                   .nonempty('Option name required'),
-                additionalPrice: z.number().min(0.01, 'Must be at least 0.01'),
+                additionalPrice: z.number().min(0, 'Must be at least 0.00'),
               })
             )
             .min(1, 'At least one option is required per group'),
         })
       )
       .optional(),
+
+    isHidden: z.boolean().optional().default(false),
   })
   .refine(
     (data) => {
@@ -128,24 +132,6 @@ const menuItemSchema = z
 
 export type MenuItemFormData = z.infer<typeof menuItemSchema>;
 
-export interface SubmitMenuItemData {
-  name: string;
-  description: string;
-  basePrice: string;
-  imageUrl?: string;
-  category: { id?: number; name: string };
-  customizationGroups: Array<{
-    name: string;
-    required: boolean;
-    minSelectable: number;
-    maxSelectable: number;
-    options: Array<{
-      name: string;
-      additionalPrice: number;
-    }>;
-  }>;
-}
-
 export type MenuFormMode = 'create' | 'edit';
 
 interface CategoryOption {
@@ -157,103 +143,99 @@ export interface MenuItemFormDialogProps {
   mode: MenuFormMode;
   open: boolean;
   onOpenChange: (val: boolean) => void;
-  initialValues?: Partial<SubmitMenuItemData>;
+  editItemId: number | null;
 }
 
 export function MenuItemFormDialog({
   mode,
   open,
   onOpenChange,
-  initialValues,
+  editItemId,
 }: MenuItemFormDialogProps) {
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
   const queryClient = useQueryClient();
 
+  const {
+    data: itemToEdit,
+    isLoading: isItemLoading,
+    isError: isItemError,
+    error: itemError,
+  } = useQuery({
+    queryKey: ['menuItem', editItemId],
+    queryFn: async () => {
+      if (!editItemId) return null;
+
+      return getMenuItemById(editItemId);
+    },
+
+    enabled: mode === 'edit' && typeof editItemId === 'number',
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000,
+  });
+
   const { data: categories = [] } = useQuery({
-    queryKey: [
-      'categories',
-      {
-        storeId: selectedStoreId,
-      },
-    ],
-    queryFn: () => getCategories(selectedStoreId!),
-    enabled: !!selectedStoreId,
+    queryKey: ['categories'],
+    queryFn: async () => {
+      if (!selectedStoreId) return [];
+      return getCategories(selectedStoreId);
+    },
+    enabled: !!selectedStoreId && open,
+    staleTime: 10 * 60 * 1000,
   });
-
-  const categoryOptions: CategoryOption[] = [
-    ...categories.map((cat) => ({
-      label: cat.name,
-      value: String(cat.id),
-    })),
-    { label: 'Add New Category', value: 'add_new' },
-  ];
-
-  const mutateCreateMenuItem = useMutation({
-    mutationFn: (dto: CreateMenuItemDto) =>
-      createMenuItem(selectedStoreId!, dto),
-  });
-
-  const mapInitialValuesToFormData = (
-    initial?: Partial<SubmitMenuItemData>
-  ): Partial<MenuItemFormData> => {
-    if (!initial) return {};
-    return {
-      name: initial.name,
-      description: initial.description,
-      basePrice: Number(initial.basePrice),
-      imageUrl: initial.imageUrl,
-
-      categoryId: initial.category?.id
-        ? String(initial.category.id)
-        : undefined,
-
-      newCategoryName: '',
-      isNewCategory: false,
-
-      customizationGroups: initial.customizationGroups?.map((group) => ({
-        name: group.name,
-        required: group.required,
-        minSelectable: group.minSelectable,
-        maxSelectable: group.maxSelectable,
-        options: group.options.map((opt) => ({
-          name: opt.name,
-          additionalPrice: opt.additionalPrice,
-        })),
-      })),
-    };
-  };
 
   const form = useForm<MenuItemFormData>({
     resolver: zodResolver(menuItemSchema),
     defaultValues: {
       name: '',
       description: '',
-      basePrice: 0,
+      basePrice: undefined,
       imageUrl: '',
       categoryId: '',
       newCategoryName: '',
       isNewCategory: false,
       customizationGroups: [],
-      ...mapInitialValuesToFormData(initialValues),
+      isHidden: false,
     },
   });
 
   useEffect(() => {
-    if (initialValues) {
-      form.reset(mapInitialValuesToFormData(initialValues));
-    } else {
-      form.reset({
-        name: '',
-        description: '',
-        basePrice: 0,
-        imageUrl: '',
-        categoryId: '',
-        newCategoryName: '',
+    if (mode === 'edit' && itemToEdit) {
+      console.log('📝 -> useEffect -> itemToEdit:', itemToEdit);
+      const mappedData: Partial<MenuItemFormData> = {
+        name: itemToEdit.name,
+        description: itemToEdit.description ?? '',
+
+        basePrice: itemToEdit.basePrice
+          ? parseFloat(itemToEdit.basePrice) || undefined
+          : undefined,
+
+        imageUrl: itemToEdit.imageUrl ?? undefined,
+
+        categoryId: itemToEdit.category.id
+          ? String(itemToEdit.category.id)
+          : undefined,
         isNewCategory: false,
-        customizationGroups: [],
-      });
+        newCategoryName: '',
+        customizationGroups:
+          itemToEdit.customizationGroups?.map((group) => ({
+            name: group.name,
+            required: group.required,
+            minSelectable: group.minSelectable,
+            maxSelectable: group.maxSelectable,
+            options:
+              group.customizationOptions?.map((opt) => ({
+                name: opt.name,
+                additionalPrice: opt.additionalPrice
+                  ? parseFloat(opt.additionalPrice) || 0
+                  : 0,
+              })) || [],
+          })) || [],
+        isHidden: itemToEdit.isHidden ?? false,
+      };
+
+      form.reset(mappedData);
     }
-  }, [initialValues, form.reset, form]);
+  }, [itemToEdit, mode, form.reset, form]);
 
   const {
     fields: groupFields,
@@ -271,116 +253,160 @@ export function MenuItemFormDialog({
 
   const watchedGroups = form.watch('customizationGroups');
 
-  useEffect(() => {
-    watchedGroups?.forEach((group, groupIndex) => {
-      const optionsCount = group.options?.length ?? 0;
-      const currentMin = group.minSelectable;
-      const currentMax = group.maxSelectable;
+  useEffect(() => {}, [watchedGroups, form.setValue, form]);
 
-      let needsUpdate = false;
-      let newMin = currentMin;
-      let newMax = currentMax;
+  const createMenuItemMutation = useMutation({
+    mutationFn: (dto: CreateMenuItemDto) => {
+      if (!selectedStoreId) throw new Error('Store ID required for creation.');
 
-      if (newMax < newMin) {
-        newMax = newMin;
-        needsUpdate = true;
-      }
-      if (newMax > optionsCount) {
-        newMax = optionsCount;
-        needsUpdate = true;
-      }
+      return createMenuItem(selectedStoreId, dto);
+    },
+    onSuccess: () => {
+      toast.success('Menu item created!');
+      queryClient.invalidateQueries({
+        queryKey: ['categories'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['menuItems'],
+      });
+      onOpenChange(false);
+    },
+    onError: (error) => {
+      console.error('Create item failed:', error);
+    },
+  });
 
-      if (newMin > newMax) {
-        newMin = newMax;
-        needsUpdate = true;
-      }
-      if (newMin < 0) {
-        newMin = 0;
-        needsUpdate = true;
-      }
+  const updateMenuItemMutation = useMutation({
+    mutationFn: (dto: UpdateMenuItemDto) => {
+      if (!selectedStoreId) throw new Error('Store ID required for update.');
+      if (!editItemId) throw new Error('Item ID required for update.');
 
-      if (needsUpdate) {
-        form.setValue(
-          `customizationGroups.${groupIndex}.minSelectable`,
-          newMin,
-          { shouldDirty: true }
-        );
-        form.setValue(
-          `customizationGroups.${groupIndex}.maxSelectable`,
-          newMax,
-          { shouldDirty: true }
-        );
-      }
-    });
-  }, [watchedGroups, form.setValue, form]);
+      return updateMenuItem(editItemId, selectedStoreId, dto);
+    },
+    onSuccess: () => {
+      toast.success('Menu item updated!');
+      queryClient.invalidateQueries({
+        queryKey: ['categories'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['menuItems'],
+      });
+      onOpenChange(false);
+    },
+    onError: (error) => {
+      console.error('Update item failed:', error);
+    },
+  });
 
   async function handleFormSubmit(values: MenuItemFormData) {
+    if (!selectedStoreId) {
+      toast.error('Cannot save: Store not selected.');
+      return;
+    }
+
     let submitCategory: { id?: number; name: string };
     if (values.isNewCategory && values.newCategoryName) {
       submitCategory = { name: values.newCategoryName.trim() };
     } else if (values.categoryId && values.categoryId !== 'add_new') {
-      const selectedCat = categoryOptions.find(
-        (c) => c.value === values.categoryId
+      const selectedCatData = categories.find(
+        (c) => String(c.id) === values.categoryId
       );
       submitCategory = {
         id: parseInt(values.categoryId, 10),
-        name: selectedCat?.label ?? 'Unknown Category',
+
+        name: selectedCatData?.name ?? 'Selected Category',
       };
     } else {
-      console.error('Invalid category state during submission');
-
       form.setError('categoryId', {
         type: 'manual',
-        message: 'Category selection is invalid.',
+        message: 'Category is required.',
       });
       return;
     }
 
-    const submitData: SubmitMenuItemData = {
+    const baseSubmitData = {
       name: values.name,
-      description: values.description,
+      description: values.description || undefined,
+
       basePrice: String(values.basePrice),
+
       imageUrl: values.imageUrl || undefined,
       category: submitCategory,
       customizationGroups:
         values.customizationGroups?.map((group) => ({
           name: group.name,
-          required: group.required,
           minSelectable: group.minSelectable,
           maxSelectable: group.maxSelectable,
           options: group.options.map((opt) => ({
             name: opt.name,
-            additionalPrice: opt.additionalPrice,
+
+            additionalPrice: String(opt.additionalPrice),
           })),
         })) ?? [],
+      isHidden: values.isHidden ?? false,
     };
 
-    await mutateCreateMenuItem.mutateAsync(submitData);
-    await queryClient.invalidateQueries({
-      queryKey: ['categories'],
-    });
-    onOpenChange(false);
+    try {
+      if (mode === 'create') {
+        await createMenuItemMutation.mutateAsync(baseSubmitData);
+      } else if (mode === 'edit' && editItemId) {
+        await updateMenuItemMutation.mutateAsync(baseSubmitData);
+      }
+    } catch (error) {
+      console.error('Form submission failed:', error);
+    }
   }
 
   function handleCancel() {
     onOpenChange(false);
   }
 
+  const categoryOptions: CategoryOption[] = useMemo(
+    () => [
+      ...categories.map((cat) => ({
+        label: cat.name,
+        value: String(cat.id),
+      })),
+      { label: 'Add New Category', value: 'add_new' },
+    ],
+    [categories]
+  );
+
+  if (mode === 'edit' && isItemLoading) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="flex items-center justify-center p-10">
+          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          <span className="ml-2">Loading item data...</span>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+  if (mode === 'edit' && isItemError) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-red-600">Error</DialogTitle>
+            <DialogDescription>
+              Could not load item data. Please try again.
+              {itemError instanceof Error && (
+                <p className="mt-2 text-xs">{itemError.message}</p>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end pt-4">
+            <Button variant="outline" onClick={handleCancel}>
+              Close
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <Button variant="default" className="flex items-center">
-          {mode === 'create' ? (
-            <>
-              {' '}
-              <Plus className="mr-1 h-4 w-4" /> Create Menu Item{' '}
-            </>
-          ) : (
-            'Edit Menu Item'
-          )}
-        </Button>
-      </DialogTrigger>
-
       <DialogContent className="max-h-[90dvh] max-w-3xl overflow-y-auto p-6">
         {' '}
         <DialogHeader>
@@ -422,7 +448,7 @@ export function MenuItemFormDialog({
                     <FormControl>
                       <Input
                         type="number"
-                        step="0.01"
+                        step="0.10"
                         placeholder="e.g. 9.99"
                         {...field}
                         onChange={(e) =>
@@ -532,14 +558,13 @@ export function MenuItemFormDialog({
                   onClick={() =>
                     appendGroup({
                       name: '',
-                      required: false,
                       minSelectable: 0,
                       maxSelectable: 1,
                       options: [{ name: '', additionalPrice: 0 }],
                     })
                   }
                 >
-                  <Plus className="mr-1 h-4 w-4" /> Add Group
+                  <Plus className="w-4 h-4 mr-1" /> Add Group
                 </Button>
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -548,7 +573,7 @@ export function MenuItemFormDialog({
               </p>
 
               {groupFields.length === 0 && (
-                <p className="text-sm text-gray-400 italic">
+                <p className="text-sm italic text-gray-400">
                   No customization groups added yet.
                 </p>
               )}
@@ -567,6 +592,34 @@ export function MenuItemFormDialog({
             </div>
 
             <Separator />
+
+            <FormField
+              control={form.control}
+              name="isHidden"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start p-4 space-x-3 space-y-0 border rounded-md dark:border-gray-700">
+                  <FormControl>
+                    {/* Use value={field.value?.toString()} if Checkbox expects string */}
+                    <Checkbox
+                      checked={field.value ?? false} // Ensure boolean value
+                      // Pass boolean to onCheckedChange
+                      onCheckedChange={(checked) =>
+                        field.onChange(Boolean(checked))
+                      }
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Hide Item from Customers</FormLabel>
+                    <FormDescription>
+                      Check this to temporarily hide the item from the menu
+                      (e.g., out of stock, inactive).
+                    </FormDescription>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
             <div className="flex justify-end gap-3 pt-4">
               <Button type="button" variant="outline" onClick={handleCancel}>
                 Cancel
