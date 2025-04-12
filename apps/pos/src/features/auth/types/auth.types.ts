@@ -4,7 +4,7 @@ export interface LoginDto {
 }
 
 export interface ChooseStoreDto {
-  storeId: number;
+  storeId: string;
 }
 
 export interface ForgotPasswordDto {

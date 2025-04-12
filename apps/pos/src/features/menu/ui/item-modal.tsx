@@ -18,7 +18,7 @@ import { getMenuItemById } from '@/features/menu/services/menu-item.service';
 import { formatCurrency } from '@/utils/formatting';
 
 interface ItemModalProps {
-  id: number | null;
+  id: string | null;
 
   open: boolean;
 
@@ -48,7 +48,7 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
     if (isLoading) {
       return (
         <div className="flex min-h-[200px] items-center justify-center text-gray-500">
-          <Loader2 className="w-8 h-8 mr-2 animate-spin" />
+          <Loader2 className="mr-2 h-8 w-8 animate-spin" />
           <span>Loading item details...</span>
         </div>
       );
@@ -57,7 +57,7 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
     if (isError) {
       return (
         <div className="flex min-h-[200px] flex-col items-center justify-center px-4 text-center text-red-600">
-          <AlertCircle className="w-8 h-8 mb-2" />
+          <AlertCircle className="mb-2 h-8 w-8" />
           <p className="font-semibold">Error Loading Item</p>
           <p className="text-sm">
             {error?.message || 'Could not load item details. Please try again.'}
@@ -77,7 +77,7 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
     if (isSuccess && !item) {
       return (
         <div className="flex min-h-[200px] flex-col items-center justify-center px-4 text-center text-gray-500">
-          <AlertCircle className="w-8 h-8 mb-2" />
+          <AlertCircle className="mb-2 h-8 w-8" />
           <p className="font-semibold">Item Not Found</p>
           <p className="text-sm">The requested item could not be found.</p>
           <Button
@@ -96,11 +96,11 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
       return (
         <>
           {item.imageUrl && (
-            <div className="mb-4 -mx-6 -mt-6">
+            <div className="-mx-6 -mt-6 mb-4">
               <img
                 src={item.imageUrl}
                 alt={item.name}
-                className="object-cover w-full h-48 rounded-t-lg"
+                className="h-48 w-full rounded-t-lg object-cover"
                 loading="lazy"
                 onError={(e) => {
                   e.currentTarget.onerror = null;
@@ -114,7 +114,7 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
             <DialogTitle id="item-modal-title" className="mb-1 text-xl">
               {item.name}
             </DialogTitle>
-            <p className="text-lg font-medium text-primary dark:text-primary-light">
+            <p className="text-primary dark:text-primary-light text-lg font-medium">
               {formatCurrency(item.basePrice)}
               {item.customizationGroups?.length > 0 && (
                 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
@@ -127,14 +127,14 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
           {item.description && (
             <DialogDescription
               id="item-modal-description"
-              className="mb-4 text-sm text-left text-gray-700 dark:text-gray-300"
+              className="mb-4 text-left text-sm text-gray-700 dark:text-gray-300"
             >
               {item.description}
             </DialogDescription>
           )}
 
           {item.customizationGroups && item.customizationGroups.length > 0 && (
-            <div className="pt-3 mt-3 space-y-4 border-t dark:border-gray-600">
+            <div className="mt-3 space-y-4 border-t pt-3 dark:border-gray-600">
               <h3 className="text-sm font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-400">
                 Available Options
               </h3>
@@ -176,7 +176,7 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="p-0 overflow-hidden sm:max-w-md">
+      <DialogContent className="overflow-hidden p-0 sm:max-w-md">
         <ScrollArea className="max-h-[80vh] p-6">
           {renderModalContent()}
         </ScrollArea>

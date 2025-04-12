@@ -15,7 +15,7 @@ const CATEGORY_ENDPOINT = '/categories';
  * @returns A promise resolving to an array of Category objects.
  * @throws {NetworkError | ApiError} - Throws on fetch/API errors. Throws Error if data is null on success.
  */
-export async function getCategories(storeId: number): Promise<Category[]> {
+export async function getCategories(storeId: string): Promise<Category[]> {
   const res = await apiFetch<Category[]>({
     path: CATEGORY_ENDPOINT,
     query: {
@@ -31,7 +31,7 @@ export async function getCategories(storeId: number): Promise<Category[]> {
 }
 
 export async function createCategory(
-  storeId: number,
+  storeId: string,
   data: CreateCategoryDto
 ): Promise<unknown> {
   const res = await apiFetch<unknown>(
@@ -49,8 +49,8 @@ export async function createCategory(
 }
 
 export async function updateCategory(
-  storeId: number,
-  categoryId: number,
+  storeId: string,
+  categoryId: string,
   data: UpdateCategoryDto
 ): Promise<unknown> {
   const res = await apiFetch<unknown>(
@@ -72,8 +72,8 @@ export async function updateCategory(
 }
 
 export async function deleteCategory(
-  storeId: number,
-  categoryId: number
+  storeId: string,
+  categoryId: string
 ): Promise<unknown> {
   const res = await apiFetch<unknown>(
     {
@@ -103,7 +103,7 @@ export async function deleteCategory(
  * @throws {NetworkError | ApiError | UnauthorizedError | ForbiddenError} - Throws on fetch/API errors (e.g., invalid payload, permissions).
  */
 export async function sortCategories(
-  storeId: number,
+  storeId: string,
   payload: SortCategoriesPayloadDto
 ): Promise<void> {
   await apiFetch<unknown>(

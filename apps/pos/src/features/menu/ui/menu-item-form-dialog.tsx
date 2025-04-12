@@ -143,7 +143,7 @@ export interface MenuItemFormDialogProps {
   mode: MenuFormMode;
   open: boolean;
   onOpenChange: (val: boolean) => void;
-  editItemId: number | null;
+  editItemId: string | null;
 }
 
 export function MenuItemFormDialog({
@@ -303,7 +303,7 @@ export function MenuItemFormDialog({
       return;
     }
 
-    let submitCategory: { id?: number; name: string };
+    let submitCategory: { id?: string; name: string };
     if (values.isNewCategory && values.newCategoryName) {
       submitCategory = { name: values.newCategoryName.trim() };
     } else if (values.categoryId && values.categoryId !== 'add_new') {
@@ -311,8 +311,7 @@ export function MenuItemFormDialog({
         (c) => String(c.id) === values.categoryId
       );
       submitCategory = {
-        id: parseInt(values.categoryId, 10),
-
+        id: values.categoryId,
         name: selectedCatData?.name ?? 'Selected Category',
       };
     } else {
@@ -375,7 +374,7 @@ export function MenuItemFormDialog({
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="flex items-center justify-center p-10">
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          <Loader2 className="text-primary h-8 w-8 animate-spin" />
           <span className="ml-2">Loading item data...</span>
         </DialogContent>
       </Dialog>
@@ -562,7 +561,7 @@ export function MenuItemFormDialog({
                     })
                   }
                 >
-                  <Plus className="w-4 h-4 mr-1" /> Add Group
+                  <Plus className="mr-1 h-4 w-4" /> Add Group
                 </Button>
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -571,7 +570,7 @@ export function MenuItemFormDialog({
               </p>
 
               {groupFields.length === 0 && (
-                <p className="text-sm italic text-gray-400">
+                <p className="text-sm text-gray-400 italic">
                   No customization groups added yet.
                 </p>
               )}
@@ -595,7 +594,7 @@ export function MenuItemFormDialog({
               control={form.control}
               name="isHidden"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start p-4 space-x-3 space-y-0 border rounded-md dark:border-gray-700">
+                <FormItem className="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4 dark:border-gray-700">
                   <FormControl>
                     {/* Use value={field.value?.toString()} if Checkbox expects string */}
                     <Checkbox

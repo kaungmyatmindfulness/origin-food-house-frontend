@@ -6,14 +6,14 @@ import type { CurrentUserData } from '@/features/user/types/user.types';
 interface AuthState {
   accessToken: string | null;
   user: CurrentUserData | null;
-  selectedStoreId: number | null;
+  selectedStoreId: string | null;
   isAuthenticated: boolean;
 }
 
 interface AuthActions {
   setAuth: (token: string | null) => void;
   setUser: (user: CurrentUserData | null) => void;
-  setSelectedStore: (storeId: number | null) => void;
+  setSelectedStore: (storeId: string | null) => void;
   clearAuth: () => void;
 }
 

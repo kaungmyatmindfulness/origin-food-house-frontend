@@ -3,11 +3,11 @@ import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 interface MenuState {
-  editMenuItemId: number | null;
+  editMenuItemId: string | null;
 }
 
 interface MenuActions {
-  setEditMenuItemId: (itemId: number | null) => void;
+  setEditMenuItemId: (itemId: string | null) => void;
 }
 
 const initialState: MenuState = {

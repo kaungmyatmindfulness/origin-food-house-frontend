@@ -153,13 +153,13 @@ export function CategoryCard({
     if (!isEditingName) {
       return (
         <>
-          <h2 className="truncate text-lg font-semibold" title={category.name}>
+          <h2 className="text-lg font-semibold truncate" title={category.name}>
             {category.name}
           </h2>
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 shrink-0 text-gray-500 hover:text-gray-800"
+            className="w-6 h-6 text-gray-500 shrink-0 hover:text-gray-800"
             onClick={handleStartEditing}
             aria-label={`Edit name for category ${category.name}`}
             disabled={
@@ -168,7 +168,7 @@ export function CategoryCard({
               deleteCategoryMutation.isPending
             }
           >
-            <Edit className="h-4 w-4" />
+            <Edit className="w-4 h-4" />
           </Button>
         </>
       );
@@ -179,7 +179,7 @@ export function CategoryCard({
         <form
           onSubmit={renameForm.handleSubmit(handleRenameSubmit)}
           onReset={handleCancelEdit}
-          className="flex flex-grow items-start gap-2"
+          className="flex items-start flex-grow gap-2"
         >
           <FormField
             control={renameForm.control}
@@ -206,25 +206,25 @@ export function CategoryCard({
             type="submit"
             variant="ghost"
             size="icon"
-            className="h-8 w-8 shrink-0 text-green-600 hover:bg-green-100"
+            className="w-8 h-8 text-green-600 shrink-0 hover:bg-green-100"
             aria-label="Confirm rename"
             disabled={renameCategoryMutation.isPending}
           >
             {renameCategoryMutation.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              <Check className="h-4 w-4" />
+              <Check className="w-4 h-4" />
             )}
           </Button>
           <Button
             type="reset"
             variant="ghost"
             size="icon"
-            className="h-8 w-8 shrink-0 text-red-600 hover:bg-red-100"
+            className="w-8 h-8 text-red-600 shrink-0 hover:bg-red-100"
             aria-label="Cancel rename"
             disabled={renameCategoryMutation.isPending}
           >
-            <X className="h-4 w-4" />
+            <X className="w-4 h-4" />
           </Button>
         </form>
       </Form>
@@ -233,7 +233,6 @@ export function CategoryCard({
 
   return (
     <>
-      {' '}
       {/* Added Fragment to contain section + dialog */}
       <section
         aria-labelledby={`category-title-${category.id}`}
@@ -271,9 +270,9 @@ export function CategoryCard({
                 {/* Show loader if either mutation is pending */}
                 {deleteCategoryMutation.isPending ||
                 renameCategoryMutation.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
-                  <MoreVertical className="h-4 w-4" />
+                  <MoreVertical className="w-4 h-4" />
                 )}
               </Button>
             </PopoverTrigger>
@@ -288,7 +287,7 @@ export function CategoryCard({
                   renameCategoryMutation.isPending
                 }
               >
-                <Trash2 className="mr-2 h-4 w-4" />
+                <Trash2 className="w-4 h-4 mr-2" />
                 Delete Category
               </Button>
               {/* Add other actions like Move Up/Down if needed */}
@@ -298,11 +297,11 @@ export function CategoryCard({
 
         {/* Items Grid or Empty Message */}
         {isEmpty(category.menuItems) ? (
-          <div className="mt-3 px-2 py-4 text-center text-sm text-gray-500 italic dark:text-gray-400">
+          <div className="px-2 py-4 mt-3 text-sm italic text-center text-gray-500 dark:text-gray-400">
             No menu items in this category yet.
           </div>
         ) : (
-          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-3 mt-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {category.menuItems?.map((item) => (
               <ItemCard key={item.id} item={item} onSelect={onSelectItem} />
             ))}
@@ -316,7 +315,7 @@ export function CategoryCard({
         title={`Delete Category: ${category.name}`}
         description={
           <>
-            Are you sure you want to permanently delete the category{' '}
+            Are you sure you want to permanently delete the category
             <strong>{category.name}</strong>? This action cannot be undone.
           </>
         }

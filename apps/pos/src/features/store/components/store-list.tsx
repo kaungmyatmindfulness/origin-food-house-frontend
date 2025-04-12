@@ -7,7 +7,7 @@ import { UserStore } from '@/features/user/types/user.types';
 
 interface StoreListProps {
   userStores: UserStore[];
-  onSelect: (storeId: number) => void;
+  onSelect: (storeId: string) => void;
 }
 
 export function StoreList({ userStores, onSelect }: StoreListProps) {

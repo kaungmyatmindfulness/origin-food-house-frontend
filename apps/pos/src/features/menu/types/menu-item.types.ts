@@ -3,7 +3,7 @@
  * If ID is provided, links/updates existing. If only name, creates new.
  */
 export interface UpsertCategoryDto {
-  id?: number;
+  id?: string;
   name: string;
 }
 
@@ -12,7 +12,7 @@ export interface UpsertCategoryDto {
  * Provide ID to update existing, omit ID to create new.
  */
 export interface UpsertCustomizationOptionDto {
-  id?: number;
+  id?: string;
   name: string;
   additionalPrice?: string;
 }
@@ -22,7 +22,7 @@ export interface UpsertCustomizationOptionDto {
  * Provide ID to update existing, omit ID to create new.
  */
 export interface UpsertCustomizationGroupDto {
-  id?: number;
+  id?: string;
   name: string;
   minSelectable?: number;
   maxSelectable?: number;
@@ -33,7 +33,7 @@ export interface UpsertCustomizationGroupDto {
  * Represents a Category object as returned within a MenuItemDto.
  */
 export interface CategoryDto {
-  id: number;
+  id: string;
   name: string;
 }
 
@@ -41,7 +41,7 @@ export interface CategoryDto {
  * Represents a Customization Option object as returned within a MenuItemDto.
  */
 export interface CustomizationOptionDto {
-  id: number;
+  id: string;
   name: string;
   additionalPrice: string;
 }
@@ -50,7 +50,7 @@ export interface CustomizationOptionDto {
  * Represents a Customization Group object as returned within a MenuItemDto.
  */
 export interface CustomizationGroupDto {
-  id: number;
+  id: string;
   name: string;
   required: boolean;
   minSelectable: number;
@@ -77,7 +77,7 @@ export type UpdateMenuItemDto = CreateMenuItemDto;
  * Represents a full MenuItem object as returned by the API (e.g., in GET responses).
  */
 export interface MenuItemDto {
-  id: number;
+  id: string;
   name: string;
   description?: string | null;
   basePrice: string;
@@ -88,13 +88,13 @@ export interface MenuItemDto {
 }
 
 export interface MenuItem {
-  id: number;
+  id: string;
   name: string;
   description?: string | null;
   basePrice: string;
   imageUrl?: string | null;
-  categoryId: number;
-  storeId: number;
+  categoryId: string;
+  storeId: string;
   createdAt: string;
   updatedAt: string;
 }

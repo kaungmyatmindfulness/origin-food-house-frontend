@@ -31,12 +31,13 @@ export default function ChooseStorePage() {
     queryFn: () => getCurrentUser(selectedStoreId!),
     enabled: !!accessToken,
   });
+  console.log('📝 -> ChooseStorePage -> user:', user);
 
   const chooseStoreMutation = useMutation({
-    mutationFn: (storeId: number) => loginWithStore({ storeId }),
+    mutationFn: (storeId: string) => loginWithStore({ storeId }),
   });
 
-  const handleStoreSelect = async (storeId: number) => {
+  const handleStoreSelect = async (storeId: string) => {
     try {
       const res = await chooseStoreMutation.mutateAsync(storeId);
 

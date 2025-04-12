@@ -98,9 +98,9 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
       >
         <div className="relative w-full h-32">
           <img
-            src={item.imageUrl || '/placeholder-image.svg'}
+            src={item.imageUrl || '/no-image.svg'}
             alt={item.name}
-            className="object-cover w-full h-full"
+            className="object-cover w-full h-full border-b border-gray-200"
             loading="lazy"
           />
 

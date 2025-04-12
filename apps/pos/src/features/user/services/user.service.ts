@@ -61,7 +61,7 @@ export async function addUserToStore(
  * @returns A promise resolving to an array of UserStoreRole objects.
  * @throws {NetworkError | ApiError | UnauthorizedError} - Throws on fetch/API errors. Throws Error if data is null on success.
  */
-export async function getUserStores(userId: number): Promise<UserStoreRole[]> {
+export async function getUserStores(userId: string): Promise<UserStoreRole[]> {
   const res = await apiFetch<UserStoreRole[]>(`/users/${userId}/stores`);
 
   if (res.data == null) {
@@ -80,7 +80,7 @@ export async function getUserStores(userId: number): Promise<UserStoreRole[]> {
  * @throws {NetworkError | ApiError | UnauthorizedError} - Throws on fetch/API errors. Throws Error if data is null on success.
  */
 export async function getCurrentUser(
-  storeId?: number
+  storeId?: string
 ): Promise<CurrentUserData> {
   const res = await apiFetch<CurrentUserData>({
     path: '/users/me',

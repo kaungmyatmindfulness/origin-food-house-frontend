@@ -16,9 +16,20 @@ export interface InviteOrAssignRoleDto {
 }
 
 /** Represents a store returned by the backend */
-export interface Store {
-  id: number;
+
+export interface Information {
+  id: string;
+  storeId: string;
   name: string;
   address?: string;
   phone?: string;
+  email?: string;
+  website?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+export interface Store {
+  id: string;
+  slug: string;
+  information: Information;
 }

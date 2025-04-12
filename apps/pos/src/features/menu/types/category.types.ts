@@ -1,18 +1,18 @@
 export interface Category {
-  id: number;
+  id: string;
   name: string;
-  storeId: number;
+  storeId: string;
   sortOrder: number;
   createdAt?: string;
   updatedAt?: string;
   menuItems?: Array<{
-    id: number;
+    id: string;
     name: string;
     description: string;
     basePrice: string;
     imageUrl: string;
-    categoryId: number;
-    storeId: number;
+    categoryId: string;
+    storeId: string;
     sortOrder: number;
     createdAt: string;
     updatedAt: string;
@@ -28,12 +28,12 @@ export interface UpdateCategoryDto {
 }
 
 export interface SortMenuItemDto {
-  id: number;
+  id: string;
   sortOrder: number;
 }
 
 export interface SortCategoryDto {
-  id: number;
+  id: string;
   sortOrder: number;
   menuItems: SortMenuItemDto[];
 }

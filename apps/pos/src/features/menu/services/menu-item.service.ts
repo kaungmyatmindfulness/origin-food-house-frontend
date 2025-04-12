@@ -9,7 +9,7 @@ import type {
 const MENU_ENDPOINT = '/menu-items';
 
 export async function getStoreMenuItems(
-  storeId: number
+  storeId: string
 ): Promise<MenuItemDto[]> {
   const res = await apiFetch<MenuItemDto[]>(
     `${MENU_ENDPOINT}?storeId=${storeId}`
@@ -25,7 +25,7 @@ export async function getStoreMenuItems(
 }
 
 export async function createMenuItem(
-  storeId: number,
+  storeId: string,
   data: CreateMenuItemDto
 ): Promise<MenuItemDto> {
   const res = await apiFetch<MenuItemDto>(
@@ -50,7 +50,7 @@ export async function createMenuItem(
   return res.data;
 }
 
-export async function getMenuItemById(id: number): Promise<MenuItemDto> {
+export async function getMenuItemById(id: string): Promise<MenuItemDto> {
   const res = await apiFetch<MenuItemDto>(`${MENU_ENDPOINT}/${id}`);
 
   if (!res.data) {
@@ -63,8 +63,8 @@ export async function getMenuItemById(id: number): Promise<MenuItemDto> {
 }
 
 export async function updateMenuItem(
-  id: number,
-  storeId: number,
+  id: string,
+  storeId: string,
   data: UpdateMenuItemDto
 ): Promise<MenuItemDto> {
   const res = await apiFetch<MenuItemDto>(`${MENU_ENDPOINT}/${id}`, {
@@ -84,8 +84,8 @@ export async function updateMenuItem(
 }
 
 export async function deleteMenuItem(
-  storeId: number,
-  id: number
+  storeId: string,
+  id: string
 ): Promise<unknown> {
   const res = await apiFetch<unknown>(
     { path: `${MENU_ENDPOINT}/${id}`, query: { storeId } },

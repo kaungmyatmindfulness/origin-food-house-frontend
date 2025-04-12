@@ -25,7 +25,7 @@ export async function createStore(data: CreateStoreDto): Promise<Store> {
 
 /** PUT /stores/{id}: Update a store (OWNER or ADMIN only) */
 export async function updateStore(
-  id: number,
+  id: string,
   data: UpdateStoreDto
 ): Promise<Store> {
   const res: StandardApiResponse<Store> = await apiFetch<Store>(
@@ -47,7 +47,7 @@ export async function updateStore(
  * Invite/assign role by email; OWNER can assign any role, ADMIN can assign CASHIER/CHEF.
  */
 export async function inviteOrAssignRoleByEmail(
-  id: number,
+  id: string,
   data: InviteOrAssignRoleDto
 ): Promise<Store> {
   const res: StandardApiResponse<Store> = await apiFetch<Store>(

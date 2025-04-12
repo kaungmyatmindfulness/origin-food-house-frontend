@@ -6,14 +6,16 @@ import { UserStore } from '@/features/user/types/user.types';
 
 interface StoreCardProps {
   userStore: UserStore;
-  onSelect: (storeId: number) => void;
+  onSelect: (storeId: string) => void;
 }
 
 export const StoreCard: React.FC<StoreCardProps> = ({
   userStore,
   onSelect,
 }) => {
+  console.log('📝 -> userStore:', userStore);
   const { store, role } = userStore;
+  const { information } = store;
 
   return (
     <li>
@@ -24,15 +26,15 @@ export const StoreCard: React.FC<StoreCardProps> = ({
           'w-full cursor-pointer rounded-lg border bg-white p-4 shadow-sm transition-all hover:shadow-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none',
           'text-left'
         )}
-        aria-label={`Select store ${store.name}, role ${role}`}
+        aria-label={`Select store ${information.name}, role ${role}`}
       >
         <div className="mb-2">
-          <h3 className="text-lg font-semibold">{store.name}</h3>
-          {store.address && (
-            <p className="text-sm text-gray-600">{store.address}</p>
+          <h3 className="text-lg font-semibold">{information.name}</h3>
+          {information.address && (
+            <p className="text-sm text-gray-600">{information.address}</p>
           )}
-          {store.phone && (
-            <p className="text-sm text-gray-600">{store.phone}</p>
+          {information.phone && (
+            <p className="text-sm text-gray-600">{information.phone}</p>
           )}
         </div>
         <div className="mt-2">
