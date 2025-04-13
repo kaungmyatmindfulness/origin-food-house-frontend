@@ -67,10 +67,13 @@ export async function updateMenuItem(
   storeId: string,
   data: UpdateMenuItemDto
 ): Promise<MenuItemDto> {
-  const res = await apiFetch<MenuItemDto>(`${MENU_ENDPOINT}/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(data),
-  });
+  const res = await apiFetch<MenuItemDto>(
+    { path: `${MENU_ENDPOINT}/${id}`, query: { storeId } },
+    {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }
+  );
 
   if (!res.data) {
     console.error(

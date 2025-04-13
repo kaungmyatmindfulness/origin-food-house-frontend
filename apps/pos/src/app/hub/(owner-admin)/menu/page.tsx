@@ -31,7 +31,7 @@ export default function MenuPage() {
   const setEditMenuItemId = useMenuStore((state) => state.setEditMenuItemId);
 
   // const [viewItem, setViewItem] = React.useState<MenuItem | null>(null);
-  const [viewItemId, setViewItemId] = React.useState<number | null>(null);
+  const [viewItemId, setViewItemId] = React.useState<string | null>(null);
 
   const { data: categories = [] } = useQuery({
     queryKey: [

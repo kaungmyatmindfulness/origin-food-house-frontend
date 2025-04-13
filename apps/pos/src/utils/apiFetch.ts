@@ -6,6 +6,7 @@ import type {
 } from '@/common/types/api.types';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { toast } from 'sonner';
+import router from 'next/router';
 
 export class FetchError extends Error {
   constructor(message: string) {
@@ -110,7 +111,6 @@ export async function apiFetch<T>(
     throw new Error(invalidUrlMsg);
   }
 
-  const token = useAuthStore.getState().accessToken;
   const clearAuth = useAuthStore.getState().clearAuth;
   const headers = new Headers(options.headers);
 
@@ -127,11 +127,12 @@ export async function apiFetch<T>(
   ) {
     headers.set('Content-Type', 'application/json');
   }
-  if (token) {
-    headers.set('Authorization', `Bearer ${token}`);
-  }
 
-  const finalOptions: RequestInit = { ...options, headers };
+  const finalOptions: RequestInit = {
+    ...options,
+    headers,
+    credentials: 'include',
+  };
   let response: Response;
   try {
     response = await fetch(requestUrl.toString(), finalOptions);
@@ -171,8 +172,14 @@ export async function apiFetch<T>(
     });
 
     if (status === 401) {
-      clearAuth();
+      try {
+        useAuthStore.getState().clearAuth();
+      } catch (stateError) {
+        console.error('Failed to update auth store on 401:', stateError);
+      }
       throw new UnauthorizedError(errMsg, json);
+    } else if (status === 403) {
+      throw new ApiError(errMsg, status, json);
     } else {
       throw new ApiError(errMsg, status, json);
     }
@@ -180,7 +187,6 @@ export async function apiFetch<T>(
 
   if (response.ok && json === null && response.status !== 204) {
     const nullErrorMsg = `API Error: Received successful status ${response.status} but invalid/null JSON body from ${requestUrl.pathname}`;
-
     throw new ApiError(nullErrorMsg, response.status, null);
   }
 

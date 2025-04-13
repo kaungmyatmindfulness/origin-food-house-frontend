@@ -1,25 +1,22 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import type { CurrentUserData } from '@/features/user/types/user.types';
 
 interface AuthState {
-  accessToken: string | null;
-  user: CurrentUserData | null;
   selectedStoreId: string | null;
+  /** Reflects the last known authentication status based on API responses (esp. 401). */
   isAuthenticated: boolean;
 }
 
 interface AuthActions {
-  setAuth: (token: string | null) => void;
-  setUser: (user: CurrentUserData | null) => void;
   setSelectedStore: (storeId: string | null) => void;
+  /** Explicitly sets the authenticated status (e.g., based on API errors). */
+  setAuthenticated: (isAuthenticated: boolean) => void;
+  /** Clears authentication state. */
   clearAuth: () => void;
 }
 
 const initialState: AuthState = {
-  accessToken: null,
-  user: null,
   selectedStoreId: null,
   isAuthenticated: false,
 };
@@ -30,45 +27,41 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       immer((set) => ({
         ...initialState,
 
-        setAuth: (token) =>
-          set((draft) => {
-            draft.accessToken = token;
-            draft.isAuthenticated = !!token;
-          }),
-
-        setUser: (user) =>
-          set((draft) => {
-            draft.user = user;
-          }),
-
         setSelectedStore: (storeId) =>
           set((draft) => {
             draft.selectedStoreId = storeId;
           }),
 
+        setAuthenticated: (isAuth) =>
+          set((draft) => {
+            draft.isAuthenticated = isAuth;
+
+            if (!isAuth) {
+              draft.selectedStoreId = null;
+            }
+          }),
+
         clearAuth: () =>
           set((draft) => {
-            draft.accessToken = null;
-            draft.user = null;
             draft.selectedStoreId = null;
             draft.isAuthenticated = false;
           }),
       })),
-
       {
         name: 'auth-storage',
+
+        partialize: (state) => ({
+          selectedStoreId: state.selectedStoreId,
+        }),
       }
     ),
-
     {
       name: 'auth-store',
     }
   )
 );
 
-export const selectIsAuthenticated = (state: AuthState) =>
-  state.isAuthenticated;
-export const selectUser = (state: AuthState) => state.user;
 export const selectSelectedStoreId = (state: AuthState) =>
   state.selectedStoreId;
-export const selectAccessToken = (state: AuthState) => state.accessToken;
+export const selectIsAuthenticated = (state: AuthState) =>
+  state.isAuthenticated;

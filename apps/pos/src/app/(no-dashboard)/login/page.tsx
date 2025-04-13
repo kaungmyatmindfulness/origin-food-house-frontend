@@ -9,7 +9,6 @@ import { z } from 'zod';
 
 import { login } from '@/features/auth/services/auth.service';
 import {
-  selectAccessToken,
   selectSelectedStoreId,
   useAuthStore,
 } from '@/features/auth/store/auth.store';
@@ -25,7 +24,7 @@ import {
   FormMessage,
 } from '@repo/ui/components/form';
 import { Input } from '@repo/ui/components/input';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address.'),
@@ -33,80 +32,65 @@ const loginSchema = z.object({
 });
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+const userQueryKey = ['user', 'currentUser'];
+
 export default function LoginPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
-  const accessToken = useAuthStore(selectAccessToken);
-  const setAuth = useAuthStore((state) => state.setAuth);
 
   const {
     data: user,
     isLoading: isUserLoading,
-    error: userError,
+    isFetching: isUserFetching,
+    isError: isUserError,
   } = useQuery({
-    queryKey: [
-      'user',
-      {
-        accessToken,
-      },
-    ],
+    queryKey: userQueryKey,
     queryFn: () => getCurrentUser(),
-    enabled: !!accessToken,
   });
 
-  // React Query: login mutation
   const loginMutation = useMutation({
     mutationFn: login,
-  });
-
-  // Form setup using React Hook Form + Zod
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
+    onSuccess: () => {
+      toast.success('Login successful!');
+      queryClient.invalidateQueries({ queryKey: userQueryKey });
     },
   });
 
-  // Handle login submission
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' },
+  });
+
   async function onSubmit(values: LoginFormValues) {
-    try {
-      const response = await loginMutation.mutateAsync(values);
-      if (!response.data?.access_token) {
-        toast.error(
-          'Login failed: No access token received. Please check your credentials.'
-        );
-        return;
-      }
-      setAuth(response.data.access_token);
-    } catch (error) {
-      console.error('Login failed:', error);
-      // Optionally show a toast or local error
-    }
+    loginMutation.mutate(values);
   }
 
-  // Redirect based on authentication and user data
   useEffect(() => {
-    if (!accessToken) return;
-    if (isUserLoading) return;
-    if (userError) return;
-
-    if (selectedStoreId) {
-      if (user?.currentRole !== 'CHEF') {
-        router.replace('/hub/sale');
+    if (!isUserLoading && !isUserFetching && user && !isUserError) {
+      if (selectedStoreId) {
+        if (user?.selectedStoreRole !== 'CHEF') {
+          router.replace('/hub/sale');
+        } else {
+          router.replace('/hub/kds');
+        }
+      } else if (user?.userStores?.length) {
+        router.replace('/store/choose');
       } else {
-        router.replace('/hub/kds');
+        router.replace('/store/create');
       }
-    } else if (user?.userStores?.length) {
-      router.replace('/store/choose');
-    } else {
-      router.replace('/store/create');
     }
-  }, [accessToken, isUserLoading, user, userError, router, selectedStoreId]);
+  }, [
+    user,
+    isUserLoading,
+    isUserFetching,
+    isUserError,
+    router,
+    selectedStoreId,
+  ]);
 
-  // Combined loading state
-  const isLoading = loginMutation.isPending || isUserLoading;
+  const isLoading = loginMutation.isPending || isUserLoading || isUserFetching;
 
   return (
     <main className="flex min-h-[calc(100dvh-160px)] items-center justify-center bg-gray-50 p-4">
@@ -125,6 +109,7 @@ export default function LoginPage() {
         <div className="rounded bg-white p-6 shadow-sm">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {/* FormFields remain the same */}
               <FormField
                 control={form.control}
                 name="email"
@@ -138,7 +123,6 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="password"
@@ -157,19 +141,12 @@ export default function LoginPage() {
                 )}
               />
 
-              {/* Show mutation error if any */}
-              {loginMutation.error && (
-                <p className="text-sm text-red-600">
-                  {(loginMutation.error as Error).message}
-                </p>
-              )}
-
               <Button
                 type="submit"
                 disabled={isLoading}
                 className="mt-2 w-full"
               >
-                {isLoading ? 'Logging in...' : 'Login'}
+                {isLoading ? 'Processing...' : 'Login'}
               </Button>
 
               <p className="mt-4 text-center text-sm text-gray-600">

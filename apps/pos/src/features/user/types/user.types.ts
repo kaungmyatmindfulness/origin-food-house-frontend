@@ -138,5 +138,5 @@ export interface CurrentUserData {
   email: string;
   name: string;
   userStores: UserStore[];
-  currentRole: UserRole | null;
+  selectedStoreRole: UserRole | null;
 }

@@ -168,7 +168,7 @@ export function MenuItemFormDialog({
       return getMenuItemById(editItemId);
     },
 
-    enabled: mode === 'edit' && typeof editItemId === 'number',
+    enabled: mode === 'edit' && typeof editItemId === 'string',
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000,
   });
@@ -277,8 +277,8 @@ export function MenuItemFormDialog({
 
   const updateMenuItemMutation = useMutation({
     mutationFn: (dto: UpdateMenuItemDto) => {
-      if (!selectedStoreId) throw new Error('Store ID required for update.');
       if (!editItemId) throw new Error('Item ID required for update.');
+      if (!selectedStoreId) throw new Error('Store ID required for update.');
 
       return updateMenuItem(editItemId, selectedStoreId, dto);
     },
@@ -325,9 +325,7 @@ export function MenuItemFormDialog({
     const baseSubmitData = {
       name: values.name,
       description: values.description || undefined,
-
       basePrice: String(values.basePrice),
-
       imageUrl: values.imageUrl || undefined,
       category: submitCategory,
       customizationGroups:
@@ -337,7 +335,6 @@ export function MenuItemFormDialog({
           maxSelectable: group.maxSelectable,
           options: group.options.map((opt) => ({
             name: opt.name,
-
             additionalPrice: String(opt.additionalPrice),
           })),
         })) ?? [],
