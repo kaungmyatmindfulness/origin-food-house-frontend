@@ -54,7 +54,7 @@ export default function MenuPage() {
 
   return (
     <>
-      <div className="p-4 space-y-6">
+      <div className="space-y-6">
         <nav className="mb-4 text-sm text-gray-500">
           Home &gt; <span className="text-gray-800">Menu</span>
         </nav>
@@ -65,7 +65,7 @@ export default function MenuPage() {
             className="flex items-center"
             onClick={() => setItemFormOpen(true)}
           >
-            <Plus className="w-4 h-4 mr-1" /> Create Menu Item
+            <Plus className="mr-1 h-4 w-4" /> Create Menu Item
           </Button>
           <MenuItemFormDialog
             mode="create"
@@ -82,7 +82,7 @@ export default function MenuPage() {
             className="flex items-center"
             onClick={() => setReorderMenuOpen(true)}
           >
-            <GripVertical className="w-4 h-4 mr-1" /> Reorder Menu
+            <GripVertical className="mr-1 h-4 w-4" /> Reorder Menu
           </Button>
           <ReorderMenuDialog
             open={reorderMenuOpen}

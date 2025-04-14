@@ -60,7 +60,7 @@ const navSections: NavItem[][] = [
       subItems: [
         {
           label: 'Information',
-          href: '/hub/store/info',
+          href: '/hub/store/information',
           icon: <Info className="mr-2 h-3 w-3 text-gray-500" />,
         },
         {

@@ -1,57 +1,77 @@
-// apps/pos/features/store/services/store.service.ts
-
 import { apiFetch } from '@/utils/apiFetch';
 import { StandardApiResponse } from '@/common/types/api.types';
 import {
   CreateStoreDto,
-  UpdateStoreDto,
-  InviteOrAssignRoleDto,
   Store,
+  StoreSettingResponseDto,
+  UpdateStoreSettingDto,
+  GetStoreDetailsResponseDto,
+  UpdateStoreInformationDto,
 } from '../types/store.types';
 
-/** POST /stores: Create a store (creator is OWNER) */
-export async function createStore(data: CreateStoreDto): Promise<Store> {
-  const res: StandardApiResponse<Store> = await apiFetch<Store>('/stores', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
-  if (res.status === 'error' || !res.data) {
+const STORE_ENDPOINT_BASE = '/stores';
+
+export async function getStoreDetails(
+  id: string
+): Promise<GetStoreDetailsResponseDto> {
+  const res = await apiFetch<GetStoreDetailsResponseDto>(
+    `${STORE_ENDPOINT_BASE}/${id}`
+  );
+
+  if (!res.data) {
+    console.error(
+      `API Error: getStoreDetails(id: ${id}) succeeded but returned null data.`
+    );
     throw new Error(
-      res.errors?.[0]?.message || res.message || 'Failed to create store'
+      'Failed to retrieve store details: No data returned by API.'
     );
   }
   return res.data;
 }
 
-/** PUT /stores/{id}: Update a store (OWNER or ADMIN only) */
-export async function updateStore(
+export async function updateStoreInformation(
   id: string,
-  data: UpdateStoreDto
-): Promise<Store> {
-  const res: StandardApiResponse<Store> = await apiFetch<Store>(
-    `/stores/${id}`,
+  storeIdQuery: string,
+  data: UpdateStoreInformationDto
+): Promise<void> {
+  await apiFetch<null>(
+    {
+      path: `${STORE_ENDPOINT_BASE}/${id}/information`,
+      query: { storeId: storeIdQuery },
+    },
     {
       method: 'PUT',
       body: JSON.stringify(data),
     }
   );
-  if (res.status === 'error' || !res.data) {
+}
+
+export async function updateStoreSettings(
+  id: string,
+  data: UpdateStoreSettingDto
+): Promise<StoreSettingResponseDto> {
+  const res = await apiFetch<StoreSettingResponseDto>(
+    `${STORE_ENDPOINT_BASE}/${id}/settings`,
+    {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!res.data) {
+    console.error(
+      `API Error: updateStoreSettings(id: ${id}) succeeded but returned null data.`
+    );
     throw new Error(
-      res.errors?.[0]?.message || res.message || 'Failed to update store'
+      'Failed to update store settings: No data returned by API.'
     );
   }
   return res.data;
 }
 
-/** POST /stores/{id}/invite-by-email:
- * Invite/assign role by email; OWNER can assign any role, ADMIN can assign CASHIER/CHEF.
- */
-export async function inviteOrAssignRoleByEmail(
-  id: string,
-  data: InviteOrAssignRoleDto
-): Promise<Store> {
+export async function createStore(data: CreateStoreDto): Promise<Store> {
   const res: StandardApiResponse<Store> = await apiFetch<Store>(
-    `/stores/${id}/invite-by-email`,
+    STORE_ENDPOINT_BASE,
     {
       method: 'POST',
       body: JSON.stringify(data),
@@ -59,9 +79,7 @@ export async function inviteOrAssignRoleByEmail(
   );
   if (res.status === 'error' || !res.data) {
     throw new Error(
-      res.errors?.[0]?.message ||
-        res.message ||
-        'Failed to invite/assign role to store'
+      res.errors?.[0]?.message || res.message || 'Failed to create store'
     );
   }
   return res.data;

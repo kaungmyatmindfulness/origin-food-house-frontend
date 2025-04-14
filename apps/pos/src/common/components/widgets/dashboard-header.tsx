@@ -28,36 +28,39 @@ export function DashboardHeader() {
   }
 
   return (
-    <header className="fixed top-0 right-0 left-0 z-10 flex h-15 items-center justify-between border-b bg-white p-4 shadow-sm">
-      {/* Logo */}
-      <div>
-        <Link href="/hub-sales" className="text-lg font-bold text-gray-800">
-          <Image src="/logo.svg" alt="Logo" width={64} height={32} />
-        </Link>
-      </div>
+    <>
+      <header className="fixed top-0 right-0 left-0 z-10 flex h-15 items-center justify-between border-b bg-white p-4 shadow-sm">
+        {/* Logo */}
+        <div>
+          <Link href="/hub-sales" className="text-lg font-bold text-gray-800">
+            <Image src="/logo.svg" alt="Logo" width={64} height={32} />
+          </Link>
+        </div>
 
-      {/* Right: Notification & Account */}
-      <div className="flex items-center space-x-4">
-        {/* Notification popover */}
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="ghost" aria-label="Open notifications">
-              <Bell className="h-4 w-4" />
-            </Button>
-          </PopoverTrigger>
-          <NotificationPopover />
-        </Popover>
+        {/* Right: Notification & Account */}
+        <div className="flex items-center space-x-4">
+          {/* Notification popover */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" aria-label="Open notifications">
+                <Bell className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <NotificationPopover />
+          </Popover>
 
-        {/* Account popover */}
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="ghost" aria-label="Open account menu">
-              <User className="h-4 w-4" />
-            </Button>
-          </PopoverTrigger>
-          <AccountPopover onLogout={handleLogout} />
-        </Popover>
-      </div>
-    </header>
+          {/* Account popover */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" aria-label="Open account menu">
+                <User className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <AccountPopover onLogout={handleLogout} />
+          </Popover>
+        </div>
+      </header>
+      <div className="h-15"></div>
+    </>
   );
 }
