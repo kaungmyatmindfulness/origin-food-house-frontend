@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../../../components/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
@@ -8,45 +9,29 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Warm, off‑white background */
   --background: #ffffff;
   --foreground: #3a1414;
-
   --card: var(--background);
   --card-foreground: var(--foreground);
-
   --popover: var(--background);
   --popover-foreground: var(--foreground);
-
-  /* Primary = vivid food‑red */
   --primary: #e63946;
   --primary-foreground: #ffffff;
-
-  /* Soft, light red for secondary surfaces */
   --secondary: #fad9d9;
   --secondary-foreground: #3a1414;
-
-  /* Stronger red accent */
   --accent: #d62828;
   --accent-foreground: #ffffff;
-
-  /* Destructive = deep tomato red */
   --destructive: #b00020;
-  --destructive-foreground: #ffffff;
-
-  /* Neutral borders/inputs */
+  --destructive-foreground: #b00020;
   --border: #e2e2e2;
   --input: #e2e2e2;
   --ring: #e63946;
-
   --chart-1: #ef233c;
   --chart-2: #d90429;
   --chart-3: #9d0208;
   --chart-4: #8d0801;
   --chart-5: #6a040f;
-
   --radius: 0.625rem;
-
   --sidebar: var(--background);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
@@ -55,7 +40,6 @@
   --sidebar-accent-foreground: var(--accent-foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
-
   --gradient-1: #1520a6;
   --gradient-2: #e63946;
 }
@@ -71,8 +55,6 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
@@ -105,5 +87,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
