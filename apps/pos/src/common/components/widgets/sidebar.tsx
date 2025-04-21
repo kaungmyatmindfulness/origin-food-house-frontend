@@ -18,6 +18,7 @@ import {
   LayoutGrid,
   DollarSign,
   History,
+  QrCode,
 } from 'lucide-react';
 import { cn } from '@repo/ui/lib/utils';
 
@@ -34,29 +35,28 @@ interface NavItem {
   subItems?: NavSubItem[];
 }
 
-// Sample nav structure
 const navSections: NavItem[][] = [
   [
     {
       label: 'Sale',
-      icon: <ShoppingCart className="h-4 w-4" />,
+      icon: <ShoppingCart className="mr-2 h-3 w-3 text-gray-500" />,
       href: '/hub/sale',
     },
     {
       label: 'Kitchen Display',
-      icon: <ChefHat className="h-4 w-4" />,
+      icon: <ChefHat className="mr-2 h-3 w-3 text-gray-500" />,
       href: '/hub/kds',
     },
   ],
   [
     {
       label: 'Menu',
-      icon: <MenuIcon className="h-4 w-4" />,
+      icon: <MenuIcon className="mr-2 h-3 w-3 text-gray-500" />,
       href: '/hub/menu',
     },
     {
       label: 'Store',
-      icon: <Settings className="h-4 w-4" />,
+      icon: <Settings className="mr-2 h-3 w-3 text-gray-500" />,
       subItems: [
         {
           label: 'Information',
@@ -68,10 +68,22 @@ const navSections: NavItem[][] = [
           href: '/hub/store/settings',
           icon: <Settings className="mr-2 h-3 w-3 text-gray-500" />,
         },
+      ],
+    },
+
+    {
+      label: 'Tables',
+      icon: <LayoutGrid className="mr-2 h-3 w-3 text-gray-500" />,
+      subItems: [
         {
-          label: 'Tables',
-          href: '/hub/store/tables',
-          icon: <LayoutGrid className="mr-2 h-3 w-3 text-gray-500" />,
+          label: 'Manage',
+          href: '/hub/tables/manage',
+          icon: <List className="mr-2 h-3 w-3 text-gray-500" />,
+        },
+        {
+          label: 'QR Codes',
+          href: '/hub/tables/qr-code',
+          icon: <QrCode className="mr-2 h-3 w-3 text-gray-500" />,
         },
       ],
     },
@@ -79,12 +91,12 @@ const navSections: NavItem[][] = [
   [
     {
       label: 'Members',
-      icon: <Users className="h-4 w-4" />,
+      icon: <Users className="mr-2 h-3 w-3 text-gray-500" />,
       href: '/hub/members',
     },
     {
       label: 'Reports',
-      icon: <BarChart3 className="h-4 w-4" />,
+      icon: <BarChart3 className="mr-2 h-3 w-3 text-gray-500" />,
       subItems: [
         {
           label: 'Sales',
@@ -113,7 +125,6 @@ function isItemActive(item: NavItem, pathname: string): boolean {
   return item.subItems?.some((sub) => pathname.startsWith(sub.href)) || false;
 }
 
-// Matches the Layout approach: 4rem collapsed, 16rem expanded
 const sidebarVariants: Variants = {
   collapsed: {
     width: '4rem',
@@ -152,7 +163,7 @@ export function DashboardSidebar({
           aria-label="Toggle sidebar collapse"
         >
           {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="mr-2 h-3 w-3 text-gray-500" />
           ) : (
             <>
               <ChevronLeft className="mr-1 h-4 w-4" />
@@ -185,7 +196,7 @@ export function DashboardSidebar({
                     </Link>
                   );
                 }
-                // sub items
+
                 const subActive = active && !collapsed;
                 return (
                   <div key={item.label} className="px-2 py-1">
