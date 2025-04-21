@@ -1,14 +1,8 @@
-/**
- * services/table.service.ts
- *
- * Service functions for interacting with table API endpoints.
- */
 import { apiFetch } from '@/utils/apiFetch';
 
 import type {
   TableResponseDto,
-  BatchReplaceTablesDto,
-  BatchOperationResponseDto,
+  BatchUpsertTableDto,
 } from '../types/table.types';
 
 const STORE_ENDPOINT_BASE = '/stores';
@@ -38,33 +32,34 @@ export async function getAllTables(
 }
 
 /**
- * Replaces ALL existing tables for a store with the provided list. (OWNER/ADMIN Required)
- * Maps to: PUT /stores/{storeId}/tables/batch-replace
+ * Synchronizes tables for a store. Creates/Updates tables based on the input list.
+ * Deletes any existing tables for the store that are NOT included in the input list (by ID).
+ * Requires OWNER/ADMIN permissions.
+ * Maps to: PUT /stores/{storeId}/tables/batch-sync
  *
- * @param storeId - The ID (UUID string) of the store whose tables are being replaced.
- * @param payload - The batch replacement payload containing the new list of tables.
- * @returns A promise resolving to the BatchOperationResponseDto (contains count).
+ * @param storeId - The ID (UUID string) of the store whose tables are being synchronized.
+ * @param payload - The synchronization payload containing the list of tables to upsert.
+ * @returns A promise resolving to the final list of tables (TableResponseDto[]) for the store after sync.
  * @throws {NetworkError | ApiError | UnauthorizedError | ForbiddenError} - Throws on fetch/API errors. Throws Error if data is null on success.
  */
-export async function replaceAllTables(
+export async function syncTables(
   storeId: string,
-  payload: BatchReplaceTablesDto
-): Promise<BatchOperationResponseDto> {
-  const res = await apiFetch<BatchOperationResponseDto>(
-    `${STORE_ENDPOINT_BASE}/${storeId}/tables/batch-replace`,
+  payload: BatchUpsertTableDto
+): Promise<TableResponseDto[]> {
+  const res = await apiFetch<TableResponseDto[]>(
+    `${STORE_ENDPOINT_BASE}/${storeId}/tables/batch-sync`,
     {
       method: 'PUT',
       body: JSON.stringify(payload),
     }
   );
 
-  if (!res.data) {
+  if (res.data == null) {
     console.error(
-      `API Error: replaceAllTables(storeId: ${storeId}) succeeded but returned null data.`
+      `API Error: syncTables(storeId: ${storeId}) succeeded but returned null/undefined data.`
     );
-    throw new Error(
-      'Failed to replace tables: No response data returned by API.'
-    );
+    throw new Error('Failed to sync tables: No response data returned by API.');
   }
+
   return res.data;
 }

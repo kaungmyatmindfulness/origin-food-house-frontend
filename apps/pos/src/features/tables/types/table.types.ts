@@ -11,31 +11,24 @@ export interface TableResponseDto {
 }
 
 /**
- * Represents the definition of a table when creating multiple tables in a batch.
- * Maps to: Schema BatchCreateTableDto
+ * Represents the data needed to create or update a single table within a batch sync.
+ * Maps to: Schema UpsertTableDto
  */
-export interface BatchCreateTableDto {
-  /** Display name or number for the table (must be unique within the batch and store) */
+export interface UpsertTableDto {
+  /** ID (UUID) of the table to update. Omit to create a new table. */
+  id?: string;
+  /** Display name or number for the table (must be unique within the store) */
   name: string;
 }
 
 /**
- * The payload structure for replacing all tables in a store.
- * Maps to: Schema BatchReplaceTablesDto (Request Body for PUT /stores/{storeId}/tables/batch-replace)
+ * The payload structure for synchronizing tables in a store.
+ * Maps to: Schema BatchUpsertTableDto (Request Body for PUT /stores/{storeId}/tables/batch-sync)
  */
-export interface BatchReplaceTablesDto {
+export interface BatchUpsertTableDto {
   /**
-   * An array of table definitions that will replace ALL existing tables for the store.
-   * Send an empty array to delete all tables.
+   * An array of table objects to create or update.
+   * Existing tables for the store NOT included in this list (by ID) will be deleted.
    */
-  tables: BatchCreateTableDto[];
-}
-
-/**
- * Represents the data returned after a successful batch operation (like replacing tables).
- * Maps to: Schema BatchOperationResponseDto
- */
-export interface BatchOperationResponseDto {
-  /** Number of records affected (e.g., tables created). */
-  count: number;
+  tables: UpsertTableDto[];
 }
