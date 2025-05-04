@@ -16,9 +16,6 @@ export async function getStoreMenuItems(
   );
 
   if (!res.data) {
-    console.error(
-      'API Error: getStoreMenuItems succeeded but returned null data.'
-    );
     throw new Error('Failed to retrieve menu items: No data returned by API.');
   }
   return res.data;

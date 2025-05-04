@@ -13,7 +13,6 @@ export const StoreCard: React.FC<StoreCardProps> = ({
   userStore,
   onSelect,
 }) => {
-  console.log('📝 -> userStore:', userStore);
   const { store, role } = userStore;
   const { information } = store;
 

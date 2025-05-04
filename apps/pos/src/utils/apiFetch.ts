@@ -6,7 +6,6 @@ import type {
 } from '@/common/types/api.types';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { toast } from 'sonner';
-import router from 'next/router';
 
 export class FetchError extends Error {
   constructor(message: string) {

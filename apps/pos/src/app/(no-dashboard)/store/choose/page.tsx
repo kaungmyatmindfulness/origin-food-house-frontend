@@ -1,25 +1,23 @@
 'use client';
 
+import { AlertCircle } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Loader2, AlertCircle } from 'lucide-react';
 
 import { loginWithStore } from '@/features/auth/services/auth.service';
-
 import {
-  useAuthStore,
   selectSelectedStoreId,
+  useAuthStore,
 } from '@/features/auth/store/auth.store';
 import { StoreList } from '@/features/store/components/store-list';
 import { StoreListSkeleton } from '@/features/store/components/store-list-skeleton';
 import { getCurrentUser } from '@/features/user/services/user.service';
-import type { CurrentUserData } from '@/features/user/types/user.types';
 import { Button } from '@repo/ui/components/button';
-import type { ApiError, UnauthorizedError } from '@/utils/apiFetch';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import type { CurrentUserData } from '@/features/user/types/user.types';
 const currentUserQueryKey = (storeId?: string | null) => [
   'currentUser',
   { storeId: storeId ?? 'context-free' },
