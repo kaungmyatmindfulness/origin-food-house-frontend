@@ -17,7 +17,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@repo/ui/components/tooltip';
-import { MenuItemFormData } from '@/features/menu/ui/menu-item-form-dialog';
+import { MenuItemFormData } from '@/features/menu/components/menu-item-form-dialog';
 
 interface CustomizationGroupFieldProps {
   groupIndex: number;

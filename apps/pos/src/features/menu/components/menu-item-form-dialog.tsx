@@ -21,7 +21,7 @@ import {
   CreateMenuItemDto,
   UpdateMenuItemDto,
 } from '@/features/menu/types/menu-item.types';
-import { CustomizationGroupField } from '@/features/menu/ui/customization-group-field';
+import { CustomizationGroupField } from '@/features/menu/components/customization-group-field';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@repo/ui/components/button';
 import { Checkbox } from '@repo/ui/components/checkbox';

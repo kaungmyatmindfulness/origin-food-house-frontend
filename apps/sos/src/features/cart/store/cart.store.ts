@@ -12,6 +12,7 @@ import {
   removeCartItem,
   clearMyCart,
 } from '@/features/cart/services/cart.service';
+import { debug } from '@/utils/debug';
 
 interface CartState {
   cart: Cart | null;
@@ -46,7 +47,7 @@ export const useCartStore = create<CartState & CartActions>()(
     cart: null,
 
     setCart: (cart) => {
-      console.log('Setting cart state:', cart);
+      debug.log('Setting cart state:', cart);
       set((state) => {
         state.cart = cart;
       });
@@ -61,7 +62,7 @@ export const useCartStore = create<CartState & CartActions>()(
     optimisticAddItem: async (cartItem) => {
       const originalCart = get().cart;
       if (!originalCart) {
-        console.error('Cannot add item: Cart state is null.');
+        debug.error('Cannot add item: Cart state is null.');
 
         throw new Error('Cart is not initialized.');
       }
@@ -78,7 +79,7 @@ export const useCartStore = create<CartState & CartActions>()(
           updatedAt: new Date().toISOString(),
         };
         state.cart.items.push(optimisticItem);
-        console.log('Optimistically added item:', optimisticItem);
+        debug.log('Optimistically added item:', optimisticItem);
       });
 
       try {
@@ -90,15 +91,15 @@ export const useCartStore = create<CartState & CartActions>()(
         };
         await addItemToCart(servicePayload);
 
-        console.log(
+        debug.log(
           'Successfully called addItemToCart API for temp ID:',
           tempItemId
         );
       } catch (error) {
-        console.error('Failed to add item via API:', error);
+        debug.error('Failed to add item via API:', error);
 
         set((state) => {
-          console.log('Rolling back optimistic add for temp ID:', tempItemId);
+          debug.log('Rolling back optimistic add for temp ID:', tempItemId);
           state.cart = originalCart;
         });
         throw error;
@@ -110,7 +111,7 @@ export const useCartStore = create<CartState & CartActions>()(
       const cartItemId = payload.id;
 
       if (!originalCart) {
-        console.error('Cannot update item: Cart state is null.');
+        debug.error('Cannot update item: Cart state is null.');
         throw new Error('Cart is not initialized.');
       }
 
@@ -125,12 +126,12 @@ export const useCartStore = create<CartState & CartActions>()(
             id: cartItemId,
             updatedAt: new Date().toISOString(),
           };
-          console.log(
+          debug.log(
             'Optimistically updated item:',
             state.cart.items[itemIndex]
           );
         } else {
-          console.warn(
+          debug.warn(
             `OptimisticUpdateItem: Item with ID ${cartItemId} not found in cart.`
           );
         }
@@ -143,15 +144,15 @@ export const useCartStore = create<CartState & CartActions>()(
         };
         await updateCartItem(cartItemId, servicePayload);
 
-        console.log(
+        debug.log(
           'Successfully called updateCartItem API for item ID:',
           cartItemId
         );
       } catch (error) {
-        console.error('Failed to update item via API:', error);
+        debug.error('Failed to update item via API:', error);
 
         set((state) => {
-          console.log(
+          debug.log(
             'Rolling back optimistic update for item ID:',
             cartItemId
           );
@@ -164,7 +165,7 @@ export const useCartStore = create<CartState & CartActions>()(
     optimisticRemoveItem: async (cartItemId) => {
       const originalCart = get().cart;
       if (!originalCart) {
-        console.error('Cannot remove item: Cart state is null.');
+        debug.error('Cannot remove item: Cart state is null.');
         throw new Error('Cart is not initialized.');
       }
 
@@ -177,9 +178,9 @@ export const useCartStore = create<CartState & CartActions>()(
         );
         itemRemoved = state.cart.items.length < initialLength;
         if (itemRemoved) {
-          console.log('Optimistically removed item ID:', cartItemId);
+          debug.log('Optimistically removed item ID:', cartItemId);
         } else {
-          console.warn(
+          debug.warn(
             `OptimisticRemoveItem: Item with ID ${cartItemId} not found.`
           );
         }
@@ -190,15 +191,15 @@ export const useCartStore = create<CartState & CartActions>()(
       try {
         await removeCartItem(cartItemId);
 
-        console.log(
+        debug.log(
           'Successfully called removeCartItem API for item ID:',
           cartItemId
         );
       } catch (error) {
-        console.error('Failed to remove item via API:', error);
+        debug.error('Failed to remove item via API:', error);
 
         set((state) => {
-          console.log(
+          debug.log(
             'Rolling back optimistic remove for item ID:',
             cartItemId
           );
@@ -211,26 +212,26 @@ export const useCartStore = create<CartState & CartActions>()(
     optimisticClearCart: async () => {
       const originalCart = get().cart;
       if (!originalCart || originalCart.items.length === 0) {
-        console.log('Cart is already empty or null, skipping clear.');
+        debug.log('Cart is already empty or null, skipping clear.');
         return;
       }
 
       set((state) => {
         if (state.cart) {
           state.cart.items = [];
-          console.log('Optimistically cleared cart items.');
+          debug.log('Optimistically cleared cart items.');
         }
       });
 
       try {
         await clearMyCart();
 
-        console.log('Successfully called clearMyCart API.');
+        debug.log('Successfully called clearMyCart API.');
       } catch (error) {
-        console.error('Failed to clear cart via API:', error);
+        debug.error('Failed to clear cart via API:', error);
 
         set((state) => {
-          console.log('Rolling back optimistic clear cart.');
+          debug.log('Rolling back optimistic clear cart.');
           state.cart = originalCart;
         });
         throw error;
@@ -238,3 +239,9 @@ export const useCartStore = create<CartState & CartActions>()(
     },
   }))
 );
+
+// Selectors
+export const selectCart = (state: CartState) => state.cart;
+export const selectCartItems = (state: CartState) => state.cart?.items ?? [];
+export const selectCartItemCount = (state: CartState) =>
+  state.cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;

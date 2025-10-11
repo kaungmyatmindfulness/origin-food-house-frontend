@@ -1,0 +1,26 @@
+{
+  "name": "@repo/api",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "qs": "^6.14.0",
+    "sonner": "^2.0.3"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "@types/node": "^22.15.3",
+    "@types/qs": "^6.9.18",
+    "typescript": "5.8.3"
+  },
+  "exports": {
+    "./utils/*": "./src/utils/*.ts",
+    "./types/*": "./src/types/*.ts",
+    "./services/*": "./src/services/*.ts"
+  }
+}

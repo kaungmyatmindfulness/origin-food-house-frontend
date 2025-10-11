@@ -24,7 +24,7 @@ import {
 } from '@repo/ui/components/card';
 import { Skeleton } from '@repo/ui/components/skeleton';
 import { Separator } from '@repo/ui/components/separator';
-import { getAllTables } from '@/features/tables/services/table.services';
+import { getAllTables } from '@/features/tables/services/table.service';
 
 const QR_CODE_BASE_PATH = '/table-sessions/join-by-table-id';
 const storeTablesQueryKey = (storeId: string | null) => ['tables', storeId];

@@ -1,7 +1,8 @@
 'use client';
 
 import { GripVertical, Plus } from 'lucide-react';
-import React from 'react';
+import { useCallback, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import {
   selectSelectedStoreId,
@@ -12,45 +13,49 @@ import {
   selectEditMenuItemId,
   useMenuStore,
 } from '@/features/menu/store/menu.store';
-import { MenuItem } from '@/features/menu/types/menu-item.types';
-import { CategoryCard } from '@/features/menu/ui/category-card';
-import { CategoryFormDialog } from '@/features/menu/ui/category-form-dialog';
-import { ItemModal } from '@/features/menu/ui/item-modal';
-import { MenuItemFormDialog } from '@/features/menu/ui/menu-item-form-dialog';
+import { menuKeys } from '@/features/menu/queries/menu.keys';
+import { CategoryCard } from '@/features/menu/components/category-card';
+import { CategoryFormDialog } from '@/features/menu/components/category-form-dialog';
+import { ItemModal } from '@/features/menu/components/item-modal';
+import { MenuItemFormDialog } from '@/features/menu/components/menu-item-form-dialog';
+import { ReorderMenuDialog } from '@/features/menu/components/reorder-menu-dialog';
+import { useDialog } from '@/common/hooks/useDialogState';
 import { Button } from '@repo/ui/components/button';
-import { useQuery } from '@tanstack/react-query';
-import { ReorderMenuDialog } from '@/features/menu/ui/reorder-menu-dialog';
+import type { MenuItem } from '@/features/menu/types/menu-item.types';
 
 export default function MenuPage() {
-  const [itemFormOpen, setItemFormOpen] = React.useState(false);
-  const [categoryFormOpen, setCategoryFormOpen] = React.useState(false);
-  const [reorderMenuOpen, setReorderMenuOpen] = React.useState(false);
+  // Dialog states using custom hook
+  const [itemFormOpen, setItemFormOpen] = useDialog();
+  const [categoryFormOpen, setCategoryFormOpen] = useDialog();
+  const [reorderMenuOpen, setReorderMenuOpen] = useDialog();
 
+  // Store state
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
   const editMenuItemId = useMenuStore(selectEditMenuItemId);
   const setEditMenuItemId = useMenuStore((state) => state.setEditMenuItemId);
 
-  // const [viewItem, setViewItem] = React.useState<MenuItem | null>(null);
-  const [viewItemId, setViewItemId] = React.useState<string | null>(null);
+  // Local state
+  const [viewItemId, setViewItemId] = useState<string | null>(null);
 
+  // Fetch categories with query key factory
   const { data: categories = [] } = useQuery({
-    queryKey: [
-      'categories',
-      {
-        selectedStoreId,
-      },
-    ],
+    queryKey: menuKeys.categories(selectedStoreId!),
     queryFn: () => getCategories(selectedStoreId!),
     enabled: !!selectedStoreId,
   });
 
-  function handleSelectItem(item: MenuItem) {
+  // Event handlers
+  const handleSelectItem = useCallback((item: MenuItem) => {
     setViewItemId(item.id);
-  }
+  }, []);
 
-  function closeEditMenuItemDialog() {
+  const handleCloseEditDialog = useCallback(() => {
     setEditMenuItemId(null);
-  }
+  }, [setEditMenuItemId]);
+
+  const handleCloseViewModal = useCallback(() => {
+    setViewItemId(null);
+  }, []);
 
   return (
     <>
@@ -67,16 +72,7 @@ export default function MenuPage() {
           >
             <Plus className="mr-1 h-4 w-4" /> Create Menu Item
           </Button>
-          <MenuItemFormDialog
-            mode="create"
-            open={itemFormOpen}
-            onOpenChange={setItemFormOpen}
-            editItemId={null}
-          />
-          <CategoryFormDialog
-            open={categoryFormOpen}
-            onOpenChange={setCategoryFormOpen}
-          />
+
           <Button
             variant="default"
             className="flex items-center"
@@ -84,10 +80,6 @@ export default function MenuPage() {
           >
             <GripVertical className="mr-1 h-4 w-4" /> Reorder Menu
           </Button>
-          <ReorderMenuDialog
-            open={reorderMenuOpen}
-            onOpenChange={setReorderMenuOpen}
-          />
         </div>
 
         <div className="space-y-4">
@@ -99,18 +91,37 @@ export default function MenuPage() {
             />
           ))}
         </div>
-
-        <ItemModal
-          id={viewItemId}
-          open={viewItemId !== null}
-          onClose={() => setViewItemId(null)}
-        />
       </div>
+
+      {/* Dialogs */}
+      <MenuItemFormDialog
+        mode="create"
+        open={itemFormOpen}
+        onOpenChange={setItemFormOpen}
+        editItemId={null}
+      />
+
       <MenuItemFormDialog
         mode="edit"
         open={editMenuItemId !== null}
-        onOpenChange={closeEditMenuItemDialog}
+        onOpenChange={handleCloseEditDialog}
         editItemId={editMenuItemId}
+      />
+
+      <CategoryFormDialog
+        open={categoryFormOpen}
+        onOpenChange={setCategoryFormOpen}
+      />
+
+      <ReorderMenuDialog
+        open={reorderMenuOpen}
+        onOpenChange={setReorderMenuOpen}
+      />
+
+      <ItemModal
+        id={viewItemId}
+        open={viewItemId !== null}
+        onClose={handleCloseViewModal}
       />
     </>
   );

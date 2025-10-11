@@ -20,7 +20,6 @@ export const useSessionInfoStore = create<
     sessionId: null,
     tableId: null,
     storeId: null,
-    tableName: null,
 
     setSessionInfo: (data) => {
       set((state) => {
@@ -39,3 +38,8 @@ export const useSessionInfoStore = create<
     },
   }))
 );
+
+// Selectors
+export const selectSessionId = (state: SessionInfoState) => state.sessionId;
+export const selectTableId = (state: SessionInfoState) => state.tableId;
+export const selectStoreId = (state: SessionInfoState) => state.storeId;

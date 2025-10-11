@@ -12,7 +12,7 @@ import {
 import {
   getAllTables,
   syncTables,
-} from '@/features/tables/services/table.services';
+} from '@/features/tables/services/table.service';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Alert, AlertDescription, AlertTitle } from '@repo/ui/components/alert';
 import { Button } from '@repo/ui/components/button';

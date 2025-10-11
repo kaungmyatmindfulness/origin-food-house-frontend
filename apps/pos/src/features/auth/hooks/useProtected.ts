@@ -13,7 +13,8 @@ import {
 import { getCurrentUser } from '@/features/user/services/user.service';
 import type { CurrentUserData } from '@/features/user/types/user.types';
 
-import { ApiError, UnauthorizedError, NetworkError } from '@/utils/apiFetch';
+import { ApiError, UnauthorizedError } from '@/utils/apiFetch';
+import { ROUTES, ERROR_MESSAGES } from '@/common/constants/routes';
 
 interface UseProtectedOptions {
   /** Optional array of role strings/enums. If provided, user role will be checked against this list. */
@@ -46,8 +47,8 @@ export function useProtected(
 ): UseProtectedReturn {
   const {
     allowedRoles,
-    loginRedirectTo = '/login',
-    unauthorizedRedirectTo = '/store/choose',
+    loginRedirectTo = ROUTES.LOGIN,
+    unauthorizedRedirectTo = ROUTES.STORE_CHOOSE,
     onRedirect,
   } = options ?? {};
 
@@ -76,9 +77,7 @@ export function useProtected(
     queryKey: queryKey,
     queryFn: async () => {
       if (needsRoleCheck && !selectedStoreId) {
-        throw new Error(
-          'Permission Denied: Store context required for role check.'
-        );
+        throw new Error(ERROR_MESSAGES.STORE.REQUIRED_FOR_ROLE_CHECK);
       }
       return getCurrentUser(
         needsRoleCheck ? selectedStoreId || undefined : undefined
@@ -106,14 +105,13 @@ export function useProtected(
         userQueryError instanceof ApiError &&
         userQueryError.status === 403
       ) {
-        toast.error('Permission Denied.');
+        toast.error(ERROR_MESSAGES.AUTH.PERMISSION_DENIED);
         router.replace(unauthorizedRedirectTo);
       } else if (
-        userQueryError.message ===
-        'Permission Denied: Store context required for role check.'
+        userQueryError.message === ERROR_MESSAGES.STORE.REQUIRED_FOR_ROLE_CHECK
       ) {
-        toast.warning('Please select a store first.');
-        router.replace('/store/choose');
+        toast.warning(ERROR_MESSAGES.AUTH.STORE_REQUIRED);
+        router.replace(ROUTES.STORE_CHOOSE);
       } else {
         router.replace(loginRedirectTo);
       }
@@ -125,7 +123,7 @@ export function useProtected(
         console.error(
           'useProtected: Query succeeded but user data is null/undefined.'
         );
-        toast.error('Invalid session data. Please log in again.');
+        toast.error(ERROR_MESSAGES.AUTH.INVALID_SESSION);
         onRedirect?.();
 
         useAuthStore.getState().setAuthenticated(false);
@@ -141,7 +139,7 @@ export function useProtected(
           console.error(
             'useProtected: Role check needed, but user role is missing.'
           );
-          toast.error('Cannot verify permissions: User role not found.');
+          toast.error(ERROR_MESSAGES.AUTH.ROLE_MISSING);
           onRedirect?.();
 
           router.replace(unauthorizedRedirectTo);
@@ -149,7 +147,7 @@ export function useProtected(
           console.warn(
             `useProtected: Role mismatch (User: ${userRole}, Allowed: ${allowedRoles!.join(',')})`
           );
-          toast.error('You do not have permission to access this page.');
+          toast.error(ERROR_MESSAGES.AUTH.NO_PERMISSION);
           onRedirect?.();
 
           router.replace(unauthorizedRedirectTo);

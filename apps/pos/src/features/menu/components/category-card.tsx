@@ -15,7 +15,7 @@ import {
   deleteCategory,
   updateCategory,
 } from '@/features/menu/services/category.service';
-import { ItemCard } from '@/features/menu/ui/item-card';
+import { ItemCard } from '@/features/menu/components/item-card';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@repo/ui/components/button';
 import { ConfirmationDialog } from '@repo/ui/components/confirmation-dialog';
