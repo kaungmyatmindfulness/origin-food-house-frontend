@@ -67,6 +67,7 @@ apps/
 ├── pos/              # Restaurant POS system (@app/pos)
 └── sos/              # Customer self-ordering system (@app/sos)
 packages/
+├── api/              # Shared API utilities & types (@repo/api) ⭐ NEW
 ├── ui/               # Shared UI components (@repo/ui)
 ├── eslint-config/    # Shared ESLint configuration
 └── typescript-config/ # Shared TypeScript configuration
@@ -81,68 +82,124 @@ src/
 ├── app/              # Next.js 15 App Router (pages, layouts, routes)
 ├── features/         # Feature-based modules (domain logic)
 │   ├── auth/
+│   │   ├── components/   # Feature-specific UI components
+│   │   ├── hooks/        # Custom hooks (useProtected)
+│   │   ├── queries/      # Query key factories ⭐ NEW
 │   │   ├── services/     # API service functions
 │   │   ├── store/        # Zustand global state
-│   │   ├── types/        # TypeScript types
-│   │   ├── hooks/        # Custom hooks
-│   │   └── components/   # Feature-specific components
+│   │   └── types/        # TypeScript types
 │   ├── menu/
 │   ├── store/        # Store management (not Zustand)
 │   ├── user/
 │   └── [feature]/
 ├── common/           # Shared app utilities
-│   ├── components/   # Shared widgets (Header, Sidebar, etc.)
+│   ├── components/   # Shared widgets (LanguageSwitcher, etc.) ⭐
+│   ├── constants/    # Routes, error messages ⭐ NEW
+│   ├── hooks/        # Reusable hooks (useDialog) ⭐ NEW
 │   ├── services/     # Common API services
-│   └── types/        # Shared types (api.types.ts)
-└── utils/            # Utility functions (apiFetch.ts)
+│   └── types/        # Shared types
+├── utils/            # Utility functions
+│   ├── apiFetch.ts   # Configured API client
+│   └── debug.ts      # Debug utility (SOS) ⭐ NEW
+├── i18n/             # Localization config ⭐ NEW
+│   ├── config.ts
+│   └── request.ts
+└── middleware.ts     # Locale detection ⭐ NEW
+
+messages/             # Translation files (root level) ⭐ NEW
+├── en.json           # English
+├── zh.json           # Chinese (中文)
+├── my.json           # Myanmar (မြန်မာ)
+└── th.json           # Thai (ไทย)
 ```
 
 ### Key Architectural Patterns
 
-#### 1. Feature Organization
+#### 1. Shared API Package (@repo/api)
+
+**NEW:** Centralized API utilities to eliminate code duplication.
+
+**Located at:** `packages/api/`
+
+**Exports:**
+- `createApiFetch(config)` - Factory for configurable API client
+- `unwrapData(response, errorMsg)` - Null-safe data extraction
+- Error classes: `ApiError`, `UnauthorizedError`, `NetworkError`, `FetchError`
+- Types: `StandardApiResponse<T>`, `ErrorDetail`, `UploadImageResponseData`
+- `createUploadService(apiFetch)` - Upload service factory
+
+**Usage in apps:**
+```typescript
+// apps/pos/src/utils/apiFetch.ts
+import { createApiFetch, unwrapData } from '@repo/api/utils/apiFetch';
+import { useAuthStore } from '@/features/auth/store/auth.store';
+
+export const apiFetch = createApiFetch({
+  baseUrl: process.env.NEXT_PUBLIC_API_URL!,
+  onUnauthorized: () => useAuthStore.getState().clearAuth(),
+});
+
+export { unwrapData };
+```
+
+#### 2. Feature Organization
 
 Each feature follows a consistent structure:
+- **`components/`**: Feature-specific UI components (always use this name, not `ui/`)
+- **`queries/`**: React Query key factories (e.g., `menu.keys.ts`)
 - **`services/`**: API calls using `apiFetch` utility
-- **`store/`**: Zustand state management (global state only)
+- **`store/`**: Zustand state management (global state only, always singular)
 - **`types/`**: TypeScript interfaces and types
 - **`hooks/`**: Custom React hooks
-- **`components/`** or **`ui/`**: Feature-specific UI components
 
-#### 2. API Communication (`apiFetch`)
+#### 3. API Communication (`apiFetch`)
 
-Located at `src/utils/apiFetch.ts`, this is the central API wrapper:
+**Located at:** `src/utils/apiFetch.ts` (configured instance)
+**Core implementation:** `packages/api/src/utils/apiFetch.ts`
 
+**Features:**
 - **Automatic error handling**: Shows toast notifications for errors
-- **Auth integration**: Reads `credentials: 'include'` for httpOnly cookies
-- **401 handling**: Automatically clears auth state on unauthorized
+- **Auth integration**: Reads `credentials: 'include'` for httpOnly cookies (POS only)
+- **401 handling**: Automatically clears auth state on unauthorized (POS only)
 - **Query string support**: Uses `qs` library for complex query parameters
 - **Custom error classes**: `ApiError`, `UnauthorizedError`, `NetworkError`
-- **Typed responses**: Returns `StandardApiResponse<T>` from `common/types/api.types.ts`
+- **Typed responses**: Returns `StandardApiResponse<T>` from `@repo/api/types/api.types`
 
-**Usage pattern:**
+**Usage pattern with unwrapData helper:**
 ```typescript
 // In service files
-export async function getMenuItem(id: string) {
-  const response = await apiFetch<MenuItem>(`/menu-items/${id}`);
-  return response.data;
+import { apiFetch, unwrapData } from '@/utils/apiFetch';
+
+export async function getCategories(storeId: string): Promise<Category[]> {
+  const res = await apiFetch<Category[]>({
+    path: '/categories',
+    query: { storeId },
+  });
+
+  return unwrapData(res, 'Failed to retrieve categories');
 }
 
-// With query parameters
-export async function searchItems(query: string) {
-  const response = await apiFetch<MenuItem[]>({
-    path: '/menu-items',
-    query: { search: query, status: 'active' }
+// For mutations
+export async function createCategory(
+  storeId: string,
+  data: CreateCategoryDto
+): Promise<Category> {
+  const res = await apiFetch<Category>('/categories', {
+    method: 'POST',
+    body: JSON.stringify(data),
   });
-  return response.data;
+
+  return unwrapData(res, 'Failed to create category');
 }
 ```
 
-#### 3. State Management (Zustand)
+#### 4. State Management (Zustand)
 
 - **Global state only**: Used for auth, selected store, user data
 - **Middleware stack**: `devtools` → `persist` → `immer`
 - **Persistent auth**: Uses localStorage via `persist` middleware
 - **No API calls in stores**: Keep stores pure, call services from components
+- **MUST export selectors**: For performance and consistency
 
 **Example pattern:**
 ```typescript
@@ -150,14 +207,129 @@ export const useAuthStore = create<AuthState & AuthActions>()(
   devtools(
     persist(
       immer((set) => ({
-        // state and actions
+        selectedStoreId: null,
+        isAuthenticated: false,
+
+        setSelectedStore: (storeId) => set((draft) => {
+          draft.selectedStoreId = storeId;
+        }),
+
+        clearAuth: () => set((draft) => {
+          draft.selectedStoreId = null;
+          draft.isAuthenticated = false;
+        }),
       })),
       { name: 'auth-storage' }
     ),
     { name: 'auth-store' }
   )
 );
+
+// ✅ ALWAYS export selectors
+export const selectSelectedStoreId = (state: AuthState) => state.selectedStoreId;
+export const selectIsAuthenticated = (state: AuthState) => state.isAuthenticated;
 ```
+
+#### 5. Query Key Factories ⭐ NEW
+
+**IMPORTANT:** Always use query key factories for React Query to ensure type safety and consistency.
+
+**Location:** `features/[feature]/queries/*.keys.ts`
+
+**Pattern:**
+```typescript
+// features/menu/queries/menu.keys.ts
+export const menuKeys = {
+  all: ['menu'] as const,
+  categories: (storeId: string) =>
+    [...menuKeys.all, 'categories', { storeId }] as const,
+  items: (storeId: string) =>
+    [...menuKeys.all, 'items', { storeId }] as const,
+  item: (storeId: string, itemId: string) =>
+    [...menuKeys.items(storeId), itemId] as const,
+};
+
+// Usage in components
+import { menuKeys } from '@/features/menu/queries/menu.keys';
+
+const { data } = useQuery({
+  queryKey: menuKeys.categories(storeId),
+  queryFn: () => getCategories(storeId),
+});
+
+// Cache invalidation
+queryClient.invalidateQueries({ queryKey: menuKeys.all });
+```
+
+**Benefits:**
+- Type-safe query keys
+- Easy cache invalidation
+- Prevents typos
+- Hierarchical structure
+
+#### 6. Constants & Configuration ⭐ NEW
+
+**NEVER hardcode routes or error messages.** Use constants.
+
+**Location:** `common/constants/routes.ts`
+
+```typescript
+export const ROUTES = {
+  LOGIN: '/login',
+  STORE_CHOOSE: '/store/choose',
+  MENU: '/hub/menu',
+  // ...
+} as const;
+
+export const ERROR_MESSAGES = {
+  AUTH: {
+    PERMISSION_DENIED: 'Permission Denied.',
+    INVALID_SESSION: 'Invalid session data. Please log in again.',
+    // ...
+  },
+} as const;
+
+// Usage
+import { ROUTES, ERROR_MESSAGES } from '@/common/constants/routes';
+
+router.push(ROUTES.MENU);
+toast.error(ERROR_MESSAGES.AUTH.PERMISSION_DENIED);
+```
+
+#### 7. Internationalization (i18n) ⭐ NEW
+
+Both apps support 4 languages: English (en), Chinese (zh), Myanmar (my), Thai (th).
+
+**Setup:**
+- Middleware: `src/middleware.ts`
+- Config: `src/i18n/config.ts`
+- Translation files: `messages/{locale}.json`
+- Language switcher: `common/components/LanguageSwitcher.tsx`
+
+**Usage:**
+```typescript
+'use client';
+
+import { useTranslations } from 'next-intl';
+
+export function MyComponent() {
+  const t = useTranslations('common');
+  const tMenu = useTranslations('menu');
+
+  return (
+    <>
+      <h1>{t('home')}</h1>
+      <button>{tMenu('createItem')}</button>
+    </>
+  );
+}
+```
+
+**Rules:**
+- ✅ Extract ALL user-facing text to translation files
+- ✅ Add translations to ALL 4 language files simultaneously
+- ✅ Use descriptive keys (`menu.createItem`, not `m.ci`)
+- ❌ Never hardcode text in components
 
 #### 4. Loading States (Skeleton UI)
 
@@ -211,6 +383,7 @@ if (isLoading) {
 - qs (query string parsing)
 - sonner (toast notifications)
 - usehooks-ts
+- next-intl (internationalization) ⭐ NEW
 
 **POS-specific:**
 - @dnd-kit (drag and drop for menu reordering)
@@ -222,12 +395,29 @@ if (isLoading) {
 - react-scroll (menu navigation)
 - decimal.js (precise currency calculations)
 
-### Shared UI Package (@repo/ui)
+### Shared Packages
+
+#### @repo/api ⭐ NEW
+
+Located in `packages/api/`, this package provides shared API utilities:
+
+- **`utils/apiFetch.ts`**: Core API client factory
+- **`types/api.types.ts`**: `StandardApiResponse`, `ErrorDetail`
+- **`types/upload.types.ts`**: Upload-related types
+- **`services/upload.service.ts`**: Upload service factory
+
+**Import pattern:**
+```typescript
+import { createApiFetch, unwrapData } from '@repo/api/utils/apiFetch';
+import type { StandardApiResponse } from '@repo/api/types/api.types';
+```
+
+#### @repo/ui
 
 Located in `packages/ui/`, this package exports:
 
-- **Components**: shadcn/ui components (Button, Dialog, Form, etc.)
-- **Hooks**: React hooks
+- **Components**: 40+ shadcn/ui components (Button, Dialog, Form, etc.)
+- **Hooks**: React hooks (use-toast, use-mobile)
 - **Utilities**: `cn()` utility via `lib/utils.ts`
 - **Styles**: `globals.css` with Tailwind configuration
 
@@ -239,23 +429,39 @@ import { useToast } from '@repo/ui/hooks/use-toast';
 
 ## Important Development Rules
 
-### 1. API Service Pattern
+### 1. API Service Pattern ⭐ UPDATED
 
 **Services should:**
 - Live in `features/[feature]/services/`
-- Use `apiFetch` for all HTTP calls
-- Return only `response.data` (errors are thrown automatically)
-- Be strongly typed with TypeScript
+- Use `apiFetch` from `@/utils/apiFetch.ts`
+- Use `unwrapData()` helper for null checking
+- Return properly typed data (NEVER `unknown`)
+- Add JSDoc comments
 
 **Example:**
 ```typescript
-// ✅ Correct
-export async function createCategory(data: CreateCategoryDto) {
-  const response = await apiFetch<Category>('/categories', {
+// ✅ Correct - Modern pattern with unwrapData
+import { apiFetch, unwrapData } from '@/utils/apiFetch';
+import type { Category, CreateCategoryDto } from '../types/category.types';
+
+/**
+ * Creates a new category for a specific store.
+ *
+ * @param storeId - The ID of the store.
+ * @param data - The category data to create.
+ * @returns A promise resolving to the created Category object.
+ * @throws {NetworkError | ApiError} - Throws on fetch/API errors.
+ */
+export async function createCategory(
+  storeId: string,
+  data: CreateCategoryDto
+): Promise<Category> {
+  const res = await apiFetch<Category>('/categories', {
     method: 'POST',
     body: JSON.stringify(data),
   });
-  return response.data; // Only return data
+
+  return unwrapData(res, 'Failed to create category');
 }
 
 // ❌ Incorrect - don't handle errors manually
@@ -269,39 +475,60 @@ export async function createCategory(data: CreateCategoryDto) {
     // Don't do this - apiFetch already shows toast
   }
 }
+
+// ❌ Incorrect - don't return unknown
+export async function createCategory(...): Promise<unknown> {
+  // Always use proper types
+}
+
+// ❌ Incorrect - manual null checking
+if (res.data == null) {
+  throw new Error('...');
+}
+return res.data;
+// Use unwrapData() instead
 ```
 
-### 2. Zustand Store Pattern
+### 2. Zustand Store Pattern ⭐ UPDATED
 
 **Stores should:**
 - Contain minimal global state
 - Use immer for immutable updates
-- Export selector functions
+- **MUST export selector functions** (for every state field)
 - Persist only necessary data
 - Never contain API logic
 
 **Example:**
 ```typescript
-// ✅ Correct - pure state management
+// ✅ Correct - pure state management with selectors
 export const useAuthStore = create<AuthState & AuthActions>()(
   devtools(
     persist(
       immer((set) => ({
         selectedStoreId: null,
+        isAuthenticated: false,
+
         setSelectedStore: (id) => set((draft) => {
           draft.selectedStoreId = id;
+        }),
+
+        clearAuth: () => set((draft) => {
+          draft.selectedStoreId = null;
+          draft.isAuthenticated = false;
         }),
       })),
       {
         name: 'auth-storage',
         partialize: (state) => ({ selectedStoreId: state.selectedStoreId })
       }
-    )
+    ),
+    { name: 'auth-store' }
   )
 );
 
-// Export selectors
+// ✅ MUST export selectors for all state fields
 export const selectSelectedStoreId = (state: AuthState) => state.selectedStoreId;
+export const selectIsAuthenticated = (state: AuthState) => state.isAuthenticated;
 ```
 
 ### 3. Component Organization
@@ -380,25 +607,55 @@ if (isLoading) return <LoadingSkeleton />;
 
 ## Common Patterns
 
-### React Query with apiFetch
+### React Query with Query Key Factories ⭐ UPDATED
 
 ```typescript
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { menuKeys } from '@/features/menu/queries/menu.keys';
 import { getCategories, createCategory } from '@/features/menu/services/category.service';
 
-// Query
+// ✅ Use query key factories
 const { data, isLoading } = useQuery({
-  queryKey: ['categories', storeId],
+  queryKey: menuKeys.categories(storeId),  // Type-safe
   queryFn: () => getCategories(storeId),
 });
 
-// Mutation
+// ✅ Mutation with query key factory
+const queryClient = useQueryClient();
 const mutation = useMutation({
   mutationFn: createCategory,
   onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['categories'] });
+    // Invalidate using query key factory
+    queryClient.invalidateQueries({ queryKey: menuKeys.all });
   },
 });
+```
+
+### Custom Hooks for Common Patterns ⭐ NEW
+
+```typescript
+// Dialog state management
+import { useDialog } from '@/common/hooks/useDialogState';
+
+const [dialogOpen, setDialogOpen] = useDialog();
+
+<Button onClick={() => setDialogOpen(true)}>Open</Button>
+<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+  ...
+</Dialog>
+```
+
+### Debug Utility (SOS App) ⭐ NEW
+
+```typescript
+import { debug } from '@/utils/debug';
+
+// Only logs in development, silent in production
+debug.log('Cart updated:', cart);
+debug.warn('Item not found');
+
+// Always logs (even in production)
+debug.error('Critical error:', error);
 ```
 
 ### Form Handling with react-hook-form + Zod
@@ -446,12 +703,139 @@ import { Form } from '@repo/ui/components/form';
 | **Key Features** | Menu management, table QR codes, store settings | Menu browsing, cart, order placement |
 | **Route Groups** | `(no-dashboard)`, `hub/`, `(owner-admin)` | `restaurants/[slug]`, `tables/[id]` |
 
+## Naming Conventions & File Organization ⭐ CRITICAL
+
+### File Naming Rules
+
+| Type | Convention | ✅ Correct | ❌ Incorrect |
+|------|-----------|-----------|-------------|
+| Services | `*.service.ts` | `category.service.ts` | `category.services.ts` |
+| Stores | `*.store.ts` | `auth.store.ts` | `authStore.ts` |
+| Types | `*.types.ts` | `menu-item.types.ts` | `menuItem.types.ts` |
+| Query Keys | `*.keys.ts` | `menu.keys.ts` | `menuKeys.ts` |
+| Hooks | `use*.ts` | `useProtected.ts` | `protected.hook.ts` |
+| Components | PascalCase.tsx | `CategoryCard.tsx` | `category-card.tsx` |
+
+### Folder Naming Rules
+
+| Purpose | ✅ Correct | ❌ Incorrect |
+|---------|-----------|-------------|
+| Feature UI | `components/` | `ui/` |
+| State store | `store/` (singular) | `stores/` (plural) |
+| Services | `services/` | `service/` |
+| Types | `types/` | `type/` |
+
+### Import Organization
+
+```typescript
+// ✅ Correct order
+'use client';
+
+// 1. React & Next.js
+import { useCallback, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+// 2. Third-party libraries
+import { useQuery } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
+
+// 3. Shared packages
+import { Button } from '@repo/ui/components/button';
+
+// 4. Features (grouped)
+import { useAuthStore, selectSelectedStoreId } from '@/features/auth/store/auth.store';
+import { menuKeys } from '@/features/menu/queries/menu.keys';
+import { getCategories } from '@/features/menu/services/category.service';
+
+// 5. Common utilities
+import { useDialog } from '@/common/hooks/useDialogState';
+import { ROUTES } from '@/common/constants/routes';
+
+// 6. Types (last, with 'type' import)
+import type { Category } from '@/features/menu/types/category.types';
+```
+
+## Custom Hooks Library ⭐ NEW
+
+### POS App Hooks
+
+**Location:** `common/hooks/`
+
+- **`useDialog()`** - Dialog state management
+- **`useDialogState()`** - Alternative dialog hook with separate handlers
+- **`useProtected()`** - Route protection & authorization
+
+**Location:** `features/auth/hooks/`
+
+- **`useProtected(options)`** - Comprehensive auth & role checking
+
+### SOS App Hooks
+
+**Location:** `features/cart/hooks/`
+
+- **`useCartSocketListener()`** - Real-time cart synchronization
+
+## Debug & Logging ⭐ NEW
+
+**SOS App Only:** `utils/debug.ts`
+
+```typescript
+import { debug } from '@/utils/debug';
+
+// Development only (NODE_ENV === 'development')
+debug.log('Info message');
+debug.warn('Warning message');
+debug.info('Info message');
+
+// Always logged (production & development)
+debug.error('Error message');
+```
+
+**POS App:**
+- Use regular `console.log` for now (consider adding debug utility)
+
 ## Technical Documentation Reference
 
-Detailed technical documentation for the POS app is available at `apps/pos/README.md`, which includes:
-- Detailed folder structure explanations
-- In-depth API patterns
-- Skeleton UI usage examples
-- Step-by-step implementation guides
+### Quick Reference
 
-Refer to this document for comprehensive implementation examples and best practices specific to the POS system.
+- **`README.md`** - Monorepo overview, quick start, tech stack
+- **`CLAUDE.md`** (this file) - Development guidelines & patterns
+- **`I18N_GUIDE.md`** - Complete internationalization guide
+- **`apps/pos/README.md`** - POS app detailed documentation
+- **`apps/sos/README.md`** - SOS app detailed documentation
+
+### Detailed Documentation
+
+Detailed technical documentation includes:
+- Folder structure explanations
+- In-depth API patterns with examples
+- Skeleton UI usage
+- State management patterns
+- Internationalization setup
+- Query key factory usage
+- Custom hooks documentation
+
+---
+
+## Summary Checklist for New Features
+
+When adding a new feature, ensure you:
+
+- [ ] Create feature folder: `features/[feature]/`
+- [ ] Add `services/*.service.ts` with proper return types
+- [ ] Add `types/*.types.ts` with TypeScript interfaces
+- [ ] Create `queries/*.keys.ts` if using React Query
+- [ ] Add `store/*.store.ts` if global state is needed
+- [ ] Export selectors for all store fields
+- [ ] Add `components/` for feature UI
+- [ ] Use `unwrapData()` in services
+- [ ] Add JSDoc to all service functions
+- [ ] Create constants for routes/messages if needed
+- [ ] Add translations to ALL 4 language files
+- [ ] Use skeleton loading states
+- [ ] Follow naming conventions
+- [ ] Use query key factories for React Query
+
+---
+
+**Origin Food House - Clean, Type-Safe, Scalable Architecture**

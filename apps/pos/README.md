@@ -1,294 +1,506 @@
-# Technical Documentation
+# Origin Food House - POS Application
+
+**Point of Sale System** for restaurant staff to manage menus, tables, orders, and store settings.
+
+**Port:** 3002
+**Tech Stack:** Next.js 15, React 19, TypeScript, Zustand, React Query, Tailwind CSS
 
 ---
 
-## 1. Overview
+## 📋 Table of Contents
 
-This project is a **Next.js (App Router)** application that manages a Restaurant POS system. It includes:
-
-- **Authentication** and **User** management
-- **Store** (restaurant) selection / management
-- **React Query** (optional) or **custom** fetch wrappers for data loading
-- **Zustand** for global state (auth token, user info, etc.)
-- **Tailwind CSS** for design and layout
-- **TypeScript** to ensure maintainability and typed domain logic
-- **Skeleton UIs** to maintain a smooth user experience when data is loading
+1. [Overview](#overview)
+2. [Features](#features)
+3. [Architecture](#architecture)
+4. [Getting Started](#getting-started)
+5. [API Integration](#api-integration)
+6. [State Management](#state-management)
+7. [Internationalization](#internationalization)
+8. [Development Patterns](#development-patterns)
+9. [Component Examples](#component-examples)
 
 ---
 
-## 2. Folder Structure & Conventions
+## Overview
 
-A typical structure might look like this:
+The POS app is designed for restaurant staff to manage daily operations including menu items, categories, table management, and store settings. It features role-based access control with three roles: Owner, Admin, and Staff.
+
+### User Roles
+
+| Role | Permissions |
+|------|-------------|
+| **Owner** | Full access to all features |
+| **Admin** | Manage menu, tables, view reports |
+| **Staff** | Process sales, view menu |
+
+---
+
+## Features
+
+### ✅ Authentication
+- Cookie-based authentication (httpOnly cookies)
+- Auto-redirect on unauthorized access
+- Protected routes with `useProtected` hook
+- Role-based page restrictions
+
+### ✅ Menu Management
+- Create, edit, delete menu items and categories
+- Drag-and-drop reordering
+- Image upload support
+- Customization groups and options
+- Availability toggling
+
+### ✅ Table Management
+- Create and manage tables
+- Generate QR codes for each table
+- Download QR codes for printing
+- Table status tracking
+
+### ✅ Store Management
+- Store information editing
+- Multi-store support
+- Store selection interface
+- Settings configuration
+
+### ✅ Internationalization
+- Support for 4 languages (EN, ZH, MY, TH)
+- Language switcher component
+- Type-safe translations
+- Cookie-based locale persistence
+
+---
+
+## Architecture
+
+### Folder Structure
 
 ```
-apps/pos/
-├─ public/
-├─ src/
-│  ├─ app/
-│  │  ├─ layout.tsx
-│  │  ├─ page.tsx
-│  │  ├─ (auth)/
-│  │  │  ├─ login/
-│  │  │  │  └─ page.tsx         # /login route
-│  │  │  ├─ register/
-│  │  │  │  └─ page.tsx         # /register route
-│  │  │  └─ layout.tsx          # Optional layout for (auth)
-│  │  └─ (protected)/
-│  │     └─ store/
-│  │        └─ choose/
-│  │           └─ page.tsx      # /store/choose route
-│  ├─ features/
-│  │  ├─ auth/
-│  │  │  ├─ services/
-│  │  │  │  └─ auth.service.ts
-│  │  │  ├─ store/
-│  │  │  │  └─ auth.store.ts
-│  │  │  └─ types/
-│  │  │     └─ auth.types.ts
-│  │  ├─ user/
-│  │  │  ├─ services/
-│  │  │  │  └─ user.service.ts
-│  │  │  ├─ store/
-│  │  │  │  └─ user.store.ts
-│  │  │  └─ types/
-│  │  │     └─ user.types.ts
-│  │  └─ store/
-│  │     ├─ services/
-│  │     │  └─ store.service.ts
-│  │     ├─ store/
-│  │     │  └─ store.store.ts
-│  │     └─ types/
-│  │        └─ store.types.ts
-│  ├─ components/
-│  │  ├─ store-card.tsx
-│  │  ├─ store-card-skeleton.tsx
-│  │  ├─ store-list-skeleton.tsx
-│  │  └─ ...
-│  ├─ utils/
-│  │  └─ apiFetch.ts
-│  └─ ...
-├─ .next/                    # Build artifacts (auto-generated)
-├─ node_modules/             # Dependencies (auto-generated)
-└─ package.json
+apps/pos/src/
+├── app/                          # Next.js 15 App Router
+│   ├── (no-dashboard)/          # Public routes (login, register, store selection)
+│   ├── hub/                     # Protected dashboard routes
+│   │   ├── sale/                # Sales processing
+│   │   ├── profile/             # User profile
+│   │   └── (owner-admin)/       # Owner/Admin only routes
+│   │       ├── menu/            # Menu management
+│   │       ├── tables/          # Table management
+│   │       └── store/           # Store settings
+│   ├── layout.tsx               # Root layout with i18n
+│   └── page.tsx                 # Landing page
+│
+├── features/                     # Feature-based modules
+│   ├── auth/
+│   │   ├── components/          # Auth UI components
+│   │   ├── hooks/               # useProtected hook
+│   │   ├── queries/             # Query key factories
+│   │   ├── services/            # Auth API calls
+│   │   ├── store/               # Auth Zustand store
+│   │   └── types/               # Auth TypeScript types
+│   ├── menu/
+│   │   ├── components/          # Menu UI (CategoryCard, ItemModal, etc.)
+│   │   ├── queries/             # menuKeys factory
+│   │   ├── services/            # category.service.ts, menu-item.service.ts
+│   │   ├── store/               # Menu UI state
+│   │   └── types/               # Menu types
+│   ├── tables/
+│   ├── store/                   # Store feature (not Zustand)
+│   └── user/
+│
+├── common/                       # Shared app utilities
+│   ├── components/              # LanguageSwitcher, widgets
+│   ├── constants/               # ROUTES, ERROR_MESSAGES
+│   ├── hooks/                   # useDialog, useDialogState
+│   ├── services/                # Upload service
+│   └── types/                   # Shared types
+│
+├── utils/                        # Utilities
+│   ├── apiFetch.ts              # Configured API client
+│   └── providers.tsx            # React Query provider
+│
+├── i18n/                         # Localization
+│   ├── config.ts                # Locale configuration
+│   └── request.ts               # next-intl setup
+│
+└── middleware.ts                 # Locale detection
+
+messages/                         # Translation files (root level)
+├── en.json
+├── zh.json
+├── my.json
+└── th.json
 ```
-
-**Key Points**:
-
-- **`src/app/`**: Next.js App Router directories. Each subfolder is a route (e.g. `/login`, `/register`, `/store/choose`).
-- **`features/`**: Domain logic grouping. Each feature (auth, user, store) has `services/`, `store/`, and `types/`.
-- **`components/`**: Shared UI (cards, skeleton placeholders, etc.).
-- **`utils/`**: Generic utilities (e.g., `apiFetch.ts` for HTTP).
 
 ---
 
-## 3. Handling API Calls
+## Getting Started
 
-### 3.1 `apiFetch` Utility
+### 1. Install Dependencies
 
-A custom fetch wrapper that merges default headers, reads an auth token from Zustand, and returns an `StandardApiResponse<T>`.
+From monorepo root:
+```bash
+npm install
+```
 
-```ts
-import { StandardApiResponse } from '@/common/types/api.types';
-import { useAuthStore } from '@/features/auth/store/auth.store';
-import { toast } from 'sonner';
+### 2. Environment Variables
 
-export async function apiFetch<T>(
-  path: string,
-  options?: RequestInit
-): Promise<StandardApiResponse<T>> {
-  const token = useAuthStore.getState().accessToken;
+Create `apps/pos/.env`:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? '';
-  const url = baseUrl + path;
+### 3. Run Development Server
 
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-    ...(options?.headers || {}),
-  };
+```bash
+# From root
+npm run dev --filter=@app/pos
 
-  if (token) {
-    (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
-  }
+# Or from apps/pos directory
+npm run dev
+```
 
-  const response = await fetch(url, { ...options, headers });
-  let json: StandardApiResponse<T>;
+Visit [http://localhost:3002](http://localhost:3002)
 
-  try {
-    json = (await response.json()) as StandardApiResponse<T>;
-  } catch {
-    toast.error(`Failed to parse JSON from ${url}`);
-    throw new Error(`Failed to parse JSON from ${url}`);
-  }
+### 4. Available Scripts
 
-  if (!response.ok || json.status === 'error') {
-    if (response.status === 401) {
-      // Possibly clear auth state if 401
-      useAuthStore.getState().clearAuth();
-    }
-    const errMsg =
-      json.error?.message || json.message || `Request failed: ${url}`;
-    toast.error(errMsg);
-    throw new Error(errMsg);
-  }
+```bash
+npm run dev          # Development server (Turbopack)
+npm run build        # Production build
+npm run start        # Start production server
+npm run lint         # ESLint (max 0 warnings)
+npm run check-types  # TypeScript type checking
+```
 
-  return json;
+---
+
+## API Integration
+
+### Using apiFetch Utility
+
+**Location:** `src/utils/apiFetch.ts`
+
+The app uses a configured API client from `@repo/api`:
+
+```typescript
+import { apiFetch, unwrapData } from '@/utils/apiFetch';
+
+// Simple GET request
+const categories = await apiFetch<Category[]>({
+  path: '/categories',
+  query: { storeId },
+});
+
+// POST request
+const newCategory = await apiFetch<Category>('/categories', {
+  method: 'POST',
+  body: JSON.stringify(data),
+});
+
+// With unwrapData helper
+export async function getCategories(storeId: string): Promise<Category[]> {
+  const res = await apiFetch<Category[]>({
+    path: '/categories',
+    query: { storeId },
+  });
+
+  return unwrapData(res, 'Failed to retrieve categories');
 }
 ```
 
-### 3.2 Example Service Function
+### Key Features
 
-```ts
-import { apiFetch } from '@/utils/apiFetch';
-import {
-  CreateUserDto,
-  RegisterUserData,
-} from '@/features/user/types/user.types';
+- ✅ Automatic error handling (toast notifications)
+- ✅ Auth integration (httpOnly cookie-based)
+- ✅ 401 handling (clears auth state automatically)
+- ✅ Query string support with `qs` library
+- ✅ Custom error classes
+- ✅ Type-safe responses
 
-export async function registerUser(
-  data: CreateUserDto
-): Promise<RegisterUserData> {
-  const res = await apiFetch<RegisterUserData>('/user/register', {
+### Service Pattern
+
+**Location:** `features/[feature]/services/*.service.ts`
+
+```typescript
+// features/menu/services/category.service.ts
+import { apiFetch, unwrapData } from '@/utils/apiFetch';
+import type { Category } from '../types/category.types';
+
+export async function getCategories(storeId: string): Promise<Category[]> {
+  const res = await apiFetch<Category[]>({
+    path: '/categories',
+    query: { storeId },
+  });
+
+  return unwrapData(res, 'Failed to retrieve categories');
+}
+
+export async function createCategory(
+  storeId: string,
+  data: CreateCategoryDto
+): Promise<Category> {
+  const res = await apiFetch<Category>('/categories', {
     method: 'POST',
     body: JSON.stringify(data),
   });
-  return res.data;
+
+  return unwrapData(res, 'Failed to create category');
 }
 ```
 
-**Behavior**:
-
-- We only return `res.data`, having thrown an error if `res.status` is `"error"`.
+**Rules:**
+- ✅ Return only data (not full response)
+- ✅ Use proper return types (not `unknown`)
+- ✅ Use `unwrapData()` for null checking
+- ✅ Add JSDoc comments
+- ✅ Throw errors for invalid responses
 
 ---
 
-## 4. Global Store (Zustand)
+## State Management
 
-Use **Zustand** for global states like the auth token and user. For instance:
+### Zustand Stores
 
-```ts
+**Purpose:** Minimal global state only
+
+**Example:** `features/auth/store/auth.store.ts`
+
+```typescript
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { CurrentUserData } from '@/features/user/types/user.types';
+import { immer } from 'zustand/middleware/immer';
 
 interface AuthState {
-  accessToken: string | null;
-  user: CurrentUserData | null;
+  selectedStoreId: string | null;
   isAuthenticated: boolean;
+}
 
-  setAuth: (token: string) => void;
-  setUser: (user: CurrentUserData) => void;
+interface AuthActions {
+  setSelectedStore: (storeId: string | null) => void;
+  setAuthenticated: (isAuthenticated: boolean) => void;
   clearAuth: () => void;
 }
 
-export const useAuthStore = create<AuthState>()(
+export const useAuthStore = create<AuthState & AuthActions>()(
   devtools(
     persist(
-      (set) => ({
-        accessToken: null,
-        user: null,
+      immer((set) => ({
+        selectedStoreId: null,
         isAuthenticated: false,
 
-        setAuth: (token) =>
-          set(() => ({ accessToken: token, isAuthenticated: true })),
+        setSelectedStore: (storeId) => set((draft) => {
+          draft.selectedStoreId = storeId;
+        }),
 
-        setUser: (user) => set(() => ({ user })),
+        setAuthenticated: (isAuth) => set((draft) => {
+          draft.isAuthenticated = isAuth;
+          if (!isAuth) draft.selectedStoreId = null;
+        }),
 
-        clearAuth: () =>
-          set(() => ({
-            accessToken: null,
-            user: null,
-            isAuthenticated: false,
-          })),
-      }),
-      { name: 'auth-storage' }
-    )
+        clearAuth: () => set((draft) => {
+          draft.selectedStoreId = null;
+          draft.isAuthenticated = false;
+        }),
+      })),
+      {
+        name: 'auth-storage',
+        partialize: (state) => ({
+          selectedStoreId: state.selectedStoreId,
+        }),
+      }
+    ),
+    { name: 'auth-store' }
   )
 );
+
+// Export selectors for performance
+export const selectSelectedStoreId = (state: AuthState) =>
+  state.selectedStoreId;
+export const selectIsAuthenticated = (state: AuthState) =>
+  state.isAuthenticated;
 ```
 
-- `persist`: Saves auth data in localStorage for persistent login.
-- `devtools`: Integrates with Redux DevTools for debugging.
+**Middleware Stack:**
+- `immer` - Immutable updates with mutable syntax
+- `persist` - localStorage persistence
+- `devtools` - Redux DevTools integration
+
+**Best Practices:**
+- ✅ Keep stores minimal (auth, UI state only)
+- ✅ No API calls in stores
+- ✅ Export selectors for each state field
+- ✅ Use `immer` for nested updates
+- ✅ Persist only necessary data
 
 ---
 
-## 5. Pages Combining Services & Store
+## Internationalization
 
-### 5.1 Example: `app/(auth)/login/page.tsx`
+### Configuration
 
-```tsx
+**Location:** `src/i18n/config.ts`
+
+```typescript
+export const locales = ['en', 'zh', 'my', 'th'] as const;
+export type Locale = (typeof locales)[number];
+
+export const defaultLocale: Locale = 'en';
+```
+
+### Usage in Components
+
+```typescript
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 
-import { login } from '@/features/auth/services/auth.service';
-import { useAuthStore } from '@/features/auth/store/auth.store';
-import { getCurrentUser } from '@/features/user/services/user.service';
-
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
-});
-type LoginFormValues = z.infer<typeof loginSchema>;
-
-export default function LoginPage() {
-  const router = useRouter();
-  const { accessToken, setAuth } = useAuthStore();
-
-  // If we want to fetch user data once we have a token
-  const {
-    mutate: loginMutate,
-    isLoading,
-    error,
-  } = useMutation(login, {
-    onSuccess: (res) => {
-      setAuth(res.access_token);
-    },
-  });
-
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-  });
-
-  const onSubmit = (data: LoginFormValues) => {
-    loginMutate(data);
-  };
-
-  useEffect(() => {
-    if (accessToken) {
-      // Possibly fetch user or redirect
-      router.replace('/store/choose');
-    }
-  }, [accessToken, router]);
+export function MyComponent() {
+  const t = useTranslations('common');
+  const tMenu = useTranslations('menu');
 
   return (
-    <div className="mx-auto max-w-md p-4">
-      <h1 className="mb-4 text-xl">Login</h1>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <input
-          placeholder="Email"
-          {...form.register('email')}
-          className="w-full border p-2"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          {...form.register('password')}
-          className="w-full border p-2"
-        />
+    <div>
+      <h1>{t('home')}</h1>
+      <button>{tMenu('createItem')}</button>
+    </div>
+  );
+}
+```
 
-        {error && (
-          <p className="text-red-600">Error: {(error as Error).message}</p>
-        )}
+### Adding the Language Switcher
 
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
+```typescript
+import { LanguageSwitcher } from '@/common/components/LanguageSwitcher';
+
+<Header>
+  <LanguageSwitcher />
+</Header>
+```
+
+See **`../../I18N_GUIDE.md`** for complete documentation.
+
+---
+
+## Development Patterns
+
+### 1. Protected Routes
+
+Use the `useProtected` hook for authentication:
+
+```typescript
+import { useProtected } from '@/features/auth/hooks/useProtected';
+
+export default function AdminPage() {
+  const { isLoading } = useProtected({
+    allowedRoles: ['OWNER', 'ADMIN'],
+    unauthorizedRedirectTo: '/hub/sale',
+  });
+
+  if (isLoading) return <PageSkeleton />;
+
+  return <PageContent />;
+}
+```
+
+### 2. React Query with Query Keys
+
+Use query key factories for type safety:
+
+```typescript
+import { useQuery } from '@tanstack/react-query';
+import { menuKeys } from '@/features/menu/queries/menu.keys';
+import { getCategories } from '@/features/menu/services/category.service';
+
+const { data: categories, isLoading } = useQuery({
+  queryKey: menuKeys.categories(storeId),
+  queryFn: () => getCategories(storeId),
+  enabled: !!storeId,
+});
+```
+
+### 3. Dialog State Management
+
+Use custom hook for cleaner dialog management:
+
+```typescript
+import { useDialog } from '@/common/hooks/useDialogState';
+
+const [dialogOpen, setDialogOpen] = useDialog();
+
+<Button onClick={() => setDialogOpen(true)}>Open</Button>
+<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+  ...
+</Dialog>
+```
+
+### 4. Constants Usage
+
+Never hardcode routes or error messages:
+
+```typescript
+import { ROUTES, ERROR_MESSAGES } from '@/common/constants/routes';
+
+// Routes
+router.push(ROUTES.MENU);
+
+// Error messages
+toast.error(ERROR_MESSAGES.AUTH.PERMISSION_DENIED);
+```
+
+### 5. Skeleton Loading States
+
+**Always** show skeleton placeholders for non-trivial data:
+
+```typescript
+import { MenuSkeleton } from '@/features/menu/components/menu-skeleton';
+
+if (isLoading) {
+  return <MenuSkeleton />;
+}
+
+return <MenuList data={data} />;
+```
+
+---
+
+## Component Examples
+
+### Page Component with All Patterns
+
+```typescript
+'use client';
+
+import { useCallback, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
+
+import { useDialog } from '@/common/hooks/useDialogState';
+import { useAuthStore, selectSelectedStoreId } from '@/features/auth/store/auth.store';
+import { menuKeys } from '@/features/menu/queries/menu.keys';
+import { getCategories } from '@/features/menu/services/category.service';
+import { MenuSkeleton } from '@/features/menu/components/menu-skeleton';
+
+export default function MenuPage() {
+  const t = useTranslations('menu');
+  const [dialogOpen, setDialogOpen] = useDialog();
+
+  const selectedStoreId = useAuthStore(selectSelectedStoreId);
+
+  const { data: categories = [], isLoading } = useQuery({
+    queryKey: menuKeys.categories(selectedStoreId!),
+    queryFn: () => getCategories(selectedStoreId!),
+    enabled: !!selectedStoreId,
+  });
+
+  const handleCreate = useCallback(() => {
+    setDialogOpen(true);
+  }, [setDialogOpen]);
+
+  if (isLoading) return <MenuSkeleton />;
+
+  return (
+    <div>
+      <h1>{t('title')}</h1>
+      <button onClick={handleCreate}>{t('createItem')}</button>
+      {/* Rest of component */}
     </div>
   );
 }
@@ -296,217 +508,250 @@ export default function LoginPage() {
 
 ---
 
-## 6. Skeleton Usage for Loading States
+## API Response Types
 
-### 6.1 Components
+All API responses follow this structure:
 
-1. **StoreCardSkeleton** – Renders a single skeleton placeholder:
+```typescript
+interface StandardApiResponse<T> {
+  status: 'success' | 'error';
+  data: T | null;
+  message: string | null;
+  errors: ErrorDetail[] | null;
+}
 
-   ```tsx
-   // store-card-skeleton.tsx
-   import { motion } from 'motion/react';
-   import { Skeleton } from '@repo/ui/components/skeleton';
-
-   export function StoreCardSkeleton() {
-     return (
-       <motion.li className="list-none">
-         <div className="rounded-lg border bg-white p-4" aria-hidden="true">
-           <Skeleton className="mb-2 h-6 w-3/4" />
-           <Skeleton className="mb-1 h-4 w-5/6" />
-           <Skeleton className="h-4 w-1/2" />
-           <div className="mt-4">
-             <Skeleton className="h-4 w-1/3" />
-           </div>
-         </div>
-       </motion.li>
-     );
-   }
-   ```
-
-2. **StoreListSkeleton** – Renders multiple skeleton cards in a list:
-
-   ```tsx
-   // store-list-skeleton.tsx
-   import { AnimatePresence, motion } from 'motion/react';
-   import { StoreCardSkeleton } from './store-card-skeleton';
-
-   export function StoreListSkeleton() {
-     return (
-       <AnimatePresence>
-         <motion.ul
-           role="list"
-           className="grid grid-cols-1 gap-6 sm:grid-cols-2"
-           initial={{ opacity: 0.5, scale: 0.95 }}
-           animate={{ opacity: 1, scale: 1 }}
-           exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.3 } }}
-         >
-           {Array.from({ length: 4 }).map((_, idx) => (
-             <StoreCardSkeleton key={idx} />
-           ))}
-         </motion.ul>
-       </AnimatePresence>
-     );
-   }
-   ```
-
-### 6.2 Usage
-
-In your **Choose Store** page, you might have:
-
-```tsx
-// app/store/choose/page.tsx
-'use client';
-
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-
-import { StoreListSkeleton } from '@/components/store-list-skeleton';
-import { StoreCard } from '@/components/store-card';
-import { getCurrentUser } from '@/features/user/services/user.service';
-
-export default function ChooseStorePage() {
-  const router = useRouter();
-  const {
-    data: user,
-    isLoading,
-    error,
-  } = useQuery(['user', 'me'], getCurrentUser);
-
-  useEffect(() => {
-    if (!isLoading && !error && user) {
-      if (user.currentStore) router.push('/hub/sale');
-      else if (!user.userStores?.length) router.push('/store/create');
-    }
-  }, [isLoading, error, user, router]);
-
-  if (isLoading) {
-    // Render skeleton while loading
-    return (
-      <main className="min-h-screen bg-gradient-to-r from-blue-200 to-indigo-200 p-4">
-        <section className="mx-auto max-w-3xl rounded-lg bg-white p-6 shadow">
-          <h1 className="mb-4 text-2xl font-bold">Choose Store</h1>
-          <StoreListSkeleton />
-        </section>
-      </main>
-    );
-  }
-
-  if (error) {
-    return <p className="text-center text-red-600">Error loading stores.</p>;
-  }
-
-  return (
-    <main className="min-h-screen bg-gradient-to-r from-blue-200 to-indigo-200 p-4">
-      <section className="mx-auto max-w-3xl rounded-lg bg-white p-6 shadow">
-        <h1 className="mb-4 text-2xl font-bold">Choose Store</h1>
-        <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {user?.userStores?.map((storeObj: any) => (
-            <StoreCard key={storeObj.id} userStore={storeObj} />
-          ))}
-        </ul>
-      </section>
-    </main>
-  );
+interface ErrorDetail {
+  code?: string;
+  message: string;
+  field?: string | null;
 }
 ```
 
-**Rule**:
-Always use skeleton placeholders in loading states, **unless** the component is trivial or purely static. This **prevents** layout shifts and provides a modern UX.
+Services return only the `data` field, throwing errors for failures.
 
 ---
 
-## 7. Important Rules & Conventions
+## Query Key Factories
 
-1. **Use Skeleton UI for Loading**
-   - When data is fetching, display skeleton placeholders.
-   - This reduces flicker and abrupt layout changes.
-2. **TypeScript**
-   - All code in `.ts` or `.tsx` with explicit interfaces or types.
-   - Use `auth.types.ts`, `user.types.ts`, etc. for domain data.
-3. **Zustand**
-   - Store only minimal global states (token, user).
-   - No direct API calls in store methods.
-   - Use `persist` for session continuity.
-4. **Services Return Data**
-   - Service calls throw if `res.status === "error"`.
-   - Return `res.data` on success.
-5. **React Query or Custom**
-   - For complex caching: React Query.
-   - For simpler or one-off calls: direct `apiFetch` usage.
-6. **Semantic HTML & Accessibility**
-   - `<main>`, `<section>`, `<header>`, `<footer>`, `<ul>`, `<li>`.
-   - Interactive elements: use `<button>` or `<a>` with ARIA roles/labels.
-7. **Styling**
-   - Tailwind utility classes.
-   - Framer Motion for transitions (fade in/out of skeletons).
-8. **Feature-Sliced**
-   - Keep domain logic grouped by feature (`auth`, `user`, `store`), each with `services/`, `store/`, `types/`.
+**Location:** `features/[feature]/queries/*.keys.ts`
 
----
+```typescript
+// features/menu/queries/menu.keys.ts
+export const menuKeys = {
+  all: ['menu'] as const,
+  categories: (storeId: string) =>
+    [...menuKeys.all, 'categories', { storeId }] as const,
+  items: (storeId: string) =>
+    [...menuKeys.all, 'items', { storeId }] as const,
+};
 
-## 8. Summary for New Developers
+// features/auth/queries/auth.keys.ts
+export const authKeys = {
+  all: ['auth'] as const,
+  currentUser: (storeId?: string) =>
+    storeId
+      ? ([...authKeys.all, 'currentUser', { storeId }] as const)
+      : ([...authKeys.all, 'currentUser'] as const),
+};
+```
 
-1. **Clone & Install**
-
-   ```bash
-   git clone [repo-url]
-   cd apps/pos
-   npm install
-   ```
-
-2. **Run Locally**
-
-   ```bash
-   npm run dev
-   ```
-
-   Runs at [http://localhost:3000](http://localhost:3000).
-
-3. **Folder Locations**
-
-   - `src/app/`: Next.js routes (App Router).
-   - `features/[feature]/services/`: API calls (auth, user, etc.).
-   - `features/[feature]/store/`: Zustand store logic.
-   - `features/[feature]/types/`: TypeScript definitions.
-   - `components/`: Reusable UI (cards, skeletons, etc.).
-   - `utils/`: e.g., `apiFetch.ts`.
-
-4. **API Flow**
-
-   - Service calls `apiFetch`, returns `res.data`.
-   - Check for error => throw if necessary.
-   - UI handles success/failure, e.g. using React Query or local state.
-
-5. **Global Store**
-
-   - `useAuthStore` for token, user object, `isAuthenticated`.
-   - Avoid API calls in store, keep it pure state only.
-
-6. **Skeleton Enforcement**
-
-   - For all pages that fetch data, show Skeleton UIs while `isLoading`.
-   - Only skip skeleton if the data is trivial or static.
-
-7. **Contributing**
-
-   - Consistent naming: `.service.ts`, `.store.ts`, `.types.ts`.
-   - Follow the skeleton usage rule, semantic HTML, and TypeScript best practices.
-
-8. **Final Steps**
-
-   - Test any new route or service call with skeleton placeholders and typed endpoints.
-   - Use devtools for debugging, and ensure it’s tested on local dev environment.
+**Benefits:**
+- Type-safe query keys
+- Easy cache invalidation
+- Prevents typos
+- Consistent structure
 
 ---
 
-## Final Thoughts
+## Common Hooks
 
-This technical documentation should help new developers:
+### `useProtected`
+**Location:** `features/auth/hooks/useProtected.ts`
 
-- **Understand** the folder structure and how to add new pages or features.
-- **Know** how to handle data fetching (services + skeleton UIs).
-- **See** how global state is kept minimal in Zustand.
-- **Enforce** consistent best practices (skeleton loading, TypeScript, semantic HTML).
+Protects routes and handles authorization:
 
-By following these guidelines, the project remains **easy to maintain**, **scalable**, and **welcoming** to future contributors.
+```typescript
+const { isLoading } = useProtected({
+  allowedRoles: ['OWNER', 'ADMIN'],
+  loginRedirectTo: '/login',
+  unauthorizedRedirectTo: '/hub/sale',
+});
+```
+
+### `useDialog`
+**Location:** `common/hooks/useDialogState.ts`
+
+Manages dialog open/close state:
+
+```typescript
+const [isOpen, setIsOpen] = useDialog();
+
+<Dialog open={isOpen} onOpenChange={setIsOpen}>
+  ...
+</Dialog>
+```
+
+---
+
+## Constants
+
+### Routes
+**Location:** `common/constants/routes.ts`
+
+```typescript
+export const ROUTES = {
+  LOGIN: '/login',
+  STORE_CHOOSE: '/store/choose',
+  MENU: '/hub/menu',
+  TABLES_MANAGE: '/hub/tables/manage',
+  // ...
+} as const;
+```
+
+### Error Messages
+```typescript
+export const ERROR_MESSAGES = {
+  AUTH: {
+    UNAUTHORIZED: 'Unauthorized',
+    PERMISSION_DENIED: 'Permission Denied.',
+    // ...
+  },
+} as const;
+```
+
+---
+
+## Translation Keys
+
+**Available Namespaces:**
+- `common` - UI elements (save, cancel, edit, etc.)
+- `auth` - Authentication (login, register)
+- `menu` - Menu management
+- `tables` - Table management
+- `store` - Store settings
+- `errors` - Error messages
+
+**Example:**
+```typescript
+const t = useTranslations('menu');
+
+t('title')       // "Menu Management" (EN) / "菜单管理" (ZH)
+t('createItem')  // "Create Menu Item" / "创建菜品"
+```
+
+---
+
+## Code Quality Rules
+
+### ✅ DO
+
+- Use `apiFetch` for all HTTP requests
+- Return typed data from services
+- Use `unwrapData()` for null checking
+- Export selectors from stores
+- Use query key factories
+- Add JSDoc to service functions
+- Use skeleton loading states
+- Memoize callbacks with `useCallback`
+- Extract constants (routes, messages)
+- Add translations for all 4 languages
+
+### ❌ DON'T
+
+- Return `unknown` from services
+- Hardcode routes or error messages
+- Mix API calls with UI components
+- Use `console.log` in production code
+- Skip skeleton loading states
+- Forget to add selectors to stores
+- Use magic strings for query keys
+
+---
+
+## File Naming Conventions
+
+| Type | Convention | Example |
+|------|-----------|---------|
+| Services | `*.service.ts` | `category.service.ts` |
+| Stores | `*.store.ts` | `auth.store.ts` |
+| Types | `*.types.ts` | `menu-item.types.ts` |
+| Queries | `*.keys.ts` | `menu.keys.ts` |
+| Hooks | `use*.ts` | `useProtected.ts` |
+| Components | PascalCase | `CategoryCard.tsx` |
+
+---
+
+## Testing
+
+```bash
+# Type checking
+npm run check-types
+
+# Linting
+npm run lint
+
+# Build test
+npm run build
+```
+
+---
+
+## Deployment
+
+### Production Build
+
+```bash
+npm run build --filter=@app/pos
+npm run start --filter=@app/pos
+```
+
+### Environment Variables
+
+Ensure `NEXT_PUBLIC_API_URL` is set for production environment.
+
+---
+
+## Troubleshooting
+
+### TypeScript Errors
+
+```bash
+npm run check-types --workspace=@app/pos
+```
+
+### Build Failures
+
+```bash
+# Clean and rebuild
+rm -rf .next node_modules
+npm install
+npm run build
+```
+
+### i18n Not Working
+
+1. Check translation files exist: `messages/en.json`, etc.
+2. Verify middleware is configured: `src/middleware.ts`
+3. Check locale cookie in DevTools
+
+---
+
+## Learn More
+
+- [Next.js App Router](https://nextjs.org/docs/app)
+- [React Query Best Practices](https://tkdodo.eu/blog/practical-react-query)
+- [Zustand Documentation](https://docs.pmnd.rs/zustand)
+- [next-intl Documentation](https://next-intl-docs.vercel.app/)
+
+---
+
+## Related Documentation
+
+- **`../../README.md`** - Monorepo overview
+- **`../../CLAUDE.md`** - Project guidelines
+- **`../../I18N_GUIDE.md`** - i18n complete guide
+
+---
+
+**POS Application - Origin Food House**
+Version 0.1.0
