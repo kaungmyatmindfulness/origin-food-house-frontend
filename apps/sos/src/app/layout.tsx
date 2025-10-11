@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 import { Toaster } from '@repo/ui/components/sonner';
 
 import '@repo/ui/globals.css';
@@ -15,20 +17,25 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'Origin Food House POS',
-  description: 'A modern and efficient restaurant POS solution.',
+  title: 'Origin Food House - Self Ordering',
+  description: 'Order your favorite food with ease.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Providers>{children}</Providers>
-        <Toaster />
+        <NextIntlClientProvider messages={messages}>
+          <Providers>{children}</Providers>
+          <Toaster />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

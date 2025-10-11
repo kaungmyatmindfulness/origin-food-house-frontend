@@ -1,0 +1,89 @@
+{
+  "common": {
+    "home": "Home",
+    "menu": "Menu",
+    "tables": "Tables",
+    "store": "Store",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "close": "Close"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "loginTitle": "Welcome Back",
+    "registerTitle": "Create Account",
+    "loginButton": "Sign In",
+    "registerButton": "Sign Up",
+    "logoutConfirm": "Are you sure you want to logout?"
+  },
+  "menu": {
+    "title": "Menu Management",
+    "createItem": "Create Menu Item",
+    "createCategory": "Create Category",
+    "reorderMenu": "Reorder Menu",
+    "menuItem": "Menu Item",
+    "category": "Category",
+    "name": "Name",
+    "description": "Description",
+    "price": "Price",
+    "image": "Image",
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "customizations": "Customizations",
+    "options": "Options"
+  },
+  "tables": {
+    "title": "Table Management",
+    "manag
+
+e": "Manage Tables",
+    "qrCode": "QR Code",
+    "tableName": "Table Name",
+    "tableNumber": "Table Number",
+    "capacity": "Capacity",
+    "status": "Status",
+    "available": "Available",
+    "occupied": "Occupied",
+    "reserved": "Reserved",
+    "generateQR": "Generate QR Code",
+    "downloadQR": "Download QR"
+  },
+  "store": {
+    "title": "Store Management",
+    "information": "Store Information",
+    "settings": "Store Settings",
+    "selectStore": "Select Store",
+    "storeName": "Store Name",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "openingHours": "Opening Hours",
+    "chooseStore": "Please choose a store to continue"
+  },
+  "errors": {
+    "unauthorized": "Unauthorized",
+    "permissionDenied": "Permission Denied",
+    "invalidSession": "Invalid session data. Please log in again.",
+    "noPermission": "You do not have permission to access this page.",
+    "storeRequired": "Please select a store first.",
+    "roleMissing": "Cannot verify permissions: User role not found.",
+    "networkError": "Network error. Please try again.",
+    "unknownError": "An unknown error occurred."
+  }
+}
