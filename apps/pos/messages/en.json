@@ -50,9 +50,7 @@
   },
   "tables": {
     "title": "Table Management",
-    "manag
-
-e": "Manage Tables",
+    "manage": "Manage Tables",
     "qrCode": "QR Code",
     "tableName": "Table Name",
     "tableNumber": "Table Number",

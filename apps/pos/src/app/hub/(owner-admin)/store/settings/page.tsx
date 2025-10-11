@@ -74,8 +74,8 @@ const availableCurrencies = [
   'SAR',
 ] as const;
 
-export const StoreCurrencyEnum = z.enum(availableCurrencies);
-export type StoreCurrency = z.infer<typeof StoreCurrencyEnum>;
+const StoreCurrencyEnum = z.enum(availableCurrencies);
+type StoreCurrency = z.infer<typeof StoreCurrencyEnum>;
 
 const percentageRateSchema = z.preprocess(
   (val) =>
@@ -100,13 +100,13 @@ const formatPercentageRateForApi = (
   return decimalRate.toFixed(2);
 };
 
-export const updateStoreSettingsSchema = z.object({
+const updateStoreSettingsSchema = z.object({
   currency: StoreCurrencyEnum,
   vatRate: percentageRateSchema,
   serviceChargeRate: percentageRateSchema,
 });
 
-export type UpdateStoreSettingsFormData = z.infer<
+type UpdateStoreSettingsFormData = z.infer<
   typeof updateStoreSettingsSchema
 >;
 

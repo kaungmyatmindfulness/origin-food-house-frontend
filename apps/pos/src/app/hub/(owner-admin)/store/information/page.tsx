@@ -46,7 +46,7 @@ import { Input } from '@repo/ui/components/input';
 import { Textarea } from '@repo/ui/components/textarea'; // Use Textarea for address
 import { Skeleton } from '@repo/ui/components/skeleton'; // For loading state
 
-export const updateStoreInformationSchema = z.object({
+const updateStoreInformationSchema = z.object({
   name: z
     .string()
     .min(1, 'Store name is required.')
@@ -68,7 +68,7 @@ export const updateStoreInformationSchema = z.object({
     .or(z.literal('')),
 });
 
-export type UpdateStoreInformationFormData = z.infer<
+type UpdateStoreInformationFormData = z.infer<
   typeof updateStoreInformationSchema
 >;
 

@@ -15,11 +15,16 @@ interface JoinPageParams {
 export default function JoinSessionByTableIdPage({
   params,
 }: {
-  params: JoinPageParams;
+  params: Promise<JoinPageParams>;
 }) {
   const router = useRouter();
+  const [tableId, setTableId] = useState<string | undefined>();
 
-  const tableId = params.id;
+  useEffect(() => {
+    params.then((resolvedParams) => {
+      setTableId(resolvedParams.id);
+    });
+  }, [params]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

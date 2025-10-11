@@ -45,7 +45,7 @@ import { Skeleton } from '@repo/ui/components/skeleton';
 const MAX_TABLES = 100;
 const MAX_TABLE_NAME_LENGTH = 50;
 
-export const tableBatchSchema = z.object({
+const tableBatchSchema = z.object({
   tables: z
     .array(
       z.object({
@@ -74,7 +74,7 @@ export const tableBatchSchema = z.object({
     ),
 });
 
-export type TableBatchFormData = z.infer<typeof tableBatchSchema>;
+type TableBatchFormData = z.infer<typeof tableBatchSchema>;
 const storeTablesQueryKey = (storeId: string | null) => ['tables', storeId];
 
 export default function StoreTablesPage() {
