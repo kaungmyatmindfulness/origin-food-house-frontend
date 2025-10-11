@@ -74,6 +74,23 @@
     "salesPage": "หน้าการขาย",
     "profilePage": "หน้าโปรไฟล์"
   },
+  "sidebar": {
+    "collapse": "ย่อ",
+    "sale": "ขาย",
+    "kitchenDisplay": "จอแสดงผลครัว",
+    "menu": "เมนู",
+    "store": "ร้าน",
+    "information": "ข้อมูล",
+    "settings": "ตั้งค่า",
+    "tables": "โต๊ะ",
+    "manage": "จัดการ",
+    "qrCodes": "คิวอาร์โค้ด",
+    "storePersonnel": "พนักงานร้าน",
+    "reports": "รายงาน",
+    "sales": "ยอดขาย",
+    "salesHistory": "ประวัติการขาย",
+    "menuItems": "รายการเมนู"
+  },
   "tables": {
     "title": "จัดการโต๊ะ",
     "manage": "จัดการโต๊ะ",

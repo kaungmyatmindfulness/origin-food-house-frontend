@@ -4,6 +4,7 @@ import React from 'react';
 import { motion, Variants } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import {
   ShoppingCart,
   ChefHat,
@@ -21,102 +22,110 @@ import {
   QrCode,
 } from 'lucide-react';
 import { cn } from '@repo/ui/lib/utils';
+import { LanguageSwitcher } from '@/common/components/LanguageSwitcher';
 
 interface NavSubItem {
-  label: string;
+  labelKey: string;
   href: string;
   icon: React.ReactNode;
 }
 
 interface NavItem {
-  label: string;
+  labelKey: string;
   icon: React.ReactNode;
   href?: string;
   subItems?: NavSubItem[];
 }
 
-const navSections: NavItem[][] = [
-  [
-    {
-      label: 'Sale',
-      icon: <ShoppingCart className="mr-2 h-3 w-3 text-gray-500" />,
-      href: '/hub/sale',
-    },
-    {
-      label: 'Kitchen Display',
-      icon: <ChefHat className="mr-2 h-3 w-3 text-gray-500" />,
-      href: '/hub/kds',
-    },
-  ],
-  [
-    {
-      label: 'Menu',
-      icon: <MenuIcon className="mr-2 h-3 w-3 text-gray-500" />,
-      href: '/hub/menu',
-    },
-    {
-      label: 'Store',
-      icon: <Settings className="mr-2 h-3 w-3 text-gray-500" />,
-      subItems: [
-        {
-          label: 'Information',
-          href: '/hub/store/information',
-          icon: <Info className="mr-2 h-3 w-3 text-gray-500" />,
-        },
-        {
-          label: 'Settings',
-          href: '/hub/store/settings',
-          icon: <Settings className="mr-2 h-3 w-3 text-gray-500" />,
-        },
-      ],
-    },
+const useNavSections = () => {
+  const t = useTranslations('sidebar');
 
-    {
-      label: 'Tables',
-      icon: <LayoutGrid className="mr-2 h-3 w-3 text-gray-500" />,
-      subItems: [
+  return React.useMemo<NavItem[][]>(
+    () => [
+      [
         {
-          label: 'Manage',
-          href: '/hub/tables/manage',
-          icon: <List className="mr-2 h-3 w-3 text-gray-500" />,
+          labelKey: 'sale',
+          icon: <ShoppingCart className="mr-2 h-3 w-3 text-gray-500" />,
+          href: '/hub/sale',
         },
         {
-          label: 'QR Codes',
-          href: '/hub/tables/qr-code',
-          icon: <QrCode className="mr-2 h-3 w-3 text-gray-500" />,
-        },
-      ],
-    },
-  ],
-  [
-    {
-      label: 'Members',
-      icon: <Users className="mr-2 h-3 w-3 text-gray-500" />,
-      href: '/hub/members',
-    },
-    {
-      label: 'Reports',
-      icon: <BarChart3 className="mr-2 h-3 w-3 text-gray-500" />,
-      subItems: [
-        {
-          label: 'Sales',
-          href: '/hub/reports/sales',
-          icon: <DollarSign className="mr-2 h-3 w-3 text-gray-500" />,
-        },
-        {
-          label: 'Sales History',
-          href: '/hub/reports/history',
-          icon: <History className="mr-2 h-3 w-3 text-gray-500" />,
-        },
-        {
-          label: 'Menu Items',
-          href: '/hub/reports/menu',
-          icon: <List className="mr-2 h-3 w-3 text-gray-500" />,
+          labelKey: 'kitchenDisplay',
+          icon: <ChefHat className="mr-2 h-3 w-3 text-gray-500" />,
+          href: '/hub/kds',
         },
       ],
-    },
-  ],
-];
+      [
+        {
+          labelKey: 'menu',
+          icon: <MenuIcon className="mr-2 h-3 w-3 text-gray-500" />,
+          href: '/hub/menu',
+        },
+        {
+          labelKey: 'store',
+          icon: <Settings className="mr-2 h-3 w-3 text-gray-500" />,
+          subItems: [
+            {
+              labelKey: 'information',
+              href: '/hub/store/information',
+              icon: <Info className="mr-2 h-3 w-3 text-gray-500" />,
+            },
+            {
+              labelKey: 'settings',
+              href: '/hub/store/settings',
+              icon: <Settings className="mr-2 h-3 w-3 text-gray-500" />,
+            },
+          ],
+        },
+
+        {
+          labelKey: 'tables',
+          icon: <LayoutGrid className="mr-2 h-3 w-3 text-gray-500" />,
+          subItems: [
+            {
+              labelKey: 'manage',
+              href: '/hub/tables/manage',
+              icon: <List className="mr-2 h-3 w-3 text-gray-500" />,
+            },
+            {
+              labelKey: 'qrCodes',
+              href: '/hub/tables/qr-code',
+              icon: <QrCode className="mr-2 h-3 w-3 text-gray-500" />,
+            },
+          ],
+        },
+      ],
+      [
+        {
+          labelKey: 'storePersonnel',
+          icon: <Users className="mr-2 h-3 w-3 text-gray-500" />,
+          href: '/hub/store-personnel',
+        },
+        {
+          labelKey: 'reports',
+          icon: <BarChart3 className="mr-2 h-3 w-3 text-gray-500" />,
+          subItems: [
+            {
+              labelKey: 'sales',
+              href: '/hub/reports/sales',
+              icon: <DollarSign className="mr-2 h-3 w-3 text-gray-500" />,
+            },
+            {
+              labelKey: 'salesHistory',
+              href: '/hub/reports/history',
+              icon: <History className="mr-2 h-3 w-3 text-gray-500" />,
+            },
+            {
+              labelKey: 'menuItems',
+              href: '/hub/reports/menu',
+              icon: <List className="mr-2 h-3 w-3 text-gray-500" />,
+            },
+          ],
+        },
+      ],
+    ],
+    []
+  );
+};
 
 function isItemActive(item: NavItem, pathname: string): boolean {
   if (item.href && pathname.startsWith(item.href)) {
@@ -144,6 +153,8 @@ export function DashboardSidebar({
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const pathname = usePathname();
+  const t = useTranslations('sidebar');
+  const navSections = useNavSections();
 
   return (
     <motion.aside
@@ -167,7 +178,7 @@ export function DashboardSidebar({
           ) : (
             <>
               <ChevronLeft className="mr-1 h-4 w-4" />
-              <span>Collapse</span>
+              <span>{t('collapse')}</span>
             </>
           )}
         </button>
@@ -183,7 +194,7 @@ export function DashboardSidebar({
                 if (!item.subItems) {
                   return (
                     <Link
-                      key={item.label}
+                      key={item.labelKey}
                       href={item.href ?? '#'}
                       className={cn(
                         'flex items-center rounded p-2 hover:bg-gray-50',
@@ -192,14 +203,16 @@ export function DashboardSidebar({
                       )}
                     >
                       {item.icon}
-                      {!collapsed && <span className="ml-2">{item.label}</span>}
+                      {!collapsed && (
+                        <span className="ml-2">{t(item.labelKey)}</span>
+                      )}
                     </Link>
                   );
                 }
 
                 const subActive = active && !collapsed;
                 return (
-                  <div key={item.label} className="px-2 py-1">
+                  <div key={item.labelKey} className="px-2 py-1">
                     <div
                       className={cn(
                         'flex items-center rounded p-2 hover:bg-gray-50',
@@ -208,7 +221,9 @@ export function DashboardSidebar({
                       )}
                     >
                       {item.icon}
-                      {!collapsed && <span className="ml-2">{item.label}</span>}
+                      {!collapsed && (
+                        <span className="ml-2">{t(item.labelKey)}</span>
+                      )}
                     </div>
                     {!collapsed && (
                       <ul className="mt-1 space-y-1 pl-6">
@@ -224,7 +239,7 @@ export function DashboardSidebar({
                                 )}
                               >
                                 {sub.icon}
-                                {sub.label}
+                                {t(sub.labelKey)}
                               </Link>
                             </li>
                           );
@@ -239,6 +254,13 @@ export function DashboardSidebar({
           </React.Fragment>
         ))}
       </nav>
+
+      {/* Language Switcher */}
+      {!collapsed && (
+        <div className="border-t p-2">
+          <LanguageSwitcher />
+        </div>
+      )}
 
       <div className="border-t p-2 text-center text-xs text-gray-400">
         v0.0.1

@@ -74,6 +74,23 @@
     "salesPage": "销售页面",
     "profilePage": "个人资料页面"
   },
+  "sidebar": {
+    "collapse": "收起",
+    "sale": "销售",
+    "kitchenDisplay": "厨房显示",
+    "menu": "菜单",
+    "store": "店铺",
+    "information": "信息",
+    "settings": "设置",
+    "tables": "桌位",
+    "manage": "管理",
+    "qrCodes": "二维码",
+    "storePersonnel": "店铺员工",
+    "reports": "报表",
+    "sales": "销售",
+    "salesHistory": "销售记录",
+    "menuItems": "菜品"
+  },
   "tables": {
     "title": "桌位管理",
     "manage": "管理桌位",
