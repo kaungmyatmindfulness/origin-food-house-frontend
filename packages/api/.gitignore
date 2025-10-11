@@ -1,0 +1,6 @@
+# OpenAPI spec files (regenerate from backend)
+openapi-spec.json
+openapi-spec-fixed.json
+
+# OpenAPI-TS error logs
+openapi-ts-error-*.log

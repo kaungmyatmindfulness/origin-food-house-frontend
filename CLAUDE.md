@@ -33,6 +33,9 @@ npm run check-types
 
 # Format code
 npm run format
+
+# Generate TypeScript types from backend OpenAPI spec
+npm run generate:api
 ```
 
 ### App-specific commands
@@ -115,18 +118,32 @@ messages/             # Translation files (root level) ⭐ NEW
 
 ### Key Architectural Patterns
 
-#### 1. Shared API Package (@repo/api)
+#### 1. Shared API Package (@repo/api) ⭐ WITH OPENAPI CODE GENERATION
 
-**NEW:** Centralized API utilities to eliminate code duplication.
+**NEW:** Centralized API utilities with **auto-generated TypeScript types** from backend OpenAPI spec.
 
 **Located at:** `packages/api/`
 
 **Exports:**
 - `createApiFetch(config)` - Factory for configurable API client
 - `unwrapData(response, errorMsg)` - Null-safe data extraction
+- **Auto-generated TypeScript types** from `@repo/api/generated/types` ⭐ NEW
 - Error classes: `ApiError`, `UnauthorizedError`, `NetworkError`, `FetchError`
 - Types: `StandardApiResponse<T>`, `ErrorDetail`, `UploadImageResponseData`
 - `createUploadService(apiFetch)` - Upload service factory
+
+**Type Generation:**
+```bash
+# Regenerate types when backend API changes (backend must be running)
+npm run generate:api
+```
+
+**Key Features:**
+- ✅ **50+ auto-generated DTOs** from backend OpenAPI specification
+- ✅ Single source of truth (backend spec → frontend types)
+- ✅ Zero manual type maintenance
+- ✅ Catch API mismatches at compile time
+- ✅ Full IDE auto-completion support
 
 **Usage in apps:**
 ```typescript
@@ -141,6 +158,40 @@ export const apiFetch = createApiFetch({
 
 export { unwrapData };
 ```
+
+**Using Generated Types in Services:**
+```typescript
+// features/menu/services/category.service.ts
+import { apiFetch, unwrapData } from '@/utils/apiFetch';
+import type {
+  CategoryResponseDto,
+  CreateCategoryDto,
+} from '@repo/api/generated/types'; // ✅ Auto-generated types
+
+export async function getCategories(
+  storeId: string
+): Promise<CategoryResponseDto[]> {
+  const res = await apiFetch<CategoryResponseDto[]>({
+    path: '/categories',
+    query: { storeId },
+  });
+
+  return unwrapData(res, 'Failed to retrieve categories');
+}
+```
+
+**Available Generated Types:**
+- `CategoryResponseDto`, `CreateCategoryDto`, `UpdateCategoryDto`
+- `MenuItemResponseDto`, `CreateMenuItemDto`, `UpdateMenuItemDto`
+- `UserProfileResponseDto`, `CreateUserDto`
+- `TableResponseDto`, `CreateTableDto`, `BatchUpsertTableDto`
+- `CartResponseDto`, `CartItemResponseDto`, `AddItemToCartDto`
+- `GetStoreDetailsResponseDto`, `CreateStoreDto`, `UpdateStoreInformationDto`
+- And 40+ more DTOs...
+
+**Documentation:**
+- See **`OPENAPI_SETUP.md`** for complete setup guide
+- See **`packages/api/README.md`** for detailed API package documentation
 
 #### 2. Feature Organization
 
@@ -397,20 +448,39 @@ if (isLoading) {
 
 ### Shared Packages
 
-#### @repo/api ⭐ NEW
+#### @repo/api ⭐ WITH OPENAPI CODE GENERATION
 
-Located in `packages/api/`, this package provides shared API utilities:
+Located in `packages/api/`, this package provides shared API utilities and **auto-generated types**:
 
+- **`src/generated/`**: Auto-generated TypeScript types from OpenAPI spec ⭐ NEW
+  - `types.gen.ts` - All DTOs and response types (50+)
+  - `sdk.gen.ts` - Generated SDK (not used directly)
+  - `index.ts` - Main export
 - **`utils/apiFetch.ts`**: Core API client factory
 - **`types/api.types.ts`**: `StandardApiResponse`, `ErrorDetail`
 - **`types/upload.types.ts`**: Upload-related types
 - **`services/upload.service.ts`**: Upload service factory
 
-**Import pattern:**
+**Import patterns:**
 ```typescript
+// API utilities
 import { createApiFetch, unwrapData } from '@repo/api/utils/apiFetch';
 import type { StandardApiResponse } from '@repo/api/types/api.types';
+
+// Auto-generated types ⭐ NEW
+import type {
+  CategoryResponseDto,
+  MenuItemResponseDto,
+  UserProfileResponseDto,
+} from '@repo/api/generated/types';
 ```
+
+**Code Generation Setup:**
+- Uses `@hey-api/openapi-ts` for type generation
+- Fetches spec from `http://localhost:3000/api-docs-json`
+- Automatically fixes common OpenAPI spec issues
+- Generates 50+ DTOs and response types
+- See `OPENAPI_SETUP.md` for complete documentation
 
 #### @repo/ui
 
@@ -429,20 +499,24 @@ import { useToast } from '@repo/ui/hooks/use-toast';
 
 ## Important Development Rules
 
-### 1. API Service Pattern ⭐ UPDATED
+### 1. API Service Pattern ⭐ UPDATED WITH AUTO-GENERATED TYPES
 
 **Services should:**
 - Live in `features/[feature]/services/`
 - Use `apiFetch` from `@/utils/apiFetch.ts`
+- **Use auto-generated types from `@repo/api/generated/types`** ⭐ NEW
 - Use `unwrapData()` helper for null checking
 - Return properly typed data (NEVER `unknown`)
 - Add JSDoc comments
 
 **Example:**
 ```typescript
-// ✅ Correct - Modern pattern with unwrapData
+// ✅ Correct - Modern pattern with auto-generated types + unwrapData
 import { apiFetch, unwrapData } from '@/utils/apiFetch';
-import type { Category, CreateCategoryDto } from '../types/category.types';
+import type {
+  CategoryResponseDto,
+  CreateCategoryDto,
+} from '@repo/api/generated/types'; // ✅ Use generated types
 
 /**
  * Creates a new category for a specific store.
@@ -455,19 +529,24 @@ import type { Category, CreateCategoryDto } from '../types/category.types';
 export async function createCategory(
   storeId: string,
   data: CreateCategoryDto
-): Promise<Category> {
-  const res = await apiFetch<Category>('/categories', {
+): Promise<CategoryResponseDto> {
+  const res = await apiFetch<CategoryResponseDto>('/categories', {
     method: 'POST',
+    query: { storeId },
     body: JSON.stringify(data),
   });
 
   return unwrapData(res, 'Failed to create category');
 }
 
+// ❌ Incorrect - don't use manual types when generated types exist
+import type { Category } from '../types/category.types'; // Don't do this
+// Always use: import type { CategoryResponseDto } from '@repo/api/generated/types';
+
 // ❌ Incorrect - don't handle errors manually
 export async function createCategory(data: CreateCategoryDto) {
   try {
-    const response = await apiFetch<Category>(...);
+    const response = await apiFetch<CategoryResponseDto>(...);
     if (response.status === 'error') {
       // Don't do this - apiFetch handles it
     }
@@ -488,6 +567,13 @@ if (res.data == null) {
 return res.data;
 // Use unwrapData() instead
 ```
+
+**Benefits of Auto-Generated Types:**
+- ✅ Always in sync with backend API
+- ✅ Catch breaking changes at compile time
+- ✅ No manual type maintenance
+- ✅ Full IDE auto-completion
+- ✅ Single source of truth (backend → frontend)
 
 ### 2. Zustand Store Pattern ⭐ UPDATED
 
@@ -752,7 +838,8 @@ import { useDialog } from '@/common/hooks/useDialogState';
 import { ROUTES } from '@/common/constants/routes';
 
 // 6. Types (last, with 'type' import)
-import type { Category } from '@/features/menu/types/category.types';
+// Prefer auto-generated types from @repo/api/generated/types
+import type { CategoryResponseDto } from '@repo/api/generated/types';
 ```
 
 ## Custom Hooks Library ⭐ NEW
@@ -800,7 +887,9 @@ debug.error('Error message');
 
 - **`README.md`** - Monorepo overview, quick start, tech stack
 - **`CLAUDE.md`** (this file) - Development guidelines & patterns
+- **`OPENAPI_SETUP.md`** - OpenAPI TypeScript code generation guide ⭐ NEW
 - **`I18N_GUIDE.md`** - Complete internationalization guide
+- **`packages/api/README.md`** - API package usage documentation
 - **`apps/pos/README.md`** - POS app detailed documentation
 - **`apps/sos/README.md`** - SOS app detailed documentation
 
@@ -822,8 +911,9 @@ Detailed technical documentation includes:
 When adding a new feature, ensure you:
 
 - [ ] Create feature folder: `features/[feature]/`
+- [ ] **Use auto-generated types from `@repo/api/generated/types`** ⭐ NEW
 - [ ] Add `services/*.service.ts` with proper return types
-- [ ] Add `types/*.types.ts` with TypeScript interfaces
+- [ ] Add `types/*.types.ts` only for non-API types (use generated types for API)
 - [ ] Create `queries/*.keys.ts` if using React Query
 - [ ] Add `store/*.store.ts` if global state is needed
 - [ ] Export selectors for all store fields
@@ -835,6 +925,7 @@ When adding a new feature, ensure you:
 - [ ] Use skeleton loading states
 - [ ] Follow naming conventions
 - [ ] Use query key factories for React Query
+- [ ] **Regenerate types after backend API changes** (`npm run generate:api`) ⭐ NEW
 
 ---
 

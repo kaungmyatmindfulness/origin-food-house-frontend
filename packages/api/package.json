@@ -4,14 +4,18 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "generate": "./scripts/fetch-and-generate.sh",
+    "generate:only": "openapi-ts",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@hey-api/client-fetch": "^0.13.1",
     "qs": "^6.14.0",
     "sonner": "^2.0.3"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.85.1",
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@types/node": "^22.15.3",
@@ -21,6 +25,8 @@
   "exports": {
     "./utils/*": "./src/utils/*.ts",
     "./types/*": "./src/types/*.ts",
-    "./services/*": "./src/services/*.ts"
+    "./services/*": "./src/services/*.ts",
+    "./generated": "./src/generated/index.ts",
+    "./generated/types": "./src/generated/types.gen.ts"
   }
 }

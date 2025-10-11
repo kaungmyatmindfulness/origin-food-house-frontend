@@ -78,6 +78,9 @@ npm run lint         # Lint all packages
 npm run check-types  # TypeScript type checking
 npm run format       # Format code with Prettier
 
+# API Type Generation
+npm run generate:api # Generate TypeScript types from backend OpenAPI spec
+
 # App-specific
 turbo run dev --filter=@app/pos
 turbo run build --filter=@app/sos
@@ -103,6 +106,7 @@ turbo run build --filter=@app/sos
 
 ### API & Data
 - Custom `apiFetch` utility with error handling
+- **Auto-generated TypeScript types** from OpenAPI spec (@hey-api/openapi-ts)
 - **qs** for query string parsing
 - **Socket.IO Client** (SOS only - real-time cart)
 
@@ -127,21 +131,32 @@ turbo run build --filter=@app/sos
 
 ## 📁 Shared Packages
 
-### `@repo/api` (NEW)
-**Purpose:** Shared API utilities and types
+### `@repo/api` ⭐ NEW
+**Purpose:** Shared API utilities and auto-generated types
 
 **Exports:**
 - `createApiFetch()` - Configurable API client factory
 - `unwrapData()` - Helper for null-safe data extraction
+- **Auto-generated TypeScript types** from backend OpenAPI spec
 - API error classes (`ApiError`, `UnauthorizedError`, `NetworkError`)
 - `StandardApiResponse<T>` type
 - Upload service factory
 
 **Key Features:**
+- ✅ **Auto-generated types** from backend OpenAPI specification
+- ✅ Type-safe API requests and responses
 - ✅ Eliminates code duplication between apps
 - ✅ Dependency injection for auth handling
 - ✅ Consistent error handling
-- ✅ Type-safe throughout
+- ✅ Single source of truth (backend spec → frontend types)
+
+**Type Generation:**
+```bash
+# Regenerate types when backend API changes
+npm run generate:api
+```
+
+See **`packages/api/README.md`** and **`OPENAPI_SETUP.md`** for details.
 
 ### `@repo/ui`
 **Purpose:** Shared UI component library (shadcn/ui)
@@ -228,14 +243,22 @@ src/
 
 ## 🔧 Development Guidelines
 
-### API Service Pattern
+### API Service Pattern (with Auto-Generated Types)
 
 ```typescript
 import { apiFetch, unwrapData } from '@/utils/apiFetch';
-import type { Category } from '../types/category.types';
+import type { CategoryResponseDto } from '@repo/api/generated/types';
 
-export async function getCategories(storeId: string): Promise<Category[]> {
-  const res = await apiFetch<Category[]>({
+/**
+ * Fetches all categories for a store.
+ *
+ * @param storeId - The ID of the store
+ * @returns Promise resolving to array of categories
+ */
+export async function getCategories(
+  storeId: string
+): Promise<CategoryResponseDto[]> {
+  const res = await apiFetch<CategoryResponseDto[]>({
     path: '/categories',
     query: { storeId },
   });
@@ -243,6 +266,12 @@ export async function getCategories(storeId: string): Promise<Category[]> {
   return unwrapData(res, 'Failed to retrieve categories');
 }
 ```
+
+**Benefits:**
+- ✅ Types are auto-generated from backend OpenAPI spec
+- ✅ Catch API mismatches at compile time
+- ✅ Full IDE auto-completion support
+- ✅ No manual type maintenance required
 
 ### Query Key Factories
 
@@ -301,7 +330,9 @@ return <MenuContent data={data} />;
 ## 📚 Documentation
 
 - **`CLAUDE.md`** - Project instructions for AI assistants
+- **`OPENAPI_SETUP.md`** - OpenAPI TypeScript code generation guide ⭐ NEW
 - **`I18N_GUIDE.md`** - Complete i18n usage guide
+- **`packages/api/README.md`** - API package usage documentation
 - **`apps/pos/README.md`** - POS app technical details
 - **`apps/sos/README.md`** - SOS app technical details
 
@@ -345,9 +376,10 @@ npm run format            # Format all .ts/.tsx/.md files
 ## 🔑 Key Features
 
 ### Shared Infrastructure
+✅ **Auto-generated TypeScript types from OpenAPI spec** ⭐ NEW
 ✅ Centralized API utilities (`@repo/api`)
 ✅ Shared UI component library (`@repo/ui`)
-✅ Type-safe API responses
+✅ Type-safe API requests & responses
 ✅ Automatic error handling with toast notifications
 ✅ Query key factories for React Query
 ✅ Debug utility for environment-aware logging
@@ -408,6 +440,15 @@ npm run format            # Format all .ts/.tsx/.md files
 - 96+ translation keys
 - Cookie-based locale detection
 
+### Phase 6: OpenAPI TypeScript Code Generation ⭐ NEW
+- **Auto-generated types** from backend OpenAPI specification
+- Uses `@hey-api/openapi-ts` for code generation
+- 50+ DTOs and response types auto-generated
+- Automated fetch + fix + generate script
+- Single source of truth (backend → frontend types)
+- Eliminates manual type maintenance
+- Full IDE support with auto-completion
+
 ---
 
 ## 🚦 Environment Variables
@@ -430,12 +471,14 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api
 
 1. Follow the feature-sliced architecture
 2. Use TypeScript with strict mode
-3. Write services that return typed data
-4. Use query key factories for React Query
-5. Add translations for all 4 languages
-6. Export selectors for Zustand stores
-7. Use `unwrapData()` for null checking
-8. Follow naming conventions (`.service.ts`, not `.services.ts`)
+3. **Use auto-generated types** from `@repo/api/generated/types` ⭐ NEW
+4. Write services that return typed data
+5. Use query key factories for React Query
+6. Add translations for all 4 languages
+7. Export selectors for Zustand stores
+8. Use `unwrapData()` for null checking
+9. Follow naming conventions (`.service.ts`, not `.services.ts`)
+10. Regenerate types after backend API changes (`npm run generate:api`)
 
 ---
 
