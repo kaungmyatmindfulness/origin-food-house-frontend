@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import { z } from 'zod';
 
 import { login } from '@/features/auth/services/auth.service';
@@ -26,19 +27,23 @@ import {
 import { Input } from '@repo/ui/components/input';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-const loginSchema = z.object({
-  email: z.string().email('Please enter a valid email address.'),
-  password: z.string().min(6, 'Password must be at least 6 characters.'),
-});
-type LoginFormValues = z.infer<typeof loginSchema>;
+const createLoginSchema = (t: (key: string) => string) =>
+  z.object({
+    email: z.string().email(t('emailValidation')),
+    password: z.string().min(6, t('passwordValidation')),
+  });
+
+type LoginFormValues = z.infer<ReturnType<typeof createLoginSchema>>;
 
 const userQueryKey = ['user', 'currentUser'];
 
 export default function LoginPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const t = useTranslations('auth');
 
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
+  const loginSchema = createLoginSchema(t);
 
   const {
     data: user,
@@ -53,7 +58,7 @@ export default function LoginPage() {
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: () => {
-      toast.success('Login successful!');
+      toast.success(t('loginSuccess'));
       queryClient.invalidateQueries({ queryKey: userQueryKey });
     },
   });
@@ -98,11 +103,9 @@ export default function LoginPage() {
         {/* Header / Brand */}
         <header className="text-center">
           <h1 className="text-2xl font-bold text-gray-800">
-            Origin Food House POS
+            {t('loginTitle')}
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Please sign in to continue
-          </p>
+          <p className="mt-1 text-sm text-gray-500">{t('loginSubtitle')}</p>
         </header>
 
         {/* Login form card */}
@@ -115,9 +118,9 @@ export default function LoginPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t('email')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="you@example.com" {...field} />
+                      <Input placeholder={t('emailPlaceholder')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -128,11 +131,11 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t('password')}</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="********"
+                        placeholder={t('passwordPlaceholder')}
                         {...field}
                       />
                     </FormControl>
@@ -146,16 +149,16 @@ export default function LoginPage() {
                 disabled={isLoading}
                 className="mt-2 w-full"
               >
-                {isLoading ? 'Processing...' : 'Login'}
+                {isLoading ? t('processing') : t('loginButton')}
               </Button>
 
               <p className="mt-4 text-center text-sm text-gray-600">
-                Forgot your password?{' '}
+                {t('forgotPasswordPrompt')}{' '}
                 <Link
                   href="/(auth)/forgot-password"
                   className="font-medium text-indigo-700 hover:underline"
                 >
-                  Reset here
+                  {t('resetPasswordLink')}
                 </Link>
               </p>
             </form>

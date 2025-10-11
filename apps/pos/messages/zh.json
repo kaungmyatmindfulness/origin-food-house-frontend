@@ -17,7 +17,18 @@
     "error": "错误",
     "success": "成功",
     "confirm": "确认",
-    "close": "关闭"
+    "close": "关闭",
+    "getStarted": "开始使用"
+  },
+  "home": {
+    "welcomeTitle": "欢迎使用 MyApp",
+    "welcomeDescription": "使用 Next.js、Tailwind CSS 和 shadcn/ui 构建的现代化启动器，用于快速开发。",
+    "keyFeatures": "主要特性",
+    "feature1": "Next.js App Router + TypeScript",
+    "feature2": "响应式 Tailwind 布局",
+    "feature3": "无障碍 UI 组件 (shadcn/ui)",
+    "feature4": "深色模式支持",
+    "copyright": "© {year} MyApp. 保留所有权利。"
   },
   "auth": {
     "login": "登录",
@@ -26,11 +37,20 @@
     "password": "密码",
     "confirmPassword": "确认密码",
     "forgotPassword": "忘记密码？",
-    "loginTitle": "欢迎回来",
+    "loginTitle": "Origin Food House POS",
+    "loginSubtitle": "请登录以继续",
     "registerTitle": "创建账户",
     "loginButton": "登录",
     "registerButton": "注册",
-    "logoutConfirm": "您确定要退出登录吗？"
+    "logoutConfirm": "您确定要退出登录吗？",
+    "processing": "处理中...",
+    "resetPasswordLink": "在此重置",
+    "forgotPasswordPrompt": "忘记密码了吗？",
+    "loginSuccess": "登录成功！",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "********",
+    "emailValidation": "请输入有效的电子邮箱地址。",
+    "passwordValidation": "密码至少需要6个字符。"
   },
   "menu": {
     "title": "菜单管理",
@@ -46,7 +66,13 @@
     "available": "可用",
     "unavailable": "不可用",
     "customizations": "自定义选项",
-    "options": "选项"
+    "options": "选项",
+    "breadcrumbHome": "首页",
+    "breadcrumbMenu": "菜单"
+  },
+  "pages": {
+    "salesPage": "销售页面",
+    "profilePage": "个人资料页面"
   },
   "tables": {
     "title": "桌位管理",
@@ -60,7 +86,48 @@
     "occupied": "占用",
     "reserved": "预留",
     "generateQR": "生成二维码",
-    "downloadQR": "下载二维码"
+    "downloadQR": "下载二维码",
+    "managePage": {
+      "title": "管理桌位",
+      "subtitle": "添加、编辑或删除店铺布局中的可用桌位。",
+      "alertTitle": "重要提示：同步桌位",
+      "alertDescription": "提交此表单将根据此列表更新或创建桌位。此列表中**不存在**的任何现有桌位（通过ID匹配）**将被删除**。请确保没有打算删除的桌位有活动订单。",
+      "editListTitle": "编辑桌位列表",
+      "editListDescription": "在下方添加、删除或重命名桌位。最终列表将与服务器同步。",
+      "tablesCount": "桌位 ({count})",
+      "addTable": "添加桌位",
+      "noTablesDefined": "未定义桌位。点击「添加桌位」开始。",
+      "tableNamePlaceholder": "桌位名称 {number}",
+      "removeTable": "删除桌位 {number}",
+      "resetChanges": "重置更改",
+      "syncTableList": "同步桌位列表",
+      "cannotSave": "无法保存：未选择店铺。",
+      "syncSuccess": "桌位同步成功！",
+      "errorLoading": "加载现有桌位时出错",
+      "tryRefreshing": "请尝试刷新页面。",
+      "validation": {
+        "nameEmpty": "桌位名称不能为空。",
+        "nameTooLong": "桌位名称不能超过 {max} 个字符。",
+        "maxTables": "不能超过 {max} 个桌位。",
+        "uniqueNames": "列表中的桌位名称必须唯一。"
+      }
+    },
+    "qrPage": {
+      "title": "桌位二维码",
+      "subtitle": "生成并打印二维码，供顾客加入桌位会话。",
+      "printAll": "打印所有二维码",
+      "noTablesFound": "未找到此店铺的桌位。请先在管理桌位部分添加桌位。",
+      "downloadQR": "下载二维码",
+      "downloadingQR": "正在下载 {name} 的二维码",
+      "cannotGenerateQR": "无法生成二维码：未配置顾客应用URL。",
+      "downloadFailed": "下载二维码失败。",
+      "elementNotFound": "找不到要下载的二维码元素。",
+      "printFailed": "启动打印失败。",
+      "errorLoadingTables": "加载桌位时出错",
+      "couldNotLoad": "无法加载桌位以生成二维码。",
+      "configError": "配置错误",
+      "configErrorDescription": "环境变量中未配置顾客应用URL（NEXT_PUBLIC_CUSTOMER_APP_URL）。"
+    }
   },
   "store": {
     "title": "店铺管理",
@@ -72,7 +139,70 @@
     "phone": "电话",
     "email": "电子邮箱",
     "openingHours": "营业时间",
-    "chooseStore": "请选择一个店铺以继续"
+    "chooseStore": "请选择一个店铺以继续",
+    "choose": {
+      "title": "选择您的店铺",
+      "changeTitle": "更换您的店铺",
+      "description": "选择您关联的店铺之一以继续。",
+      "changeDescription": "选择其他店铺进行管理。",
+      "noStoresYet": "您还没有任何店铺。让我们创建一个吧！",
+      "storeSelectedSuccess": "店铺选择成功！",
+      "sessionRefreshFailed": "会话已更新，但刷新用户上下文失败。",
+      "invalidStore": "选择的店铺无效。",
+      "couldNotLoadSession": "无法加载用户会话。",
+      "goToLogin": "前往登录",
+      "noStoresFound": "未找到您账户的店铺。",
+      "selectToProceed": "选择一个店铺以继续。"
+    },
+    "info": {
+      "title": "店铺信息",
+      "subtitle": "更新您店铺的基本详情和标志。",
+      "detailsTitle": "详情",
+      "detailsDescription": "管理您店铺的公开信息。",
+      "storeNameLabel": "店铺名称",
+      "storeNamePlaceholder": "您的店铺名称",
+      "addressLabel": "地址",
+      "addressPlaceholder": "123 主街，某某市...",
+      "phoneLabel": "电话号码",
+      "phonePlaceholder": "例如：081-234-5678",
+      "emailLabel": "联系邮箱",
+      "emailPlaceholder": "info@yourstore.com",
+      "websiteLabel": "网站 URL",
+      "websitePlaceholder": "https://yourstore.com",
+      "logoLabel": "店铺标志",
+      "logoDescription": "上传您店铺的标志（例如，PNG、JPG、WEBP）。",
+      "saveChanges": "保存更改",
+      "updateSuccess": "店铺信息更新成功！",
+      "cannotUpdate": "无法更新：未选择店铺。",
+      "errorLoading": "加载店铺信息时出错。",
+      "validation": {
+        "nameRequired": "店铺名称为必填项。",
+        "nameTooLong": "店铺名称过长。",
+        "validUrl": "必须是有效的URL。",
+        "addressTooLong": "地址过长。",
+        "phoneTooLong": "电话号码过长。",
+        "invalidEmail": "无效的电子邮箱地址。"
+      }
+    },
+    "settingsPage": {
+      "title": "店铺设置",
+      "subtitle": "管理货币、税费和服务费设置。",
+      "financialTitle": "财务设置",
+      "financialDescription": "配置价格和总额的计算和显示方式。",
+      "currencyLabel": "默认货币",
+      "currencyPlaceholder": "选择货币",
+      "currencyDescription": "用于定价和交易的主要货币。",
+      "vatLabel": "增值税率（%）",
+      "vatPlaceholder": "例如：7 或 7.5",
+      "vatDescription": "输入百分比（例如，7 代表 7%，10.5 代表 10.5%）。如果没有增值税，请留空或输入 0。",
+      "serviceChargeLabel": "服务费率（%）",
+      "serviceChargePlaceholder": "例如：10 或 5.5",
+      "serviceChargeDescription": "输入百分比（例如，10 代表 10%）。如果没有服务费，请留空或输入 0。",
+      "saveSettings": "保存设置",
+      "updateSuccess": "店铺设置更新成功！",
+      "cannotUpdate": "无法更新：未选择店铺。",
+      "errorLoading": "加载店铺设置时出错。"
+    }
   },
   "errors": {
     "unauthorized": "未授权",

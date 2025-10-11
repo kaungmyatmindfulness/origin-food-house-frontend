@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { useTranslations } from 'next-intl';
 
 import {
   selectSelectedStoreId,
@@ -127,6 +128,7 @@ const storeDetailsQueryKey = (storeId: string | null) => [
 ];
 
 export default function UpdateStoreSettingsPage() {
+  const t = useTranslations('store.settingsPage');
   const queryClient = useQueryClient();
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
 
@@ -179,7 +181,7 @@ export default function UpdateStoreSettingsPage() {
       return updateStoreSettings(selectedStoreId, data);
     },
     onSuccess: (updatedSettings) => {
-      toast.success('Store settings updated successfully!');
+      toast.success(t('updateSuccess'));
       queryClient.invalidateQueries({
         queryKey: storeDetailsQueryKey(selectedStoreId),
       });
@@ -199,7 +201,7 @@ export default function UpdateStoreSettingsPage() {
 
   function onSubmit(values: UpdateStoreSettingsFormData) {
     if (!selectedStoreId) {
-      toast.error('Cannot update: Store not selected.');
+      toast.error(t('cannotUpdate'));
       return;
     }
 
@@ -235,7 +237,7 @@ export default function UpdateStoreSettingsPage() {
   if (isError || !storeDetails) {
     return (
       <div className="text-destructive p-6 text-center">
-        <p>Error loading store settings.</p>
+        <p>{t('errorLoading')}</p>
         {error instanceof Error && <p className="text-sm">{error.message}</p>}
       </div>
     );
@@ -244,17 +246,13 @@ export default function UpdateStoreSettingsPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">Store Settings</h1>
-        <p className="text-muted-foreground">
-          Manage currency, tax, and service charge settings.
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
       </header>
       <Card>
         <CardHeader>
-          <CardTitle>Financial Settings</CardTitle>
-          <CardDescription>
-            Configure how prices and totals are calculated and displayed.
-          </CardDescription>
+          <CardTitle>{t('financialTitle')}</CardTitle>
+          <CardDescription>{t('financialDescription')}</CardDescription>
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -264,7 +262,7 @@ export default function UpdateStoreSettingsPage() {
                 name="currency"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Default Currency</FormLabel>
+                    <FormLabel>{t('currencyLabel')}</FormLabel>
                     <Select
                       onValueChange={(e) => {
                         if (e === '') return;
@@ -275,7 +273,7 @@ export default function UpdateStoreSettingsPage() {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a currency" />
+                          <SelectValue placeholder={t('currencyPlaceholder')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -286,9 +284,7 @@ export default function UpdateStoreSettingsPage() {
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormDescription>
-                      The primary currency used for pricing and transactions.
-                    </FormDescription>
+                    <FormDescription>{t('currencyDescription')}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -299,7 +295,7 @@ export default function UpdateStoreSettingsPage() {
                 name="vatRate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>VAT Rate (%)</FormLabel>
+                    <FormLabel>{t('vatLabel')}</FormLabel>
                     <div className="flex items-center gap-2">
                       <FormControl>
                         <Input
@@ -307,7 +303,7 @@ export default function UpdateStoreSettingsPage() {
                           step="0.1"
                           min="0"
                           max="99.999"
-                          placeholder="e.g., 7 or 7.5"
+                          placeholder={t('vatPlaceholder')}
                           value={field.value ?? ''}
                           onChange={field.onChange}
                           disabled={updateSettingsMutation.isPending}
@@ -318,10 +314,7 @@ export default function UpdateStoreSettingsPage() {
                         aria-hidden="true"
                       />
                     </div>
-                    <FormDescription>
-                      Enter percentage (e.g., 7 for 7%, 10.5 for 10.5%). Leave
-                      empty or 0 if no VAT.
-                    </FormDescription>
+                    <FormDescription>{t('vatDescription')}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -332,7 +325,7 @@ export default function UpdateStoreSettingsPage() {
                 name="serviceChargeRate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Service Charge Rate (%)</FormLabel>
+                    <FormLabel>{t('serviceChargeLabel')}</FormLabel>
                     <div className="flex items-center gap-2">
                       <FormControl>
                         <Input
@@ -340,7 +333,7 @@ export default function UpdateStoreSettingsPage() {
                           step="0.1"
                           min="0"
                           max="99.999"
-                          placeholder="e.g., 10 or 5.5"
+                          placeholder={t('serviceChargePlaceholder')}
                           value={field.value ?? ''}
                           onChange={field.onChange}
                           disabled={updateSettingsMutation.isPending}
@@ -352,8 +345,7 @@ export default function UpdateStoreSettingsPage() {
                       />
                     </div>
                     <FormDescription>
-                      Enter percentage (e.g., 10 for 10%). Leave empty or 0 for
-                      no service charge.
+                      {t('serviceChargeDescription')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -370,7 +362,7 @@ export default function UpdateStoreSettingsPage() {
                 {updateSettingsMutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Save Settings
+                {t('saveSettings')}
               </Button>
             </CardFooter>
           </form>

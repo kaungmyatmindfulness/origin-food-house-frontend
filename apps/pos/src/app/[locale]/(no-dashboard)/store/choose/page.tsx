@@ -3,6 +3,7 @@
 import { AlertCircle } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
@@ -24,6 +25,7 @@ const currentUserQueryKey = (storeId?: string | null) => [
 ];
 
 export default function ChooseStorePage() {
+  const t = useTranslations('store.choose');
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -47,7 +49,7 @@ export default function ChooseStorePage() {
 
     if (isUserSuccess) {
       if (user && (!user.userStores || user.userStores.length === 0)) {
-        toast.info("You don't have any stores yet. Let's create one!");
+        toast.info(t('noStoresYet'));
         router.replace('/store/create');
         return;
       }
@@ -71,12 +73,13 @@ export default function ChooseStorePage() {
     userError,
     selectedStoreId,
     router,
+    t,
   ]);
 
   const chooseStoreMutation = useMutation({
     mutationFn: (storeId: string) => loginWithStore({ storeId }),
     onSuccess: async (data, storeId) => {
-      toast.success(data?.message || 'Store selected successfully!');
+      toast.success(data?.message || t('storeSelectedSuccess'));
 
       setSelectedStore(storeId);
 
@@ -91,7 +94,7 @@ export default function ChooseStorePage() {
           staleTime: 0,
         });
       } catch {
-        toast.error('Session updated, but failed to refresh user context.');
+        toast.error(t('sessionRefreshFailed'));
       }
 
       const role = updatedUser?.selectedStoreRole;
@@ -107,17 +110,17 @@ export default function ChooseStorePage() {
   const handleStoreSelect = (storeId: string | number) => {
     const storeIdString = String(storeId);
     if (!storeIdString) {
-      toast.error('Invalid store selected.');
+      toast.error(t('invalidStore'));
       return;
     }
 
     chooseStoreMutation.mutate(storeIdString);
   };
 
-  const pageTitle = selectedStoreId ? 'Change Your Store' : 'Choose Your Store';
+  const pageTitle = selectedStoreId ? t('changeTitle') : t('title');
   const pageDescription = selectedStoreId
-    ? 'Select a different store to manage.'
-    : 'Select one of your associated stores to continue.';
+    ? t('changeDescription')
+    : t('description');
 
   if (isUserLoading) {
     return (
@@ -134,10 +137,10 @@ export default function ChooseStorePage() {
       <main className="flex min-h-screen items-center justify-center p-4">
         <div className="text-center text-red-600 dark:text-red-400">
           <AlertCircle className="mx-auto mb-2 h-10 w-10" />
-          Could not load user session.
+          {t('couldNotLoadSession')}
           <div className="mt-4">
             <Button onClick={() => router.push('/login')} variant="outline">
-              Go to Login
+              {t('goToLogin')}
             </Button>
           </div>
         </div>
@@ -172,7 +175,7 @@ export default function ChooseStorePage() {
               exit={{ opacity: 0 }}
               className="py-10 text-center text-gray-500 dark:text-gray-400"
             >
-              No stores found for your account.
+              {t('noStoresFound')}
             </motion.div>
           ) : (
             <motion.div
@@ -190,7 +193,7 @@ export default function ChooseStorePage() {
         </AnimatePresence>
 
         <footer className="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
-          <p>Select a store to proceed.</p>
+          <p>{t('selectToProceed')}</p>
         </footer>
       </section>
     </main>

@@ -6,6 +6,7 @@ import { QRCodeCanvas } from 'qrcode.react';
 import { useReactToPrint } from 'react-to-print';
 import { toast } from 'sonner';
 import { AlertCircle, Printer, Download } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import {
   useAuthStore,
@@ -30,6 +31,7 @@ const QR_CODE_BASE_PATH = '/table-sessions/join-by-table-id';
 const storeTablesQueryKey = (storeId: string | null) => ['tables', storeId];
 
 export default function TableQrCodePage() {
+  const t = useTranslations('tables.qrPage');
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -60,16 +62,14 @@ export default function TableQrCodePage() {
     documentTitle: `table-qr-codes-${selectedStoreId || 'store'}`,
     onPrintError: (printError) => {
       console.error('Printing error:', printError);
-      toast.error('Failed to initiate printing.');
+      toast.error(t('printFailed'));
     },
   });
 
   const downloadQrCode = useCallback(
     (table: TableResponseDto) => {
       if (!customerAppBaseUrl) {
-        toast.error(
-          'Cannot generate QR code: Customer App URL is not configured.'
-        );
+        toast.error(t('cannotGenerateQR'));
         return;
       }
       const qrValue = `${customerAppBaseUrl}${QR_CODE_BASE_PATH}/${table.id}`;
@@ -93,17 +93,17 @@ export default function TableQrCodePage() {
           document.body.appendChild(downloadLink);
           downloadLink.click();
           document.body.removeChild(downloadLink);
-          toast.success(`Downloading QR Code for ${table.name}`);
+          toast.success(t('downloadingQR', { name: table.name }));
         } catch (e) {
           console.error('Error generating download:', e);
-          toast.error('Failed to download QR code.');
+          toast.error(t('downloadFailed'));
         }
       } else {
         console.error(`Canvas not found for table ${table.id}`);
-        toast.error('Could not find QR code element to download.');
+        toast.error(t('elementNotFound'));
       }
     },
-    [customerAppBaseUrl]
+    [customerAppBaseUrl, t]
   );
 
   if (isLoading) {
@@ -132,13 +132,11 @@ export default function TableQrCodePage() {
     return (
       <div className="text-destructive mx-auto max-w-4xl p-6 text-center">
         <AlertCircle className="text-destructive mx-auto mb-2 h-10 w-10" />
-        <p className="font-semibold">Error Loading Tables</p>
+        <p className="font-semibold">{t('errorLoadingTables')}</p>
         {error instanceof Error && (
           <p className="mt-1 text-sm">{error.message}</p>
         )}
-        <p className="mt-2 text-sm">
-          Could not load tables to generate QR codes.
-        </p>
+        <p className="mt-2 text-sm">{t('couldNotLoad')}</p>
       </div>
     );
   }
@@ -147,11 +145,8 @@ export default function TableQrCodePage() {
     return (
       <div className="text-destructive mx-auto max-w-4xl p-6 text-center">
         <AlertCircle className="text-destructive mx-auto mb-2 h-10 w-10" />
-        <p className="font-semibold">Configuration Error</p>
-        <p className="mt-1 text-sm">
-          The Customer App URL is not configured in the environment variables
-          (NEXT_PUBLIC_CUSTOMER_APP_URL).
-        </p>
+        <p className="font-semibold">{t('configError')}</p>
+        <p className="mt-1 text-sm">{t('configErrorDescription')}</p>
       </div>
     );
   }
@@ -191,10 +186,8 @@ export default function TableQrCodePage() {
 
       <header className="no-print">
         {/* Hide header when printing */}
-        <h1 className="text-2xl font-bold tracking-tight">Table QR Codes</h1>
-        <p className="text-muted-foreground">
-          Generate and print QR codes for customers to join table sessions.
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
       </header>
 
       <div className="no-print flex justify-end gap-2">
@@ -205,7 +198,7 @@ export default function TableQrCodePage() {
           disabled={tables.length === 0}
         >
           <Printer className="mr-2 h-4 w-4" />
-          Print All QR Codes
+          {t('printAll')}
         </Button>
       </div>
 
@@ -213,8 +206,7 @@ export default function TableQrCodePage() {
 
       {tables.length === 0 ? (
         <div className="text-muted-foreground py-10 text-center">
-          No tables found for this store. Add tables in the Manage Tables
-          section first.
+          {t('noTablesFound')}
         </div>
       ) : (
         <div ref={printRef} className="printable-area">
@@ -254,7 +246,7 @@ export default function TableQrCodePage() {
                       onClick={() => downloadQrCode(table)}
                     >
                       <Download className="mr-2 h-4 w-4" />
-                      Download QR
+                      {t('downloadQR')}
                     </Button>
                   </CardFooter>
                 </Card>

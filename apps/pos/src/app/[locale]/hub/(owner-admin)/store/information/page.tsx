@@ -7,6 +7,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { z } from 'zod';
+import { useTranslations } from 'next-intl';
 
 import {
   getStoreDetails,
@@ -46,30 +47,35 @@ import { Input } from '@repo/ui/components/input';
 import { Textarea } from '@repo/ui/components/textarea'; // Use Textarea for address
 import { Skeleton } from '@repo/ui/components/skeleton'; // For loading state
 
-const updateStoreInformationSchema = z.object({
-  name: z
-    .string()
-    .min(1, 'Store name is required.')
-    .max(100, 'Store name too long.'),
-  logoUrl: z.string().url('Must be a valid URL.').optional().or(z.literal('')), // Optional URL or empty string
-  address: z.string().max(255, 'Address too long.').optional(),
-  phone: z.string().max(20, 'Phone number too long.').optional(), // Add regex pattern if needed
-  email: z
-    .string()
-    .email('Invalid email address.')
-    .max(100)
-    .optional()
-    .or(z.literal('')),
-  website: z
-    .string()
-    .url('Must be a valid URL.')
-    .max(255)
-    .optional()
-    .or(z.literal('')),
-});
+const createUpdateStoreInformationSchema = (t: (key: string) => string) =>
+  z.object({
+    name: z
+      .string()
+      .min(1, t('validation.nameRequired'))
+      .max(100, t('validation.nameTooLong')),
+    logoUrl: z
+      .string()
+      .url(t('validation.validUrl'))
+      .optional()
+      .or(z.literal('')), // Optional URL or empty string
+    address: z.string().max(255, t('validation.addressTooLong')).optional(),
+    phone: z.string().max(20, t('validation.phoneTooLong')).optional(), // Add regex pattern if needed
+    email: z
+      .string()
+      .email(t('validation.invalidEmail'))
+      .max(100)
+      .optional()
+      .or(z.literal('')),
+    website: z
+      .string()
+      .url(t('validation.validUrl'))
+      .max(255)
+      .optional()
+      .or(z.literal('')),
+  });
 
 type UpdateStoreInformationFormData = z.infer<
-  typeof updateStoreInformationSchema
+  ReturnType<typeof createUpdateStoreInformationSchema>
 >;
 
 // Consistent query key
@@ -79,6 +85,7 @@ const storeDetailsQueryKey = (storeId: string | null) => [
 ];
 
 export default function UpdateStoreInformationPage() {
+  const t = useTranslations('store.info');
   const queryClient = useQueryClient();
   const selectedStoreId = useAuthStore(selectSelectedStoreId); // string | null
 
@@ -99,6 +106,7 @@ export default function UpdateStoreInformationPage() {
   });
 
   // --- Form Setup ---
+  const updateStoreInformationSchema = createUpdateStoreInformationSchema(t);
   const form = useForm<UpdateStoreInformationFormData>({
     resolver: zodResolver(updateStoreInformationSchema),
     defaultValues: {
@@ -139,7 +147,7 @@ export default function UpdateStoreInformationPage() {
       await updateStoreInformation(selectedStoreId, selectedStoreId, data);
     },
     onSuccess: () => {
-      toast.success('Store information updated successfully!');
+      toast.success(t('updateSuccess'));
       // Invalidate the store details query to refetch fresh data
       queryClient.invalidateQueries({
         queryKey: storeDetailsQueryKey(selectedStoreId),
@@ -156,7 +164,7 @@ export default function UpdateStoreInformationPage() {
   // --- Form Submit Handler ---
   function onSubmit(values: UpdateStoreInformationFormData) {
     if (!selectedStoreId) {
-      toast.error('Cannot update: Store not selected.');
+      toast.error(t('cannotUpdate'));
       return;
     }
     console.log('Submitting updated store info:', values);
@@ -183,7 +191,7 @@ export default function UpdateStoreInformationPage() {
   if (isError || !storeDetails) {
     return (
       <div className="text-destructive p-6 text-center">
-        <p>Error loading store information.</p>
+        <p>{t('errorLoading')}</p>
         {error instanceof Error && <p className="text-sm">{error.message}</p>}
       </div>
     );
@@ -192,17 +200,13 @@ export default function UpdateStoreInformationPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">Store Information</h1>
-        <p className="text-muted-foreground">
-          Update your store's basic details and logo.
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
       </header>
       <Card>
         <CardHeader>
-          <CardTitle>Details</CardTitle>
-          <CardDescription>
-            Manage your store's public information.
-          </CardDescription>
+          <CardTitle>{t('detailsTitle')}</CardTitle>
+          <CardDescription>{t('detailsDescription')}</CardDescription>
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -213,9 +217,9 @@ export default function UpdateStoreInformationPage() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Store Name</FormLabel>
+                    <FormLabel>{t('storeNameLabel')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your Store Name" {...field} />
+                      <Input placeholder={t('storeNamePlaceholder')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -228,10 +232,10 @@ export default function UpdateStoreInformationPage() {
                 name="address"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Address</FormLabel>
+                    <FormLabel>{t('addressLabel')}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="123 Main St, Anytown..."
+                        placeholder={t('addressPlaceholder')}
                         {...field}
                       />
                     </FormControl>
@@ -246,11 +250,11 @@ export default function UpdateStoreInformationPage() {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
+                    <FormLabel>{t('phoneLabel')}</FormLabel>
                     <FormControl>
                       <Input
                         type="tel"
-                        placeholder="e.g., 081-234-5678"
+                        placeholder={t('phonePlaceholder')}
                         {...field}
                       />
                     </FormControl>
@@ -265,11 +269,11 @@ export default function UpdateStoreInformationPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Contact Email</FormLabel>
+                    <FormLabel>{t('emailLabel')}</FormLabel>
                     <FormControl>
                       <Input
                         type="email"
-                        placeholder="info@yourstore.com"
+                        placeholder={t('emailPlaceholder')}
                         {...field}
                       />
                     </FormControl>
@@ -284,11 +288,11 @@ export default function UpdateStoreInformationPage() {
                 name="website"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Website URL</FormLabel>
+                    <FormLabel>{t('websiteLabel')}</FormLabel>
                     <FormControl>
                       <Input
                         type="url"
-                        placeholder="https://yourstore.com"
+                        placeholder={t('websitePlaceholder')}
                         {...field}
                       />
                     </FormControl>
@@ -306,14 +310,12 @@ export default function UpdateStoreInformationPage() {
                     {/* Label provided by ImageUpload component */}
                     <FormControl>
                       <ImageUpload
-                        label="Store Logo"
+                        label={t('logoLabel')}
                         value={field.value}
                         onChange={field.onChange}
                       />
                     </FormControl>
-                    <FormDescription>
-                      Upload your store's logo (e.g., PNG, JPG, WEBP).
-                    </FormDescription>
+                    <FormDescription>{t('logoDescription')}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -329,7 +331,7 @@ export default function UpdateStoreInformationPage() {
                 {updateInfoMutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Save Changes
+                {t('saveChanges')}
               </Button>
             </CardFooter>
           </form>

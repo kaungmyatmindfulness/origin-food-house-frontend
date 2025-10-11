@@ -17,7 +17,18 @@
     "error": "Error",
     "success": "Success",
     "confirm": "Confirm",
-    "close": "Close"
+    "close": "Close",
+    "getStarted": "Get Started"
+  },
+  "home": {
+    "welcomeTitle": "Welcome to MyApp",
+    "welcomeDescription": "A modern starter built with Next.js, Tailwind CSS, and shadcn/ui for rapid development.",
+    "keyFeatures": "Key Features",
+    "feature1": "Next.js App Router + TypeScript",
+    "feature2": "Responsive Tailwind layouts",
+    "feature3": "Accessible UI components (shadcn/ui)",
+    "feature4": "Dark mode ready",
+    "copyright": "© {year} MyApp. All rights reserved."
   },
   "auth": {
     "login": "Login",
@@ -26,11 +37,20 @@
     "password": "Password",
     "confirmPassword": "Confirm Password",
     "forgotPassword": "Forgot Password?",
-    "loginTitle": "Welcome Back",
+    "loginTitle": "Origin Food House POS",
+    "loginSubtitle": "Please sign in to continue",
     "registerTitle": "Create Account",
-    "loginButton": "Sign In",
+    "loginButton": "Login",
     "registerButton": "Sign Up",
-    "logoutConfirm": "Are you sure you want to logout?"
+    "logoutConfirm": "Are you sure you want to logout?",
+    "processing": "Processing...",
+    "resetPasswordLink": "Reset here",
+    "forgotPasswordPrompt": "Forgot your password?",
+    "loginSuccess": "Login successful!",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "********",
+    "emailValidation": "Please enter a valid email address.",
+    "passwordValidation": "Password must be at least 6 characters."
   },
   "menu": {
     "title": "Menu Management",
@@ -46,7 +66,13 @@
     "available": "Available",
     "unavailable": "Unavailable",
     "customizations": "Customizations",
-    "options": "Options"
+    "options": "Options",
+    "breadcrumbHome": "Home",
+    "breadcrumbMenu": "Menu"
+  },
+  "pages": {
+    "salesPage": "Sales Page",
+    "profilePage": "Profile Page"
   },
   "tables": {
     "title": "Table Management",
@@ -60,7 +86,48 @@
     "occupied": "Occupied",
     "reserved": "Reserved",
     "generateQR": "Generate QR Code",
-    "downloadQR": "Download QR"
+    "downloadQR": "Download QR",
+    "managePage": {
+      "title": "Manage Tables",
+      "subtitle": "Add, edit, or remove tables available in your store layout.",
+      "alertTitle": "Important: Synchronizes Tables",
+      "alertDescription": "Submitting this form will update or create tables based on this list. Any existing tables **not present** in this list (matched by ID) **will be deleted**. Ensure no tables intended for deletion have active orders.",
+      "editListTitle": "Edit Table List",
+      "editListDescription": "Add, remove, or rename tables below. The final list will synchronize with the server.",
+      "tablesCount": "Tables ({count})",
+      "addTable": "Add Table",
+      "noTablesDefined": "No tables defined. Click \"Add Table\" to begin.",
+      "tableNamePlaceholder": "Table Name {number}",
+      "removeTable": "Remove Table {number}",
+      "resetChanges": "Reset Changes",
+      "syncTableList": "Sync Table List",
+      "cannotSave": "Cannot save: Store not selected.",
+      "syncSuccess": "Tables synchronized successfully!",
+      "errorLoading": "Error Loading Existing Tables",
+      "tryRefreshing": "Please try refreshing the page.",
+      "validation": {
+        "nameEmpty": "Table name cannot be empty.",
+        "nameTooLong": "Table name cannot exceed {max} characters.",
+        "maxTables": "Cannot exceed {max} tables.",
+        "uniqueNames": "Table names in the list must be unique."
+      }
+    },
+    "qrPage": {
+      "title": "Table QR Codes",
+      "subtitle": "Generate and print QR codes for customers to join table sessions.",
+      "printAll": "Print All QR Codes",
+      "noTablesFound": "No tables found for this store. Add tables in the Manage Tables section first.",
+      "downloadQR": "Download QR",
+      "downloadingQR": "Downloading QR Code for {name}",
+      "cannotGenerateQR": "Cannot generate QR code: Customer App URL is not configured.",
+      "downloadFailed": "Failed to download QR code.",
+      "elementNotFound": "Could not find QR code element to download.",
+      "printFailed": "Failed to initiate printing.",
+      "errorLoadingTables": "Error Loading Tables",
+      "couldNotLoad": "Could not load tables to generate QR codes.",
+      "configError": "Configuration Error",
+      "configErrorDescription": "The Customer App URL is not configured in the environment variables (NEXT_PUBLIC_CUSTOMER_APP_URL)."
+    }
   },
   "store": {
     "title": "Store Management",
@@ -72,7 +139,70 @@
     "phone": "Phone",
     "email": "Email",
     "openingHours": "Opening Hours",
-    "chooseStore": "Please choose a store to continue"
+    "chooseStore": "Please choose a store to continue",
+    "choose": {
+      "title": "Choose Your Store",
+      "changeTitle": "Change Your Store",
+      "description": "Select one of your associated stores to continue.",
+      "changeDescription": "Select a different store to manage.",
+      "noStoresYet": "You don't have any stores yet. Let's create one!",
+      "storeSelectedSuccess": "Store selected successfully!",
+      "sessionRefreshFailed": "Session updated, but failed to refresh user context.",
+      "invalidStore": "Invalid store selected.",
+      "couldNotLoadSession": "Could not load user session.",
+      "goToLogin": "Go to Login",
+      "noStoresFound": "No stores found for your account.",
+      "selectToProceed": "Select a store to proceed."
+    },
+    "info": {
+      "title": "Store Information",
+      "subtitle": "Update your store's basic details and logo.",
+      "detailsTitle": "Details",
+      "detailsDescription": "Manage your store's public information.",
+      "storeNameLabel": "Store Name",
+      "storeNamePlaceholder": "Your Store Name",
+      "addressLabel": "Address",
+      "addressPlaceholder": "123 Main St, Anytown...",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "e.g., 081-234-5678",
+      "emailLabel": "Contact Email",
+      "emailPlaceholder": "info@yourstore.com",
+      "websiteLabel": "Website URL",
+      "websitePlaceholder": "https://yourstore.com",
+      "logoLabel": "Store Logo",
+      "logoDescription": "Upload your store's logo (e.g., PNG, JPG, WEBP).",
+      "saveChanges": "Save Changes",
+      "updateSuccess": "Store information updated successfully!",
+      "cannotUpdate": "Cannot update: Store not selected.",
+      "errorLoading": "Error loading store information.",
+      "validation": {
+        "nameRequired": "Store name is required.",
+        "nameTooLong": "Store name too long.",
+        "validUrl": "Must be a valid URL.",
+        "addressTooLong": "Address too long.",
+        "phoneTooLong": "Phone number too long.",
+        "invalidEmail": "Invalid email address."
+      }
+    },
+    "settingsPage": {
+      "title": "Store Settings",
+      "subtitle": "Manage currency, tax, and service charge settings.",
+      "financialTitle": "Financial Settings",
+      "financialDescription": "Configure how prices and totals are calculated and displayed.",
+      "currencyLabel": "Default Currency",
+      "currencyPlaceholder": "Select a currency",
+      "currencyDescription": "The primary currency used for pricing and transactions.",
+      "vatLabel": "VAT Rate (%)",
+      "vatPlaceholder": "e.g., 7 or 7.5",
+      "vatDescription": "Enter percentage (e.g., 7 for 7%, 10.5 for 10.5%). Leave empty or 0 if no VAT.",
+      "serviceChargeLabel": "Service Charge Rate (%)",
+      "serviceChargePlaceholder": "e.g., 10 or 5.5",
+      "serviceChargeDescription": "Enter percentage (e.g., 10 for 10%). Leave empty or 0 for no service charge.",
+      "saveSettings": "Save Settings",
+      "updateSuccess": "Store settings updated successfully!",
+      "cannotUpdate": "Cannot update: Store not selected.",
+      "errorLoading": "Error loading store settings."
+    }
   },
   "errors": {
     "unauthorized": "Unauthorized",

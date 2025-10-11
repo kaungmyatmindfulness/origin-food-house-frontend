@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { useTranslations } from 'next-intl';
 import {
   selectSelectedStoreId,
   useAuthStore,
@@ -45,41 +46,40 @@ import { Skeleton } from '@repo/ui/components/skeleton';
 const MAX_TABLES = 100;
 const MAX_TABLE_NAME_LENGTH = 50;
 
-const tableBatchSchema = z.object({
-  tables: z
-    .array(
-      z.object({
-        id: z.string().uuid('Invalid ID format').optional(),
-        name: z
-          .string()
-          .trim()
-          .min(1, 'Table name cannot be empty.')
-          .max(
-            MAX_TABLE_NAME_LENGTH,
-            `Table name cannot exceed ${MAX_TABLE_NAME_LENGTH} characters.`
-          ),
-      })
-    )
-    .min(
-      0,
-      'At least one table must be present to sync (or send empty to delete all).'
-    )
-    .max(MAX_TABLES, `Cannot exceed ${MAX_TABLES} tables.`)
-    .refine(
-      (tables) => {
-        const names = tables.map((t) => t.name);
-        return new Set(names).size === names.length;
-      },
-      { message: 'Table names in the list must be unique.', path: ['tables'] }
-    ),
-});
+// Create schema factory function to support translations
+const createTableBatchSchema = (t: (key: string, params?: any) => string) =>
+  z.object({
+    tables: z
+      .array(
+        z.object({
+          id: z.string().uuid('Invalid ID format').optional(),
+          name: z
+            .string()
+            .trim()
+            .min(1, t('validation.nameEmpty'))
+            .max(MAX_TABLE_NAME_LENGTH, t('validation.nameTooLong', { max: MAX_TABLE_NAME_LENGTH })),
+        })
+      )
+      .min(0, 'At least one table must be present to sync (or send empty to delete all).')
+      .max(MAX_TABLES, t('validation.maxTables', { max: MAX_TABLES }))
+      .refine(
+        (tables) => {
+          const names = tables.map((t) => t.name);
+          return new Set(names).size === names.length;
+        },
+        { message: t('validation.uniqueNames'), path: ['tables'] }
+      ),
+  });
 
-type TableBatchFormData = z.infer<typeof tableBatchSchema>;
+type TableBatchFormData = z.infer<ReturnType<typeof createTableBatchSchema>>;
 const storeTablesQueryKey = (storeId: string | null) => ['tables', storeId];
 
 export default function StoreTablesPage() {
+  const t = useTranslations('tables.managePage');
   const queryClient = useQueryClient();
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
+
+  const tableBatchSchema = createTableBatchSchema(t);
 
   const {
     data: fetchedTables,
@@ -132,7 +132,7 @@ export default function StoreTablesPage() {
       return syncTables(selectedStoreId, processedPayload);
     },
     onSuccess: (finalTableList) => {
-      toast.success(`Tables synchronized successfully!`);
+      toast.success(t('syncSuccess'));
       queryClient.setQueryData(
         storeTablesQueryKey(selectedStoreId),
         finalTableList
@@ -151,7 +151,7 @@ export default function StoreTablesPage() {
 
   function onSubmit(values: TableBatchFormData) {
     if (!selectedStoreId) {
-      toast.error('Cannot save: Store not selected.');
+      toast.error(t('cannotSave'));
       return;
     }
     const apiPayload: BatchUpsertTableDto = {
@@ -190,11 +190,11 @@ export default function StoreTablesPage() {
     return (
       <div className="text-destructive mx-auto max-w-4xl p-6 text-center">
         <AlertCircle className="text-destructive mx-auto mb-2 h-10 w-10" />
-        <p className="font-semibold">Error Loading Existing Tables</p>
+        <p className="font-semibold">{t('errorLoading')}</p>
         {tablesError instanceof Error && (
           <p className="mt-1 text-sm">{tablesError.message}</p>
         )}
-        <p className="mt-2 text-sm">Please try refreshing the page.</p>
+        <p className="mt-2 text-sm">{t('tryRefreshing')}</p>
       </div>
     );
   }
@@ -202,31 +202,21 @@ export default function StoreTablesPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-4 sm:p-6 md:p-8">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">Manage Tables</h1>
-        <p className="text-muted-foreground">
-          Add, edit, or remove tables available in your store layout.
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
       </header>
       <Alert variant="destructive">
         <Info className="h-4 w-4" />
-        <AlertTitle>Important: Synchronizes Tables</AlertTitle>
-        <AlertDescription>
-          Submitting this form will update or create tables based on this list.
-          Any existing tables **not present** in this list (matched by ID)
-          **will be deleted**. Ensure no tables intended for deletion have
-          active orders.
-        </AlertDescription>
+        <AlertTitle>{t('alertTitle')}</AlertTitle>
+        <AlertDescription>{t('alertDescription')}</AlertDescription>
       </Alert>
       <Card>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             {/* Removed Generator CardHeader & CardContent */}
             <CardHeader>
-              <CardTitle>Edit Table List</CardTitle>
-              <CardDescription>
-                Add, remove, or rename tables below. The final list will
-                synchronize with the server.
-              </CardDescription>
+              <CardTitle>{t('editListTitle')}</CardTitle>
+              <CardDescription>{t('editListDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
               {/* Dynamic Table Name List */}
@@ -234,7 +224,7 @@ export default function StoreTablesPage() {
                 {/* Added container div */}
                 <div className="mb-2 flex items-center justify-between">
                   <FormLabel className="text-base font-medium">
-                    Tables ({fields.length})
+                    {t('tablesCount', { count: fields.length })}
                   </FormLabel>
                   {/* Add Single Table Button */}
                   <Button
@@ -245,14 +235,14 @@ export default function StoreTablesPage() {
                     disabled={syncTablesMutation.isPending}
                     className="gap-1"
                   >
-                    <Plus className="h-4 w-4" /> Add Table
+                    <Plus className="h-4 w-4" /> {t('addTable')}
                   </Button>
                 </div>
                 <ScrollArea className="h-80 w-full rounded-md border p-4 dark:border-gray-700">
                   {/* Adjusted height */}
                   {fields.length === 0 ? (
                     <p className="text-muted-foreground py-10 text-center text-sm italic">
-                      No tables defined. Click &quot;Add Table&quot; to begin.
+                      {t('noTablesDefined')}
                     </p>
                   ) : (
                     <div className="space-y-3">
@@ -277,11 +267,11 @@ export default function StoreTablesPage() {
                               render={({ field: tableField }) => (
                                 <FormItem className="flex-grow">
                                   <FormLabel className="sr-only">
-                                    Table Name {index + 1}
+                                    {t('tableNamePlaceholder', { number: index + 1 })}
                                   </FormLabel>
                                   <FormControl>
                                     <Input
-                                      placeholder={`Table Name ${index + 1}`}
+                                      placeholder={t('tableNamePlaceholder', { number: index + 1 })}
                                       {...tableField}
                                       disabled={syncTablesMutation.isPending}
                                     />
@@ -297,7 +287,7 @@ export default function StoreTablesPage() {
                               className="text-muted-foreground hover:text-destructive h-8 w-8 shrink-0"
                               onClick={() => remove(index)}
                               disabled={syncTablesMutation.isPending}
-                              title={`Remove Table ${index + 1}`}
+                              title={t('removeTable', { number: index + 1 })}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -325,7 +315,7 @@ export default function StoreTablesPage() {
                 onClick={() => form.reset()}
                 disabled={syncTablesMutation.isPending}
               >
-                Reset Changes
+                {t('resetChanges')}
               </Button>
               <Button
                 type="submit"
@@ -339,7 +329,7 @@ export default function StoreTablesPage() {
                 {syncTablesMutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Sync Table List {/* Updated Button Text */}
+                {t('syncTableList')}
               </Button>
             </CardFooter>
           </form>

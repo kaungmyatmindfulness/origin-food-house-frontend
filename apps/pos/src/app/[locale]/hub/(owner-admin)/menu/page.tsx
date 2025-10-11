@@ -3,6 +3,7 @@
 import { GripVertical, Plus } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 
 import {
   selectSelectedStoreId,
@@ -24,6 +25,7 @@ import { Button } from '@repo/ui/components/button';
 import type { MenuItem } from '@/features/menu/types/menu-item.types';
 
 export default function MenuPage() {
+  const t = useTranslations('menu');
   // Dialog states using custom hook
   const [itemFormOpen, setItemFormOpen] = useDialog();
   const [categoryFormOpen, setCategoryFormOpen] = useDialog();
@@ -61,7 +63,8 @@ export default function MenuPage() {
     <>
       <div className="space-y-6">
         <nav className="mb-4 text-sm text-gray-500">
-          Home &gt; <span className="text-gray-800">Menu</span>
+          {t('breadcrumbHome')} &gt;{' '}
+          <span className="text-gray-800">{t('breadcrumbMenu')}</span>
         </nav>
 
         <div className="flex items-center space-x-2">
@@ -70,7 +73,7 @@ export default function MenuPage() {
             className="flex items-center"
             onClick={() => setItemFormOpen(true)}
           >
-            <Plus className="mr-1 h-4 w-4" /> Create Menu Item
+            <Plus className="mr-1 h-4 w-4" /> {t('createItem')}
           </Button>
 
           <Button
@@ -78,7 +81,7 @@ export default function MenuPage() {
             className="flex items-center"
             onClick={() => setReorderMenuOpen(true)}
           >
-            <GripVertical className="mr-1 h-4 w-4" /> Reorder Menu
+            <GripVertical className="mr-1 h-4 w-4" /> {t('reorderMenu')}
           </Button>
         </div>
 

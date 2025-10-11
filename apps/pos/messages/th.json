@@ -17,7 +17,18 @@
     "error": "ข้อผิดพลาด",
     "success": "สำเร็จ",
     "confirm": "ยืนยัน",
-    "close": "ปิด"
+    "close": "ปิด",
+    "getStarted": "เริ่มต้นใช้งาน"
+  },
+  "home": {
+    "welcomeTitle": "ยินดีต้อนรับสู่ MyApp",
+    "welcomeDescription": "ตัวเริ่มต้นที่ทันสมัยที่สร้างด้วย Next.js, Tailwind CSS และ shadcn/ui เพื่อการพัฒนาที่รวดเร็ว",
+    "keyFeatures": "คุณสมบัติหลัก",
+    "feature1": "Next.js App Router + TypeScript",
+    "feature2": "เลย์เอาต์ Tailwind ที่ตอบสนอง",
+    "feature3": "คอมโพเนนต์ UI ที่เข้าถึงได้ (shadcn/ui)",
+    "feature4": "พร้อมสำหรับโหมดมืด",
+    "copyright": "© {year} MyApp. สงวนลิขสิทธิ์."
   },
   "auth": {
     "login": "เข้าสู่ระบบ",
@@ -26,11 +37,20 @@
     "password": "รหัสผ่าน",
     "confirmPassword": "ยืนยันรหัสผ่าน",
     "forgotPassword": "ลืมรหัสผ่าน?",
-    "loginTitle": "ยินดีต้อนรับกลับมา",
+    "loginTitle": "Origin Food House POS",
+    "loginSubtitle": "กรุณาเข้าสู่ระบบเพื่อดำเนินการต่อ",
     "registerTitle": "สร้างบัญชี",
     "loginButton": "เข้าสู่ระบบ",
     "registerButton": "สมัครสมาชิก",
-    "logoutConfirm": "คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ?"
+    "logoutConfirm": "คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ?",
+    "processing": "กำลังดำเนินการ...",
+    "resetPasswordLink": "รีเซ็ตที่นี่",
+    "forgotPasswordPrompt": "ลืมรหัสผ่านของคุณหรือไม่?",
+    "loginSuccess": "เข้าสู่ระบบสำเร็จ!",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "********",
+    "emailValidation": "กรุณาใส่ที่อยู่อีเมลที่ถูกต้อง",
+    "passwordValidation": "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"
   },
   "menu": {
     "title": "จัดการเมนู",
@@ -46,7 +66,13 @@
     "available": "พร้อมให้บริการ",
     "unavailable": "ไม่พร้อมให้บริการ",
     "customizations": "ตัวเลือกเพิ่มเติม",
-    "options": "ตัวเลือก"
+    "options": "ตัวเลือก",
+    "breadcrumbHome": "หน้าแรก",
+    "breadcrumbMenu": "เมนู"
+  },
+  "pages": {
+    "salesPage": "หน้าการขาย",
+    "profilePage": "หน้าโปรไฟล์"
   },
   "tables": {
     "title": "จัดการโต๊ะ",
@@ -60,7 +86,48 @@
     "occupied": "ไม่ว่าง",
     "reserved": "จอง",
     "generateQR": "สร้างคิวอาร์โค้ด",
-    "downloadQR": "ดาวน์โหลดคิวอาร์โค้ด"
+    "downloadQR": "ดาวน์โหลดคิวอาร์โค้ด",
+    "managePage": {
+      "title": "จัดการโต๊ะ",
+      "subtitle": "เพิ่ม แก้ไข หรือลบโต๊ะที่มีในเค้าโครงร้านของคุณ",
+      "alertTitle": "สำคัญ: ซิงโครไนซ์โต๊ะ",
+      "alertDescription": "การส่งแบบฟอร์มนี้จะอัปเดตหรือสร้างโต๊ะตามรายการนี้ โต๊ะที่มีอยู่ **ที่ไม่อยู่** ในรายการนี้ (จับคู่โดย ID) **จะถูกลบ** โปรดตรวจสอบว่าไม่มีโต๊ะที่ต้องการลบมีคำสั่งซื้อที่ใช้งานอยู่",
+      "editListTitle": "แก้ไขรายการโต๊ะ",
+      "editListDescription": "เพิ่ม ลบ หรือเปลี่ยนชื่อโต๊ะด้านล่าง รายการสุดท้ายจะซิงโครไนซ์กับเซิร์ฟเวอร์",
+      "tablesCount": "โต๊ะ ({count})",
+      "addTable": "เพิ่มโต๊ะ",
+      "noTablesDefined": "ยังไม่มีการกำหนดโต๊ะ คลิก \"เพิ่มโต๊ะ\" เพื่อเริ่มต้น",
+      "tableNamePlaceholder": "ชื่อโต๊ะ {number}",
+      "removeTable": "ลบโต๊ะ {number}",
+      "resetChanges": "รีเซ็ตการเปลี่ยนแปลง",
+      "syncTableList": "ซิงโครไนซ์รายการโต๊ะ",
+      "cannotSave": "ไม่สามารถบันทึก: ยังไม่ได้เลือกร้าน",
+      "syncSuccess": "ซิงโครไนซ์โต๊ะสำเร็จ!",
+      "errorLoading": "เกิดข้อผิดพลาดในการโหลดโต๊ะที่มีอยู่",
+      "tryRefreshing": "กรุณาลองรีเฟรชหน้าเพจ",
+      "validation": {
+        "nameEmpty": "ชื่อโต๊ะต้องไม่ว่าง",
+        "nameTooLong": "ชื่อโต๊ะต้องไม่เกิน {max} ตัวอักษร",
+        "maxTables": "ไม่สามารถมีโต๊ะเกิน {max} โต๊ะ",
+        "uniqueNames": "ชื่อโต๊ะในรายการต้องไม่ซ้ำกัน"
+      }
+    },
+    "qrPage": {
+      "title": "คิวอาร์โค้ดโต๊ะ",
+      "subtitle": "สร้างและพิมพ์คิวอาร์โค้ดสำหรับให้ลูกค้าเข้าร่วมเซสชันโต๊ะ",
+      "printAll": "พิมพ์คิวอาร์โค้ดทั้งหมด",
+      "noTablesFound": "ไม่พบโต๊ะสำหรับร้านนี้ กรุณาเพิ่มโต๊ะในส่วนจัดการโต๊ะก่อน",
+      "downloadQR": "ดาวน์โหลดคิวอาร์โค้ด",
+      "downloadingQR": "กำลังดาวน์โหลดคิวอาร์โค้ดสำหรับ {name}",
+      "cannotGenerateQR": "ไม่สามารถสร้างคิวอาร์โค้ด: URL แอปลูกค้ายังไม่ได้ตั้งค่า",
+      "downloadFailed": "ดาวน์โหลดคิวอาร์โค้ดล้มเหลว",
+      "elementNotFound": "ไม่พบองค์ประกอบคิวอาร์โค้ดที่จะดาวน์โหลด",
+      "printFailed": "ไม่สามารถเริ่มการพิมพ์ได้",
+      "errorLoadingTables": "เกิดข้อผิดพลาดในการโหลดโต๊ะ",
+      "couldNotLoad": "ไม่สามารถโหลดโต๊ะเพื่อสร้างคิวอาร์โค้ด",
+      "configError": "ข้อผิดพลาดในการตั้งค่า",
+      "configErrorDescription": "URL แอปลูกค้ายังไม่ได้ตั้งค่าในตัวแปรสภาพแวดล้อม (NEXT_PUBLIC_CUSTOMER_APP_URL)"
+    }
   },
   "store": {
     "title": "จัดการร้าน",
@@ -72,7 +139,70 @@
     "phone": "เบอร์โทรศัพท์",
     "email": "อีเมล",
     "openingHours": "เวลาเปิดทำการ",
-    "chooseStore": "กรุณาเลือกร้านเพื่อดำเนินการต่อ"
+    "chooseStore": "กรุณาเลือกร้านเพื่อดำเนินการต่อ",
+    "choose": {
+      "title": "เลือกร้านของคุณ",
+      "changeTitle": "เปลี่ยนร้านของคุณ",
+      "description": "เลือกร้านที่เกี่ยวข้องกับคุณเพื่อดำเนินการต่อ",
+      "changeDescription": "เลือกร้านอื่นเพื่อจัดการ",
+      "noStoresYet": "คุณยังไม่มีร้านใดๆ มาสร้างร้านกันเลย!",
+      "storeSelectedSuccess": "เลือกร้านสำเร็จ!",
+      "sessionRefreshFailed": "อัปเดตเซสชันแล้ว แต่ไม่สามารถรีเฟรชบริบทผู้ใช้ได้",
+      "invalidStore": "เลือกร้านที่ไม่ถูกต้อง",
+      "couldNotLoadSession": "ไม่สามารถโหลดเซสชันผู้ใช้ได้",
+      "goToLogin": "ไปยังหน้าเข้าสู่ระบบ",
+      "noStoresFound": "ไม่พบร้านสำหรับบัญชีของคุณ",
+      "selectToProceed": "เลือกร้านเพื่อดำเนินการต่อ"
+    },
+    "info": {
+      "title": "ข้อมูลร้าน",
+      "subtitle": "อัปเดตข้อมูลพื้นฐานและโลโก้ของร้านคุณ",
+      "detailsTitle": "รายละเอียด",
+      "detailsDescription": "จัดการข้อมูลสาธารณะของร้านคุณ",
+      "storeNameLabel": "ชื่อร้าน",
+      "storeNamePlaceholder": "ชื่อร้านของคุณ",
+      "addressLabel": "ที่อยู่",
+      "addressPlaceholder": "123 ถนนหลัก, เมือง...",
+      "phoneLabel": "หมายเลขโทรศัพท์",
+      "phonePlaceholder": "เช่น 081-234-5678",
+      "emailLabel": "อีเมลติดต่อ",
+      "emailPlaceholder": "info@yourstore.com",
+      "websiteLabel": "URL เว็บไซต์",
+      "websitePlaceholder": "https://yourstore.com",
+      "logoLabel": "โลโก้ร้าน",
+      "logoDescription": "อัปโหลดโลโก้ของร้านคุณ (เช่น PNG, JPG, WEBP)",
+      "saveChanges": "บันทึกการเปลี่ยนแปลง",
+      "updateSuccess": "อัปเดตข้อมูลร้านสำเร็จ!",
+      "cannotUpdate": "ไม่สามารถอัปเดต: ยังไม่ได้เลือกร้าน",
+      "errorLoading": "เกิดข้อผิดพลาดในการโหลดข้อมูลร้าน",
+      "validation": {
+        "nameRequired": "จำเป็นต้องใส่ชื่อร้าน",
+        "nameTooLong": "ชื่อร้านยาวเกินไป",
+        "validUrl": "ต้องเป็น URL ที่ถูกต้อง",
+        "addressTooLong": "ที่อยู่ยาวเกินไป",
+        "phoneTooLong": "หมายเลขโทรศัพท์ยาวเกินไป",
+        "invalidEmail": "ที่อยู่อีเมลไม่ถูกต้อง"
+      }
+    },
+    "settingsPage": {
+      "title": "ตั้งค่าร้าน",
+      "subtitle": "จัดการการตั้งค่าสกุลเงิน ภาษี และค่าบริการ",
+      "financialTitle": "การตั้งค่าทางการเงิน",
+      "financialDescription": "กำหนดวิธีการคำนวณและแสดงราคาและยอดรวม",
+      "currencyLabel": "สกุลเงินหลัก",
+      "currencyPlaceholder": "เลือกสกุลเงิน",
+      "currencyDescription": "สกุลเงินหลักที่ใช้สำหรับราคาและธุรกรรม",
+      "vatLabel": "อัตราภาษีมูลค่าเพิ่ม (%)",
+      "vatPlaceholder": "เช่น 7 หรือ 7.5",
+      "vatDescription": "ใส่เปอร์เซ็นต์ (เช่น 7 สำหรับ 7%, 10.5 สำหรับ 10.5%) ปล่อยว่างหรือ 0 ถ้าไม่มีภาษีมูลค่าเพิ่ม",
+      "serviceChargeLabel": "อัตราค่าบริการ (%)",
+      "serviceChargePlaceholder": "เช่น 10 หรือ 5.5",
+      "serviceChargeDescription": "ใส่เปอร์เซ็นต์ (เช่น 10 สำหรับ 10%) ปล่อยว่างหรือ 0 ถ้าไม่มีค่าบริการ",
+      "saveSettings": "บันทึกการตั้งค่า",
+      "updateSuccess": "อัปเดตการตั้งค่าร้านสำเร็จ!",
+      "cannotUpdate": "ไม่สามารถอัปเดต: ยังไม่ได้เลือกร้าน",
+      "errorLoading": "เกิดข้อผิดพลาดในการโหลดการตั้งค่าร้าน"
+    }
   },
   "errors": {
     "unauthorized": "ไม่ได้รับอนุญาต",
