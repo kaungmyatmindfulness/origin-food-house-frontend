@@ -55,6 +55,7 @@ turbo run dev --filter=@app/sos
 ```
 
 **Individual app scripts:**
+
 - `npm run dev` - Start development server with Turbopack
 - `npm run build` - Production build
 - `npm run start` - Start production server
@@ -125,6 +126,7 @@ messages/             # Translation files (root level) ⭐ NEW
 **Located at:** `packages/api/`
 
 **Exports:**
+
 - `createApiFetch(config)` - Factory for configurable API client
 - `unwrapData(response, errorMsg)` - Null-safe data extraction
 - **Auto-generated TypeScript types** from `@repo/api/generated/types` ⭐ NEW
@@ -133,12 +135,14 @@ messages/             # Translation files (root level) ⭐ NEW
 - `createUploadService(apiFetch)` - Upload service factory
 
 **Type Generation:**
+
 ```bash
 # Regenerate types when backend API changes (backend must be running)
 npm run generate:api
 ```
 
 **Key Features:**
+
 - ✅ **50+ auto-generated DTOs** from backend OpenAPI specification
 - ✅ Single source of truth (backend spec → frontend types)
 - ✅ Zero manual type maintenance
@@ -146,6 +150,7 @@ npm run generate:api
 - ✅ Full IDE auto-completion support
 
 **Usage in apps:**
+
 ```typescript
 // apps/pos/src/utils/apiFetch.ts
 import { createApiFetch, unwrapData } from '@repo/api/utils/apiFetch';
@@ -160,6 +165,7 @@ export { unwrapData };
 ```
 
 **Using Generated Types in Services:**
+
 ```typescript
 // features/menu/services/category.service.ts
 import { apiFetch, unwrapData } from '@/utils/apiFetch';
@@ -181,6 +187,7 @@ export async function getCategories(
 ```
 
 **Available Generated Types:**
+
 - `CategoryResponseDto`, `CreateCategoryDto`, `UpdateCategoryDto`
 - `MenuItemResponseDto`, `CreateMenuItemDto`, `UpdateMenuItemDto`
 - `UserProfileResponseDto`, `CreateUserDto`
@@ -190,12 +197,14 @@ export async function getCategories(
 - And 40+ more DTOs...
 
 **Documentation:**
+
 - See **`OPENAPI_SETUP.md`** for complete setup guide
 - See **`packages/api/README.md`** for detailed API package documentation
 
 #### 2. Feature Organization
 
 Each feature follows a consistent structure:
+
 - **`components/`**: Feature-specific UI components (always use this name, not `ui/`)
 - **`queries/`**: React Query key factories (e.g., `menu.keys.ts`)
 - **`services/`**: API calls using `apiFetch` utility
@@ -209,6 +218,7 @@ Each feature follows a consistent structure:
 **Core implementation:** `packages/api/src/utils/apiFetch.ts`
 
 **Features:**
+
 - **Automatic error handling**: Shows toast notifications for errors
 - **Auth integration**: Reads `credentials: 'include'` for httpOnly cookies (POS only)
 - **401 handling**: Automatically clears auth state on unauthorized (POS only)
@@ -217,6 +227,7 @@ Each feature follows a consistent structure:
 - **Typed responses**: Returns `StandardApiResponse<T>` from `@repo/api/types/api.types`
 
 **Usage pattern with unwrapData helper:**
+
 ```typescript
 // In service files
 import { apiFetch, unwrapData } from '@/utils/apiFetch';
@@ -253,6 +264,7 @@ export async function createCategory(
 - **MUST export selectors**: For performance and consistency
 
 **Example pattern:**
+
 ```typescript
 export const useAuthStore = create<AuthState & AuthActions>()(
   devtools(
@@ -261,14 +273,16 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         selectedStoreId: null,
         isAuthenticated: false,
 
-        setSelectedStore: (storeId) => set((draft) => {
-          draft.selectedStoreId = storeId;
-        }),
+        setSelectedStore: (storeId) =>
+          set((draft) => {
+            draft.selectedStoreId = storeId;
+          }),
 
-        clearAuth: () => set((draft) => {
-          draft.selectedStoreId = null;
-          draft.isAuthenticated = false;
-        }),
+        clearAuth: () =>
+          set((draft) => {
+            draft.selectedStoreId = null;
+            draft.isAuthenticated = false;
+          }),
       })),
       { name: 'auth-storage' }
     ),
@@ -277,8 +291,10 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 );
 
 // ✅ ALWAYS export selectors
-export const selectSelectedStoreId = (state: AuthState) => state.selectedStoreId;
-export const selectIsAuthenticated = (state: AuthState) => state.isAuthenticated;
+export const selectSelectedStoreId = (state: AuthState) =>
+  state.selectedStoreId;
+export const selectIsAuthenticated = (state: AuthState) =>
+  state.isAuthenticated;
 ```
 
 #### 5. Query Key Factories ⭐ NEW
@@ -288,14 +304,14 @@ export const selectIsAuthenticated = (state: AuthState) => state.isAuthenticated
 **Location:** `features/[feature]/queries/*.keys.ts`
 
 **Pattern:**
+
 ```typescript
 // features/menu/queries/menu.keys.ts
 export const menuKeys = {
   all: ['menu'] as const,
   categories: (storeId: string) =>
     [...menuKeys.all, 'categories', { storeId }] as const,
-  items: (storeId: string) =>
-    [...menuKeys.all, 'items', { storeId }] as const,
+  items: (storeId: string) => [...menuKeys.all, 'items', { storeId }] as const,
   item: (storeId: string, itemId: string) =>
     [...menuKeys.items(storeId), itemId] as const,
 };
@@ -313,6 +329,7 @@ queryClient.invalidateQueries({ queryKey: menuKeys.all });
 ```
 
 **Benefits:**
+
 - Type-safe query keys
 - Easy cache invalidation
 - Prevents typos
@@ -352,12 +369,14 @@ toast.error(ERROR_MESSAGES.AUTH.PERMISSION_DENIED);
 Both apps support 4 languages: English (en), Chinese (zh), Myanmar (my), Thai (th).
 
 **Setup:**
+
 - Middleware: `src/middleware.ts`
 - Config: `src/i18n/config.ts`
 - Translation files: `messages/{locale}.json`
 - Language switcher: `common/components/LanguageSwitcher.tsx`
 
 **Usage:**
+
 ```typescript
 'use client';
 
@@ -377,6 +396,7 @@ export function MyComponent() {
 ```
 
 **Rules:**
+
 - ✅ Extract ALL user-facing text to translation files
 - ✅ Add translations to ALL 4 language files simultaneously
 - ✅ Use descriptive keys (`menu.createItem`, not `m.ci`)
@@ -391,6 +411,7 @@ export function MyComponent() {
 - Consistent UX across apps
 
 **Pattern:**
+
 ```typescript
 if (isLoading) {
   return <StoreListSkeleton />;
@@ -400,36 +421,43 @@ if (isLoading) {
 #### 5. Route Organization (Next.js App Router)
 
 **POS app routes:**
+
 - `(no-dashboard)/` - Routes without dashboard layout (login, register, store selection)
 - `hub/` - Main dashboard routes
 - `hub/(owner-admin)/` - Routes restricted to owners/admins
 
 **SOS app routes:**
+
 - `restaurants/[slug]/menu/` - Restaurant menu page
 - `tables/[id]/join/` - Table joining flow
 
 ### Technology Stack
 
 **Framework & Core:**
+
 - Next.js 15 (App Router)
 - React 19
 - TypeScript 5.8+
 
 **State Management:**
+
 - Zustand with immer, persist, devtools middleware
 - React Query (@tanstack/react-query) for server state
 
 **Styling:**
+
 - Tailwind CSS v4 (@tailwindcss/postcss)
 - Motion (framer-motion alternative) for animations
 - shadcn/ui components via `@repo/ui`
 
 **Forms & Validation:**
+
 - react-hook-form
 - Zod (via @repo/ui)
 - @hookform/resolvers
 
 **Utilities:**
+
 - lodash-es
 - qs (query string parsing)
 - sonner (toast notifications)
@@ -437,11 +465,13 @@ if (isLoading) {
 - next-intl (internationalization) ⭐ NEW
 
 **POS-specific:**
+
 - @dnd-kit (drag and drop for menu reordering)
 - qrcode.react (QR code generation)
 - react-to-print (receipt printing)
 
 **SOS-specific:**
+
 - socket.io-client (real-time cart sync)
 - react-scroll (menu navigation)
 - decimal.js (precise currency calculations)
@@ -462,6 +492,7 @@ Located in `packages/api/`, this package provides shared API utilities and **aut
 - **`services/upload.service.ts`**: Upload service factory
 
 **Import patterns:**
+
 ```typescript
 // API utilities
 import { createApiFetch, unwrapData } from '@repo/api/utils/apiFetch';
@@ -476,6 +507,7 @@ import type {
 ```
 
 **Code Generation Setup:**
+
 - Uses `@hey-api/openapi-ts` for type generation
 - Fetches spec from `http://localhost:3000/api-docs-json`
 - Automatically fixes common OpenAPI spec issues
@@ -492,6 +524,7 @@ Located in `packages/ui/`, this package exports:
 - **Styles**: `globals.css` with Tailwind configuration
 
 **Import pattern:**
+
 ```typescript
 import { Button } from '@repo/ui/components/button';
 import { useToast } from '@repo/ui/hooks/use-toast';
@@ -502,6 +535,7 @@ import { useToast } from '@repo/ui/hooks/use-toast';
 ### 1. API Service Pattern ⭐ UPDATED WITH AUTO-GENERATED TYPES
 
 **Services should:**
+
 - Live in `features/[feature]/services/`
 - Use `apiFetch` from `@/utils/apiFetch.ts`
 - **Use auto-generated types from `@repo/api/generated/types`** ⭐ NEW
@@ -510,6 +544,7 @@ import { useToast } from '@repo/ui/hooks/use-toast';
 - Add JSDoc comments
 
 **Example:**
+
 ```typescript
 // ✅ Correct - Modern pattern with auto-generated types + unwrapData
 import { apiFetch, unwrapData } from '@/utils/apiFetch';
@@ -569,6 +604,7 @@ return res.data;
 ```
 
 **Benefits of Auto-Generated Types:**
+
 - ✅ Always in sync with backend API
 - ✅ Catch breaking changes at compile time
 - ✅ No manual type maintenance
@@ -578,6 +614,7 @@ return res.data;
 ### 2. Zustand Store Pattern ⭐ UPDATED
 
 **Stores should:**
+
 - Contain minimal global state
 - Use immer for immutable updates
 - **MUST export selector functions** (for every state field)
@@ -585,6 +622,7 @@ return res.data;
 - Never contain API logic
 
 **Example:**
+
 ```typescript
 // ✅ Correct - pure state management with selectors
 export const useAuthStore = create<AuthState & AuthActions>()(
@@ -594,18 +632,20 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         selectedStoreId: null,
         isAuthenticated: false,
 
-        setSelectedStore: (id) => set((draft) => {
-          draft.selectedStoreId = id;
-        }),
+        setSelectedStore: (id) =>
+          set((draft) => {
+            draft.selectedStoreId = id;
+          }),
 
-        clearAuth: () => set((draft) => {
-          draft.selectedStoreId = null;
-          draft.isAuthenticated = false;
-        }),
+        clearAuth: () =>
+          set((draft) => {
+            draft.selectedStoreId = null;
+            draft.isAuthenticated = false;
+          }),
       })),
       {
         name: 'auth-storage',
-        partialize: (state) => ({ selectedStoreId: state.selectedStoreId })
+        partialize: (state) => ({ selectedStoreId: state.selectedStoreId }),
       }
     ),
     { name: 'auth-store' }
@@ -613,30 +653,36 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 );
 
 // ✅ MUST export selectors for all state fields
-export const selectSelectedStoreId = (state: AuthState) => state.selectedStoreId;
-export const selectIsAuthenticated = (state: AuthState) => state.isAuthenticated;
+export const selectSelectedStoreId = (state: AuthState) =>
+  state.selectedStoreId;
+export const selectIsAuthenticated = (state: AuthState) =>
+  state.isAuthenticated;
 ```
 
 ### 3. Component Organization
 
 **Client components (`'use client'`):**
+
 - Required for: interactivity, hooks, event handlers, browser APIs
 - Use for: forms, interactive UI, state management
 - Keep minimal - extract server-renderable parts
 
 **Server components (default):**
+
 - Use for: static content, data fetching, layouts
 - Cannot use: useState, useEffect, event handlers
 
 ### 4. Type Safety
 
 **All code must:**
+
 - Use `.ts` or `.tsx` extensions
 - Define explicit types for API responses
 - Use type imports when importing types
 - Avoid `any` - use `unknown` if type is truly unknown
 
 **Pattern:**
+
 ```typescript
 // ✅ Correct
 import type { Category } from '@/features/menu/types/category.types';
@@ -653,6 +699,7 @@ export async function getCategories(): Promise<Category[]> {
 **Always show skeleton placeholders during loading states** for non-trivial data.
 
 **Pattern:**
+
 ```tsx
 'use client';
 
@@ -670,12 +717,14 @@ export default function MenuPage() {
 ### 6. Authentication Flow
 
 **POS app uses cookie-based authentication:**
+
 - Access tokens stored in httpOnly cookies (not localStorage)
 - `apiFetch` uses `credentials: 'include'` for cookies
 - Auth store only tracks `isAuthenticated` flag and `selectedStoreId`
 - 401 responses automatically clear auth state via `clearAuth()`
 
 **Protected routes pattern:**
+
 ```typescript
 // Use useProtected hook
 const { user, isLoading } = useProtected();
@@ -686,6 +735,7 @@ if (isLoading) return <LoadingSkeleton />;
 ### 7. Error Handling
 
 **Let apiFetch handle errors:**
+
 - Toast notifications shown automatically
 - Custom error classes for different scenarios
 - 401 errors clear auth automatically
@@ -698,11 +748,14 @@ if (isLoading) return <LoadingSkeleton />;
 ```typescript
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { menuKeys } from '@/features/menu/queries/menu.keys';
-import { getCategories, createCategory } from '@/features/menu/services/category.service';
+import {
+  getCategories,
+  createCategory,
+} from '@/features/menu/services/category.service';
 
 // ✅ Use query key factories
 const { data, isLoading } = useQuery({
-  queryKey: menuKeys.categories(storeId),  // Type-safe
+  queryKey: menuKeys.categories(storeId), // Type-safe
   queryFn: () => getCategories(storeId),
 });
 
@@ -774,42 +827,43 @@ import { Form } from '@repo/ui/components/form';
 ## Environment Variables
 
 **Required for both apps:**
+
 - `NEXT_PUBLIC_API_URL` - Backend API base URL
 
 **Note:** Only `NEXT_PUBLIC_*` variables are exposed to the client. Keep sensitive keys server-side.
 
 ## Key Differences Between POS and SOS
 
-| Feature | POS (@app/pos) | SOS (@app/sos) |
-|---------|---------------|---------------|
-| **Port** | 3002 | 3001 |
-| **Users** | Restaurant staff | Customers |
-| **Auth** | Required (cookie-based) | Optional (session-based) |
-| **Real-time** | Not used | Socket.IO for cart sync |
+| Feature          | POS (@app/pos)                                  | SOS (@app/sos)                       |
+| ---------------- | ----------------------------------------------- | ------------------------------------ |
+| **Port**         | 3002                                            | 3001                                 |
+| **Users**        | Restaurant staff                                | Customers                            |
+| **Auth**         | Required (cookie-based)                         | Optional (session-based)             |
+| **Real-time**    | Not used                                        | Socket.IO for cart sync              |
 | **Key Features** | Menu management, table QR codes, store settings | Menu browsing, cart, order placement |
-| **Route Groups** | `(no-dashboard)`, `hub/`, `(owner-admin)` | `restaurants/[slug]`, `tables/[id]` |
+| **Route Groups** | `(no-dashboard)`, `hub/`, `(owner-admin)`       | `restaurants/[slug]`, `tables/[id]`  |
 
 ## Naming Conventions & File Organization ⭐ CRITICAL
 
 ### File Naming Rules
 
-| Type | Convention | ✅ Correct | ❌ Incorrect |
-|------|-----------|-----------|-------------|
-| Services | `*.service.ts` | `category.service.ts` | `category.services.ts` |
-| Stores | `*.store.ts` | `auth.store.ts` | `authStore.ts` |
-| Types | `*.types.ts` | `menu-item.types.ts` | `menuItem.types.ts` |
-| Query Keys | `*.keys.ts` | `menu.keys.ts` | `menuKeys.ts` |
-| Hooks | `use*.ts` | `useProtected.ts` | `protected.hook.ts` |
-| Components | PascalCase.tsx | `CategoryCard.tsx` | `category-card.tsx` |
+| Type       | Convention     | ✅ Correct            | ❌ Incorrect           |
+| ---------- | -------------- | --------------------- | ---------------------- |
+| Services   | `*.service.ts` | `category.service.ts` | `category.services.ts` |
+| Stores     | `*.store.ts`   | `auth.store.ts`       | `authStore.ts`         |
+| Types      | `*.types.ts`   | `menu-item.types.ts`  | `menuItem.types.ts`    |
+| Query Keys | `*.keys.ts`    | `menu.keys.ts`        | `menuKeys.ts`          |
+| Hooks      | `use*.ts`      | `useProtected.ts`     | `protected.hook.ts`    |
+| Components | PascalCase.tsx | `CategoryCard.tsx`    | `category-card.tsx`    |
 
 ### Folder Naming Rules
 
-| Purpose | ✅ Correct | ❌ Incorrect |
-|---------|-----------|-------------|
-| Feature UI | `components/` | `ui/` |
+| Purpose     | ✅ Correct          | ❌ Incorrect       |
+| ----------- | ------------------- | ------------------ |
+| Feature UI  | `components/`       | `ui/`              |
 | State store | `store/` (singular) | `stores/` (plural) |
-| Services | `services/` | `service/` |
-| Types | `types/` | `type/` |
+| Services    | `services/`         | `service/`         |
+| Types       | `types/`            | `type/`            |
 
 ### Import Organization
 
@@ -829,7 +883,10 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@repo/ui/components/button';
 
 // 4. Features (grouped)
-import { useAuthStore, selectSelectedStoreId } from '@/features/auth/store/auth.store';
+import {
+  useAuthStore,
+  selectSelectedStoreId,
+} from '@/features/auth/store/auth.store';
 import { menuKeys } from '@/features/menu/queries/menu.keys';
 import { getCategories } from '@/features/menu/services/category.service';
 
@@ -879,6 +936,7 @@ debug.error('Error message');
 ```
 
 **POS App:**
+
 - Use regular `console.log` for now (consider adding debug utility)
 
 ## Technical Documentation Reference
@@ -896,6 +954,7 @@ debug.error('Error message');
 ### Detailed Documentation
 
 Detailed technical documentation includes:
+
 - Folder structure explanations
 - In-depth API patterns with examples
 - Skeleton UI usage
@@ -926,6 +985,25 @@ When adding a new feature, ensure you:
 - [ ] Follow naming conventions
 - [ ] Use query key factories for React Query
 - [ ] **Regenerate types after backend API changes** (`npm run generate:api`) ⭐ NEW
+
+---
+
+## 🚨 Before Completing ANY Task
+
+**ALWAYS run these commands to ensure code quality:**
+
+```bash
+# Type checking (must pass with 0 errors)
+npm run check-types
+
+# Linting (must pass with 0 warnings)
+npm run lint
+
+# Code formatting
+npm run format
+```
+
+**Do not consider a task complete until all checks pass.**
 
 ---
 
