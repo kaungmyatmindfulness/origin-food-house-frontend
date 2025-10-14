@@ -4,17 +4,6 @@ export type ClientOptions = {
   baseUrl: string;
 };
 
-export type LoginDto = {
-  /**
-   * The user’s email address
-   */
-  email: string;
-  /**
-   * The user’s password
-   */
-  password: string;
-};
-
 export type ChooseStoreDto = {
   /**
    * The ID (UUID) of the store the user wants to act under
@@ -57,23 +46,6 @@ export type StandardApiResponse = {
    * Array of error details when status is "error". Usually empty on success.
    */
   errors?: Array<StandardApiErrorDetails>;
-};
-
-export type ForgotPasswordDto = {
-  email: string;
-};
-
-export type ResetPasswordDto = {
-  /**
-   * Reset token
-   */
-  token: string;
-  newPassword: string;
-};
-
-export type ChangePasswordDto = {
-  oldPassword: string;
-  newPassword: string;
 };
 
 export type UserProfileResponseDto = {
@@ -525,139 +497,6 @@ export type UpdateTableDto = {
   name?: string;
 };
 
-export type ActiveTableSessionResponseDto = {
-  /**
-   * Unique ID of the active session record
-   */
-  id: string;
-  /**
-   * ID of the associated table
-   */
-  tableId: string;
-  /**
-   * ID of the associated store
-   */
-  storeId: string;
-  /**
-   * Timestamp when the session started
-   */
-  createdAt: string;
-};
-
-export type JoinSessionResponseDto = {
-  message: string;
-  /**
-   * ID of the joined active session record
-   */
-  sessionId: string;
-  /**
-   * ID of the associated table
-   */
-  tableId: string;
-  /**
-   * ID of the associated store
-   */
-  storeId: string;
-  /**
-   * Slug of the store associated with the session
-   */
-  storeSlug: string;
-};
-
-export type SessionContextDto = {
-  /**
-   * ID of the active table session associated with the request token.
-   */
-  sessionId: string;
-};
-
-export type MenuItemBasicResponseDto = {
-  id: string;
-  name: string;
-  imageUrl?: {
-    [key: string]: unknown;
-  };
-  basePrice: string;
-};
-
-export type CartItemResponseDto = {
-  id: string;
-  cartId: string;
-  quantity: number;
-  notes?: {
-    [key: string]: unknown;
-  };
-  menuItem?: MenuItemBasicResponseDto;
-  selectedOptions?: Array<CustomizationOptionResponseDto>;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type CartResponseDto = {
-  id: string;
-  activeTableSessionId: string;
-  items: Array<CartItemResponseDto>;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type AddItemToCartDto = {
-  /**
-   * ID (UUID) of the MenuItem being added to the cart.
-   */
-  menuItemId: string;
-  /**
-   * Quantity of this menu item configuration being added.
-   */
-  quantity: number;
-  /**
-   * Array of IDs (UUIDs) of the chosen CustomizationOptions for this item.
-   */
-  selectedOptionIds?: Array<string>;
-  /**
-   * Optional special instructions or notes for this cart item.
-   */
-  notes?: string;
-};
-
-export type UpdateCartItemDto = {
-  /**
-   * ID (UUID) of the CartItem to update.
-   */
-  cartItemId: string;
-  /**
-   * New quantity for the item.
-   */
-  quantity?: number;
-  /**
-   * Updated special instructions or notes. Send null to clear.
-   */
-  notes?: {
-    [key: string]: unknown;
-  };
-};
-
-export type AuthControllerLoginData = {
-  body: LoginDto;
-  path?: never;
-  query?: never;
-  url: '/auth/login';
-};
-
-export type AuthControllerLoginErrors = {
-  /**
-   * Invalid credentials or email not verified.
-   */
-  401: unknown;
-};
-
-export type AuthControllerLoginResponses = {
-  /**
-   * Login successful (Step 1). Basic JWT set in HttpOnly cookie. Token only contains { sub: userId }.
-   */
-  200: unknown;
-};
-
 export type AuthControllerLoginWithStoreData = {
   body: ChooseStoreDto;
   path?: never;
@@ -686,126 +525,67 @@ export type AuthControllerLoginWithStoreResponses = {
 export type AuthControllerLoginWithStoreResponse =
   AuthControllerLoginWithStoreResponses[keyof AuthControllerLoginWithStoreResponses];
 
-export type AuthControllerVerifyData = {
+export type AuthControllerGetAuth0ConfigData = {
   body?: never;
   path?: never;
-  query: {
+  query?: never;
+  url: '/auth/auth0/config';
+};
+
+export type AuthControllerGetAuth0ConfigResponses = {
+  /**
+   * Auth0 configuration retrieved successfully
+   */
+  200: unknown;
+};
+
+export type AuthControllerValidateAuth0TokenData = {
+  body?: never;
+  headers: {
     /**
-     * Verification token
+     * Bearer <auth0-access-token>
      */
-    token: string;
+    Authorization: string;
   };
-  url: '/auth/verify';
-};
-
-export type AuthControllerVerifyErrors = {
-  /**
-   * Missing, invalid, or expired token.
-   */
-  400: unknown;
-};
-
-export type AuthControllerVerifyResponses = {
-  /**
-   * Email verified successfully.
-   */
-  200: StandardApiResponse;
-};
-
-export type AuthControllerVerifyResponse =
-  AuthControllerVerifyResponses[keyof AuthControllerVerifyResponses];
-
-export type AuthControllerForgotPasswordData = {
-  body: ForgotPasswordDto;
   path?: never;
   query?: never;
-  url: '/auth/forgot-password';
+  url: '/auth/auth0/validate';
 };
 
-export type AuthControllerForgotPasswordErrors = {
+export type AuthControllerValidateAuth0TokenErrors = {
   /**
-   * Invalid request body.
-   */
-  400: unknown;
-  /**
-   * Failed to initiate password reset process.
-   */
-  500: unknown;
-};
-
-export type AuthControllerForgotPasswordResponses = {
-  /**
-   * If the email exists, a reset token is generated and an email is queued.
-   */
-  200: StandardApiResponse;
-};
-
-export type AuthControllerForgotPasswordResponse =
-  AuthControllerForgotPasswordResponses[keyof AuthControllerForgotPasswordResponses];
-
-export type AuthControllerResetPasswordData = {
-  body: ResetPasswordDto;
-  path?: never;
-  query?: never;
-  url: '/auth/reset-password';
-};
-
-export type AuthControllerResetPasswordErrors = {
-  /**
-   * Invalid/expired token or validation errors.
-   */
-  400: unknown;
-  /**
-   * Internal error during password reset.
-   */
-  500: unknown;
-};
-
-export type AuthControllerResetPasswordResponses = {
-  /**
-   * Password reset successful.
-   */
-  200: StandardApiResponse;
-};
-
-export type AuthControllerResetPasswordResponse =
-  AuthControllerResetPasswordResponses[keyof AuthControllerResetPasswordResponses];
-
-export type AuthControllerChangePasswordData = {
-  body: ChangePasswordDto;
-  path?: never;
-  query?: never;
-  url: '/auth/change-password';
-};
-
-export type AuthControllerChangePasswordErrors = {
-  /**
-   * Validation errors (e.g., new password same as old).
-   */
-  400: unknown;
-  /**
-   * Invalid old password.
+   * Invalid Auth0 token or Auth0 is not enabled
    */
   401: unknown;
-  /**
-   * User not found (should not happen with valid JWT).
-   */
-  404: unknown;
-  /**
-   * Internal error during password change.
-   */
-  500: unknown;
 };
 
-export type AuthControllerChangePasswordResponses = {
+export type AuthControllerValidateAuth0TokenResponses = {
   /**
-   * Password changed successfully.
+   * Auth0 token validated and user synced successfully
    */
-  200: StandardApiResponse;
+  200: unknown;
 };
 
-export type AuthControllerChangePasswordResponse =
-  AuthControllerChangePasswordResponses[keyof AuthControllerChangePasswordResponses];
+export type AuthControllerGetAuth0ProfileData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/auth/auth0/profile';
+};
+
+export type AuthControllerGetAuth0ProfileErrors = {
+  /**
+   * Invalid or missing Auth0 token
+   */
+  401: unknown;
+};
+
+export type AuthControllerGetAuth0ProfileResponses = {
+  /**
+   * User profile retrieved successfully
+   */
+  200: unknown;
+};
 
 export type UserControllerRegisterData = {
   body: CreateUserDto;
@@ -1588,291 +1368,3 @@ export type TableControllerUpdateTableResponses = {
 
 export type TableControllerUpdateTableResponse =
   TableControllerUpdateTableResponses[keyof TableControllerUpdateTableResponses];
-
-export type ActiveTableSessionControllerCreateSessionData = {
-  body?: never;
-  path: {
-    /**
-     * ID of the store containing the table
-     */
-    storeId: string;
-    /**
-     * ID of the table to start the session for
-     */
-    tableId: string;
-  };
-  query?: never;
-  url: '/stores/{storeId}/tables/{tableId}/sessions';
-};
-
-export type ActiveTableSessionControllerCreateSessionResponses = {
-  /**
-   * Session created successfully.
-   */
-  201: StandardApiResponse & {
-    status?: string;
-    data?: ActiveTableSessionResponseDto;
-    errors?: Array<unknown>;
-    message?: string;
-  };
-};
-
-export type ActiveTableSessionControllerCreateSessionResponse =
-  ActiveTableSessionControllerCreateSessionResponses[keyof ActiveTableSessionControllerCreateSessionResponses];
-
-export type ActiveTableSessionControllerJoinSessionByTableData = {
-  body?: never;
-  path: {
-    /**
-     * The unique ID of the table to join (from QR code/NFC)
-     */
-    tableId: string;
-  };
-  query?: never;
-  url: '/tables/{tableId}/join-session';
-};
-
-export type ActiveTableSessionControllerJoinSessionByTableResponses = {
-  /**
-   * Session joined. Session token set in HttpOnly cookie.
-   */
-  200: StandardApiResponse & {
-    status?: string;
-    data?: JoinSessionResponseDto;
-    errors?: Array<unknown>;
-    message?: string;
-  };
-};
-
-export type ActiveTableSessionControllerJoinSessionByTableResponse =
-  ActiveTableSessionControllerJoinSessionByTableResponses[keyof ActiveTableSessionControllerJoinSessionByTableResponses];
-
-export type ActiveTableSessionControllerGetCurrentSessionContextData = {
-  body?: never;
-  path?: never;
-  query?: never;
-  url: '/sessions/my-context';
-};
-
-export type ActiveTableSessionControllerGetCurrentSessionContextErrors = {
-  /**
-   * Missing, invalid, or expired session cookie.
-   */
-  401: StandardApiResponse;
-};
-
-export type ActiveTableSessionControllerGetCurrentSessionContextError =
-  ActiveTableSessionControllerGetCurrentSessionContextErrors[keyof ActiveTableSessionControllerGetCurrentSessionContextErrors];
-
-export type ActiveTableSessionControllerGetCurrentSessionContextResponses = {
-  /**
-   * Session context retrieved.
-   */
-  200: StandardApiResponse & {
-    status?: string;
-    data?: SessionContextDto;
-    errors?: Array<unknown>;
-    message?: string;
-  };
-};
-
-export type ActiveTableSessionControllerGetCurrentSessionContextResponse =
-  ActiveTableSessionControllerGetCurrentSessionContextResponses[keyof ActiveTableSessionControllerGetCurrentSessionContextResponses];
-
-export type CartControllerClearCartData = {
-  body?: never;
-  path?: never;
-  query?: never;
-  url: '/sessions/my-cart';
-};
-
-export type CartControllerClearCartErrors = {
-  /**
-   * Missing, invalid, or expired session cookie.
-   */
-  401: StandardApiResponse;
-  /**
-   * Session or Cart not found.
-   */
-  404: StandardApiResponse;
-};
-
-export type CartControllerClearCartError =
-  CartControllerClearCartErrors[keyof CartControllerClearCartErrors];
-
-export type CartControllerClearCartResponses = {
-  /**
-   * Cart cleared successfully. Returns empty cart.
-   */
-  200: StandardApiResponse & {
-    status?: string;
-    data?: CartResponseDto;
-    errors?: Array<unknown>;
-    message?: string;
-  };
-};
-
-export type CartControllerClearCartResponse =
-  CartControllerClearCartResponses[keyof CartControllerClearCartResponses];
-
-export type CartControllerGetMyCartData = {
-  body?: never;
-  path?: never;
-  query?: never;
-  url: '/sessions/my-cart';
-};
-
-export type CartControllerGetMyCartErrors = {
-  /**
-   * Missing, invalid, or expired session cookie.
-   */
-  401: StandardApiResponse;
-  /**
-   * Cart or session not found.
-   */
-  404: StandardApiResponse;
-};
-
-export type CartControllerGetMyCartError =
-  CartControllerGetMyCartErrors[keyof CartControllerGetMyCartErrors];
-
-export type CartControllerGetMyCartResponses = {
-  /**
-   * Cart retrieved successfully.
-   */
-  200: StandardApiResponse & {
-    status?: string;
-    data?: CartResponseDto;
-    errors?: Array<unknown>;
-    message?: string;
-  };
-};
-
-export type CartControllerGetMyCartResponse =
-  CartControllerGetMyCartResponses[keyof CartControllerGetMyCartResponses];
-
-export type CartControllerAddItemData = {
-  body: AddItemToCartDto;
-  path?: never;
-  query?: never;
-  url: '/sessions/my-cart/items';
-};
-
-export type CartControllerAddItemErrors = {
-  /**
-   * Invalid item data (e.g., bad menu item ID, invalid options).
-   */
-  400: StandardApiResponse;
-  /**
-   * Missing, invalid, or expired session cookie.
-   */
-  401: StandardApiResponse;
-  /**
-   * Session or Menu Item not found.
-   */
-  404: StandardApiResponse;
-};
-
-export type CartControllerAddItemError =
-  CartControllerAddItemErrors[keyof CartControllerAddItemErrors];
-
-export type CartControllerAddItemResponses = {
-  /**
-   * Item added successfully. Returns updated cart.
-   */
-  200: StandardApiResponse & {
-    status?: string;
-    data?: CartResponseDto;
-    errors?: Array<unknown>;
-    message?: string;
-  };
-};
-
-export type CartControllerAddItemResponse =
-  CartControllerAddItemResponses[keyof CartControllerAddItemResponses];
-
-export type CartControllerRemoveItemData = {
-  body?: never;
-  path: {
-    /**
-     * ID of the CartItem to remove
-     */
-    cartItemId: string;
-  };
-  query?: never;
-  url: '/sessions/my-cart/items/{cartItemId}';
-};
-
-export type CartControllerRemoveItemErrors = {
-  /**
-   * Missing, invalid, or expired session cookie.
-   */
-  401: StandardApiResponse;
-  /**
-   * Session or Cart Item not found.
-   */
-  404: StandardApiResponse;
-};
-
-export type CartControllerRemoveItemError =
-  CartControllerRemoveItemErrors[keyof CartControllerRemoveItemErrors];
-
-export type CartControllerRemoveItemResponses = {
-  /**
-   * Item removed successfully. Returns updated cart.
-   */
-  200: StandardApiResponse & {
-    status?: string;
-    data?: CartResponseDto;
-    errors?: Array<unknown>;
-    message?: string;
-  };
-};
-
-export type CartControllerRemoveItemResponse =
-  CartControllerRemoveItemResponses[keyof CartControllerRemoveItemResponses];
-
-export type CartControllerUpdateItemData = {
-  body: UpdateCartItemDto;
-  path: {
-    /**
-     * ID of the CartItem to update
-     */
-    cartItemId: string;
-  };
-  query?: never;
-  url: '/sessions/my-cart/items/{cartItemId}';
-};
-
-export type CartControllerUpdateItemErrors = {
-  /**
-   * Invalid input (e.g., quantity < 1).
-   */
-  400: StandardApiResponse;
-  /**
-   * Missing, invalid, or expired session cookie.
-   */
-  401: StandardApiResponse;
-  /**
-   * Session or Cart Item not found.
-   */
-  404: StandardApiResponse;
-};
-
-export type CartControllerUpdateItemError =
-  CartControllerUpdateItemErrors[keyof CartControllerUpdateItemErrors];
-
-export type CartControllerUpdateItemResponses = {
-  /**
-   * Cart item updated successfully. Returns updated cart.
-   */
-  200: StandardApiResponse & {
-    status?: string;
-    data?: CartResponseDto;
-    errors?: Array<unknown>;
-    message?: string;
-  };
-};
-
-export type CartControllerUpdateItemResponse =
-  CartControllerUpdateItemResponses[keyof CartControllerUpdateItemResponses];

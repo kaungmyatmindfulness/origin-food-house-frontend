@@ -8,46 +8,17 @@ import {
 } from './client';
 import { client } from './client.gen';
 import type {
-  ActiveTableSessionControllerCreateSessionData,
-  ActiveTableSessionControllerCreateSessionResponses,
-  ActiveTableSessionControllerGetCurrentSessionContextData,
-  ActiveTableSessionControllerGetCurrentSessionContextErrors,
-  ActiveTableSessionControllerGetCurrentSessionContextResponses,
-  ActiveTableSessionControllerJoinSessionByTableData,
-  ActiveTableSessionControllerJoinSessionByTableResponses,
-  AuthControllerChangePasswordData,
-  AuthControllerChangePasswordErrors,
-  AuthControllerChangePasswordResponses,
-  AuthControllerForgotPasswordData,
-  AuthControllerForgotPasswordErrors,
-  AuthControllerForgotPasswordResponses,
-  AuthControllerLoginData,
-  AuthControllerLoginErrors,
-  AuthControllerLoginResponses,
+  AuthControllerGetAuth0ConfigData,
+  AuthControllerGetAuth0ConfigResponses,
+  AuthControllerGetAuth0ProfileData,
+  AuthControllerGetAuth0ProfileErrors,
+  AuthControllerGetAuth0ProfileResponses,
   AuthControllerLoginWithStoreData,
   AuthControllerLoginWithStoreErrors,
   AuthControllerLoginWithStoreResponses,
-  AuthControllerResetPasswordData,
-  AuthControllerResetPasswordErrors,
-  AuthControllerResetPasswordResponses,
-  AuthControllerVerifyData,
-  AuthControllerVerifyErrors,
-  AuthControllerVerifyResponses,
-  CartControllerAddItemData,
-  CartControllerAddItemErrors,
-  CartControllerAddItemResponses,
-  CartControllerClearCartData,
-  CartControllerClearCartErrors,
-  CartControllerClearCartResponses,
-  CartControllerGetMyCartData,
-  CartControllerGetMyCartErrors,
-  CartControllerGetMyCartResponses,
-  CartControllerRemoveItemData,
-  CartControllerRemoveItemErrors,
-  CartControllerRemoveItemResponses,
-  CartControllerUpdateItemData,
-  CartControllerUpdateItemErrors,
-  CartControllerUpdateItemResponses,
+  AuthControllerValidateAuth0TokenData,
+  AuthControllerValidateAuth0TokenErrors,
+  AuthControllerValidateAuth0TokenResponses,
   CategoryControllerCreateData,
   CategoryControllerCreateResponses,
   CategoryControllerFindAllData,
@@ -133,27 +104,7 @@ export type Options<
 };
 
 /**
- * Login with email/password (Step 1)
- */
-export const authControllerLogin = <ThrowOnError extends boolean = false>(
-  options: Options<AuthControllerLoginData, ThrowOnError>
-) => {
-  return (options.client ?? client).post<
-    AuthControllerLoginResponses,
-    AuthControllerLoginErrors,
-    ThrowOnError
-  >({
-    url: '/auth/login',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-};
-
-/**
- * Select a store to complete login (Step 2)
+ * Select a store to complete login
  */
 export const authControllerLoginWithStore = <
   ThrowOnError extends boolean = false,
@@ -181,76 +132,52 @@ export const authControllerLoginWithStore = <
 };
 
 /**
- * Verify user email using token from email link
+ * Get Auth0 configuration for frontend
  */
-export const authControllerVerify = <ThrowOnError extends boolean = false>(
-  options: Options<AuthControllerVerifyData, ThrowOnError>
+export const authControllerGetAuth0Config = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<AuthControllerGetAuth0ConfigData, ThrowOnError>
 ) => {
-  return (options.client ?? client).get<
-    AuthControllerVerifyResponses,
-    AuthControllerVerifyErrors,
+  return (options?.client ?? client).get<
+    AuthControllerGetAuth0ConfigResponses,
+    unknown,
     ThrowOnError
   >({
-    url: '/auth/verify',
+    url: '/auth/auth0/config',
     ...options,
   });
 };
 
 /**
- * Request password reset token via email
+ * Validate Auth0 access token and sync user
  */
-export const authControllerForgotPassword = <
+export const authControllerValidateAuth0Token = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<AuthControllerForgotPasswordData, ThrowOnError>
+  options: Options<AuthControllerValidateAuth0TokenData, ThrowOnError>
 ) => {
   return (options.client ?? client).post<
-    AuthControllerForgotPasswordResponses,
-    AuthControllerForgotPasswordErrors,
+    AuthControllerValidateAuth0TokenResponses,
+    AuthControllerValidateAuth0TokenErrors,
     ThrowOnError
   >({
-    url: '/auth/forgot-password',
+    url: '/auth/auth0/validate',
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
   });
 };
 
 /**
- * Reset password using reset token from email
+ * Get user profile (Auth0 protected)
  */
-export const authControllerResetPassword = <
+export const authControllerGetAuth0Profile = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<AuthControllerResetPasswordData, ThrowOnError>
+  options?: Options<AuthControllerGetAuth0ProfileData, ThrowOnError>
 ) => {
-  return (options.client ?? client).post<
-    AuthControllerResetPasswordResponses,
-    AuthControllerResetPasswordErrors,
-    ThrowOnError
-  >({
-    url: '/auth/reset-password',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-};
-
-/**
- * Change password for logged-in user
- */
-export const authControllerChangePassword = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<AuthControllerChangePasswordData, ThrowOnError>
-) => {
-  return (options.client ?? client).post<
-    AuthControllerChangePasswordResponses,
-    AuthControllerChangePasswordErrors,
+  return (options?.client ?? client).get<
+    AuthControllerGetAuth0ProfileResponses,
+    AuthControllerGetAuth0ProfileErrors,
     ThrowOnError
   >({
     security: [
@@ -259,12 +186,8 @@ export const authControllerChangePassword = <
         type: 'http',
       },
     ],
-    url: '/auth/change-password',
+    url: '/auth/auth0/profile',
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
   });
 };
 
@@ -893,155 +816,6 @@ export const tableControllerUpdateTable = <
     ThrowOnError
   >({
     url: '/stores/{storeId}/tables/{tableId}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-};
-
-/**
- * Start a new active session for a table (Staff Only)
- * Creates an ActiveTableSession, linking it to the table. Fails if the table already has an active session.
- */
-export const activeTableSessionControllerCreateSession = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<ActiveTableSessionControllerCreateSessionData, ThrowOnError>
-) => {
-  return (options.client ?? client).post<
-    ActiveTableSessionControllerCreateSessionResponses,
-    unknown,
-    ThrowOnError
-  >({
-    url: '/stores/{storeId}/tables/{tableId}/sessions',
-    ...options,
-  });
-};
-
-/**
- * Join the active session for a specific table ID (Public)
- */
-export const activeTableSessionControllerJoinSessionByTable = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<
-    ActiveTableSessionControllerJoinSessionByTableData,
-    ThrowOnError
-  >
-) => {
-  return (options.client ?? client).post<
-    ActiveTableSessionControllerJoinSessionByTableResponses,
-    unknown,
-    ThrowOnError
-  >({
-    url: '/tables/{tableId}/join-session',
-    ...options,
-  });
-};
-
-/**
- * Get context (session ID) of the current customer session (Requires Session Cookie)
- */
-export const activeTableSessionControllerGetCurrentSessionContext = <
-  ThrowOnError extends boolean = false,
->(
-  options?: Options<
-    ActiveTableSessionControllerGetCurrentSessionContextData,
-    ThrowOnError
-  >
-) => {
-  return (options?.client ?? client).get<
-    ActiveTableSessionControllerGetCurrentSessionContextResponses,
-    ActiveTableSessionControllerGetCurrentSessionContextErrors,
-    ThrowOnError
-  >({
-    url: '/sessions/my-context',
-    ...options,
-  });
-};
-
-/**
- * Clear all items from the cart
- */
-export const cartControllerClearCart = <ThrowOnError extends boolean = false>(
-  options?: Options<CartControllerClearCartData, ThrowOnError>
-) => {
-  return (options?.client ?? client).delete<
-    CartControllerClearCartResponses,
-    CartControllerClearCartErrors,
-    ThrowOnError
-  >({
-    url: '/sessions/my-cart',
-    ...options,
-  });
-};
-
-/**
- * Get the current session's cart
- */
-export const cartControllerGetMyCart = <ThrowOnError extends boolean = false>(
-  options?: Options<CartControllerGetMyCartData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    CartControllerGetMyCartResponses,
-    CartControllerGetMyCartErrors,
-    ThrowOnError
-  >({
-    url: '/sessions/my-cart',
-    ...options,
-  });
-};
-
-/**
- * Add an item to the cart
- */
-export const cartControllerAddItem = <ThrowOnError extends boolean = false>(
-  options: Options<CartControllerAddItemData, ThrowOnError>
-) => {
-  return (options.client ?? client).post<
-    CartControllerAddItemResponses,
-    CartControllerAddItemErrors,
-    ThrowOnError
-  >({
-    url: '/sessions/my-cart/items',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-};
-
-/**
- * Remove an item from the cart
- */
-export const cartControllerRemoveItem = <ThrowOnError extends boolean = false>(
-  options: Options<CartControllerRemoveItemData, ThrowOnError>
-) => {
-  return (options.client ?? client).delete<
-    CartControllerRemoveItemResponses,
-    CartControllerRemoveItemErrors,
-    ThrowOnError
-  >({
-    url: '/sessions/my-cart/items/{cartItemId}',
-    ...options,
-  });
-};
-
-/**
- * Update quantity or notes for a cart item
- */
-export const cartControllerUpdateItem = <ThrowOnError extends boolean = false>(
-  options: Options<CartControllerUpdateItemData, ThrowOnError>
-) => {
-  return (options.client ?? client).patch<
-    CartControllerUpdateItemResponses,
-    CartControllerUpdateItemErrors,
-    ThrowOnError
-  >({
-    url: '/sessions/my-cart/items/{cartItemId}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
