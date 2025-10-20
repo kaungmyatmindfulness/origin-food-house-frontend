@@ -2,6 +2,7 @@ import { apiFetch } from '@/utils/apiFetch';
 import { StandardApiResponse } from '@/common/types/api.types';
 import {
   LoginDto,
+  RegisterDto,
   ChooseStoreDto,
   ForgotPasswordDto,
   ResetPasswordDto,
@@ -18,6 +19,25 @@ export async function login(
     body: JSON.stringify(data),
   });
   return res; // The entire { status, data, message, error }
+}
+
+/**
+ * POST /users/register
+ * Registers a new user account and sends a verification email
+ *
+ * @param data - User registration data (email, password, optional name)
+ * @returns Promise resolving to StandardApiResponse
+ * @throws {ApiError} If registration fails
+ */
+export async function register(
+  data: RegisterDto
+): Promise<StandardApiResponse<null>> {
+  const res = await apiFetch<null>('/users/register', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+
+  return res;
 }
 
 /** POST /auth/login/store (Step 2) */

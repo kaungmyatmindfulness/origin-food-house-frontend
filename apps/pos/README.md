@@ -27,23 +27,25 @@ The POS app is designed for restaurant staff to manage daily operations includin
 
 ### User Roles
 
-| Role | Permissions |
-|------|-------------|
-| **Owner** | Full access to all features |
+| Role      | Permissions                       |
+| --------- | --------------------------------- |
+| **Owner** | Full access to all features       |
 | **Admin** | Manage menu, tables, view reports |
-| **Staff** | Process sales, view menu |
+| **Staff** | Process sales, view menu          |
 
 ---
 
 ## Features
 
 ### ✅ Authentication
+
 - Cookie-based authentication (httpOnly cookies)
 - Auto-redirect on unauthorized access
 - Protected routes with `useProtected` hook
 - Role-based page restrictions
 
 ### ✅ Menu Management
+
 - Create, edit, delete menu items and categories
 - Drag-and-drop reordering
 - Image upload support
@@ -51,18 +53,21 @@ The POS app is designed for restaurant staff to manage daily operations includin
 - Availability toggling
 
 ### ✅ Table Management
+
 - Create and manage tables
 - Generate QR codes for each table
 - Download QR codes for printing
 - Table status tracking
 
 ### ✅ Store Management
+
 - Store information editing
 - Multi-store support
 - Store selection interface
 - Settings configuration
 
 ### ✅ Internationalization
+
 - Support for 4 languages (EN, ZH, MY, TH)
 - Language switcher component
 - Type-safe translations
@@ -137,6 +142,7 @@ messages/                         # Translation files (root level)
 ### 1. Install Dependencies
 
 From monorepo root:
+
 ```bash
 npm install
 ```
@@ -144,6 +150,7 @@ npm install
 ### 2. Environment Variables
 
 Create `apps/pos/.env`:
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
@@ -247,6 +254,7 @@ export async function createCategory(
 ```
 
 **Rules:**
+
 - ✅ Return only data (not full response)
 - ✅ Use proper return types (not `unknown`)
 - ✅ Use `unwrapData()` for null checking
@@ -286,19 +294,22 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         selectedStoreId: null,
         isAuthenticated: false,
 
-        setSelectedStore: (storeId) => set((draft) => {
-          draft.selectedStoreId = storeId;
-        }),
+        setSelectedStore: (storeId) =>
+          set((draft) => {
+            draft.selectedStoreId = storeId;
+          }),
 
-        setAuthenticated: (isAuth) => set((draft) => {
-          draft.isAuthenticated = isAuth;
-          if (!isAuth) draft.selectedStoreId = null;
-        }),
+        setAuthenticated: (isAuth) =>
+          set((draft) => {
+            draft.isAuthenticated = isAuth;
+            if (!isAuth) draft.selectedStoreId = null;
+          }),
 
-        clearAuth: () => set((draft) => {
-          draft.selectedStoreId = null;
-          draft.isAuthenticated = false;
-        }),
+        clearAuth: () =>
+          set((draft) => {
+            draft.selectedStoreId = null;
+            draft.isAuthenticated = false;
+          }),
       })),
       {
         name: 'auth-storage',
@@ -319,11 +330,13 @@ export const selectIsAuthenticated = (state: AuthState) =>
 ```
 
 **Middleware Stack:**
+
 - `immer` - Immutable updates with mutable syntax
 - `persist` - localStorage persistence
 - `devtools` - Redux DevTools integration
 
 **Best Practices:**
+
 - ✅ Keep stores minimal (auth, UI state only)
 - ✅ No API calls in stores
 - ✅ Export selectors for each state field
@@ -541,8 +554,7 @@ export const menuKeys = {
   all: ['menu'] as const,
   categories: (storeId: string) =>
     [...menuKeys.all, 'categories', { storeId }] as const,
-  items: (storeId: string) =>
-    [...menuKeys.all, 'items', { storeId }] as const,
+  items: (storeId: string) => [...menuKeys.all, 'items', { storeId }] as const,
 };
 
 // features/auth/queries/auth.keys.ts
@@ -556,6 +568,7 @@ export const authKeys = {
 ```
 
 **Benefits:**
+
 - Type-safe query keys
 - Easy cache invalidation
 - Prevents typos
@@ -566,6 +579,7 @@ export const authKeys = {
 ## Common Hooks
 
 ### `useProtected`
+
 **Location:** `features/auth/hooks/useProtected.ts`
 
 Protects routes and handles authorization:
@@ -579,6 +593,7 @@ const { isLoading } = useProtected({
 ```
 
 ### `useDialog`
+
 **Location:** `common/hooks/useDialogState.ts`
 
 Manages dialog open/close state:
@@ -596,6 +611,7 @@ const [isOpen, setIsOpen] = useDialog();
 ## Constants
 
 ### Routes
+
 **Location:** `common/constants/routes.ts`
 
 ```typescript
@@ -609,6 +625,7 @@ export const ROUTES = {
 ```
 
 ### Error Messages
+
 ```typescript
 export const ERROR_MESSAGES = {
   AUTH: {
@@ -624,6 +641,7 @@ export const ERROR_MESSAGES = {
 ## Translation Keys
 
 **Available Namespaces:**
+
 - `common` - UI elements (save, cancel, edit, etc.)
 - `auth` - Authentication (login, register)
 - `menu` - Menu management
@@ -632,11 +650,12 @@ export const ERROR_MESSAGES = {
 - `errors` - Error messages
 
 **Example:**
+
 ```typescript
 const t = useTranslations('menu');
 
-t('title')       // "Menu Management" (EN) / "菜单管理" (ZH)
-t('createItem')  // "Create Menu Item" / "创建菜品"
+t('title'); // "Menu Management" (EN) / "菜单管理" (ZH)
+t('createItem'); // "Create Menu Item" / "创建菜品"
 ```
 
 ---
@@ -670,14 +689,14 @@ t('createItem')  // "Create Menu Item" / "创建菜品"
 
 ## File Naming Conventions
 
-| Type | Convention | Example |
-|------|-----------|---------|
-| Services | `*.service.ts` | `category.service.ts` |
-| Stores | `*.store.ts` | `auth.store.ts` |
-| Types | `*.types.ts` | `menu-item.types.ts` |
-| Queries | `*.keys.ts` | `menu.keys.ts` |
-| Hooks | `use*.ts` | `useProtected.ts` |
-| Components | PascalCase | `CategoryCard.tsx` |
+| Type       | Convention     | Example               |
+| ---------- | -------------- | --------------------- |
+| Services   | `*.service.ts` | `category.service.ts` |
+| Stores     | `*.store.ts`   | `auth.store.ts`       |
+| Types      | `*.types.ts`   | `menu-item.types.ts`  |
+| Queries    | `*.keys.ts`    | `menu.keys.ts`        |
+| Hooks      | `use*.ts`      | `useProtected.ts`     |
+| Components | PascalCase     | `CategoryCard.tsx`    |
 
 ---
 

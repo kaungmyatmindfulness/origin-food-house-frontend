@@ -10,28 +10,28 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #3a1414;
+  --foreground: #2d1b1b;
   --card: var(--background);
   --card-foreground: var(--foreground);
   --popover: var(--background);
   --popover-foreground: var(--foreground);
-  --primary: #e63946;
+  --primary: #c2410c;
   --primary-foreground: #ffffff;
-  --secondary: #fad9d9;
-  --secondary-foreground: #3a1414;
-  --accent: #d62828;
+  --secondary: #fed7aa;
+  --secondary-foreground: #2d1b1b;
+  --accent: #ea580c;
   --accent-foreground: #ffffff;
-  --destructive: #b00020;
-  --destructive-foreground: #b00020;
-  --border: #e2e2e2;
-  --input: #e2e2e2;
-  --ring: #e63946;
-  --chart-1: #ef233c;
-  --chart-2: #d90429;
-  --chart-3: #9d0208;
-  --chart-4: #8d0801;
-  --chart-5: #6a040f;
-  --radius: 0.625rem;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #f3e8e3;
+  --input: #f3e8e3;
+  --ring: #c2410c;
+  --chart-1: #ea580c;
+  --chart-2: #f97316;
+  --chart-3: #fb923c;
+  --chart-4: #c2410c;
+  --chart-5: #9a3412;
+  --radius: 0.75rem;
   --sidebar: var(--background);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
@@ -40,8 +40,8 @@
   --sidebar-accent-foreground: var(--accent-foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
-  --gradient-1: #1520a6;
-  --gradient-2: #e63946;
+  --gradient-1: #ea580c;
+  --gradient-2: #c2410c;
 }
 
 @theme inline {

@@ -19,7 +19,9 @@ describe('DashboardFooter', () => {
     it('should display the current year', () => {
       render(<DashboardFooter />);
       const currentYear = new Date().getFullYear();
-      expect(screen.getByText(new RegExp(currentYear.toString()))).toBeInTheDocument();
+      expect(
+        screen.getByText(new RegExp(currentYear.toString()))
+      ).toBeInTheDocument();
     });
 
     it('should display the copyright symbol', () => {

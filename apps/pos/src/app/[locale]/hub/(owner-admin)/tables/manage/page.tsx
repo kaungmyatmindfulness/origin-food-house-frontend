@@ -57,10 +57,16 @@ const createTableBatchSchema = (t: (key: string, params?: any) => string) =>
             .string()
             .trim()
             .min(1, t('validation.nameEmpty'))
-            .max(MAX_TABLE_NAME_LENGTH, t('validation.nameTooLong', { max: MAX_TABLE_NAME_LENGTH })),
+            .max(
+              MAX_TABLE_NAME_LENGTH,
+              t('validation.nameTooLong', { max: MAX_TABLE_NAME_LENGTH })
+            ),
         })
       )
-      .min(0, 'At least one table must be present to sync (or send empty to delete all).')
+      .min(
+        0,
+        'At least one table must be present to sync (or send empty to delete all).'
+      )
       .max(MAX_TABLES, t('validation.maxTables', { max: MAX_TABLES }))
       .refine(
         (tables) => {
@@ -267,11 +273,15 @@ export default function StoreTablesPage() {
                               render={({ field: tableField }) => (
                                 <FormItem className="flex-grow">
                                   <FormLabel className="sr-only">
-                                    {t('tableNamePlaceholder', { number: index + 1 })}
+                                    {t('tableNamePlaceholder', {
+                                      number: index + 1,
+                                    })}
                                   </FormLabel>
                                   <FormControl>
                                     <Input
-                                      placeholder={t('tableNamePlaceholder', { number: index + 1 })}
+                                      placeholder={t('tableNamePlaceholder', {
+                                        number: index + 1,
+                                      })}
                                       {...tableField}
                                       disabled={syncTablesMutation.isPending}
                                     />

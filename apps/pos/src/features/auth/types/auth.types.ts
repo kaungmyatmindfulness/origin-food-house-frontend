@@ -21,6 +21,12 @@ export interface ChangePasswordDto {
   newPassword: string;
 }
 
+export interface RegisterDto {
+  email: string;
+  password: string;
+  name?: string;
+}
+
 export interface AccessTokenData {
   access_token: string;
 }

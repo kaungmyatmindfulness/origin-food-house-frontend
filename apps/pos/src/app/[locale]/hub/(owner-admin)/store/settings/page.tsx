@@ -107,9 +107,7 @@ const updateStoreSettingsSchema = z.object({
   serviceChargeRate: percentageRateSchema,
 });
 
-type UpdateStoreSettingsFormData = z.infer<
-  typeof updateStoreSettingsSchema
->;
+type UpdateStoreSettingsFormData = z.infer<typeof updateStoreSettingsSchema>;
 
 const parseApiRateToPercentage = (
   rateString: string | null | undefined
@@ -284,7 +282,9 @@ export default function UpdateStoreSettingsPage() {
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormDescription>{t('currencyDescription')}</FormDescription>
+                    <FormDescription>
+                      {t('currencyDescription')}
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

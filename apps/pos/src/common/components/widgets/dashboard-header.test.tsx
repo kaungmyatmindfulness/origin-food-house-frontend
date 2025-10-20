@@ -12,7 +12,9 @@ jest.mock('@/features/auth/store/auth.store', () => ({
 
 // Mock the child components
 jest.mock('./notification-popover', () => ({
-  NotificationPopover: () => <div data-testid="notification-popover">Notifications</div>,
+  NotificationPopover: () => (
+    <div data-testid="notification-popover">Notifications</div>
+  ),
 }));
 
 jest.mock('./account-popover', () => ({
@@ -52,13 +54,17 @@ describe('DashboardHeader', () => {
 
     it('should render notification button', () => {
       render(<DashboardHeader />);
-      const notificationButton = screen.getByRole('button', { name: /open notifications/i });
+      const notificationButton = screen.getByRole('button', {
+        name: /open notifications/i,
+      });
       expect(notificationButton).toBeInTheDocument();
     });
 
     it('should render account button', () => {
       render(<DashboardHeader />);
-      const accountButton = screen.getByRole('button', { name: /open account menu/i });
+      const accountButton = screen.getByRole('button', {
+        name: /open account menu/i,
+      });
       expect(accountButton).toBeInTheDocument();
     });
 
@@ -107,13 +113,17 @@ describe('DashboardHeader', () => {
   describe('Notification Button', () => {
     it('should have correct ARIA label', () => {
       render(<DashboardHeader />);
-      const button = screen.getByRole('button', { name: /open notifications/i });
+      const button = screen.getByRole('button', {
+        name: /open notifications/i,
+      });
       expect(button).toHaveAttribute('aria-label', 'Open notifications');
     });
 
     it('should have ghost variant styling', () => {
       render(<DashboardHeader />);
-      const button = screen.getByRole('button', { name: /open notifications/i });
+      const button = screen.getByRole('button', {
+        name: /open notifications/i,
+      });
       // Button component should apply variant classes
       expect(button).toBeInTheDocument();
     });
@@ -212,8 +222,12 @@ describe('DashboardHeader', () => {
     it('should have accessible button labels', () => {
       render(<DashboardHeader />);
 
-      const notificationButton = screen.getByRole('button', { name: /open notifications/i });
-      const accountButton = screen.getByRole('button', { name: /open account menu/i });
+      const notificationButton = screen.getByRole('button', {
+        name: /open notifications/i,
+      });
+      const accountButton = screen.getByRole('button', {
+        name: /open account menu/i,
+      });
 
       expect(notificationButton).toHaveAccessibleName('Open notifications');
       expect(accountButton).toHaveAccessibleName('Open account menu');

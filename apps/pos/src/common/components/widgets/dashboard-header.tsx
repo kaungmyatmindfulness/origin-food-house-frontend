@@ -3,7 +3,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Bell, User } from 'lucide-react';
+import { useState } from 'react';
 import { useAuthStore } from '@/features/auth/store/auth.store';
+import {
+  logoutFromAuth0,
+  isAuth0Authenticated,
+} from '@/features/auth/services/auth0.service';
 import { NotificationPopover } from './notification-popover';
 import { AccountPopover } from './account-popover';
 import { Popover, PopoverTrigger } from '@repo/ui/components/popover';
@@ -21,10 +26,33 @@ import { Button } from '@repo/ui/components/button';
  */
 export function DashboardHeader() {
   const { clearAuth } = useAuthStore();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  function handleLogout() {
-    clearAuth();
-    // e.g. push to /login if desired
+  async function handleLogout() {
+    if (isLoggingOut) return;
+
+    try {
+      setIsLoggingOut(true);
+
+      // Check if user is authenticated with Auth0
+      const isAuth0User = await isAuth0Authenticated();
+
+      if (isAuth0User) {
+        // Logout from Auth0 (also logs out from backend)
+        await logoutFromAuth0();
+      } else {
+        // Traditional logout - just clear local auth state
+        clearAuth();
+        window.location.href = '/login';
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Fallback: clear auth and redirect
+      clearAuth();
+      window.location.href = '/login';
+    } finally {
+      setIsLoggingOut(false);
+    }
   }
 
   return (

@@ -219,7 +219,10 @@ export default function UpdateStoreInformationPage() {
                   <FormItem>
                     <FormLabel>{t('storeNameLabel')}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('storeNamePlaceholder')} {...field} />
+                      <Input
+                        placeholder={t('storeNamePlaceholder')}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
