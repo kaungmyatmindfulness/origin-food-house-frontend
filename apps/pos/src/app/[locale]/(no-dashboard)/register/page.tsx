@@ -126,11 +126,14 @@ function PasswordInput({
   placeholder: string;
 }) {
   const [showPassword, setShowPassword] = useState(false);
+  // Destructure to omit HTML 'size' attribute which conflicts with our variant prop
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { size, ...fieldProps } = field;
 
   return (
     <div className="relative">
       <Input
-        {...field}
+        {...fieldProps}
         type={showPassword ? 'text' : 'password'}
         placeholder={placeholder}
         className="pr-10"
