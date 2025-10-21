@@ -72,7 +72,6 @@ export default function TableQrCodePage() {
         toast.error(t('cannotGenerateQR'));
         return;
       }
-      const qrValue = `${customerAppBaseUrl}${QR_CODE_BASE_PATH}/${table.id}`;
       const canvas = document.getElementById(
         `qr-canvas-${table.id}`
       ) as HTMLCanvasElement;

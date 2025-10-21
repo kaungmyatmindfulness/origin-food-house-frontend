@@ -1,13 +1,15 @@
 // src/features/menu/components/menu-skeleton.tsx
 import React from 'react';
 import { Skeleton } from '@repo/ui/components/skeleton';
-import { Card, CardHeader, CardFooter } from '@repo/ui/components/card'; // Keep Card for skeleton structure
 
 interface MenuSkeletonProps {
-  storeName?: string; // Optional prop for potential future use
+  storeName?: string; // Reserved for future use
 }
 
-export function MenuSkeleton({ storeName }: MenuSkeletonProps) {
+export function MenuSkeleton({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  storeName: _storeName,
+}: MenuSkeletonProps) {
   return (
     <div className="container mx-auto animate-pulse px-4 py-8">
       {/* Header Skeleton */}

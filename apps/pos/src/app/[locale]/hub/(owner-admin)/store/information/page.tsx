@@ -133,7 +133,7 @@ export default function UpdateStoreInformationPage() {
         website: info.website ?? '',
       });
     }
-  }, [storeDetails, form.reset]); // form.reset is stable
+  }, [storeDetails, form]);
 
   // --- Mutation for Updating Store Info ---
   const updateInfoMutation = useMutation<

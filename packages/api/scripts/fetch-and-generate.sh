@@ -54,4 +54,9 @@ echo "⚡ Generating TypeScript types..."
 # Run openapi-ts
 openapi-ts
 
+echo "🔧 Fixing import extensions for ESM compatibility..."
+
+# Fix imports to add .js extensions
+node "$SCRIPT_DIR/fix-imports.js"
+
 echo "🎉 Done! TypeScript types generated successfully"

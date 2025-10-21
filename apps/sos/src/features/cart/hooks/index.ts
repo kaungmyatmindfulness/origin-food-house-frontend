@@ -23,7 +23,7 @@ export const useCartSocketListener = () => {
       };
       const handleCartError = (errorData: {
         message: string;
-        details?: any;
+        details?: unknown;
         event?: string;
       }) => {
         console.error(

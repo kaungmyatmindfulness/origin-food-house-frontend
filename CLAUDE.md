@@ -1007,4 +1007,51 @@ npm run format
 
 ---
 
+## Code Quality & Build System
+
+### ESM Module Resolution with OpenAPI Code Generation
+
+The project uses TypeScript's `NodeNext` module resolution for proper ESM support. This requires explicit `.js` extensions in imports, even for `.ts` files.
+
+**Post-Generation Script**: `packages/api/scripts/fix-imports.js`
+
+This Node.js script automatically fixes generated OpenAPI code after running `npm run generate:api`:
+- Adds `.js` extensions to all relative imports
+- Fixes incorrect import paths (e.g., `./client.js` → `./client/index.js`)
+- Runs automatically as part of the generation pipeline
+
+**Integration**:
+```bash
+# packages/api/scripts/fetch-and-generate.sh
+openapi-ts
+node "$SCRIPT_DIR/fix-imports.js"  # Auto-fixes imports
+```
+
+**Why This is Necessary**: The `@hey-api/openapi-ts` generator doesn't add `.js` extensions to imports, which TypeScript requires with `moduleResolution: NodeNext`. This post-processing step ensures generated code passes type checks without manual intervention.
+
+### Environment Variables
+
+**Declared in `turbo.json`**:
+```json
+{
+  "globalEnv": ["NODE_ENV"]
+}
+```
+
+This tells Turborepo that `NODE_ENV` is an allowable environment variable, preventing lint warnings from `turbo/no-undeclared-env-vars`.
+
+### Build Quality Gates
+
+Before merging any code, ensure all quality checks pass:
+
+```bash
+npm run check-types  # ✅ 0 errors
+npm run lint         # ✅ 0 warnings
+npm run format       # ✅ Code formatted
+```
+
+**Current Status**: ✅ All checks passing (as of last update)
+
+---
+
 **Origin Food House - Clean, Type-Safe, Scalable Architecture**

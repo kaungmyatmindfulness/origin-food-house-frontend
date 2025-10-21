@@ -38,8 +38,6 @@ interface NavItem {
 }
 
 const useNavSections = () => {
-  const t = useTranslations('sidebar');
-
   return React.useMemo<NavItem[][]>(
     () => [
       [
@@ -210,7 +208,6 @@ export function DashboardSidebar({
                   );
                 }
 
-                const subActive = active && !collapsed;
                 return (
                   <div key={item.labelKey} className="px-2 py-1">
                     <div

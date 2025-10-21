@@ -41,7 +41,9 @@ export function CartSheetContent({
 }: CartSheetContentProps) {
   // Get cart state directly from the store
   const cart = useCartStore((state) => state.cart);
-  const itemsArray = cart?.items ?? [];
+
+  // Memoize itemsArray to prevent useMemo dependency issues
+  const itemsArray = useMemo(() => cart?.items ?? [], [cart?.items]);
 
   // Calculate total based on store state
   const cartTotal = useMemo(() => {

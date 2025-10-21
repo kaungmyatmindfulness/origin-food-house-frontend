@@ -37,7 +37,9 @@ export function LanguageSwitcher() {
           disabled={isPending}
         >
           <Globe className="h-4 w-4" />
-          <span className="hidden sm:inline">{localeNames[locale as Locale]}</span>
+          <span className="hidden sm:inline">
+            {localeNames[locale as Locale]}
+          </span>
           <span className="sm:hidden">{localeFlags[locale as Locale]}</span>
         </Button>
       </DropdownMenuTrigger>
@@ -46,7 +48,7 @@ export function LanguageSwitcher() {
           <DropdownMenuItem
             key={loc}
             onClick={() => handleLocaleChange(loc)}
-            className="gap-2 cursor-pointer"
+            className="cursor-pointer gap-2"
           >
             <span>{localeFlags[loc]}</span>
             <span>{localeNames[loc]}</span>

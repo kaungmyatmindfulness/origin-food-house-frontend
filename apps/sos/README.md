@@ -37,6 +37,7 @@ The SOS (Self-Ordering System) app allows customers to scan a table QR code, bro
 ## Features
 
 ### ✅ Menu Browsing
+
 - Browse menu categories
 - View item details with images
 - See customization options
@@ -44,6 +45,7 @@ The SOS (Self-Ordering System) app allows customers to scan a table QR code, bro
 - Smooth scroll navigation
 
 ### ✅ Real-Time Cart
+
 - Socket.IO-based synchronization
 - Optimistic UI updates
 - Rollback on errors
@@ -51,18 +53,21 @@ The SOS (Self-Ordering System) app allows customers to scan a table QR code, bro
 - Session-based cart persistence
 
 ### ✅ Table Sessions
+
 - QR code table joining
 - Session management
 - Table information display
 - Session expiration handling
 
 ### ✅ Order Management
+
 - Cart quantity management
 - Special instructions per item
 - Order summary
 - Checkout flow
 
 ### ✅ Internationalization
+
 - 4 languages (EN, ZH, MY, TH)
 - Language switcher
 - Type-safe translations
@@ -137,6 +142,7 @@ messages/                         # Translation files (root level)
 ### 1. Install Dependencies
 
 From monorepo root:
+
 ```bash
 npm install
 ```
@@ -144,6 +150,7 @@ npm install
 ### 2. Environment Variables
 
 Create `apps/sos/.env`:
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
@@ -200,6 +207,7 @@ await optimisticAddItem({
 ```
 
 **Pattern:**
+
 1. Update UI optimistically
 2. Call API in background
 3. Rollback on error
@@ -328,6 +336,7 @@ debug.warn('Item not found:', itemId);
 ```
 
 **Benefits:**
+
 - ✅ Clean production logs
 - ✅ Useful development debugging
 - ✅ Consistent logging interface
@@ -339,9 +348,7 @@ Use `decimal.js` for all currency operations:
 ```typescript
 import Decimal from 'decimal.js';
 
-const itemTotal = new Decimal(item.price)
-  .times(item.quantity)
-  .toFixed(2);
+const itemTotal = new Decimal(item.price).times(item.quantity).toFixed(2);
 
 const cartTotal = items
   .reduce((sum, item) => sum.plus(item.total), new Decimal(0))
@@ -369,10 +376,10 @@ export async function getCategories(storeSlug: string): Promise<Category[]> {
 
 ### Subscribed Events
 
-| Event | Description | Handler |
-|-------|-------------|---------|
-| `cart:updated` | Cart state changed | `setCart(cart)` |
-| `cart:error` | Cart operation failed | `setError(error)` |
+| Event          | Description           | Handler           |
+| -------------- | --------------------- | ----------------- |
+| `cart:updated` | Cart state changed    | `setCart(cart)`   |
+| `cart:error`   | Cart operation failed | `setError(error)` |
 
 ### Event Flow
 
@@ -385,18 +392,20 @@ User Action → Optimistic Update → API Call → WebSocket Broadcast → Final
 ## Translation Keys
 
 **Cart Namespace:**
+
 ```typescript
-t('cart.title')           // "Your Cart"
-t('cart.empty')           // "Your cart is empty"
-t('cart.checkout')        // "Checkout"
-t('cart.clearCart')       // "Clear Cart"
+t('cart.title'); // "Your Cart"
+t('cart.empty'); // "Your cart is empty"
+t('cart.checkout'); // "Checkout"
+t('cart.clearCart'); // "Clear Cart"
 ```
 
 **Menu Namespace:**
+
 ```typescript
-t('menu.title')           // "Our Menu"
-t('menu.addToCart')       // "Add to Cart"
-t('menu.outOfStock')      // "Out of Stock"
+t('menu.title'); // "Our Menu"
+t('menu.addToCart'); // "Add to Cart"
+t('menu.outOfStock'); // "Out of Stock"
 ```
 
 ---
@@ -425,13 +434,13 @@ t('menu.outOfStock')      // "Out of Stock"
 
 ## File Naming Conventions
 
-| Type | Convention | Example |
-|------|-----------|---------|
-| Services | `*.service.ts` | `cart.service.ts` |
-| Stores | `*.store.ts` | `cart.store.ts` |
-| Types | `*.types.ts` | `cart.types.ts` |
-| Hooks | `use*.ts` | `useCartSocketListener.ts` |
-| Components | PascalCase | `CartItem.tsx` |
+| Type       | Convention     | Example                    |
+| ---------- | -------------- | -------------------------- |
+| Services   | `*.service.ts` | `cart.service.ts`          |
+| Stores     | `*.store.ts`   | `cart.store.ts`            |
+| Types      | `*.types.ts`   | `cart.types.ts`            |
+| Hooks      | `use*.ts`      | `useCartSocketListener.ts` |
+| Components | PascalCase     | `CartItem.tsx`             |
 
 ---
 

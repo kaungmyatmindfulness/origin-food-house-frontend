@@ -122,7 +122,7 @@ function PasswordInput({
   field,
   placeholder,
 }: {
-  field: any;
+  field: React.InputHTMLAttributes<HTMLInputElement> & { name: string };
   placeholder: string;
 }) {
   const [showPassword, setShowPassword] = useState(false);

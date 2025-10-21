@@ -21,7 +21,7 @@ import { MenuItemFormData } from '@/features/menu/components/menu-item-form-dial
 
 interface CustomizationGroupFieldProps {
   groupIndex: number;
-  control: any;
+  control: ReturnType<typeof useForm<MenuItemFormData>>['control'];
   removeGroup: (index: number) => void;
   form: ReturnType<typeof useForm<MenuItemFormData>>;
 }
@@ -195,7 +195,7 @@ export function CustomizationGroupField({
                     <p>
                       The minimum number of options the customer must select
                       from this group (e.g., 0, 1). Must be less than or equal
-                      to 'Max Choices'.
+                      to &apos;Max Choices&apos;.
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -238,7 +238,7 @@ export function CustomizationGroupField({
                     <p>
                       The maximum number of different options the customer can
                       select (e.g., 1 for Size, 3 for Toppings). Must be equal
-                      to or greater than 'Min Choices' and cannot exceed the
+                      to or greater than &apos;Min Choices&apos; and cannot exceed the
                       total number of options available ({optionsCount}).
                     </p>
                   </TooltipContent>

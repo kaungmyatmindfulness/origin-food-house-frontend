@@ -164,10 +164,7 @@ export const useCartStore = create<CartState & CartActions>()(
         debug.error('Failed to update item via API:', error);
 
         set((state) => {
-          debug.log(
-            'Rolling back optimistic update for item ID:',
-            cartItemId
-          );
+          debug.log('Rolling back optimistic update for item ID:', cartItemId);
           state.cart = originalCart;
         });
         throw error;
@@ -211,10 +208,7 @@ export const useCartStore = create<CartState & CartActions>()(
         debug.error('Failed to remove item via API:', error);
 
         set((state) => {
-          debug.log(
-            'Rolling back optimistic remove for item ID:',
-            cartItemId
-          );
+          debug.log('Rolling back optimistic remove for item ID:', cartItemId);
           state.cart = originalCart;
         });
         throw error;

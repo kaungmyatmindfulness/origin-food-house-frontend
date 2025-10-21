@@ -20,15 +20,13 @@ import { Category, MenuItem } from '@/features/menu/types/menu.types'; // Adjust
 import { formatCurrency } from '@/utils/formatting'; // Adjust path
 import { Button } from '@repo/ui/components/button'; // Adjust path
 import { Sheet, SheetTrigger } from '@repo/ui/components/sheet'; // Adjust path
-import {
-  OptimisticAddCartItem,
-  useCartStore,
-} from '@/features/cart/store/cart.store';
+import { useCartStore } from '@/features/cart/store/cart.store';
 import { toast } from 'sonner';
 
 export default function RestaurantMenuPage() {
   const params = useParams();
-  const slug = params.slug as string; // Assuming slug is used for fetching store/menu data
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _slug = params.slug as string; // Reserved for future use
 
   // const categories =
 
@@ -127,9 +125,11 @@ export default function RestaurantMenuPage() {
   };
 
   // TODO: Implement this function in CustomizationDialog and pass it down or lift state up
-  const handleAddCustomizedItem = (item: CartItem) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _handleAddCustomizedItem = (item: CartItem) => {
     // The item passed from dialog should already have quantity, notes, selectedOptions etc.
-    const { id, cartId, createdAt, updatedAt, ...payload } = item; // Omit generated fields
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: _id, cartId: _cartId, createdAt: _createdAt, updatedAt: _updatedAt, ...payload } = item; // Omit generated fields
     optimisticAddItem(payload).catch((err) =>
       handleApiError('add customized item', err)
     );

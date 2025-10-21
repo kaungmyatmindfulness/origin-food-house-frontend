@@ -295,7 +295,7 @@ export function ReorderMenuDialog({
           <DialogTitle className="text-xl">Re-order Menu</DialogTitle>
           <DialogDescription>
             Drag and drop categories or items within a category to change their
-            display order. Changes are saved only when you click "Save Order".
+            display order. Changes are saved only when you click &quot;Save Order&quot;.
           </DialogDescription>
         </DialogHeader>
 

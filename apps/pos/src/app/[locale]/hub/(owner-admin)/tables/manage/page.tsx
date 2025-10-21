@@ -47,7 +47,9 @@ const MAX_TABLES = 100;
 const MAX_TABLE_NAME_LENGTH = 50;
 
 // Create schema factory function to support translations
-const createTableBatchSchema = (t: (key: string, params?: any) => string) =>
+const createTableBatchSchema = (
+  t: (key: string, params?: Record<string, string | number | Date>) => string
+) =>
   z.object({
     tables: z
       .array(
@@ -109,7 +111,7 @@ export default function StoreTablesPage() {
     mode: 'onChange',
   });
 
-  const { fields, replace, remove, append } = useFieldArray({
+  const { fields, remove, append } = useFieldArray({
     control: form.control,
     name: 'tables',
     keyName: 'fieldId',

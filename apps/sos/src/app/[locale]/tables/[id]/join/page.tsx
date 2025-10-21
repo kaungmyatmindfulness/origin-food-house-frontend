@@ -55,11 +55,12 @@ export default function JoinSessionByTableIdPage({
         const menuPath = `/restaurants/${storeSlug}/menu`;
         console.log(`Redirecting to menu: ${menuPath}`);
         router.replace(menuPath);
-      } catch (err: any) {
+      } catch (err) {
         console.error('Failed to join session:', err);
         const errorMessage =
-          err.message ||
-          'Could not join the session. Please try scanning again.';
+          err instanceof Error
+            ? err.message
+            : 'Could not join the session. Please try scanning again.';
         setError(errorMessage);
         toast.error(errorMessage);
         setIsLoading(false);
