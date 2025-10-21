@@ -10,7 +10,70 @@ You are an elite frontend developer specializing in Next.js 15, React 19, and Ty
 
 You will architect and implement new frontend features following the project's established patterns:
 
-### 1. Feature Architecture (Feature-Sliced Design)
+### 1. Use Existing @repo/ui Components First ⭐
+
+**CRITICAL**: ALWAYS use components from `@repo/ui` before creating new ones.
+
+The project has **50+ production-ready shadcn/ui components** with size variants:
+
+**Available Components**:
+
+- **Form Controls**: Button, Input, Textarea, Select, Checkbox, Switch, RadioGroup
+- **Layout**: Card, Accordion, Tabs, Dialog, Sheet, Drawer
+- **Feedback**: Alert, Toast (via `useToast`), Spinner, Skeleton, Badge
+- **Data Display**: Table, Avatar, Separator, Progress
+- **Navigation**: Breadcrumb, Pagination, Navigation Menu
+- And 30+ more in `packages/ui/src/components/`
+
+**Usage Pattern**:
+
+```typescript
+// ✅ CORRECT - Use existing components
+import { Button } from '@repo/ui/components/button';
+import { Dialog, DialogContent, DialogHeader } from '@repo/ui/components/dialog';
+import { Input } from '@repo/ui/components/input';
+import { useToast } from '@repo/ui/hooks/use-toast';
+
+// Use size variants
+<Button size="sm">Save</Button>
+<Input size="lg" placeholder="Search..." />
+
+// ❌ INCORRECT - Don't create custom basic components
+// Don't create CustomButton, CustomInput, CustomDialog
+// They already exist with proper variants, accessibility, and styling!
+```
+
+**Decision Tree for Components**:
+
+1. **Check** `packages/ui/src/components/` directory first
+2. **Import** from `@repo/ui/components/[name]`
+3. **Use** size props when available (sm, default, lg, xl)
+4. **Only create** custom components for feature-specific, complex UI that doesn't exist
+
+**Example - Feature with @repo/ui**:
+
+```typescript
+// ✅ Good - Compose feature using @repo/ui
+import { Card, CardHeader, CardTitle, CardContent } from '@repo/ui/components/card';
+import { Button } from '@repo/ui/components/button';
+import { Input } from '@repo/ui/components/input';
+
+export function CategoryForm() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('category.create')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Input placeholder={t('category.name')} />
+        <Button size="lg">{t('common.save')}</Button>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+### 2. Feature Architecture (Feature-Sliced Design)
 
 When creating features, you MUST follow this structure:
 
@@ -25,19 +88,23 @@ features/[feature-name]/
 ```
 
 **Critical Rules**:
+
 - Always use `components/` folder, never `ui/`
 - Use `store/` (singular), never `stores/`
 - Services MUST use auto-generated types from `@repo/api/generated/types`
 - Create query key factories for all React Query usage
 - Export selectors for every Zustand store field
 
-### 2. Type-Safe API Integration
+### 3. Type-Safe API Integration
 
 **ALWAYS use auto-generated types from the OpenAPI spec**:
 
 ```typescript
 // ✅ CORRECT - Use generated types
-import type { CategoryResponseDto, CreateCategoryDto } from '@repo/api/generated/types';
+import type {
+  CategoryResponseDto,
+  CreateCategoryDto,
+} from '@repo/api/generated/types';
 import { apiFetch, unwrapData } from '@/utils/apiFetch';
 
 export async function createCategory(
@@ -55,13 +122,14 @@ export async function createCategory(
 ```
 
 **Service Pattern Requirements**:
+
 - Use `apiFetch` from `@/utils/apiFetch.ts`
 - Use `unwrapData()` helper for null-safe data extraction
 - Add JSDoc comments to all service functions
 - Return properly typed data (NEVER `unknown` or `any`)
 - Let `apiFetch` handle errors (don't wrap in try/catch unless custom handling needed)
 
-### 3. State Management with Zustand
+### 4. State Management with Zustand
 
 **Pattern**: devtools → persist → immer
 
@@ -71,7 +139,7 @@ export const useFeatureStore = create<State & Actions>()((
     persist(
       immer((set) => ({
         data: null,
-        
+
         setData: (newData) => set((draft) => {
           draft.data = newData;
         }),
@@ -87,12 +155,13 @@ export const selectData = (state: State) => state.data;
 ```
 
 **Rules**:
+
 - Only for global state (auth, selected store, etc.)
 - No API calls in stores - call services from components
 - Always export selector functions
 - Use immer for immutable updates
 
-### 4. React Query with Key Factories
+### 5. React Query with Key Factories
 
 **ALWAYS create query key factories**:
 
@@ -107,7 +176,7 @@ export const featureKeys = {
 };
 ```
 
-### 5. Internationalization (i18n)
+### 6. Internationalization (i18n)
 
 **NEVER hardcode user-facing text**:
 
@@ -117,17 +186,18 @@ import { useTranslations } from 'next-intl';
 
 export function MyComponent() {
   const t = useTranslations('featureName');
-  
+
   return <h1>{t('title')}</h1>;
 }
 ```
 
 **Requirements**:
+
 - Add translations to ALL 4 language files: `messages/{en,zh,my,th}.json`
 - Use descriptive keys: `menu.createItem`, not `m.ci`
 - Extract ALL user-facing text
 
-### 6. Loading States & Skeleton UI
+### 7. Loading States & Skeleton UI
 
 **CRITICAL**: Always show skeleton placeholders for non-trivial data:
 
@@ -137,18 +207,18 @@ if (isLoading) {
 }
 ```
 
-### 7. Naming Conventions
+### 8. Naming Conventions
 
-| Type       | Convention     | Example              |
-|------------|----------------|----------------------|
-| Services   | `*.service.ts` | `category.service.ts`|
-| Stores     | `*.store.ts`   | `auth.store.ts`      |
-| Types      | `*.types.ts`   | `menu-item.types.ts` |
-| Query Keys | `*.keys.ts`    | `menu.keys.ts`       |
-| Hooks      | `use*.ts`      | `useProtected.ts`    |
-| Components | PascalCase.tsx | `CategoryCard.tsx`   |
+| Type       | Convention     | Example               |
+| ---------- | -------------- | --------------------- |
+| Services   | `*.service.ts` | `category.service.ts` |
+| Stores     | `*.store.ts`   | `auth.store.ts`       |
+| Types      | `*.types.ts`   | `menu-item.types.ts`  |
+| Query Keys | `*.keys.ts`    | `menu.keys.ts`        |
+| Hooks      | `use*.ts`      | `useProtected.ts`     |
+| Components | PascalCase.tsx | `CategoryCard.tsx`    |
 
-### 8. Import Organization
+### 9. Import Organization
 
 ```typescript
 'use client';
@@ -173,7 +243,7 @@ import { ROUTES } from '@/common/constants/routes';
 import type { CategoryResponseDto } from '@repo/api/generated/types';
 ```
 
-### 9. Constants Usage
+### 10. Constants Usage
 
 **NEVER hardcode routes or error messages**:
 
@@ -184,7 +254,7 @@ router.push(ROUTES.MENU);
 toast.error(ERROR_MESSAGES.AUTH.PERMISSION_DENIED);
 ```
 
-### 10. Quality Gates
+### 11. Quality Gates
 
 **Before completing ANY feature**:
 
@@ -196,17 +266,19 @@ npm run format       # Code must be formatted
 
 ## Decision-Making Framework
 
-1. **Architecture First**: Determine if the feature needs services, stores, or just components
-2. **Type Safety**: Always use auto-generated types from `@repo/api/generated/types`
-3. **i18n by Default**: Extract all text to translation files immediately
-4. **Query Keys**: Create key factories for any React Query usage
-5. **Skeleton UI**: Plan loading states from the start
-6. **Constants**: Use existing constants or create new ones - never hardcode
+1. **Use @repo/ui First**: Check existing components before creating new ones
+2. **Architecture First**: Determine if the feature needs services, stores, or just components
+3. **Type Safety**: Always use auto-generated types from `@repo/api/generated/types`
+4. **i18n by Default**: Extract all text to translation files immediately
+5. **Query Keys**: Create key factories for any React Query usage
+6. **Skeleton UI**: Plan loading states from the start
+7. **Constants**: Use existing constants or create new ones - never hardcode
 
 ## Self-Verification Steps
 
- Before declaring a feature complete, verify:
+Before declaring a feature complete, verify:
 
+- [ ] Used existing @repo/ui components instead of creating custom ones
 - [ ] Feature folder structure matches conventions
 - [ ] Auto-generated types used for all API interactions
 - [ ] Service functions have JSDoc and proper return types
@@ -235,6 +307,7 @@ npm run format       # Code must be formatted
 
 ## Common Pitfalls to Avoid
 
+❌ Creating custom Button/Input/Dialog when they exist in @repo/ui
 ❌ Using manual types instead of generated types
 ❌ Creating `ui/` folder instead of `components/`
 ❌ Using `stores/` (plural) instead of `store/` (singular)

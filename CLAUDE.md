@@ -1,566 +1,123 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-This is a **Turborepo monorepo** for Origin Food House, a restaurant management system with two Next.js 15 applications:
+Turborepo monorepo for Origin Food House restaurant management system with two Next.js 15 apps:
 
-- **`@app/pos`** (port 3002): Point of Sale system for restaurant staff
+- **`@app/pos`** (port 3002): Point of Sale for staff
 - **`@app/sos`** (port 3001): Self-Ordering System for customers
 
-Both apps share a common UI component library (`@repo/ui`) and configuration packages.
-
-## Development Commands
-
-### Root-level commands (using Turborepo)
+## Commands
 
 ```bash
-# Install dependencies
-npm install
+npm install              # Install dependencies
+npm run dev              # Run all apps (POS: 3002, SOS: 3001)
+npm run build            # Build all apps
+npm run lint             # Lint (max 0 warnings)
+npm run check-types      # Type check (0 errors)
+npm run format           # Format code
+npm run generate:api     # Generate types from OpenAPI spec
 
-# Run all apps in development mode
-npm run dev
+# POS-specific
+cd apps/pos && npm test              # Run Jest tests
+cd apps/pos && npm run test:watch    # Watch mode
+cd apps/pos && npm run test:coverage # Coverage report
 
-# Build all apps
-npm run build
-
-# Lint all apps
-npm run lint
-
-# Type-check all apps
-npm run check-types
-
-# Format code
-npm run format
-
-# Generate TypeScript types from backend OpenAPI spec
-npm run generate:api
-```
-
-### App-specific commands
-
-Navigate to the app directory or use Turborepo filtering:
-
-```bash
-# Run only POS app
-cd apps/pos && npm run dev
-# or
+# App-specific dev
 turbo run dev --filter=@app/pos
-
-# Run only SOS app
-cd apps/sos && npm run dev
-# or
 turbo run dev --filter=@app/sos
 ```
 
-**Individual app scripts:**
+## Architecture
 
-- `npm run dev` - Start development server with Turbopack
-- `npm run build` - Production build
-- `npm run start` - Start production server
-- `npm run lint` - Lint with ESLint (max 0 warnings)
-- `npm run check-types` - TypeScript type checking
-
-## Architecture Overview
-
-### Monorepo Structure
+### Structure
 
 ```
 apps/
-├── pos/              # Restaurant POS system (@app/pos)
-└── sos/              # Customer self-ordering system (@app/sos)
+├── pos/              # POS system
+└── sos/              # Customer ordering
 packages/
-├── api/              # Shared API utilities & types (@repo/api) ⭐ NEW
-├── ui/               # Shared UI components (@repo/ui)
-├── eslint-config/    # Shared ESLint configuration
-└── typescript-config/ # Shared TypeScript configuration
+├── api/              # Shared API utilities + auto-generated types
+├── ui/               # Shared UI components (shadcn/ui)
+├── eslint-config/
+└── typescript-config/
 ```
 
-### App Architecture (POS & SOS)
-
-Both apps follow a **feature-sliced architecture** with the following structure:
+### App Structure (Feature-Sliced)
 
 ```
 src/
-├── app/              # Next.js 15 App Router (pages, layouts, routes)
-├── features/         # Feature-based modules (domain logic)
-│   ├── auth/
-│   │   ├── components/   # Feature-specific UI components
-│   │   ├── hooks/        # Custom hooks (useProtected)
-│   │   ├── queries/      # Query key factories ⭐ NEW
-│   │   ├── services/     # API service functions
-│   │   ├── store/        # Zustand global state
-│   │   └── types/        # TypeScript types
-│   ├── menu/
-│   ├── store/        # Store management (not Zustand)
-│   ├── user/
+├── app/              # Next.js App Router
+├── features/         # Domain logic
 │   └── [feature]/
-├── common/           # Shared app utilities
-│   ├── components/   # Shared widgets (LanguageSwitcher, etc.) ⭐
-│   ├── constants/    # Routes, error messages ⭐ NEW
-│   ├── hooks/        # Reusable hooks (useDialog) ⭐ NEW
-│   ├── services/     # Common API services
-│   └── types/        # Shared types
-├── utils/            # Utility functions
-│   ├── apiFetch.ts   # Configured API client
-│   └── debug.ts      # Debug utility (SOS) ⭐ NEW
-├── i18n/             # Localization config ⭐ NEW
-│   ├── config.ts
-│   └── request.ts
-└── middleware.ts     # Locale detection ⭐ NEW
-
-messages/             # Translation files (root level) ⭐ NEW
-├── en.json           # English
-├── zh.json           # Chinese (中文)
-├── my.json           # Myanmar (မြန်မာ)
-└── th.json           # Thai (ไทย)
+│       ├── components/   # Feature UI
+│       ├── hooks/        # Custom hooks
+│       ├── queries/      # Query key factories
+│       ├── services/     # API calls
+│       ├── store/        # Zustand state
+│       └── types/        # Types
+├── common/           # Shared utilities
+│   ├── components/   # Shared widgets
+│   ├── constants/    # Routes, messages
+│   ├── hooks/        # Reusable hooks
+│   └── services/
+├── utils/            # Utilities (apiFetch, debug)
+├── i18n/             # Localization
+└── middleware.ts
 ```
 
-### Key Architectural Patterns
+## Tech Stack
 
-#### 1. Shared API Package (@repo/api) ⭐ WITH OPENAPI CODE GENERATION
+**Core**: Next.js 15 (Turbopack), React 19, TypeScript 5.8+
+**State**: Zustand (persist, immer, devtools), React Query (@tanstack/react-query)
+**Styling**: Tailwind CSS v4, Motion, shadcn/ui (50+ components)
+**Forms**: react-hook-form, Zod, @hookform/resolvers
+**i18n**: next-intl (en, zh, my, th)
+**Testing (POS)**: Jest, @testing-library/react, jsdom
+**Utilities**: lodash-es, qs, sonner, usehooks-ts
+**POS-specific**: @auth0/auth0-spa-js, @dnd-kit (drag-drop), qrcode.react, react-to-print, react-dropzone
+**SOS-specific**: socket.io-client (real-time), react-scroll, decimal.js (currency)
 
-**NEW:** Centralized API utilities with **auto-generated TypeScript types** from backend OpenAPI spec.
+## Key Patterns
 
-**Located at:** `packages/api/`
+### 1. Use Existing @repo/ui Components ⭐
 
-**Exports:**
+**ALWAYS use components from `@repo/ui` before creating new ones.**
 
-- `createApiFetch(config)` - Factory for configurable API client
-- `unwrapData(response, errorMsg)` - Null-safe data extraction
-- **Auto-generated TypeScript types** from `@repo/api/generated/types` ⭐ NEW
-- Error classes: `ApiError`, `UnauthorizedError`, `NetworkError`, `FetchError`
-- Types: `StandardApiResponse<T>`, `ErrorDetail`, `UploadImageResponseData`
-- `createUploadService(apiFetch)` - Upload service factory
-
-**Type Generation:**
-
-```bash
-# Regenerate types when backend API changes (backend must be running)
-npm run generate:api
-```
-
-**Key Features:**
-
-- ✅ **50+ auto-generated DTOs** from backend OpenAPI specification
-- ✅ Single source of truth (backend spec → frontend types)
-- ✅ Zero manual type maintenance
-- ✅ Catch API mismatches at compile time
-- ✅ Full IDE auto-completion support
-
-**Usage in apps:**
+The project has 50+ production-ready components:
 
 ```typescript
-// apps/pos/src/utils/apiFetch.ts
-import { createApiFetch, unwrapData } from '@repo/api/utils/apiFetch';
-import { useAuthStore } from '@/features/auth/store/auth.store';
-
-export const apiFetch = createApiFetch({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL!,
-  onUnauthorized: () => useAuthStore.getState().clearAuth(),
-});
-
-export { unwrapData };
-```
-
-**Using Generated Types in Services:**
-
-```typescript
-// features/menu/services/category.service.ts
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
-import type {
-  CategoryResponseDto,
-  CreateCategoryDto,
-} from '@repo/api/generated/types'; // ✅ Auto-generated types
-
-export async function getCategories(
-  storeId: string
-): Promise<CategoryResponseDto[]> {
-  const res = await apiFetch<CategoryResponseDto[]>({
-    path: '/categories',
-    query: { storeId },
-  });
-
-  return unwrapData(res, 'Failed to retrieve categories');
-}
-```
-
-**Available Generated Types:**
-
-- `CategoryResponseDto`, `CreateCategoryDto`, `UpdateCategoryDto`
-- `MenuItemResponseDto`, `CreateMenuItemDto`, `UpdateMenuItemDto`
-- `UserProfileResponseDto`, `CreateUserDto`
-- `TableResponseDto`, `CreateTableDto`, `BatchUpsertTableDto`
-- `CartResponseDto`, `CartItemResponseDto`, `AddItemToCartDto`
-- `GetStoreDetailsResponseDto`, `CreateStoreDto`, `UpdateStoreInformationDto`
-- And 40+ more DTOs...
-
-**Documentation:**
-
-- See **`OPENAPI_SETUP.md`** for complete setup guide
-- See **`packages/api/README.md`** for detailed API package documentation
-
-#### 2. Feature Organization
-
-Each feature follows a consistent structure:
-
-- **`components/`**: Feature-specific UI components (always use this name, not `ui/`)
-- **`queries/`**: React Query key factories (e.g., `menu.keys.ts`)
-- **`services/`**: API calls using `apiFetch` utility
-- **`store/`**: Zustand state management (global state only, always singular)
-- **`types/`**: TypeScript interfaces and types
-- **`hooks/`**: Custom React hooks
-
-#### 3. API Communication (`apiFetch`)
-
-**Located at:** `src/utils/apiFetch.ts` (configured instance)
-**Core implementation:** `packages/api/src/utils/apiFetch.ts`
-
-**Features:**
-
-- **Automatic error handling**: Shows toast notifications for errors
-- **Auth integration**: Reads `credentials: 'include'` for httpOnly cookies (POS only)
-- **401 handling**: Automatically clears auth state on unauthorized (POS only)
-- **Query string support**: Uses `qs` library for complex query parameters
-- **Custom error classes**: `ApiError`, `UnauthorizedError`, `NetworkError`
-- **Typed responses**: Returns `StandardApiResponse<T>` from `@repo/api/types/api.types`
-
-**Usage pattern with unwrapData helper:**
-
-```typescript
-// In service files
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
-
-export async function getCategories(storeId: string): Promise<Category[]> {
-  const res = await apiFetch<Category[]>({
-    path: '/categories',
-    query: { storeId },
-  });
-
-  return unwrapData(res, 'Failed to retrieve categories');
-}
-
-// For mutations
-export async function createCategory(
-  storeId: string,
-  data: CreateCategoryDto
-): Promise<Category> {
-  const res = await apiFetch<Category>('/categories', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
-
-  return unwrapData(res, 'Failed to create category');
-}
-```
-
-#### 4. State Management (Zustand)
-
-- **Global state only**: Used for auth, selected store, user data
-- **Middleware stack**: `devtools` → `persist` → `immer`
-- **Persistent auth**: Uses localStorage via `persist` middleware
-- **No API calls in stores**: Keep stores pure, call services from components
-- **MUST export selectors**: For performance and consistency
-
-**Example pattern:**
-
-```typescript
-export const useAuthStore = create<AuthState & AuthActions>()(
-  devtools(
-    persist(
-      immer((set) => ({
-        selectedStoreId: null,
-        isAuthenticated: false,
-
-        setSelectedStore: (storeId) =>
-          set((draft) => {
-            draft.selectedStoreId = storeId;
-          }),
-
-        clearAuth: () =>
-          set((draft) => {
-            draft.selectedStoreId = null;
-            draft.isAuthenticated = false;
-          }),
-      })),
-      { name: 'auth-storage' }
-    ),
-    { name: 'auth-store' }
-  )
-);
-
-// ✅ ALWAYS export selectors
-export const selectSelectedStoreId = (state: AuthState) =>
-  state.selectedStoreId;
-export const selectIsAuthenticated = (state: AuthState) =>
-  state.isAuthenticated;
-```
-
-#### 5. Query Key Factories ⭐ NEW
-
-**IMPORTANT:** Always use query key factories for React Query to ensure type safety and consistency.
-
-**Location:** `features/[feature]/queries/*.keys.ts`
-
-**Pattern:**
-
-```typescript
-// features/menu/queries/menu.keys.ts
-export const menuKeys = {
-  all: ['menu'] as const,
-  categories: (storeId: string) =>
-    [...menuKeys.all, 'categories', { storeId }] as const,
-  items: (storeId: string) => [...menuKeys.all, 'items', { storeId }] as const,
-  item: (storeId: string, itemId: string) =>
-    [...menuKeys.items(storeId), itemId] as const,
-};
-
-// Usage in components
-import { menuKeys } from '@/features/menu/queries/menu.keys';
-
-const { data } = useQuery({
-  queryKey: menuKeys.categories(storeId),
-  queryFn: () => getCategories(storeId),
-});
-
-// Cache invalidation
-queryClient.invalidateQueries({ queryKey: menuKeys.all });
-```
-
-**Benefits:**
-
-- Type-safe query keys
-- Easy cache invalidation
-- Prevents typos
-- Hierarchical structure
-
-#### 6. Constants & Configuration ⭐ NEW
-
-**NEVER hardcode routes or error messages.** Use constants.
-
-**Location:** `common/constants/routes.ts`
-
-```typescript
-export const ROUTES = {
-  LOGIN: '/login',
-  STORE_CHOOSE: '/store/choose',
-  MENU: '/hub/menu',
-  // ...
-} as const;
-
-export const ERROR_MESSAGES = {
-  AUTH: {
-    PERMISSION_DENIED: 'Permission Denied.',
-    INVALID_SESSION: 'Invalid session data. Please log in again.',
-    // ...
-  },
-} as const;
-
-// Usage
-import { ROUTES, ERROR_MESSAGES } from '@/common/constants/routes';
-
-router.push(ROUTES.MENU);
-toast.error(ERROR_MESSAGES.AUTH.PERMISSION_DENIED);
-```
-
-#### 7. Internationalization (i18n) ⭐ NEW
-
-Both apps support 4 languages: English (en), Chinese (zh), Myanmar (my), Thai (th).
-
-**Setup:**
-
-- Middleware: `src/middleware.ts`
-- Config: `src/i18n/config.ts`
-- Translation files: `messages/{locale}.json`
-- Language switcher: `common/components/LanguageSwitcher.tsx`
-
-**Usage:**
-
-```typescript
-'use client';
-
-import { useTranslations } from 'next-intl';
-
-export function MyComponent() {
-  const t = useTranslations('common');
-  const tMenu = useTranslations('menu');
-
-  return (
-    <>
-      <h1>{t('home')}</h1>
-      <button>{tMenu('createItem')}</button>
-    </>
-  );
-}
-```
-
-**Rules:**
-
-- ✅ Extract ALL user-facing text to translation files
-- ✅ Add translations to ALL 4 language files simultaneously
-- ✅ Use descriptive keys (`menu.createItem`, not `m.ci`)
-- ❌ Never hardcode text in components
-
-#### 4. Loading States (Skeleton UI)
-
-**CRITICAL RULE**: Always use skeleton placeholders for loading states unless the data is trivial.
-
-- Prevents layout shifts
-- Improves perceived performance
-- Consistent UX across apps
-
-**Pattern:**
-
-```typescript
-if (isLoading) {
-  return <StoreListSkeleton />;
-}
-```
-
-#### 5. Route Organization (Next.js App Router)
-
-**POS app routes:**
-
-- `(no-dashboard)/` - Routes without dashboard layout (login, register, store selection)
-- `hub/` - Main dashboard routes
-- `hub/(owner-admin)/` - Routes restricted to owners/admins
-
-**SOS app routes:**
-
-- `restaurants/[slug]/menu/` - Restaurant menu page
-- `tables/[id]/join/` - Table joining flow
-
-### Technology Stack
-
-**Framework & Core:**
-
-- Next.js 15 (App Router)
-- React 19
-- TypeScript 5.8+
-
-**State Management:**
-
-- Zustand with immer, persist, devtools middleware
-- React Query (@tanstack/react-query) for server state
-
-**Styling:**
-
-- Tailwind CSS v4 (@tailwindcss/postcss)
-- Motion (framer-motion alternative) for animations
-- shadcn/ui components via `@repo/ui`
-
-**Forms & Validation:**
-
-- react-hook-form
-- Zod (via @repo/ui)
-- @hookform/resolvers
-
-**Utilities:**
-
-- lodash-es
-- qs (query string parsing)
-- sonner (toast notifications)
-- usehooks-ts
-- next-intl (internationalization) ⭐ NEW
-
-**POS-specific:**
-
-- @dnd-kit (drag and drop for menu reordering)
-- qrcode.react (QR code generation)
-- react-to-print (receipt printing)
-
-**SOS-specific:**
-
-- socket.io-client (real-time cart sync)
-- react-scroll (menu navigation)
-- decimal.js (precise currency calculations)
-
-### Shared Packages
-
-#### @repo/api ⭐ WITH OPENAPI CODE GENERATION
-
-Located in `packages/api/`, this package provides shared API utilities and **auto-generated types**:
-
-- **`src/generated/`**: Auto-generated TypeScript types from OpenAPI spec ⭐ NEW
-  - `types.gen.ts` - All DTOs and response types (50+)
-  - `sdk.gen.ts` - Generated SDK (not used directly)
-  - `index.ts` - Main export
-- **`utils/apiFetch.ts`**: Core API client factory
-- **`types/api.types.ts`**: `StandardApiResponse`, `ErrorDetail`
-- **`types/upload.types.ts`**: Upload-related types
-- **`services/upload.service.ts`**: Upload service factory
-
-**Import patterns:**
-
-```typescript
-// API utilities
-import { createApiFetch, unwrapData } from '@repo/api/utils/apiFetch';
-import type { StandardApiResponse } from '@repo/api/types/api.types';
-
-// Auto-generated types ⭐ NEW
-import type {
-  CategoryResponseDto,
-  MenuItemResponseDto,
-  UserProfileResponseDto,
-} from '@repo/api/generated/types';
-```
-
-**Code Generation Setup:**
-
-- Uses `@hey-api/openapi-ts` for type generation
-- Fetches spec from `http://localhost:3000/api-docs-json`
-- Automatically fixes common OpenAPI spec issues
-- Generates 50+ DTOs and response types
-- See `OPENAPI_SETUP.md` for complete documentation
-
-#### @repo/ui
-
-Located in `packages/ui/`, this package exports:
-
-- **Components**: 40+ shadcn/ui components (Button, Dialog, Form, etc.)
-- **Hooks**: React hooks (use-toast, use-mobile)
-- **Utilities**: `cn()` utility via `lib/utils.ts`
-- **Styles**: `globals.css` with Tailwind configuration
-
-**Import pattern:**
-
-```typescript
-import { Button } from '@repo/ui/components/button';
+// ✅ Use existing components
+import { Button, Dialog, Form, Input, Select } from '@repo/ui/components/*';
 import { useToast } from '@repo/ui/hooks/use-toast';
+
+// ❌ Don't create custom button/input/dialog components
+// They already exist in @repo/ui with proper variants!
 ```
 
-## Important Development Rules
+**Available components**: Button, Dialog, Form, Input, Textarea, Select, Checkbox, Switch, RadioGroup, Alert, Card, Accordion, Tabs, Table, Avatar, Badge, Spinner, Skeleton, Toast, and 30+ more.
 
-### 1. API Service Pattern ⭐ UPDATED WITH AUTO-GENERATED TYPES
+**Before creating a component**:
 
-**Services should:**
+1. Check `packages/ui/src/components/` directory
+2. Import from `@repo/ui/components/[name]`
+3. Use size variants (sm, default, lg) when available
+4. Only create custom components for feature-specific, complex UI
 
-- Live in `features/[feature]/services/`
-- Use `apiFetch` from `@/utils/apiFetch.ts`
-- **Use auto-generated types from `@repo/api/generated/types`** ⭐ NEW
-- Use `unwrapData()` helper for null checking
-- Return properly typed data (NEVER `unknown`)
-- Add JSDoc comments
+### 2. Auto-Generated API Types ⭐
 
-**Example:**
+**Always use auto-generated types from OpenAPI spec:**
 
 ```typescript
-// ✅ Correct - Modern pattern with auto-generated types + unwrapData
+// ✅ Use generated types
 import { apiFetch, unwrapData } from '@/utils/apiFetch';
 import type {
   CategoryResponseDto,
   CreateCategoryDto,
-} from '@repo/api/generated/types'; // ✅ Use generated types
+} from '@repo/api/generated/types';
 
-/**
- * Creates a new category for a specific store.
- *
- * @param storeId - The ID of the store.
- * @param data - The category data to create.
- * @returns A promise resolving to the created Category object.
- * @throws {NetworkError | ApiError} - Throws on fetch/API errors.
- */
 export async function createCategory(
   storeId: string,
   data: CreateCategoryDto
@@ -570,67 +127,67 @@ export async function createCategory(
     query: { storeId },
     body: JSON.stringify(data),
   });
-
   return unwrapData(res, 'Failed to create category');
 }
-
-// ❌ Incorrect - don't use manual types when generated types exist
-import type { Category } from '../types/category.types'; // Don't do this
-// Always use: import type { CategoryResponseDto } from '@repo/api/generated/types';
-
-// ❌ Incorrect - don't handle errors manually
-export async function createCategory(data: CreateCategoryDto) {
-  try {
-    const response = await apiFetch<CategoryResponseDto>(...);
-    if (response.status === 'error') {
-      // Don't do this - apiFetch handles it
-    }
-  } catch (error) {
-    // Don't do this - apiFetch already shows toast
-  }
-}
-
-// ❌ Incorrect - don't return unknown
-export async function createCategory(...): Promise<unknown> {
-  // Always use proper types
-}
-
-// ❌ Incorrect - manual null checking
-if (res.data == null) {
-  throw new Error('...');
-}
-return res.data;
-// Use unwrapData() instead
 ```
 
-**Benefits of Auto-Generated Types:**
+**Features:**
 
-- ✅ Always in sync with backend API
-- ✅ Catch breaking changes at compile time
-- ✅ No manual type maintenance
-- ✅ Full IDE auto-completion
-- ✅ Single source of truth (backend → frontend)
+- 50+ auto-generated DTOs from backend
+- Single source of truth
+- Compile-time type safety
+- Run `npm run generate:api` when backend changes
 
-### 2. Zustand Store Pattern ⭐ UPDATED
+### 3. Query Key Factories
 
-**Stores should:**
-
-- Contain minimal global state
-- Use immer for immutable updates
-- **MUST export selector functions** (for every state field)
-- Persist only necessary data
-- Never contain API logic
-
-**Example:**
+**Reference**: [TkDodo's Effective React Query Keys](https://tkdodo.eu/blog/effective-react-query-keys)
 
 ```typescript
-// ✅ Correct - pure state management with selectors
+// features/menu/queries/menu.keys.ts
+export const menuKeys = {
+  all: ['menu'] as const,
+
+  categories: (storeId: string) =>
+    [...menuKeys.all, 'categories', { storeId }] as const,
+
+  category: (storeId: string, categoryId: string) =>
+    [...menuKeys.categories(storeId), categoryId] as const,
+
+  items: (storeId: string) => [...menuKeys.all, 'items', { storeId }] as const,
+
+  item: (storeId: string, itemId: string) =>
+    [...menuKeys.items(storeId), itemId] as const,
+};
+
+// Usage in components
+const { data } = useQuery({
+  queryKey: menuKeys.categories(storeId),
+  queryFn: () => getCategories(storeId),
+});
+
+// Cache invalidation (hierarchical)
+queryClient.invalidateQueries({ queryKey: menuKeys.all }); // All menu
+queryClient.invalidateQueries({ queryKey: menuKeys.categories(storeId) }); // Specific
+```
+
+**Benefits**: Type-safe, hierarchical invalidation, prevents typos
+
+### 4. Zustand Stores
+
+**Pattern**: devtools → persist → immer
+
+```typescript
+// Define initial state separately for clarity
+const initialState: AuthState = {
+  selectedStoreId: null,
+  isAuthenticated: false,
+};
+
 export const useAuthStore = create<AuthState & AuthActions>()(
   devtools(
     persist(
       immer((set) => ({
-        selectedStoreId: null,
-        isAuthenticated: false,
+        ...initialState,
 
         setSelectedStore: (id) =>
           set((draft) => {
@@ -652,400 +209,348 @@ export const useAuthStore = create<AuthState & AuthActions>()(
   )
 );
 
-// ✅ MUST export selectors for all state fields
+// ✅ MUST export selectors
 export const selectSelectedStoreId = (state: AuthState) =>
   state.selectedStoreId;
 export const selectIsAuthenticated = (state: AuthState) =>
   state.isAuthenticated;
 ```
 
-### 3. Component Organization
+**Rules**:
 
-**Client components (`'use client'`):**
+- Define `initialState` separately
+- Use `partialize` to control what gets persisted
+- Middleware order: devtools → persist → immer
+- Always export selectors for all state fields
 
-- Required for: interactivity, hooks, event handlers, browser APIs
-- Use for: forms, interactive UI, state management
-- Keep minimal - extract server-renderable parts
-
-**Server components (default):**
-
-- Use for: static content, data fetching, layouts
-- Cannot use: useState, useEffect, event handlers
-
-### 4. Type Safety
-
-**All code must:**
-
-- Use `.ts` or `.tsx` extensions
-- Define explicit types for API responses
-- Use type imports when importing types
-- Avoid `any` - use `unknown` if type is truly unknown
-
-**Pattern:**
+### 5. Constants (Never Hardcode)
 
 ```typescript
-// ✅ Correct
-import type { Category } from '@/features/menu/types/category.types';
+// common/constants/routes.ts
+export const ROUTES = {
+  LOGIN: '/login',
+  MENU: '/hub/menu',
+} as const;
 
-// ✅ Correct - explicit return type
-export async function getCategories(): Promise<Category[]> {
-  const response = await apiFetch<Category[]>('/categories');
-  return response.data;
-}
+export const ERROR_MESSAGES = {
+  AUTH: { PERMISSION_DENIED: 'Permission Denied.' },
+} as const;
 ```
 
-### 5. Skeleton UI Enforcement
+### 6. Internationalization
 
-**Always show skeleton placeholders during loading states** for non-trivial data.
-
-**Pattern:**
-
-```tsx
+```typescript
 'use client';
+import { useTranslations } from 'next-intl';
 
-export default function MenuPage() {
-  const { data, isLoading } = useQuery(['menu'], fetchMenu);
-
-  if (isLoading) {
-    return <MenuSkeleton />; // ✅ Always show skeleton
-  }
-
-  return <MenuContent data={data} />;
+export function MyComponent() {
+  const t = useTranslations('common');
+  return <h1>{t('home')}</h1>;
 }
 ```
 
-### 6. Authentication Flow
+**Rules:**
 
-**POS app uses cookie-based authentication:**
+- Extract ALL user-facing text
+- Add to ALL 4 language files (en, zh, my, th)
+- Use descriptive keys
 
-- Access tokens stored in httpOnly cookies (not localStorage)
-- `apiFetch` uses `credentials: 'include'` for cookies
-- Auth store only tracks `isAuthenticated` flag and `selectedStoreId`
-- 401 responses automatically clear auth state via `clearAuth()`
-
-**Protected routes pattern:**
+### 7. Skeleton Loading States
 
 ```typescript
-// Use useProtected hook
-const { user, isLoading } = useProtected();
-
-if (isLoading) return <LoadingSkeleton />;
+if (isLoading) return <MenuSkeleton />;
 ```
 
-### 7. Error Handling
+Always use skeleton placeholders for non-trivial loading states.
 
-**Let apiFetch handle errors:**
+### 8. React Query Configuration
 
-- Toast notifications shown automatically
-- Custom error classes for different scenarios
-- 401 errors clear auth automatically
-- Don't wrap apiFetch in try/catch unless you need custom handling
-
-## Common Patterns
-
-### React Query with Query Key Factories ⭐ UPDATED
+**Default settings in providers.tsx**:
 
 ```typescript
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { menuKeys } from '@/features/menu/queries/menu.keys';
-import {
-  getCategories,
-  createCategory,
-} from '@/features/menu/services/category.service';
-
-// ✅ Use query key factories
-const { data, isLoading } = useQuery({
-  queryKey: menuKeys.categories(storeId), // Type-safe
-  queryFn: () => getCategories(storeId),
-});
-
-// ✅ Mutation with query key factory
-const queryClient = useQueryClient();
-const mutation = useMutation({
-  mutationFn: createCategory,
-  onSuccess: () => {
-    // Invalidate using query key factory
-    queryClient.invalidateQueries({ queryKey: menuKeys.all });
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1 * 60 * 1000, // 1 minute
+      gcTime: 30 * 60 * 1000, // 30 minutes
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+      refetchOnMount: true,
+      retry: 1,
+    },
+    mutations: {
+      retry: 0,
+    },
   },
 });
 ```
 
-### Custom Hooks for Common Patterns ⭐ NEW
+**Server-side handling**: Separate query client instances for server/browser to prevent hydration issues.
+
+### 9. Optimistic Updates Pattern (SOS Cart)
+
+For real-time feel with WebSocket sync:
 
 ```typescript
-// Dialog state management
-import { useDialog } from '@/common/hooks/useDialogState';
+// In store
+optimisticAddItem: async (cartItem) => {
+  const originalCart = get().cart;
+  const tempId = `temp-${Date.now()}`;
 
-const [dialogOpen, setDialogOpen] = useDialog();
+  // 1. Update UI immediately
+  set((state) => {
+    state.cart.items.push({ ...cartItem, id: tempId });
+  });
 
-<Button onClick={() => setDialogOpen(true)}>Open</Button>
-<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-  ...
-</Dialog>
+  try {
+    // 2. Call API
+    await addItemToCart(payload);
+  } catch (error) {
+    // 3. Rollback on error
+    set((state) => {
+      state.cart = originalCart;
+    });
+    throw error;
+  }
+  // 4. Final state from WebSocket 'cart:updated' event
+};
 ```
 
-### Debug Utility (SOS App) ⭐ NEW
+**Pattern**: Optimistic update → API call → Rollback on error → WebSocket confirmation
+
+### 10. WebSocket Integration (SOS)
+
+**Setup**: SocketProvider in utils/socket-provider.tsx
 
 ```typescript
-import { debug } from '@/utils/debug';
-
-// Only logs in development, silent in production
-debug.log('Cart updated:', cart);
-debug.warn('Item not found');
-
-// Always logs (even in production)
-debug.error('Critical error:', error);
-```
-
-### Form Handling with react-hook-form + Zod
-
-```typescript
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-
-const schema = z.object({
-  name: z.string().min(1),
-  price: z.number().positive(),
+const socket = io(WS_URL, {
+  withCredentials: true, // For httpOnly cookies
+  transports: ['websocket'], // Explicit transport
 });
 
-type FormValues = z.infer<typeof schema>;
+// Usage
+const { socket, isConnected } = useSocket();
 
-const form = useForm<FormValues>({
-  resolver: zodResolver(schema),
+socket?.on('cart:updated', (cart) => {
+  useCartStore.getState().setCart(cart);
 });
 ```
 
-### Accessing Shared UI Components
+**Events**: `connect`, `disconnect`, `connect_error`, `error`, `cart:updated`
+
+### 11. Testing Infrastructure (POS Only)
+
+**Setup**: Jest + @testing-library/react + jsdom
 
 ```typescript
-import { Button } from '@repo/ui/components/button';
-import { Dialog } from '@repo/ui/components/dialog';
-import { Form } from '@repo/ui/components/form';
+// jest.config.ts
+{
+  testEnvironment: 'jsdom',
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1' },
+  collectCoverageFrom: ['src/**/*.{ts,tsx}'],
+}
 ```
 
-## Environment Variables
+**Testing Pattern**:
 
-**Required for both apps:**
+- Mock Zustand stores with jest.mock
+- Mock Next.js components (Image, Link)
+- Use @testing-library/react for component testing
+- Focus on rendering, interactions, accessibility
 
-- `NEXT_PUBLIC_API_URL` - Backend API base URL
+**Run tests**: `npm test` (in apps/pos directory)
 
-**Note:** Only `NEXT_PUBLIC_*` variables are exposed to the client. Keep sensitive keys server-side.
+## Critical Rules
 
-## Key Differences Between POS and SOS
+### API Services
 
-| Feature          | POS (@app/pos)                                  | SOS (@app/sos)                       |
-| ---------------- | ----------------------------------------------- | ------------------------------------ |
-| **Port**         | 3002                                            | 3001                                 |
-| **Users**        | Restaurant staff                                | Customers                            |
-| **Auth**         | Required (cookie-based)                         | Optional (session-based)             |
-| **Real-time**    | Not used                                        | Socket.IO for cart sync              |
-| **Key Features** | Menu management, table QR codes, store settings | Menu browsing, cart, order placement |
-| **Route Groups** | `(no-dashboard)`, `hub/`, `(owner-admin)`       | `restaurants/[slug]`, `tables/[id]`  |
+- Live in `features/[feature]/services/`
+- Use `apiFetch` + `unwrapData`
+- Use auto-generated types from `@repo/api/generated/types`
+- Add JSDoc comments
+- Return typed data (never `unknown`)
 
-## Naming Conventions & File Organization ⭐ CRITICAL
+### Zustand Stores
 
-### File Naming Rules
+- Minimal global state only
+- Use immer for updates
+- **Must export selectors**
+- Never contain API logic
+- Persist only necessary data
 
-| Type       | Convention     | ✅ Correct            | ❌ Incorrect           |
-| ---------- | -------------- | --------------------- | ---------------------- |
-| Services   | `*.service.ts` | `category.service.ts` | `category.services.ts` |
-| Stores     | `*.store.ts`   | `auth.store.ts`       | `authStore.ts`         |
-| Types      | `*.types.ts`   | `menu-item.types.ts`  | `menuItem.types.ts`    |
-| Query Keys | `*.keys.ts`    | `menu.keys.ts`        | `menuKeys.ts`          |
-| Hooks      | `use*.ts`      | `useProtected.ts`     | `protected.hook.ts`    |
-| Components | PascalCase.tsx | `CategoryCard.tsx`    | `category-card.tsx`    |
+### Component Organization
 
-### Folder Naming Rules
+- **Client** (`'use client'`): hooks, events, interactivity
+- **Server** (default): static content, layouts
 
-| Purpose     | ✅ Correct          | ❌ Incorrect       |
-| ----------- | ------------------- | ------------------ |
-| Feature UI  | `components/`       | `ui/`              |
-| State store | `store/` (singular) | `stores/` (plural) |
-| Services    | `services/`         | `service/`         |
-| Types       | `types/`            | `type/`            |
+### Type Safety
 
-### Import Organization
+- Use `.ts`/`.tsx` extensions
+- Explicit types for API responses
+- Type imports: `import type { ... }`
+- Avoid `any`, use `unknown` if needed
+
+### Authentication & Authorization
+
+**POS App**:
+
+- Cookie-based auth with httpOnly cookies
+- Auth0 SSO integration (@auth0/auth0-spa-js)
+- `useProtected()` hook for route protection with role-based access control
+- 401 auto-clears auth state and redirects to login
+- 403 shows permission denied and redirects
+
+**useProtected Hook Features**:
+
+- Role-based authorization (`allowedRoles` option)
+- Custom redirect paths
+- Error handling (401, 403, missing session)
+- Loading states for smooth UX
+
+**SOS App**:
+
+- Session-based auth with cookies
+- No Auth0 (simpler flow for customers)
+- WebSocket auth via `withCredentials: true`
+
+## Naming Conventions
+
+### Files
+
+| Type       | Convention     | Example               |
+| ---------- | -------------- | --------------------- |
+| Services   | `*.service.ts` | `category.service.ts` |
+| Stores     | `*.store.ts`   | `auth.store.ts`       |
+| Types      | `*.types.ts`   | `menu-item.types.ts`  |
+| Query Keys | `*.keys.ts`    | `menu.keys.ts`        |
+| Hooks      | `use*.ts`      | `useProtected.ts`     |
+| Components | PascalCase.tsx | `CategoryCard.tsx`    |
+
+### Folders
+
+- Feature UI: `components/` (not `ui/`)
+- State: `store/` (singular, not `stores/`)
+- Services: `services/`
+- Types: `types/`
+
+### Import Order
 
 ```typescript
-// ✅ Correct order
 'use client';
 
 // 1. React & Next.js
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-// 2. Third-party libraries
+// 2. Third-party
 import { useQuery } from '@tanstack/react-query';
-import { useTranslations } from 'next-intl';
 
 // 3. Shared packages
 import { Button } from '@repo/ui/components/button';
 
-// 4. Features (grouped)
-import {
-  useAuthStore,
-  selectSelectedStoreId,
-} from '@/features/auth/store/auth.store';
-import { menuKeys } from '@/features/menu/queries/menu.keys';
-import { getCategories } from '@/features/menu/services/category.service';
+// 4. Features
+import { useAuthStore } from '@/features/auth/store/auth.store';
 
-// 5. Common utilities
-import { useDialog } from '@/common/hooks/useDialogState';
+// 5. Common
 import { ROUTES } from '@/common/constants/routes';
 
-// 6. Types (last, with 'type' import)
-// Prefer auto-generated types from @repo/api/generated/types
+// 6. Types (last)
 import type { CategoryResponseDto } from '@repo/api/generated/types';
 ```
 
-## Custom Hooks Library ⭐ NEW
+## POS vs SOS
 
-### POS App Hooks
+| Feature      | POS                                       | SOS                                 |
+| ------------ | ----------------------------------------- | ----------------------------------- |
+| Port         | 3002                                      | 3001                                |
+| Users        | Staff                                     | Customers                           |
+| Auth         | Auth0 SSO + cookies                       | Session-based cookies               |
+| Real-time    | None                                      | Socket.IO (cart sync)               |
+| Testing      | Jest + Testing Library                    | None (manual testing)               |
+| Key Features | Menu mgmt, QR codes, store settings       | Menu browse, cart, ordering         |
+| Routes       | `(no-dashboard)`, `hub/`, `(owner-admin)` | `restaurants/[slug]`, `tables/[id]` |
+| Env Vars     | 6 (API, Customer URL, Auth0 x5)           | 1 (API URL)                         |
 
-**Location:** `common/hooks/`
+## Environment Variables
 
-- **`useDialog()`** - Dialog state management
-- **`useDialogState()`** - Alternative dialog hook with separate handlers
-- **`useProtected()`** - Route protection & authorization
+**POS App** (.env.example):
 
-**Location:** `features/auth/hooks/`
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_CUSTOMER_APP_URL=http://localhost:3001
 
-- **`useProtected(options)`** - Comprehensive auth & role checking
+# Auth0 SSO
+NEXT_PUBLIC_AUTH0_DOMAIN=your-tenant.auth0.com
+NEXT_PUBLIC_AUTH0_CLIENT_ID=your-client-id
+NEXT_PUBLIC_AUTH0_AUDIENCE=https://api.origin-food-house.com
+NEXT_PUBLIC_AUTH0_REDIRECT_URI=http://localhost:3002/auth/callback
+```
 
-### SOS App Hooks
+**SOS App** (.env.example):
 
-**Location:** `features/cart/hooks/`
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:3000
+# Note: NEXT_PUBLIC_WS_URL defaults to http://localhost:3001 (in code)
+```
 
-- **`useCartSocketListener()`** - Real-time cart synchronization
+**Important**: Only `NEXT_PUBLIC_*` variables are exposed to the client.
 
-## Debug & Logging ⭐ NEW
+## Custom Hooks Reference
 
-**SOS App Only:** `utils/debug.ts`
+**POS App**:
+
+- `useProtected(options?)` - Auth/role-based route protection (`features/auth/hooks/`)
+- `useDialogState(initial?)` - Dialog state with open/close/toggle (`common/hooks/`)
+- `useDialog(initial?)` - Simpler dialog state with setter (`common/hooks/`)
+
+**SOS App**:
+
+- `useSocket()` - WebSocket connection access (from SocketProvider)
+- `useCartSocketListener()` - Real-time cart sync (`features/cart/hooks/`)
+- `useStickyHeader()` - Sticky menu header (`features/menu/hooks/`)
+
+**Shared (@repo/ui)**:
+
+- `useToast()` - Toast notifications
+- `useMobile()` - Mobile breakpoint detection
+
+## Utility Functions
+
+**Formatting** (`utils/formatting.ts`):
 
 ```typescript
-import { debug } from '@/utils/debug';
-
-// Development only (NODE_ENV === 'development')
-debug.log('Info message');
-debug.warn('Warning message');
-debug.info('Info message');
-
-// Always logged (production & development)
-debug.error('Error message');
+formatCurrency(value, currency?, locale?) // Intl.NumberFormat with fallback
+// Default: THB, th-TH locale
 ```
 
-**POS App:**
+**Debug** (SOS only, `utils/debug.ts`):
 
-- Use regular `console.log` for now (consider adding debug utility)
+```typescript
+debug.log(); // Dev only
+debug.warn(); // Dev only
+debug.error(); // Always logged
+```
 
-## Technical Documentation Reference
+## New Feature Checklist
 
-### Quick Reference
-
-- **`README.md`** - Monorepo overview, quick start, tech stack
-- **`CLAUDE.md`** (this file) - Development guidelines & patterns
-- **`OPENAPI_SETUP.md`** - OpenAPI TypeScript code generation guide ⭐ NEW
-- **`I18N_GUIDE.md`** - Complete internationalization guide
-- **`packages/api/README.md`** - API package usage documentation
-- **`apps/pos/README.md`** - POS app detailed documentation
-- **`apps/sos/README.md`** - SOS app detailed documentation
-
-### Detailed Documentation
-
-Detailed technical documentation includes:
-
-- Folder structure explanations
-- In-depth API patterns with examples
-- Skeleton UI usage
-- State management patterns
-- Internationalization setup
-- Query key factory usage
-- Custom hooks documentation
-
----
-
-## Summary Checklist for New Features
-
-When adding a new feature, ensure you:
-
-- [ ] Create feature folder: `features/[feature]/`
-- [ ] **Use auto-generated types from `@repo/api/generated/types`** ⭐ NEW
-- [ ] Add `services/*.service.ts` with proper return types
-- [ ] Add `types/*.types.ts` only for non-API types (use generated types for API)
-- [ ] Create `queries/*.keys.ts` if using React Query
-- [ ] Add `store/*.store.ts` if global state is needed
-- [ ] Export selectors for all store fields
-- [ ] Add `components/` for feature UI
+- [ ] Check `@repo/ui` components first - don't recreate basics
+- [ ] Create `features/[feature]/` folder
+- [ ] Use auto-generated types from `@repo/api/generated/types`
+- [ ] Add `services/*.service.ts` with JSDoc
+- [ ] Create `queries/*.keys.ts` for React Query
+- [ ] Add `store/*.store.ts` with selectors (if needed)
+- [ ] Add `components/` for feature-specific UI only
 - [ ] Use `unwrapData()` in services
-- [ ] Add JSDoc to all service functions
-- [ ] Create constants for routes/messages if needed
-- [ ] Add translations to ALL 4 language files
+- [ ] Add constants for routes/messages
+- [ ] Add translations to ALL 4 languages
 - [ ] Use skeleton loading states
 - [ ] Follow naming conventions
-- [ ] Use query key factories for React Query
-- [ ] **Regenerate types after backend API changes** (`npm run generate:api`) ⭐ NEW
+- [ ] Add tests (POS) if component is in common/
 
----
+## Quality Gates
 
-## 🚨 Before Completing ANY Task
-
-**ALWAYS run these commands to ensure code quality:**
-
-```bash
-# Type checking (must pass with 0 errors)
-npm run check-types
-
-# Linting (must pass with 0 warnings)
-npm run lint
-
-# Code formatting
-npm run format
-```
-
-**Do not consider a task complete until all checks pass.**
-
----
-
-## Code Quality & Build System
-
-### ESM Module Resolution with OpenAPI Code Generation
-
-The project uses TypeScript's `NodeNext` module resolution for proper ESM support. This requires explicit `.js` extensions in imports, even for `.ts` files.
-
-**Post-Generation Script**: `packages/api/scripts/fix-imports.js`
-
-This Node.js script automatically fixes generated OpenAPI code after running `npm run generate:api`:
-
-- Adds `.js` extensions to all relative imports
-- Fixes incorrect import paths (e.g., `./client.js` → `./client/index.js`)
-- Runs automatically as part of the generation pipeline
-
-**Integration**:
-
-```bash
-# packages/api/scripts/fetch-and-generate.sh
-openapi-ts
-node "$SCRIPT_DIR/fix-imports.js"  # Auto-fixes imports
-```
-
-**Why This is Necessary**: The `@hey-api/openapi-ts` generator doesn't add `.js` extensions to imports, which TypeScript requires with `moduleResolution: NodeNext`. This post-processing step ensures generated code passes type checks without manual intervention.
-
-### Environment Variables
-
-**Declared in `turbo.json`**:
-
-```json
-{
-  "globalEnv": ["NODE_ENV"]
-}
-```
-
-This tells Turborepo that `NODE_ENV` is an allowable environment variable, preventing lint warnings from `turbo/no-undeclared-env-vars`.
-
-### Build Quality Gates
-
-Before merging any code, ensure all quality checks pass:
+**Before completing ANY task:**
 
 ```bash
 npm run check-types  # ✅ 0 errors
@@ -1053,8 +558,120 @@ npm run lint         # ✅ 0 warnings
 npm run format       # ✅ Code formatted
 ```
 
-**Current Status**: ✅ All checks passing (as of last update)
+**Task is not complete until all checks pass.**
+
+## Build System & Configuration
+
+### Turborepo Setup
+
+- **UI**: Terminal UI (`"ui": "tui"`)
+- **Global Env**: `NODE_ENV` declared in turbo.json
+- **Task Dependencies**: `^build`, `^lint`, `^check-types` (runs dependencies first)
+- **Dev Mode**: `cache: false, persistent: true`
+
+### TypeScript Configuration
+
+- **Module Resolution**: `NodeNext` (requires `.js` extensions)
+- **Path Aliases**: `@/*` → `./src/*`
+- **Extends**: `@repo/typescript-config/nextjs.json`
+- **Post-generation**: `fix-imports.js` auto-fixes OpenAPI imports
+
+### Next.js Configuration
+
+- **Turbopack**: Enabled for dev mode
+- **Plugins**: next-intl for i18n
+- **Middleware**: Locale detection (never prefix URLs)
+
+## Advanced Patterns
+
+### Form Composition with react-hook-form
+
+```typescript
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Form, FormField, FormItem, FormLabel, FormControl } from '@repo/ui/components/form';
+
+const schema = z.object({
+  name: z.string().min(1, 'Name required'),
+  price: z.number().positive(),
+});
+
+type FormValues = z.infer<typeof schema>;
+
+export function MyForm() {
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: { name: '', price: 0 },
+  });
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </form>
+    </Form>
+  );
+}
+```
+
+### Drag & Drop with @dnd-kit (POS)
+
+Used in menu reordering. Pattern:
+
+- `DndContext` from `@dnd-kit/core`
+- `SortableContext` from `@dnd-kit/sortable`
+- `useSortable` hook for items
+- `arrayMove` utility for reordering
+
+### Server/Browser Query Client Pattern
+
+```typescript
+// utils/providers.tsx
+let browserQueryClient: QueryClient | undefined;
+
+function getQueryClient() {
+  if (isServer) {
+    return makeQueryClient(); // New client per request
+  } else {
+    if (!browserQueryClient) browserQueryClient = makeQueryClient();
+    return browserQueryClient; // Reuse in browser
+  }
+}
+```
+
+Prevents query client recreation during React suspense.
+
+## Project Statistics
+
+- **Apps**: 2 (POS, SOS)
+- **Shared Packages**: 4 (api, ui, eslint-config, typescript-config)
+- **UI Components**: 50+ in @repo/ui
+- **Services**: 14 across both apps
+- **Stores**: 4 Zustand stores
+- **Languages**: 4 (en, zh, my, th)
+- **Auto-generated DTOs**: 50+
+
+## Documentation
+
+- `README.md` - Quick start, overview
+- `OPENAPI_SETUP.md` - Type generation setup
+- `I18N_GUIDE.md` - Internationalization guide
+- `packages/api/README.md` - API package docs
+- `apps/pos/README.md` - POS documentation
+- `apps/sos/README.md` - SOS documentation
 
 ---
 
-**Origin Food House - Clean, Type-Safe, Scalable Architecture**
+**Origin Food House - Type-Safe, Scalable Architecture**
