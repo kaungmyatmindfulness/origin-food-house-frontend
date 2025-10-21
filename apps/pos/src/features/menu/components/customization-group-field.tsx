@@ -45,8 +45,8 @@ export function CustomizationGroupField({
     form.watch(`customizationGroups.${groupIndex}.options`)?.length ?? 0;
 
   return (
-    <div className="p-4 border rounded-md bg-gray-50 dark:border-gray-700 dark:bg-gray-800/30">
-      <div className="flex items-center justify-between mb-3">
+    <div className="rounded-md border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/30">
+      <div className="mb-3 flex items-center justify-between">
         <FormField
           control={control}
           name={`customizationGroups.${groupIndex}.name`}
@@ -72,20 +72,20 @@ export function CustomizationGroupField({
           className="ml-2 text-red-500 hover:text-red-700"
           aria-label="Remove group"
         >
-          <Trash2 className="w-4 h-4" />
+          <Trash2 className="h-4 w-4" />
         </Button>
       </div>
 
       {form.formState.errors.customizationGroups?.[groupIndex]
         ?.maxSelectable && (
-        <p className="mb-2 -mt-2 text-xs text-red-500">
+        <p className="-mt-2 mb-2 text-xs text-red-500">
           Max choices cannot exceed the number of options ({optionsCount}) and
           must be &gt; min choices.
         </p>
       )}
       {form.formState.errors.customizationGroups?.[groupIndex]
         ?.minSelectable && (
-        <p className="mb-2 -mt-2 text-xs text-red-500">
+        <p className="-mt-2 mb-2 text-xs text-red-500">
           Min choices must be less than or equal to max choices.
         </p>
       )}
@@ -93,7 +93,7 @@ export function CustomizationGroupField({
       <div className="space-y-3">
         <FormLabel className="text-sm font-medium">Options</FormLabel>
         {optionFields.length === 0 && (
-          <p className="text-xs italic text-gray-400">
+          <p className="text-xs text-gray-400 italic">
             Add at least one option.
           </p>
         )}
@@ -144,10 +144,10 @@ export function CustomizationGroupField({
               variant="ghost"
               size="icon"
               onClick={() => removeOption(optionIndex)}
-              className="w-8 h-8 text-red-500 shrink-0 hover:bg-red-100 dark:hover:bg-red-900/50"
+              className="h-8 w-8 shrink-0 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50"
               aria-label="Remove option"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         ))}
@@ -158,7 +158,7 @@ export function CustomizationGroupField({
           onClick={() => appendOption({ name: '', additionalPrice: 0 })}
           className="mt-2"
         >
-          <PlusIcon className="w-4 h-4" aria-hidden="true" />
+          <PlusIcon className="h-4 w-4" aria-hidden="true" />
           Add Option
         </Button>
 
@@ -173,22 +173,22 @@ export function CustomizationGroupField({
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2">
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <FormField
           control={control}
           name={`customizationGroups.${groupIndex}.minSelectable`}
           render={({ field }) => (
             <FormItem>
-              <div className="flex items-center gap-1 mb-1">
+              <div className="mb-1 flex items-center gap-1">
                 <FormLabel className="text-sm">Min Choices</FormLabel>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                      className="h-5 w-5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
                     >
-                      <HelpCircle className="w-3 h-3" />
+                      <HelpCircle className="h-3 w-3" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
@@ -222,24 +222,25 @@ export function CustomizationGroupField({
           name={`customizationGroups.${groupIndex}.maxSelectable`}
           render={({ field }) => (
             <FormItem>
-              <div className="flex items-center gap-1 mb-1">
+              <div className="mb-1 flex items-center gap-1">
                 <FormLabel className="text-sm">Max Choices</FormLabel>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="w-5 h-5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                      className="h-5 w-5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
                     >
-                      <HelpCircle className="w-3 h-3" />
+                      <HelpCircle className="h-3 w-3" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
                     <p>
                       The maximum number of different options the customer can
                       select (e.g., 1 for Size, 3 for Toppings). Must be equal
-                      to or greater than &apos;Min Choices&apos; and cannot exceed the
-                      total number of options available ({optionsCount}).
+                      to or greater than &apos;Min Choices&apos; and cannot
+                      exceed the total number of options available (
+                      {optionsCount}).
                     </p>
                   </TooltipContent>
                 </Tooltip>

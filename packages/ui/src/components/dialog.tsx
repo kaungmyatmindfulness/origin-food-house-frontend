@@ -77,7 +77,7 @@ function DialogContent({
           )}
           aria-label="Close"
         >
-          <X className="w-4 h-4" /> {/* Use Lucide X icon */}
+          <X className="h-4 w-4" /> {/* Use Lucide X icon */}
           {/* Removed sr-only span as aria-label is usually sufficient */}
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>

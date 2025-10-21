@@ -5,6 +5,7 @@ Shared API utilities and TypeScript types for Origin Food House applications.
 ## Overview
 
 This package provides:
+
 - **API client utilities** (`apiFetch`) with error handling and auth integration
 - **Auto-generated TypeScript types** from the backend OpenAPI specification
 - **Shared services** (upload, etc.)
@@ -16,7 +17,10 @@ This package is workspace-internal and automatically available to all apps in th
 ```typescript
 // In your app
 import { createApiFetch, unwrapData } from '@repo/api/utils/apiFetch';
-import type { CategoryResponseDto, MenuItemResponseDto } from '@repo/api/generated/types';
+import type {
+  CategoryResponseDto,
+  MenuItemResponseDto,
+} from '@repo/api/generated/types';
 ```
 
 ## Core Utilities
@@ -24,6 +28,7 @@ import type { CategoryResponseDto, MenuItemResponseDto } from '@repo/api/generat
 ### `apiFetch` - API Client
 
 The `apiFetch` utility is a configured fetch wrapper with:
+
 - Automatic error handling & toast notifications
 - Auth integration (HttpOnly cookies)
 - Query string support (using `qs`)
@@ -49,12 +54,17 @@ export { unwrapData };
 ```typescript
 // features/menu/services/category.service.ts
 import { apiFetch, unwrapData } from '@/utils/apiFetch';
-import type { CategoryResponseDto, CreateCategoryDto } from '@repo/api/generated/types';
+import type {
+  CategoryResponseDto,
+  CreateCategoryDto,
+} from '@repo/api/generated/types';
 
 /**
  * Fetches all categories for a store.
  */
-export async function getCategories(storeId: string): Promise<CategoryResponseDto[]> {
+export async function getCategories(
+  storeId: string
+): Promise<CategoryResponseDto[]> {
   const res = await apiFetch<CategoryResponseDto[]>({
     path: '/categories',
     query: { storeId },
@@ -157,7 +167,11 @@ cd packages/api && npm run generate
 The `apiFetch` utility provides custom error classes:
 
 ```typescript
-import { ApiError, UnauthorizedError, NetworkError } from '@repo/api/utils/apiFetch';
+import {
+  ApiError,
+  UnauthorizedError,
+  NetworkError,
+} from '@repo/api/utils/apiFetch';
 
 try {
   const data = await getCategories(storeId);
@@ -218,14 +232,18 @@ const res = await apiFetch<MenuItem[]>({
 });
 
 // ❌ Bad - Manual query string construction
-const res = await apiFetch<MenuItem[]>(`/menu-items?storeId=${storeId}&categoryId=${categoryId}`);
+const res = await apiFetch<MenuItem[]>(
+  `/menu-items?storeId=${storeId}&categoryId=${categoryId}`
+);
 ```
 
 ### 3. Use `unwrapData` Helper
 
 ```typescript
 // ✅ Good - Uses unwrapData
-export async function getCategories(storeId: string): Promise<CategoryResponseDto[]> {
+export async function getCategories(
+  storeId: string
+): Promise<CategoryResponseDto[]> {
   const res = await apiFetch<CategoryResponseDto[]>({
     path: '/categories',
     query: { storeId },
@@ -234,7 +252,9 @@ export async function getCategories(storeId: string): Promise<CategoryResponseDt
 }
 
 // ❌ Bad - Manual null checking
-export async function getCategories(storeId: string): Promise<CategoryResponseDto[]> {
+export async function getCategories(
+  storeId: string
+): Promise<CategoryResponseDto[]> {
   const res = await apiFetch<CategoryResponseDto[]>({
     path: '/categories',
     query: { storeId },
@@ -292,9 +312,7 @@ import type {
   ErrorDetail,
 } from '@repo/api/types/api.types';
 
-import type {
-  UploadImageResponseData,
-} from '@repo/api/types/upload.types';
+import type { UploadImageResponseData } from '@repo/api/types/upload.types';
 ```
 
 ## Architecture

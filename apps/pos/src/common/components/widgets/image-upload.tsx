@@ -154,8 +154,8 @@ export function ImageUpload({
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="flex flex-col items-center justify-center h-full py-4 text-gray-500">
-          <Loader2 className="w-8 h-8 mb-2 animate-spin" />
+        <div className="flex h-full flex-col items-center justify-center py-4 text-gray-500">
+          <Loader2 className="mb-2 h-8 w-8 animate-spin" />
           <span>Uploading...</span>
         </div>
       );
@@ -163,24 +163,24 @@ export function ImageUpload({
 
     if (preview) {
       return (
-        <div className="relative w-32 h-32 group">
+        <div className="group relative h-32 w-32">
           {' '}
           {/* Added group for potential hover effects */}
           <img
             src={preview}
             alt="Preview"
-            className="object-cover w-full h-full rounded"
+            className="h-full w-full rounded object-cover"
           />
           {!disabled && (
             <button
               type="button"
               onClick={handleRemove}
-              className="absolute flex items-center justify-center w-6 h-6 p-1 text-sm transition-opacity bg-white rounded-full shadow opacity-0 -top-2 -right-2 group-hover:opacity-100 hover:bg-gray-100 disabled:opacity-50"
+              className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-white p-1 text-sm opacity-0 shadow transition-opacity group-hover:opacity-100 hover:bg-gray-100 disabled:opacity-50"
               aria-label="Remove image"
               title="Remove image"
               disabled={isLoading || disabled}
             >
-              <X className="w-4 h-4 text-red-500" />
+              <X className="h-4 w-4 text-red-500" />
             </button>
           )}
         </div>
@@ -191,14 +191,14 @@ export function ImageUpload({
       const displayUrl = value;
 
       return (
-        <div className="relative w-32 h-32 group">
+        <div className="group relative h-32 w-32">
           {' '}
           {/* Container to hold image + button */}
           {/* Attempt to display the image using the constructed or provided URL */}
           <img
             src={displayUrl}
             alt={value.split('/').pop() || 'Uploaded image'}
-            className="object-cover w-full h-full rounded"
+            className="h-full w-full rounded object-cover"
             onError={(e) => {
               e.currentTarget.style.display = 'none';
               const placeholder = e.currentTarget
@@ -209,21 +209,21 @@ export function ImageUpload({
           {/* Fallback / Placeholder if image fails to load */}
           <div
             style={{ display: 'none' }}
-            className="flex flex-col items-center justify-center w-full h-full text-center text-gray-500 bg-gray-100 rounded dark:bg-gray-700"
+            className="flex h-full w-full flex-col items-center justify-center rounded bg-gray-100 text-center text-gray-500 dark:bg-gray-700"
           >
-            <ImageIcon className="w-10 h-10 mb-1 text-gray-400" />
+            <ImageIcon className="mb-1 h-10 w-10 text-gray-400" />
             <span className="text-xs break-all">{value.split('/').pop()}</span>
           </div>
           {!disabled && (
             <button
               type="button"
               onClick={handleRemove}
-              className="absolute flex items-center justify-center w-6 h-6 p-1 text-sm transition-opacity bg-white rounded-full shadow opacity-0 -top-2 -right-2 group-hover:opacity-100 hover:bg-gray-100 disabled:opacity-50"
+              className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-white p-1 text-sm opacity-0 shadow transition-opacity group-hover:opacity-100 hover:bg-gray-100 disabled:opacity-50"
               aria-label="Remove image"
               title="Remove image"
               disabled={isLoading || disabled}
             >
-              <X className="w-4 h-4 text-red-500" />
+              <X className="h-4 w-4 text-red-500" />
             </button>
           )}
         </div>
@@ -231,8 +231,8 @@ export function ImageUpload({
     }
 
     return (
-      <div className="flex flex-col items-center justify-center h-full text-center text-gray-600 dark:text-gray-400">
-        <Upload className="w-8 h-8 mb-2 text-gray-400" />
+      <div className="flex h-full flex-col items-center justify-center text-center text-gray-600 dark:text-gray-400">
+        <Upload className="mb-2 h-8 w-8 text-gray-400" />
         <span>Drop image here, or click</span>
         <span className="mt-1 text-xs">
           (Max {Math.round(maxSize / 1024 / 1024)}MB)
@@ -245,7 +245,7 @@ export function ImageUpload({
     <div>
       {/* Optional Label */}
       {label && (
-        <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
           {label}
         </label>
       )}

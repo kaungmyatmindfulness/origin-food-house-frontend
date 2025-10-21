@@ -129,7 +129,13 @@ export default function RestaurantMenuPage() {
   const _handleAddCustomizedItem = (item: CartItem) => {
     // The item passed from dialog should already have quantity, notes, selectedOptions etc.
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id: _id, cartId: _cartId, createdAt: _createdAt, updatedAt: _updatedAt, ...payload } = item; // Omit generated fields
+    const {
+      id: _id,
+      cartId: _cartId,
+      createdAt: _createdAt,
+      updatedAt: _updatedAt,
+      ...payload
+    } = item; // Omit generated fields
     optimisticAddItem(payload).catch((err) =>
       handleApiError('add customized item', err)
     );

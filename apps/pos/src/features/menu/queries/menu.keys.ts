@@ -14,8 +14,7 @@ export const menuKeys = {
   category: (storeId: string, categoryId: string) =>
     [...menuKeys.categories(storeId), categoryId] as const,
 
-  items: (storeId: string) =>
-    [...menuKeys.all, 'items', { storeId }] as const,
+  items: (storeId: string) => [...menuKeys.all, 'items', { storeId }] as const,
 
   item: (storeId: string, itemId: string) =>
     [...menuKeys.items(storeId), itemId] as const,

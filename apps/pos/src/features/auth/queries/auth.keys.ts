@@ -11,9 +11,5 @@ export const authKeys = {
       : ([...authKeys.all, 'currentUser'] as const),
 
   protectedCheck: (storeId?: string) =>
-    [
-      'currentUser',
-      'protectedCheck',
-      { storeId: storeId ?? 'none' },
-    ] as const,
+    ['currentUser', 'protectedCheck', { storeId: storeId ?? 'none' }] as const,
 };

@@ -1,10 +1,7 @@
 import qs from 'qs';
 import { toast } from 'sonner';
 
-import type {
-  ErrorDetail,
-  StandardApiResponse,
-} from '../types/api.types.js';
+import type { ErrorDetail, StandardApiResponse } from '../types/api.types.js';
 
 export class FetchError extends Error {
   constructor(message: string) {

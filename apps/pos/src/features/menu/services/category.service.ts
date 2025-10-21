@@ -23,7 +23,10 @@ export async function getCategories(storeId: string): Promise<Category[]> {
     },
   });
 
-  return unwrapData(res, 'Failed to retrieve categories: No data returned by API.');
+  return unwrapData(
+    res,
+    'Failed to retrieve categories: No data returned by API.'
+  );
 }
 
 /**

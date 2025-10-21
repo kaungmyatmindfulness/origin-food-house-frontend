@@ -1016,11 +1016,13 @@ The project uses TypeScript's `NodeNext` module resolution for proper ESM suppor
 **Post-Generation Script**: `packages/api/scripts/fix-imports.js`
 
 This Node.js script automatically fixes generated OpenAPI code after running `npm run generate:api`:
+
 - Adds `.js` extensions to all relative imports
 - Fixes incorrect import paths (e.g., `./client.js` → `./client/index.js`)
 - Runs automatically as part of the generation pipeline
 
 **Integration**:
+
 ```bash
 # packages/api/scripts/fetch-and-generate.sh
 openapi-ts
@@ -1032,6 +1034,7 @@ node "$SCRIPT_DIR/fix-imports.js"  # Auto-fixes imports
 ### Environment Variables
 
 **Declared in `turbo.json`**:
+
 ```json
 {
   "globalEnv": ["NODE_ENV"]

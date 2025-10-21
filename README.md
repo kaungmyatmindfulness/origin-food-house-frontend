@@ -24,10 +24,12 @@ origin-food-house-frontend/
 ## 📦 Applications
 
 ### **POS (Point of Sale)** - `@app/pos`
+
 **Port:** 3002
 **Users:** Restaurant staff (owners, admins, cashiers)
 
 **Features:**
+
 - Menu management (CRUD operations, drag-and-drop reordering)
 - Table management with QR code generation
 - Store settings and information
@@ -35,10 +37,12 @@ origin-food-house-frontend/
 - Multi-store support
 
 ### **SOS (Self-Ordering System)** - `@app/sos`
+
 **Port:** 3001
 **Users:** Customers
 
 **Features:**
+
 - Browse restaurant menu
 - Real-time cart synchronization (Socket.IO)
 - Table-based ordering via QR code
@@ -91,38 +95,46 @@ turbo run build --filter=@app/sos
 ## 🛠️ Tech Stack
 
 ### Core Framework
+
 - **Next.js 15** (App Router with Turbopack)
 - **React 19**
 - **TypeScript 5.8+**
 
 ### State Management
+
 - **Zustand** (with immer, persist, devtools middleware)
 - **React Query** (@tanstack/react-query) for server state
 
 ### Styling
+
 - **Tailwind CSS v4** (@tailwindcss/postcss)
 - **Motion** (Framer Motion alternative)
 - **shadcn/ui** components via `@repo/ui`
 
 ### API & Data
+
 - Custom `apiFetch` utility with error handling
 - **Auto-generated TypeScript types** from OpenAPI spec (@hey-api/openapi-ts)
 - **qs** for query string parsing
 - **Socket.IO Client** (SOS only - real-time cart)
 
 ### Forms & Validation
+
 - **react-hook-form**
 - **Zod** validation
 
 ### i18n
+
 - **next-intl** (English, Chinese, Myanmar, Thai)
 
 ### POS-Specific
+
 - **@dnd-kit** (drag-and-drop menu reordering)
 - **qrcode.react** (table QR code generation)
 - **react-to-print** (receipt printing)
 
 ### SOS-Specific
+
 - **socket.io-client** (real-time cart sync)
 - **react-scroll** (smooth menu navigation)
 - **decimal.js** (precise currency calculations)
@@ -132,9 +144,11 @@ turbo run build --filter=@app/sos
 ## 📁 Shared Packages
 
 ### `@repo/api` ⭐ NEW
+
 **Purpose:** Shared API utilities and auto-generated types
 
 **Exports:**
+
 - `createApiFetch()` - Configurable API client factory
 - `unwrapData()` - Helper for null-safe data extraction
 - **Auto-generated TypeScript types** from backend OpenAPI spec
@@ -143,6 +157,7 @@ turbo run build --filter=@app/sos
 - Upload service factory
 
 **Key Features:**
+
 - ✅ **Auto-generated types** from backend OpenAPI specification
 - ✅ Type-safe API requests and responses
 - ✅ Eliminates code duplication between apps
@@ -151,6 +166,7 @@ turbo run build --filter=@app/sos
 - ✅ Single source of truth (backend spec → frontend types)
 
 **Type Generation:**
+
 ```bash
 # Regenerate types when backend API changes
 npm run generate:api
@@ -159,15 +175,18 @@ npm run generate:api
 See **`packages/api/README.md`** and **`OPENAPI_SETUP.md`** for details.
 
 ### `@repo/ui`
+
 **Purpose:** Shared UI component library (shadcn/ui)
 
 **Exports:**
+
 - 40+ React components (Button, Dialog, Form, etc.)
 - Custom hooks (`use-toast`, `use-mobile`)
 - Utility functions (`cn()` via lib/utils)
 - Global CSS with Tailwind configuration
 
 ### `@repo/eslint-config` & `@repo/typescript-config`
+
 **Purpose:** Shared tooling configuration
 
 ---
@@ -177,13 +196,14 @@ See **`packages/api/README.md`** and **`OPENAPI_SETUP.md`** for details.
 Both apps support **4 languages** with automatic locale detection:
 
 | Language | Code | Native Name |
-|----------|------|-------------|
-| English  | `en` | English |
-| Chinese  | `zh` | 中文 |
-| Myanmar  | `my` | မြန်မာ |
-| Thai     | `th` | ไทย |
+| -------- | ---- | ----------- |
+| English  | `en` | English     |
+| Chinese  | `zh` | 中文        |
+| Myanmar  | `my` | မြန်မာ      |
+| Thai     | `th` | ไทย         |
 
 **Features:**
+
 - ✅ Cookie-based locale persistence
 - ✅ Clean URLs (no `/en/` prefixes)
 - ✅ Language switcher component included
@@ -191,6 +211,7 @@ Both apps support **4 languages** with automatic locale detection:
 - ✅ Type-safe translation access
 
 **Usage:**
+
 ```typescript
 import { useTranslations } from 'next-intl';
 
@@ -268,6 +289,7 @@ export async function getCategories(
 ```
 
 **Benefits:**
+
 - ✅ Types are auto-generated from backend OpenAPI spec
 - ✅ Catch API mismatches at compile time
 - ✅ Full IDE auto-completion support
@@ -301,9 +323,10 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         selectedStoreId: null,
         isAuthenticated: false,
 
-        setSelectedStore: (storeId) => set((draft) => {
-          draft.selectedStoreId = storeId;
-        }),
+        setSelectedStore: (storeId) =>
+          set((draft) => {
+            draft.selectedStoreId = storeId;
+          }),
       })),
       { name: 'auth-storage' }
     )
@@ -341,18 +364,21 @@ return <MenuContent data={data} />;
 ## 🧪 Quality Assurance
 
 ### Type Checking
+
 ```bash
 npm run check-types        # All packages
 npm run check-types --workspace=@app/pos
 ```
 
 ### Linting
+
 ```bash
 npm run lint              # All packages (max 0 warnings)
 npm run lint --filter=@app/sos
 ```
 
 ### Code Formatting
+
 ```bash
 npm run format            # Format all .ts/.tsx/.md files
 ```
@@ -361,21 +387,22 @@ npm run format            # Format all .ts/.tsx/.md files
 
 ## 📊 Project Stats
 
-| Metric | Value |
-|--------|-------|
-| **Apps** | 2 (POS, SOS) |
-| **Shared Packages** | 4 |
-| **Languages Supported** | 4 |
-| **TypeScript Files (POS)** | 65+ |
-| **TypeScript Files (SOS)** | 37+ |
-| **Translation Keys** | 96+ |
-| **UI Components** | 40+ |
+| Metric                     | Value        |
+| -------------------------- | ------------ |
+| **Apps**                   | 2 (POS, SOS) |
+| **Shared Packages**        | 4            |
+| **Languages Supported**    | 4            |
+| **TypeScript Files (POS)** | 65+          |
+| **TypeScript Files (SOS)** | 37+          |
+| **Translation Keys**       | 96+          |
+| **UI Components**          | 40+          |
 
 ---
 
 ## 🔑 Key Features
 
 ### Shared Infrastructure
+
 ✅ **Auto-generated TypeScript types from OpenAPI spec** ⭐ NEW
 ✅ Centralized API utilities (`@repo/api`)
 ✅ Shared UI component library (`@repo/ui`)
@@ -385,6 +412,7 @@ npm run format            # Format all .ts/.tsx/.md files
 ✅ Debug utility for environment-aware logging
 
 ### POS Features
+
 ✅ Cookie-based authentication
 ✅ Multi-store management
 ✅ Drag-and-drop menu reordering
@@ -393,6 +421,7 @@ npm run format            # Format all .ts/.tsx/.md files
 ✅ Receipt printing
 
 ### SOS Features
+
 ✅ Real-time cart synchronization
 ✅ Optimistic UI updates
 ✅ Session-based ordering
@@ -401,6 +430,7 @@ npm run format            # Format all .ts/.tsx/.md files
 ✅ Precise decimal calculations
 
 ### Developer Experience
+
 ✅ Turborepo for fast builds
 ✅ Hot module replacement with Turbopack
 ✅ Comprehensive TypeScript coverage
@@ -413,34 +443,40 @@ npm run format            # Format all .ts/.tsx/.md files
 ## 🌟 Recent Improvements
 
 ### Phase 1: Shared API Package
+
 - Created `@repo/api` to eliminate ~380 lines of duplicated code
 - Factory pattern for configurable API clients
 - Consistent error handling across apps
 
 ### Phase 2: Naming Standardization
+
 - Standardized folder names (`components/`, `store/`)
 - Unified service file naming (`.service.ts`)
 - Consistent structure across features
 
 ### Phase 3: Type Safety & Code Quality
+
 - Added proper return types to all services
 - Created `unwrapData()` helper for null checking
 - Added selector exports to all stores
 - Debug utility for production-safe logging
 
 ### Phase 4: Clean Code Patterns
+
 - Query key factories for type-safe caching
 - Constants extraction (routes, error messages)
 - Custom hooks (`useDialog`, `useDialogState`)
 - Memoized callbacks with `useCallback`
 
 ### Phase 5: Internationalization
+
 - Multi-language support (4 languages)
 - `LanguageSwitcher` component
 - 96+ translation keys
 - Cookie-based locale detection
 
 ### Phase 6: OpenAPI TypeScript Code Generation ⭐ NEW
+
 - **Auto-generated types** from backend OpenAPI specification
 - Uses `@hey-api/openapi-ts` for code generation
 - 50+ DTOs and response types auto-generated
@@ -456,11 +492,13 @@ npm run format            # Format all .ts/.tsx/.md files
 Create `.env` files in each app directory:
 
 ### POS App (`apps/pos/.env`)
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
 
 ### SOS App (`apps/sos/.env`)
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```

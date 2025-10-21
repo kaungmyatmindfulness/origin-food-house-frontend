@@ -113,8 +113,7 @@ export async function logoutFromAuth0(returnToUrl?: string): Promise<void> {
     // Logout from Auth0
     await auth0Client.logout({
       logoutParams: {
-        returnTo:
-          returnToUrl || `${window.location.origin}/login`,
+        returnTo: returnToUrl || `${window.location.origin}/login`,
       },
     });
   } catch (error) {

@@ -113,10 +113,10 @@ function SortableItem({
         <span
           {...attributes}
           {...listeners}
-          className="p-1 text-muted-foreground hover:text-foreground cursor-grab touch-none"
+          className="text-muted-foreground hover:text-foreground cursor-grab touch-none p-1"
           aria-label="Drag to reorder"
         >
-          <GripVertical className="w-5 h-5" />
+          <GripVertical className="h-5 w-5" />
         </span>
         {/* Content */}
         <div className="flex-grow truncate">{children}</div>
@@ -291,27 +291,28 @@ export function ReorderMenuDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex max-h-[90vh] flex-col p-0 sm:max-w-2xl">
-        <DialogHeader className="p-6 pb-4 border-b dark:border-gray-700">
+        <DialogHeader className="border-b p-6 pb-4 dark:border-gray-700">
           <DialogTitle className="text-xl">Re-order Menu</DialogTitle>
           <DialogDescription>
             Drag and drop categories or items within a category to change their
-            display order. Changes are saved only when you click &quot;Save Order&quot;.
+            display order. Changes are saved only when you click &quot;Save
+            Order&quot;.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex-grow p-6 overflow-y-auto">
+        <div className="flex-grow overflow-y-auto p-6">
           {isLoadingCategories ? (
             <div className="space-y-4">
-              <Skeleton className="w-full h-12" />
-              <Skeleton className="w-full h-12" />
-              <Skeleton className="w-full h-12" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
             </div>
           ) : isError ? (
-            <div className="py-10 text-center text-destructive">
+            <div className="text-destructive py-10 text-center">
               Error loading categories: {error?.message || 'Unknown error'}
             </div>
           ) : orderedCategories.length === 0 ? (
-            <div className="py-10 text-center text-muted-foreground">
+            <div className="text-muted-foreground py-10 text-center">
               No categories available to reorder.
             </div>
           ) : (
@@ -346,13 +347,13 @@ export function ReorderMenuDialog({
                   {orderedCategories.map((category) => (
                     <div
                       key={`cat-section-${category.id}`}
-                      className="p-3 border rounded-lg bg-background dark:border-gray-700"
+                      className="bg-background rounded-lg border p-3 dark:border-gray-700"
                     >
-                      <h3 className="mb-2 text-sm font-semibold text-muted-foreground">
+                      <h3 className="text-muted-foreground mb-2 text-sm font-semibold">
                         {category.name} Items
                       </h3>
                       {isEmpty(category.menuItems) ? (
-                        <p className="text-xs italic text-muted-foreground">
+                        <p className="text-muted-foreground text-xs italic">
                           No items in this category.
                         </p>
                       ) : (
@@ -362,7 +363,7 @@ export function ReorderMenuDialog({
                           )}
                           strategy={verticalListSortingStrategy}
                         >
-                          <div className="pl-4 space-y-1">
+                          <div className="space-y-1 pl-4">
                             {/* Indent items */}
                             {(category.menuItems || []).map((item) => (
                               <SortableItem
@@ -386,7 +387,7 @@ export function ReorderMenuDialog({
           )}
         </div>
 
-        <DialogFooter className="p-4 border-t dark:border-gray-700">
+        <DialogFooter className="border-t p-4 dark:border-gray-700">
           <DialogClose asChild>
             <Button variant="outline" disabled={sortMutation.isPending}>
               Cancel
@@ -401,7 +402,7 @@ export function ReorderMenuDialog({
             }
           >
             {sortMutation.isPending && (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             )}
             Save Order
           </Button>

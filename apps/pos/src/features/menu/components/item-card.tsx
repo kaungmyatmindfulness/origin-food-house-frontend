@@ -90,17 +90,17 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
   return (
     <>
       <motion.div
-        className="overflow-hidden text-left bg-white border border-gray-200 rounded-lg shadow-sm cursor-pointer dark:border-gray-700 dark:bg-gray-800"
+        className="cursor-pointer overflow-hidden rounded-lg border border-gray-200 bg-white text-left shadow-sm dark:border-gray-700 dark:bg-gray-800"
         whileHover={{ scale: 1.02, boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}
         whileTap={{ scale: 0.98 }}
         onClick={handleCardClick}
         layout
       >
-        <div className="relative w-full h-32">
+        <div className="relative h-32 w-full">
           <img
             src={item.imageUrl || '/no-image.svg'}
             alt={item.name}
-            className="object-cover w-full h-full border-b border-gray-200"
+            className="h-full w-full border-b border-gray-200 object-cover"
             loading="lazy"
           />
 
@@ -109,15 +109,15 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
               <Button
                 variant="secondary"
                 size="icon"
-                className="absolute rounded-full shadow-md top-1 right-1 h-7 w-7 opacity-80 hover:opacity-100"
+                className="absolute top-1 right-1 h-7 w-7 rounded-full opacity-80 shadow-md hover:opacity-100"
                 onClick={handlePopoverTriggerClick}
                 aria-label={`Actions for ${item.name}`}
                 disabled={actionsDisabled}
               >
                 {deleteItemMutation.isPending ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <MoreVertical className="w-4 h-4" />
+                  <MoreVertical className="h-4 w-4" />
                 )}
               </Button>
             </PopoverTrigger>
@@ -132,7 +132,7 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
                   onClick={handleEditClick}
                   disabled={actionsDisabled}
                 >
-                  <Edit className="w-4 h-4 mr-2" />
+                  <Edit className="mr-2 h-4 w-4" />
                   Edit
                 </Button>
 
@@ -142,7 +142,7 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
                   onClick={handleDeleteRequest}
                   disabled={actionsDisabled}
                 >
-                  <Trash2 className="w-4 h-4 mr-2" />
+                  <Trash2 className="mr-2 h-4 w-4" />
                   Delete
                 </Button>
               </div>
@@ -152,13 +152,13 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
 
         <div className="p-3">
           <h3
-            className="text-sm font-semibold text-gray-800 truncate dark:text-gray-100"
+            className="truncate text-sm font-semibold text-gray-800 dark:text-gray-100"
             title={item.name}
           >
             {item.name}
           </h3>
           {item.description && (
-            <p className="mt-1 text-xs text-gray-600 line-clamp-2 dark:text-gray-400">
+            <p className="mt-1 line-clamp-2 text-xs text-gray-600 dark:text-gray-400">
               {item.description}
             </p>
           )}
