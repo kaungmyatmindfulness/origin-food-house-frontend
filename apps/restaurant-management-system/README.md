@@ -80,7 +80,7 @@ The POS app is designed for restaurant staff to manage daily operations includin
 ### Folder Structure
 
 ```
-apps/pos/src/
+apps/restaurant-management-system/src/
 ├── app/                          # Next.js 15 App Router
 │   ├── (no-dashboard)/          # Public routes (login, register, store selection)
 │   ├── hub/                     # Protected dashboard routes
@@ -149,7 +149,7 @@ npm install
 
 ### 2. Environment Variables
 
-Create `apps/pos/.env`:
+Create `apps/restaurant-management-system/.env`:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
@@ -159,9 +159,9 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api
 
 ```bash
 # From root
-npm run dev --filter=@app/pos
+npm run dev --filter=@app/restaurant-management-system
 
-# Or from apps/pos directory
+# Or from apps/restaurant-management-system directory
 npm run dev
 ```
 
@@ -720,8 +720,8 @@ npm run build
 ### Production Build
 
 ```bash
-npm run build --filter=@app/pos
-npm run start --filter=@app/pos
+npm run build --filter=@app/restaurant-management-system
+npm run start --filter=@app/restaurant-management-system
 ```
 
 ### Environment Variables
@@ -735,7 +735,7 @@ Ensure `NEXT_PUBLIC_API_URL` is set for production environment.
 ### TypeScript Errors
 
 ```bash
-npm run check-types --workspace=@app/pos
+npm run check-types --workspace=@app/restaurant-management-system
 ```
 
 ### Build Failures

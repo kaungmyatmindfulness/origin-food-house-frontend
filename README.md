@@ -9,8 +9,8 @@ This is a **Turborepo monorepo** containing two Next.js applications and shared 
 ```
 origin-food-house-frontend/
 ├── apps/
-│   ├── pos/          # Point of Sale System (Port 3002)
-│   └── sos/          # Self-Ordering System (Port 3001)
+│   ├── restaurant-management-system/  # Point of Sale System (Port 3002)
+│   └── self-ordering-system/          # Self-Ordering System (Port 3001)
 ├── packages/
 │   ├── api/          # Shared API utilities & types
 │   ├── ui/           # Shared UI components (shadcn/ui)
@@ -23,7 +23,7 @@ origin-food-house-frontend/
 
 ## 📦 Applications
 
-### **POS (Point of Sale)** - `@app/pos`
+### **POS (Point of Sale)** - `@app/restaurant-management-system`
 
 **Port:** 3002
 **Users:** Restaurant staff (owners, admins, cashiers)
@@ -36,7 +36,7 @@ origin-food-house-frontend/
 - Role-based access control (Owner, Admin, Staff)
 - Multi-store support
 
-### **SOS (Self-Ordering System)** - `@app/sos`
+### **SOS (Self-Ordering System)** - `@app/self-ordering-system`
 
 **Port:** 3001
 **Users:** Customers
@@ -68,8 +68,8 @@ npm install
 npm run dev
 
 # Run specific app
-npm run dev --filter=@app/pos
-npm run dev --filter=@app/sos
+npm run dev --filter=@app/restaurant-management-system
+npm run dev --filter=@app/self-ordering-system
 ```
 
 ### Available Commands
@@ -86,8 +86,8 @@ npm run format       # Format code with Prettier
 npm run generate:api # Generate TypeScript types from backend OpenAPI spec
 
 # App-specific
-turbo run dev --filter=@app/pos
-turbo run build --filter=@app/sos
+turbo run dev --filter=@app/restaurant-management-system
+turbo run build --filter=@app/self-ordering-system
 ```
 
 ---
@@ -356,8 +356,8 @@ return <MenuContent data={data} />;
 - **`OPENAPI_SETUP.md`** - OpenAPI TypeScript code generation guide ⭐ NEW
 - **`I18N_GUIDE.md`** - Complete i18n usage guide
 - **`packages/api/README.md`** - API package usage documentation
-- **`apps/pos/README.md`** - POS app technical details
-- **`apps/sos/README.md`** - SOS app technical details
+- **`apps/restaurant-management-system/README.md`** - POS app technical details
+- **`apps/self-ordering-system/README.md`** - SOS app technical details
 
 ---
 
@@ -367,14 +367,14 @@ return <MenuContent data={data} />;
 
 ```bash
 npm run check-types        # All packages
-npm run check-types --workspace=@app/pos
+npm run check-types --workspace=@app/restaurant-management-system
 ```
 
 ### Linting
 
 ```bash
 npm run lint              # All packages (max 0 warnings)
-npm run lint --filter=@app/sos
+npm run lint --filter=@app/self-ordering-system
 ```
 
 ### Code Formatting
@@ -491,13 +491,13 @@ npm run format            # Format all .ts/.tsx/.md files
 
 Create `.env` files in each app directory:
 
-### POS App (`apps/pos/.env`)
+### POS App (`apps/restaurant-management-system/.env`)
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
 
-### SOS App (`apps/sos/.env`)
+### SOS App (`apps/self-ordering-system/.env`)
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api

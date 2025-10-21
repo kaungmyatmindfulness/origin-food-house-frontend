@@ -25,7 +25,7 @@
     "packages/*"
   ],
   "dependencies": {
-    "@app/pos": "^0.1.0",
-    "@app/sos": "^0.1.0"
+    "@app/restaurant-management-system": "^0.1.0",
+    "@app/self-ordering-system": "^0.1.0"
   }
 }

@@ -80,7 +80,7 @@ The SOS (Self-Ordering System) app allows customers to scan a table QR code, bro
 ### Folder Structure
 
 ```
-apps/sos/src/
+apps/self-ordering-system/src/
 ├── app/                          # Next.js 15 App Router
 │   ├── restaurants/
 │   │   └── [slug]/
@@ -149,7 +149,7 @@ npm install
 
 ### 2. Environment Variables
 
-Create `apps/sos/.env`:
+Create `apps/self-ordering-system/.env`:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
@@ -159,9 +159,9 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api
 
 ```bash
 # From root
-npm run dev --filter=@app/sos
+npm run dev --filter=@app/self-ordering-system
 
-# Or from apps/sos directory
+# Or from apps/self-ordering-system directory
 npm run dev
 ```
 
@@ -464,8 +464,8 @@ npm run build
 ### Production Build
 
 ```bash
-npm run build --filter=@app/sos
-npm run start --filter=@app/sos
+npm run build --filter=@app/self-ordering-system
+npm run start --filter=@app/self-ordering-system
 ```
 
 ### Environment Variables
@@ -495,7 +495,7 @@ NEXT_PUBLIC_API_URL=https://api.yourproduction.com/api
 ### TypeScript Errors
 
 ```bash
-npm run check-types --workspace=@app/sos
+npm run check-types --workspace=@app/self-ordering-system
 ```
 
 ---

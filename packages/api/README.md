@@ -37,7 +37,7 @@ The `apiFetch` utility is a configured fetch wrapper with:
 #### Setup
 
 ```typescript
-// apps/pos/src/utils/apiFetch.ts
+// apps/restaurant-management-system/src/utils/apiFetch.ts
 import { createApiFetch, unwrapData } from '@repo/api/utils/apiFetch';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 

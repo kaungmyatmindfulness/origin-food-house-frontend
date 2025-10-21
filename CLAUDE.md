@@ -6,8 +6,8 @@ This file provides guidance to Claude Code when working with this repository.
 
 Turborepo monorepo for Origin Food House restaurant management system with two Next.js 15 apps:
 
-- **`@app/pos`** (port 3002): Point of Sale for staff
-- **`@app/sos`** (port 3001): Self-Ordering System for customers
+- **`@app/restaurant-management-system`** (port 3002): Point of Sale for staff
+- **`@app/self-ordering-system`** (port 3001): Self-Ordering System for customers
 
 ## Commands
 
@@ -20,14 +20,14 @@ npm run check-types      # Type check (0 errors)
 npm run format           # Format code
 npm run generate:api     # Generate types from OpenAPI spec
 
-# POS-specific
-cd apps/pos && npm test              # Run Jest tests
-cd apps/pos && npm run test:watch    # Watch mode
-cd apps/pos && npm run test:coverage # Coverage report
+# Restaurant Management System-specific
+cd apps/restaurant-management-system && npm test              # Run Jest tests
+cd apps/restaurant-management-system && npm run test:watch    # Watch mode
+cd apps/restaurant-management-system && npm run test:coverage # Coverage report
 
 # App-specific dev
-turbo run dev --filter=@app/pos
-turbo run dev --filter=@app/sos
+turbo run dev --filter=@app/restaurant-management-system
+turbo run dev --filter=@app/self-ordering-system
 ```
 
 ## Architecture
@@ -36,8 +36,8 @@ turbo run dev --filter=@app/sos
 
 ```
 apps/
-├── pos/              # POS system
-└── sos/              # Customer ordering
+├── restaurant-management-system/  # Restaurant Management System
+└── self-ordering-system/          # Customer ordering
 packages/
 ├── api/              # Shared API utilities + auto-generated types
 ├── ui/               # Shared UI components (shadcn/ui)
@@ -75,10 +75,10 @@ src/
 **Styling**: Tailwind CSS v4, Motion, shadcn/ui (50+ components)
 **Forms**: react-hook-form, Zod, @hookform/resolvers
 **i18n**: next-intl (en, zh, my, th)
-**Testing (POS)**: Jest, @testing-library/react, jsdom
+**Testing (Restaurant Management System)**: Jest, @testing-library/react, jsdom
 **Utilities**: lodash-es, qs, sonner, usehooks-ts
-**POS-specific**: @auth0/auth0-spa-js, @dnd-kit (drag-drop), qrcode.react, react-to-print, react-dropzone
-**SOS-specific**: socket.io-client (real-time), react-scroll, decimal.js (currency)
+**Restaurant Management System-specific**: @auth0/auth0-spa-js, @dnd-kit (drag-drop), qrcode.react, react-to-print, react-dropzone
+**Self-Ordering System-specific**: socket.io-client (real-time), react-scroll, decimal.js (currency)
 
 ## Key Patterns
 
@@ -287,7 +287,7 @@ const queryClient = new QueryClient({
 
 **Server-side handling**: Separate query client instances for server/browser to prevent hydration issues.
 
-### 9. Optimistic Updates Pattern (SOS Cart)
+### 9. Optimistic Updates Pattern (Self-Ordering System Cart)
 
 For real-time feel with WebSocket sync:
 
@@ -318,7 +318,7 @@ optimisticAddItem: async (cartItem) => {
 
 **Pattern**: Optimistic update → API call → Rollback on error → WebSocket confirmation
 
-### 10. WebSocket Integration (SOS)
+### 10. WebSocket Integration (Self-Ordering System)
 
 **Setup**: SocketProvider in utils/socket-provider.tsx
 
@@ -338,7 +338,7 @@ socket?.on('cart:updated', (cart) => {
 
 **Events**: `connect`, `disconnect`, `connect_error`, `error`, `cart:updated`
 
-### 11. Testing Infrastructure (POS Only)
+### 11. Testing Infrastructure (Restaurant Management System Only)
 
 **Setup**: Jest + @testing-library/react + jsdom
 
@@ -359,7 +359,7 @@ socket?.on('cart:updated', (cart) => {
 - Use @testing-library/react for component testing
 - Focus on rendering, interactions, accessibility
 
-**Run tests**: `npm test` (in apps/pos directory)
+**Run tests**: `npm test` (in apps/restaurant-management-system directory)
 
 ## Critical Rules
 
@@ -393,7 +393,7 @@ socket?.on('cart:updated', (cart) => {
 
 ### Authentication & Authorization
 
-**POS App**:
+**Restaurant Management System App**:
 
 - Cookie-based auth with httpOnly cookies
 - Auth0 SSO integration (@auth0/auth0-spa-js)
@@ -408,7 +408,7 @@ socket?.on('cart:updated', (cart) => {
 - Error handling (401, 403, missing session)
 - Loading states for smooth UX
 
-**SOS App**:
+**Self-Ordering System App**:
 
 - Session-based auth with cookies
 - No Auth0 (simpler flow for customers)
@@ -459,9 +459,9 @@ import { ROUTES } from '@/common/constants/routes';
 import type { CategoryResponseDto } from '@repo/api/generated/types';
 ```
 
-## POS vs SOS
+## Restaurant Management System vs Self-Ordering System
 
-| Feature      | POS                                       | SOS                                 |
+| Feature      | Restaurant Management System              | Self-Ordering System                |
 | ------------ | ----------------------------------------- | ----------------------------------- |
 | Port         | 3002                                      | 3001                                |
 | Users        | Staff                                     | Customers                           |
@@ -474,7 +474,7 @@ import type { CategoryResponseDto } from '@repo/api/generated/types';
 
 ## Environment Variables
 
-**POS App** (.env.example):
+**Restaurant Management System App** (.env.example):
 
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:3000
@@ -487,7 +487,7 @@ NEXT_PUBLIC_AUTH0_AUDIENCE=https://api.origin-food-house.com
 NEXT_PUBLIC_AUTH0_REDIRECT_URI=http://localhost:3002/auth/callback
 ```
 
-**SOS App** (.env.example):
+**Self-Ordering System App** (.env.example):
 
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:3000
@@ -498,13 +498,13 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 
 ## Custom Hooks Reference
 
-**POS App**:
+**Restaurant Management System App**:
 
 - `useProtected(options?)` - Auth/role-based route protection (`features/auth/hooks/`)
 - `useDialogState(initial?)` - Dialog state with open/close/toggle (`common/hooks/`)
 - `useDialog(initial?)` - Simpler dialog state with setter (`common/hooks/`)
 
-**SOS App**:
+**Self-Ordering System App**:
 
 - `useSocket()` - WebSocket connection access (from SocketProvider)
 - `useCartSocketListener()` - Real-time cart sync (`features/cart/hooks/`)
@@ -524,7 +524,7 @@ formatCurrency(value, currency?, locale?) // Intl.NumberFormat with fallback
 // Default: THB, th-TH locale
 ```
 
-**Debug** (SOS only, `utils/debug.ts`):
+**Debug** (Self-Ordering System only, `utils/debug.ts`):
 
 ```typescript
 debug.log(); // Dev only
@@ -546,7 +546,7 @@ debug.error(); // Always logged
 - [ ] Add translations to ALL 4 languages
 - [ ] Use skeleton loading states
 - [ ] Follow naming conventions
-- [ ] Add tests (POS) if component is in common/
+- [ ] Add tests (Restaurant Management System) if component is in common/
 
 ## Quality Gates
 
@@ -626,7 +626,7 @@ export function MyForm() {
 }
 ```
 
-### Drag & Drop with @dnd-kit (POS)
+### Drag & Drop with @dnd-kit (Restaurant Management System)
 
 Used in menu reordering. Pattern:
 
@@ -655,7 +655,7 @@ Prevents query client recreation during React suspense.
 
 ## Project Statistics
 
-- **Apps**: 2 (POS, SOS)
+- **Apps**: 2 (Restaurant Management System, Self-Ordering System)
 - **Shared Packages**: 4 (api, ui, eslint-config, typescript-config)
 - **UI Components**: 50+ in @repo/ui
 - **Services**: 14 across both apps
@@ -669,8 +669,8 @@ Prevents query client recreation during React suspense.
 - `OPENAPI_SETUP.md` - Type generation setup
 - `I18N_GUIDE.md` - Internationalization guide
 - `packages/api/README.md` - API package docs
-- `apps/pos/README.md` - POS documentation
-- `apps/sos/README.md` - SOS documentation
+- `apps/restaurant-management-system/README.md` - Restaurant Management System documentation
+- `apps/self-ordering-system/README.md` - Self-Ordering System documentation
 
 ---
 
