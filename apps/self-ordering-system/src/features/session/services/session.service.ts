@@ -4,7 +4,7 @@ import { JoinSessionResponse, SessionContext } from '../types/session.types';
 /**
  * Initiates joining the active session for a specific table ID.
  * The backend should set an HttpOnly session_token cookie on success.
- * Corresponds to POST /tables/{tableId}/join-session
+ * Corresponds to POST /active-table-sessions/join-by-table/:tableId
  * @param tableId - The ID (UUID) of the table to join.
  * @returns Promise<JoinSessionResponse> - Session details upon successful join.
  */
@@ -12,8 +12,8 @@ export async function joinTableSession(
   tableId: string
 ): Promise<JoinSessionResponse> {
   const res = await apiFetch<JoinSessionResponse>(
-    { path: `/tables/${tableId}/join-session` },
-    { method: 'POST' }
+    { path: `/active-table-sessions/join-by-table/${tableId}` },
+    { method: 'POST', body: JSON.stringify({}) } // Empty body as per JoinSessionDto
   );
 
   if (res.data == null) {

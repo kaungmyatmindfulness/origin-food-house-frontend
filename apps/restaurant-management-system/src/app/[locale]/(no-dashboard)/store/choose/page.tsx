@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
-import { loginWithStore } from '@/features/auth/services/auth.service';
+import { loginWithStoreAuth0 } from '@/features/auth/services/auth0.service';
 import {
   selectSelectedStoreId,
   useAuthStore,
@@ -77,9 +77,9 @@ export default function ChooseStorePage() {
   ]);
 
   const chooseStoreMutation = useMutation({
-    mutationFn: (storeId: string) => loginWithStore({ storeId }),
+    mutationFn: (storeId: string) => loginWithStoreAuth0({ storeId }),
     onSuccess: async (data, storeId) => {
-      toast.success(data?.message || t('storeSelectedSuccess'));
+      toast.success(t('storeSelectedSuccess'));
 
       setSelectedStore(storeId);
 

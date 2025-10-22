@@ -33,10 +33,10 @@ export async function loginWithAuth0(): Promise<void> {
 
 /**
  * Handles Auth0 callback after successful authentication
- * Exchanges Auth0 token for backend JWT
+ * Validates Auth0 token with backend and gets JWT
  *
  * @returns {Promise<StandardApiResponse<AccessTokenData>>} Backend access token
- * @throws {Error} If callback handling or token exchange fails
+ * @throws {Error} If callback handling or token validation fails
  */
 export async function handleAuth0Callback(): Promise<
   StandardApiResponse<AccessTokenData>
@@ -49,10 +49,12 @@ export async function handleAuth0Callback(): Promise<
   // Get the Auth0 access token
   const auth0Token = await auth0Client.getTokenSilently();
 
-  // Exchange Auth0 token for backend JWT (Step 1)
-  const res = await apiFetch<AccessTokenData>('/auth/auth0/exchange', {
+  // Validate Auth0 token with backend and get backend JWT (Step 1)
+  const res = await apiFetch<AccessTokenData>('/auth/auth0/validate', {
     method: 'POST',
-    body: JSON.stringify({ auth0Token }),
+    headers: {
+      Authorization: `Bearer ${auth0Token}`,
+    },
   });
 
   return res;

@@ -5,7 +5,7 @@ import {
   formDataBodySerializer,
   type Options as Options2,
   type TDataShape,
-} from './client/index.js';
+} from './client.js';
 import { client } from './client.gen.js';
 import type {
   AuthControllerGetAuth0ConfigData,

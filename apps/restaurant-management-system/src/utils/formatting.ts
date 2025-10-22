@@ -28,3 +28,30 @@ export const formatCurrency = (
     return `${currency} ${numericValue.toFixed(2)}`;
   }
 };
+
+/**
+ * Formats the distance from now to a given date
+ * @param date - The date to calculate distance from
+ * @returns Human-readable time ago string (e.g., "2 mins ago")
+ */
+export const formatDistanceToNow = (date: Date): string => {
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  if (diffInSeconds < 60) {
+    return `${diffInSeconds}s ago`;
+  }
+
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes}m ago`;
+  }
+
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return `${diffInHours}h ago`;
+  }
+
+  const diffInDays = Math.floor(diffInHours / 24);
+  return `${diffInDays}d ago`;
+};

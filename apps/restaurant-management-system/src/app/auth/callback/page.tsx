@@ -9,6 +9,9 @@ import { handleAuth0Callback } from '@/features/auth/services/auth0.service';
 import { useAuthStore } from '@/features/auth/store/auth.store';
 import { ROUTES } from '@/common/constants/routes';
 
+// Force dynamic rendering to prevent build-time errors with QueryClient
+export const dynamic = 'force-dynamic';
+
 /**
  * Auth0 Callback Page
  *

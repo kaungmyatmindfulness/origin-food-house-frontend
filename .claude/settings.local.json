@@ -72,7 +72,10 @@
       "Bash(done })",
       "Bash(chmod:*)",
       "Bash(./add-component.sh:*)",
-      "Bash(npm run format:*)"
+      "Bash(npm run format:*)",
+      "Bash(xargs ls:*)",
+      "Bash(xargs cat:*)",
+      "Read(//Users/kaungmyat/Desktop/FILES/Codes/Personal/origin-food-house/**)"
     ],
     "deny": [],
     "ask": []

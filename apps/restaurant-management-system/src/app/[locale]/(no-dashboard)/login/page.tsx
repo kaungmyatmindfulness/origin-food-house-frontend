@@ -1,15 +1,11 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
-import { z } from 'zod';
 import { motion } from 'motion/react';
 
-import { login } from '@/features/auth/services/auth.service';
 import { loginWithAuth0 } from '@/features/auth/services/auth0.service';
 import { isAuth0Configured } from '@/lib/auth0';
 import {
@@ -17,27 +13,8 @@ import {
   useAuthStore,
 } from '@/features/auth/store/auth.store';
 import { getCurrentUser } from '@/features/user/services/user.service';
-import { ROUTES } from '@/common/constants/routes';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@repo/ui/components/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@repo/ui/components/form';
-import { Input } from '@repo/ui/components/input';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-
-const createLoginSchema = (t: (key: string) => string) =>
-  z.object({
-    email: z.string().email(t('emailValidation')),
-    password: z.string().min(6, t('passwordValidation')),
-  });
-
-type LoginFormValues = z.infer<ReturnType<typeof createLoginSchema>>;
+import { useQuery } from '@tanstack/react-query';
 
 const userQueryKey = ['user', 'currentUser'];
 
@@ -68,11 +45,9 @@ function LoadingSpinner() {
 
 export default function LoginPage() {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const t = useTranslations('auth');
 
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
-  const loginSchema = createLoginSchema(t);
   const [isAuth0Available] = useState(isAuth0Configured());
   const [isAuth0Loading, setIsAuth0Loading] = useState(false);
 
@@ -87,39 +62,6 @@ export default function LoginPage() {
     enabled: false, // Don't fetch on mount - we're on the login page!
     retry: false, // Don't retry on 401 errors
   });
-
-  const loginMutation = useMutation({
-    mutationFn: login,
-    onSuccess: async () => {
-      toast.success(t('loginSuccess'));
-      // Manually refetch user data after successful login
-      await queryClient.refetchQueries({ queryKey: userQueryKey });
-    },
-    onError: (error) => {
-      // Handle specific error cases
-      if (error instanceof Error) {
-        // Check if it's a 404 error (endpoint not found)
-        if (
-          error.message.includes('404') ||
-          error.message.includes('Cannot POST')
-        ) {
-          toast.error(
-            t('loginEndpointNotAvailable') ||
-              'Login endpoint not available. Please contact support or use SSO.'
-          );
-        }
-      }
-    },
-  });
-
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
-  });
-
-  async function onSubmit(values: LoginFormValues) {
-    loginMutation.mutate(values);
-  }
 
   async function handleAuth0Login() {
     try {
@@ -159,11 +101,41 @@ export default function LoginPage() {
     selectedStoreId,
   ]);
 
-  const isLoading =
-    loginMutation.isPending ||
-    isUserLoading ||
-    isUserFetching ||
-    isAuth0Loading;
+  const isLoading = isUserLoading || isUserFetching || isAuth0Loading;
+
+  // Show error if Auth0 is not configured
+  if (!isAuth0Available) {
+    return (
+      <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-orange-50 via-white to-red-50 p-4">
+        <div className="rounded-2xl border border-red-200 bg-white/80 p-8 shadow-2xl backdrop-blur-sm">
+          <div className="text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+              <svg
+                className="h-6 w-6 text-red-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <h2 className="mb-2 text-xl font-semibold text-red-800">
+              Auth0 Not Configured
+            </h2>
+            <p className="text-sm text-gray-600">
+              Please configure Auth0 environment variables to enable
+              authentication.
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-orange-50 via-white to-red-50 p-4">
@@ -193,129 +165,53 @@ export default function LoginPage() {
           </motion.div>
         </header>
 
-        {/* Login form card */}
+        {/* Login card - Auth0 Only */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
           className="rounded-2xl border border-gray-200 bg-white/80 p-8 shadow-2xl backdrop-blur-sm"
         >
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700">
-                      {t('email')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="email"
-                        placeholder={t('emailPlaceholder')}
-                        className="border-gray-300 py-6 transition-all focus:border-orange-600 focus:ring-2 focus:ring-orange-200"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700">
-                      {t('password')}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="password"
-                        placeholder={t('passwordPlaceholder')}
-                        className="border-gray-300 py-6 transition-all focus:border-orange-600 focus:ring-2 focus:ring-orange-200"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <div className="space-y-6">
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                {t('ssoOnlyMessage') ||
+                  'This application uses Single Sign-On (SSO) for secure authentication.'}
+              </p>
+            </div>
 
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="mt-6 w-full bg-gradient-to-r from-orange-600 to-red-600 py-6 text-base font-medium transition-all hover:from-orange-700 hover:to-red-700 hover:shadow-lg disabled:opacity-50"
-              >
-                {isLoading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <LoadingSpinner />
-                    {t('processing')}
-                  </span>
-                ) : (
-                  t('loginButton')
-                )}
-              </Button>
+            <Button
+              type="button"
+              className="w-full bg-gradient-to-r from-orange-600 to-red-600 py-6 text-base font-medium transition-all hover:from-orange-700 hover:to-red-700 hover:shadow-lg disabled:opacity-50"
+              onClick={handleAuth0Login}
+              disabled={isLoading}
+            >
+              {isAuth0Loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <LoadingSpinner />
+                  {t('redirecting') || 'Redirecting...'}
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  <svg
+                    className="h-5 w-5"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+                  </svg>
+                  {t('signInWithSSO') || 'Sign in with SSO'}
+                </span>
+              )}
+            </Button>
 
-              <div className="mt-6 flex items-center justify-between text-sm">
-                <Link
-                  href="/(auth)/forgot-password"
-                  className="text-gray-600 transition-colors hover:text-orange-600"
-                >
-                  {t('forgotPassword')}
-                </Link>
-                <Link
-                  href={ROUTES.REGISTER}
-                  className="font-semibold text-orange-600 transition-colors hover:text-orange-700 hover:underline"
-                >
-                  {t('signUpHere')}
-                </Link>
-              </div>
-            </form>
-          </Form>
-
-          {/* Auth0 Login Option */}
-          {isAuth0Available && (
-            <>
-              <div className="relative my-8">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="bg-white px-4 text-gray-500">
-                    {t('orContinueWith')}
-                  </span>
-                </div>
-              </div>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full border-2 border-gray-300 py-6 text-base font-medium transition-all hover:border-orange-600 hover:bg-orange-50"
-                onClick={handleAuth0Login}
-                disabled={isLoading}
-              >
-                {isAuth0Loading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <LoadingSpinner />
-                    {t('redirecting')}
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    <svg
-                      className="h-5 w-5"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-                    </svg>
-                    Sign in with SSO
-                  </span>
-                )}
-              </Button>
-            </>
-          )}
+            <div className="text-center text-xs text-gray-500">
+              <p>
+                {t('ssoSecurityNote') ||
+                  'Secure authentication powered by Auth0'}
+              </p>
+            </div>
+          </div>
         </motion.div>
       </motion.div>
     </main>

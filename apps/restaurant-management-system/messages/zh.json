@@ -71,7 +71,10 @@
     "nameValidation": "名称为必填项。",
     "nameTooLong": "名称过长（最多100个字符）。",
     "passwordMismatch": "密码不匹配。",
-    "loginEndpointNotAvailable": "登录端点不可用。请使用 SSO 或联系支持。"
+    "loginEndpointNotAvailable": "登录端点不可用。请使用 SSO 或联系支持。",
+    "ssoOnlyMessage": "本应用程序使用单点登录 (SSO) 进行安全身份验证。",
+    "signInWithSSO": "使用 SSO 登录",
+    "ssoSecurityNote": "由 Auth0 提供安全认证服务"
   },
   "menu": {
     "title": "菜单管理",
@@ -251,5 +254,64 @@
     "roleMissing": "无法验证权限：未找到用户角色。",
     "networkError": "网络错误。请重试。",
     "unknownError": "发生未知错误。"
+  },
+  "kitchen": {
+    "title": "厨房显示屏",
+    "subtitle": "厨房员工的实时订单管理",
+    "selectStore": "请选择店铺以查看厨房订单",
+    "loadFailed": "加载厨房订单失败",
+    "retry": "重试",
+    "refresh": "刷新订单",
+    "enableSound": "启用声音",
+    "disableSound": "禁用声音",
+    "stats": {
+      "pending": "待处理",
+      "preparing": "准备中",
+      "ready": "已完成",
+      "totalActive": "总活跃",
+      "pendingDesc": "等待准备",
+      "preparingDesc": "正在准备",
+      "readyDesc": "准备上菜",
+      "totalActiveDesc": "所有活跃订单"
+    },
+    "columns": {
+      "pending": "待处理",
+      "preparing": "准备中",
+      "ready": "已完成"
+    },
+    "empty": {
+      "pending": "没有待处理订单",
+      "preparing": "没有准备中的订单",
+      "ready": "没有已完成订单",
+      "served": "没有已上菜订单",
+      "completed": "没有已完成订单",
+      "cancelled": "没有已取消订单"
+    },
+    "status": {
+      "pending": "待处理",
+      "preparing": "准备中",
+      "ready": "已完成",
+      "served": "已上菜",
+      "completed": "已完成",
+      "cancelled": "已取消"
+    },
+    "actions": {
+      "startPreparing": "开始准备",
+      "markReady": "标记完成",
+      "markServed": "标记上菜"
+    },
+    "order": {
+      "number": "订单号",
+      "table": "桌子",
+      "total": "总计",
+      "note": "备注",
+      "items": "项"
+    },
+    "notifications": {
+      "orderUpdated": "订单已更新",
+      "statusChanged": "订单状态已更改为",
+      "updateFailed": "更新失败",
+      "failedToUpdate": "更新订单状态失败"
+    }
   }
 }
