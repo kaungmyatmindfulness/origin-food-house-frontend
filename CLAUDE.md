@@ -532,33 +532,213 @@ debug.warn(); // Dev only
 debug.error(); // Always logged
 ```
 
-## New Feature Checklist
+## 🚦 MANDATORY Task Completion Guardrails
 
-- [ ] Check `@repo/ui` components first - don't recreate basics
-- [ ] Create `features/[feature]/` folder
-- [ ] Use auto-generated types from `@repo/api/generated/types`
-- [ ] Add `services/*.service.ts` with JSDoc
-- [ ] Create `queries/*.keys.ts` for React Query
-- [ ] Add `store/*.store.ts` with selectors (if needed)
-- [ ] Add `components/` for feature-specific UI only
-- [ ] Use `unwrapData()` in services
-- [ ] Add constants for routes/messages
-- [ ] Add translations to ALL 4 languages
-- [ ] Use skeleton loading states
-- [ ] Follow naming conventions
-- [ ] Add tests (Restaurant Management System) if component is in common/
+**CRITICAL**: Every frontend task MUST pass ALL applicable quality gates before being marked complete. No exceptions.
 
-## Quality Gates
+### Pre-Task Analysis
 
-**Before completing ANY task:**
+Before starting any frontend task, determine:
+
+- [ ] **App Scope**: RMS only, SOS only, or Both?
+- [ ] **Shared Package**: Does this affect `@repo/ui` or `@repo/api`?
+- [ ] **Backend Dependency**: Does this require backend API changes?
+- [ ] **Translation Required**: Does this add user-facing text?
+- [ ] **Testing Required**: RMS modifications require tests
+
+### Quality Gate Execution Order
+
+#### Frontend Monorepo Level (Run at root)
 
 ```bash
-npm run check-types  # ✅ 0 errors
-npm run lint         # ✅ 0 warnings
-npm run format       # ✅ Code formatted
+cd origin-food-house-frontend
+
+# Step 1: Code Formatting (MUST pass)
+npm run format
+
+# Step 2: Linting (MUST pass - 0 warnings)
+npm run lint
+
+# Step 3: Type Checking (MUST pass - 0 errors)
+npm run check-types
+
+# Step 4: Build (MUST succeed for all apps)
+npm run build
+
+# Step 5: API Types (if backend API changed)
+npm run generate:api  # Regenerate from OpenAPI spec
 ```
 
-**Task is not complete until all checks pass.**
+#### App-Specific Quality Gates
+
+**Restaurant Management System (RMS):**
+
+```bash
+cd apps/restaurant-management-system
+
+# 1. Lint (0 warnings)
+npm run lint
+
+# 2. Type Check (0 errors)
+npm run check-types
+
+# 3. Tests (ALL must pass)
+npm test
+
+# 4. Build (must succeed)
+npm run build
+```
+
+**Self-Ordering System (SOS):**
+
+```bash
+cd apps/self-ordering-system
+
+# 1. Lint (0 warnings)
+npm run lint
+
+# 2. Type Check (0 errors)
+npm run check-types
+
+# 3. Build (must succeed)
+npm run build
+
+# ⚠️ Tests: Currently no test infrastructure
+# TODO: Add Jest + React Testing Library setup
+```
+
+### Task NOT Complete Until
+
+**Code Quality:**
+
+- ✅ All lint warnings resolved (0 warnings)
+- ✅ Type checking passes (0 errors)
+- ✅ Code is formatted (Prettier)
+- ✅ All affected apps build successfully
+- ✅ No console errors or warnings
+
+**Testing:**
+
+- ✅ RMS tests pass (if RMS modified)
+- ✅ New tests added for new components/features
+- ✅ Business logic tested (not just rendering)
+- ✅ Edge cases covered
+
+**Architecture & Patterns:**
+
+- ✅ Checked `@repo/ui` before creating components
+- ✅ Used auto-generated types from `@repo/api/generated/types`
+- ✅ Created query key factories (React Query)
+- ✅ Exported selectors for Zustand stores
+- ✅ Used `unwrapData()` in services
+- ✅ Followed feature-sliced design
+- ✅ No hardcoded strings (use constants)
+
+**Internationalization:**
+
+- ✅ Translations added for ALL 4 languages (en, zh, my, th)
+- ✅ Translation keys follow naming conventions
+- ✅ No hardcoded user-facing text
+
+**Integration:**
+
+- ✅ API types regenerated (if backend changed)
+- ✅ No type mismatches with backend
+- ✅ Services use correct API endpoints
+
+### When Quality Gates Fail
+
+**If ANY check fails:**
+
+1. ❌ **DO NOT** mark task as complete
+2. 🔧 **FIX** the failing check immediately
+3. 🔄 **RE-RUN** ALL quality gates from Step 1
+4. ✅ **VERIFY** all checks pass before proceeding
+
+**Common Failure Resolutions:**
+
+| Failure             | Resolution                                 |
+| ------------------- | ------------------------------------------ |
+| Format fails        | Run `npm run format` at monorepo root      |
+| Lint warnings       | Fix warnings manually, check ESLint output |
+| Type errors         | Fix TypeScript errors, verify imports      |
+| Build fails         | Check syntax errors, missing dependencies  |
+| Missing types       | Run `npm run generate:api`                 |
+| Translation missing | Add to all 4 language files                |
+
+### Automated Verification Script
+
+**Copy-paste this to verify ALL frontend quality gates:**
+
+```bash
+#!/bin/bash
+set -e  # Exit on first error
+
+echo "🔍 Running Frontend Quality Gates..."
+
+# Monorepo level
+echo "📦 Monorepo Quality Gates..."
+cd origin-food-house-frontend
+npm run format || { echo "❌ Format failed"; exit 1; }
+npm run lint || { echo "❌ Lint failed"; exit 1; }
+npm run check-types || { echo "❌ Type check failed"; exit 1; }
+npm run build || { echo "❌ Build failed"; exit 1; }
+echo "✅ Monorepo passed all checks"
+
+# RMS Tests
+echo "🧪 RMS Tests..."
+cd apps/restaurant-management-system
+npm test || { echo "❌ RMS tests failed"; exit 1; }
+echo "✅ RMS tests passed"
+
+echo ""
+echo "✅✅✅ ALL FRONTEND QUALITY GATES PASSED ✅✅✅"
+echo "Task is ready for completion!"
+```
+
+### Task Completion Certification
+
+**Before marking ANY frontend task complete, certify:**
+
+```
+✅ All quality gate steps passed
+✅ Code formatted, linted, type-safe
+✅ All affected apps build successfully
+✅ RMS tests pass (if RMS modified)
+✅ Translations added for all 4 languages (if UI changes)
+✅ API types regenerated (if backend changed)
+✅ Used @repo/ui components (checked first)
+✅ Used auto-generated API types
+✅ Created query key factories (if React Query used)
+✅ Exported selectors (if Zustand store created)
+✅ No hardcoded strings (constants + i18n)
+✅ Feature-sliced design followed
+✅ Services use unwrapData()
+✅ Skeleton loading states implemented
+
+FRONTEND TASK COMPLETION VERIFIED ✅
+```
+
+**RULE**: If you cannot certify ALL applicable items above, the task is NOT complete.
+
+## New Feature Checklist
+
+When adding a new feature:
+
+- [ ] **Check `@repo/ui` components first** - don't recreate basics (50+ components available)
+- [ ] Create `features/[feature]/` folder following feature-sliced design
+- [ ] Use auto-generated types from `@repo/api/generated/types` (never manual types)
+- [ ] Add `services/*.service.ts` with JSDoc comments and typed return values
+- [ ] Create `queries/*.keys.ts` for hierarchical React Query cache keys
+- [ ] Add `store/*.store.ts` with selectors (minimal state only)
+- [ ] Add `components/` for feature-specific UI only (not generic components)
+- [ ] Use `unwrapData()` in services for consistent error handling
+- [ ] Add constants for routes/messages (no magic strings)
+- [ ] Add translations to ALL 4 languages (en, zh, my, th)
+- [ ] Use skeleton loading states for non-trivial loading
+- [ ] Follow naming conventions (see section above)
+- [ ] Add tests (RMS: mandatory for common/ components)
+- [ ] **Run ALL quality gates** before marking complete
 
 ## Build System & Configuration
 

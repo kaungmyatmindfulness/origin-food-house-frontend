@@ -299,7 +299,9 @@ export default function CreateOrderPage() {
                         <Card
                           key={item.id}
                           className="cursor-pointer p-4 transition-shadow hover:shadow-md"
-                          onClick={() => handleAddItem(item as unknown as MenuItem)}
+                          onClick={() =>
+                            handleAddItem(item as unknown as MenuItem)
+                          }
                         >
                           <div className="flex items-start justify-between">
                             <div>
