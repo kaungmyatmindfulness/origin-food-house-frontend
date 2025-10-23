@@ -171,7 +171,7 @@ export function useProtected(
   ]);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!isAuthenticated) {
       queryClient.clear();
       router.replace(loginRedirectTo);
     }

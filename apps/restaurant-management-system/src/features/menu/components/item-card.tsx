@@ -9,7 +9,10 @@ import {
   selectSelectedStoreId,
   useAuthStore,
 } from '@/features/auth/store/auth.store';
-import { deleteMenuItem } from '@/features/menu/services/menu-item.service';
+import {
+  deleteMenuItem,
+  toggleMenuItemOutOfStock,
+} from '@/features/menu/services/menu-item.service';
 import { MenuItem } from '@/features/menu/types/menu-item.types';
 import { Button } from '@repo/ui/components/button';
 import { ConfirmationDialog } from '@repo/ui/components/confirmation-dialog';
@@ -18,6 +21,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@repo/ui/components/popover';
+import { Switch } from '@repo/ui/components/switch';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type { ApiError } from '@/utils/apiFetch';
@@ -60,6 +64,31 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
     },
   });
 
+  const toggleOutOfStockMutation = useMutation<void, ApiError | Error, boolean>(
+    {
+      mutationFn: async (isOutOfStock: boolean) => {
+        if (!selectedStoreId) {
+          throw new Error('Store is not selected.');
+        }
+        await toggleMenuItemOutOfStock(item.id, selectedStoreId, isOutOfStock);
+      },
+      onSuccess: (_, isOutOfStock) => {
+        toast.success(
+          isOutOfStock
+            ? `"${item.name}" marked as out of stock (86'd)`
+            : `"${item.name}" is back in stock`
+        );
+        queryClient.invalidateQueries({
+          queryKey: ['categories'],
+        });
+      },
+      onError: (error) => {
+        console.error(`Failed to toggle out-of-stock for ${item.id}:`, error);
+        toast.error('Failed to update stock status');
+      },
+    }
+  );
+
   const handleCardClick = () => {
     if (deleteItemMutation.isPending) return;
     onSelect(item);
@@ -83,6 +112,14 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
 
   const handlePopoverTriggerClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+  };
+
+  const handleToggleOutOfStock = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newStatus = !(
+      (item as MenuItem & { isOutOfStock?: boolean }).isOutOfStock ?? false
+    );
+    toggleOutOfStockMutation.mutate(newStatus);
   };
 
   const actionsDisabled = deleteItemMutation.isPending || !selectedStoreId;
@@ -165,6 +202,30 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
           <p className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
             {Number(item.basePrice).toFixed(2)} THB
           </p>
+
+          <div
+            className="mt-3 flex items-center justify-between border-t border-gray-200 pt-2 dark:border-gray-700"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <label
+              htmlFor={`out-of-stock-${item.id}`}
+              className="text-xs font-medium text-gray-700 dark:text-gray-300"
+            >
+              Out of Stock (86)
+            </label>
+            <Switch
+              id={`out-of-stock-${item.id}`}
+              checked={
+                (item as MenuItem & { isOutOfStock?: boolean }).isOutOfStock ??
+                false
+              }
+              onCheckedChange={() =>
+                handleToggleOutOfStock({} as React.MouseEvent)
+              }
+              disabled={toggleOutOfStockMutation.isPending || !selectedStoreId}
+              aria-label={`Toggle out of stock for ${item.name}`}
+            />
+          </div>
         </div>
       </motion.div>
       <ConfirmationDialog

@@ -49,7 +49,7 @@ const useNavSections = () => {
         {
           labelKey: 'kitchenDisplay',
           icon: <ChefHat className="mr-2 h-3 w-3 text-gray-500" />,
-          href: '/hub/kds',
+          href: '/hub/kitchen',
         },
       ],
       [

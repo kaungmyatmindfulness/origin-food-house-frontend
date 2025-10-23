@@ -95,3 +95,27 @@ export async function deleteMenuItem(
   );
   return res.data;
 }
+
+/**
+ * Toggle the isOutOfStock status of a menu item (quick "86" action)
+ */
+export async function toggleMenuItemOutOfStock(
+  id: string,
+  storeId: string,
+  isOutOfStock: boolean
+): Promise<MenuItemDto> {
+  const res = await apiFetch<MenuItemDto>(
+    { path: `${MENU_ENDPOINT}/${id}`, query: { storeId } },
+    {
+      method: 'PATCH',
+      body: JSON.stringify({ isOutOfStock }),
+    }
+  );
+
+  if (!res.data) {
+    throw new Error(
+      `Failed to toggle out-of-stock status for item ${id}: No data returned.`
+    );
+  }
+  return res.data;
+}

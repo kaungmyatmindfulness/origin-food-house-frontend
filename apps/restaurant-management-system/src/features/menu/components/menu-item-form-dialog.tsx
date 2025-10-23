@@ -34,6 +34,13 @@ import {
   DialogTitle,
 } from '@repo/ui/components/dialog';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/ui/components/select';
+import {
   Form,
   FormControl,
   FormDescription,
@@ -46,6 +53,22 @@ import { Input } from '@repo/ui/components/input';
 import { Separator } from '@repo/ui/components/separator';
 import { Textarea } from '@repo/ui/components/textarea';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+/**
+ * Routing area enum values
+ */
+export const ROUTING_AREAS = [
+  'GRILL',
+  'FRY',
+  'SALAD',
+  'DRINKS',
+  'DESSERT',
+  'APPETIZER',
+  'SOUP',
+  'OTHER',
+] as const;
+
+export type RoutingArea = (typeof ROUTING_AREAS)[number];
 
 /**
  * Zod schema for the new menu item form structure.
@@ -69,6 +92,14 @@ const menuItemSchema = z
         'Category name cannot be empty if provided'
       ),
     isNewCategory: z.boolean().default(false),
+
+    routingArea: z.enum(ROUTING_AREAS).optional(),
+    preparationTimeMinutes: z
+      .number()
+      .int('Must be a whole number')
+      .min(1, 'Must be at least 1 minute')
+      .optional()
+      .nullable(),
 
     customizationGroups: z
       .array(
@@ -193,6 +224,8 @@ export function MenuItemFormDialog({
       categoryId: '',
       newCategoryName: '',
       isNewCategory: false,
+      routingArea: undefined,
+      preparationTimeMinutes: null,
       customizationGroups: [],
       isHidden: false,
     },
@@ -215,6 +248,18 @@ export function MenuItemFormDialog({
           : undefined,
         isNewCategory: false,
         newCategoryName: '',
+        routingArea:
+          (
+            itemToEdit as typeof itemToEdit & {
+              routingArea?: RoutingArea;
+            }
+          ).routingArea ?? undefined,
+        preparationTimeMinutes:
+          (
+            itemToEdit as typeof itemToEdit & {
+              preparationTimeMinutes?: number;
+            }
+          ).preparationTimeMinutes ?? null,
         customizationGroups:
           itemToEdit.customizationGroups?.map((group) => ({
             name: group.name,
@@ -328,6 +373,8 @@ export function MenuItemFormDialog({
       basePrice: String(values.basePrice),
       imageUrl: values.imageUrl || undefined,
       category: submitCategory,
+      routingArea: values.routingArea || undefined,
+      preparationTimeMinutes: values.preparationTimeMinutes || undefined,
       customizationGroups:
         values.customizationGroups?.map((group) => ({
           name: group.name,
@@ -455,6 +502,69 @@ export function MenuItemFormDialog({
                         value={field.value ?? ''}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="routingArea"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Routing Area (Optional)</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value ?? undefined}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select kitchen area" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {ROUTING_AREAS.map((area) => (
+                          <SelectItem key={area} value={area}>
+                            {area}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Kitchen area responsible for preparing this item
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="preparationTimeMinutes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Prep Time (Minutes) (Optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min="1"
+                        step="1"
+                        placeholder="e.g. 15"
+                        {...field}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === ''
+                              ? null
+                              : parseInt(e.target.value, 10)
+                          )
+                        }
+                        value={field.value ?? ''}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Estimated time to prepare this item
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

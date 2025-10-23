@@ -125,11 +125,7 @@ export default function KitchenDashboard() {
       {isLoading ? <StatsSkeleton /> : <KitchenStats />}
 
       {/* Order Grid */}
-      {isLoading ? (
-        <GridSkeleton />
-      ) : (
-        <OrderGrid storeId={storeId} />
-      )}
+      {isLoading ? <GridSkeleton /> : <OrderGrid storeId={storeId} />}
     </div>
   );
 }

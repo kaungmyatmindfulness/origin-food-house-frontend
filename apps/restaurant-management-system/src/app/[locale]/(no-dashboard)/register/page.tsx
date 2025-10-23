@@ -36,7 +36,6 @@ function LoadingSpinner() {
   );
 }
 
-
 export default function RegisterPage() {
   const t = useTranslations('auth');
 

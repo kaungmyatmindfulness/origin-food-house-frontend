@@ -84,7 +84,7 @@ export default function LoginPage() {
         if (user?.selectedStoreRole !== 'CHEF') {
           router.replace('/hub/sale');
         } else {
-          router.replace('/hub/kds');
+          router.replace('/hub/kitchen');
         }
       } else if (user?.userStores?.length) {
         router.replace('/store/choose');

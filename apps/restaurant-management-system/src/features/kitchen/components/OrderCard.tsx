@@ -25,7 +25,7 @@ export function OrderCard({ order, onSelect, isSelected }: OrderCardProps) {
   return (
     <Card
       className={`cursor-pointer transition-all hover:shadow-lg ${
-        isSelected ? 'ring-2 ring-primary' : ''
+        isSelected ? 'ring-primary ring-2' : ''
       }`}
       onClick={() => onSelect?.(order)}
     >
@@ -33,11 +33,11 @@ export function OrderCard({ order, onSelect, isSelected }: OrderCardProps) {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-bold">{order.orderNumber}</h3>
-            <p className="text-sm text-muted-foreground">{order.tableName}</p>
+            <p className="text-muted-foreground text-sm">{order.tableName}</p>
           </div>
           <OrderStatusBadge status={order.status} />
         </div>
-        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex items-center gap-1 text-sm">
           <Clock className="h-4 w-4" />
           <span>{timeElapsed}</span>
         </div>
@@ -48,19 +48,17 @@ export function OrderCard({ order, onSelect, isSelected }: OrderCardProps) {
           {order.orderItems.map((item) => (
             <div key={item.id} className="flex justify-between text-sm">
               <div className="flex-1">
-                <span className="font-medium">
-                  {item.quantity}x
-                </span>{' '}
+                <span className="font-medium">{item.quantity}x</span>{' '}
                 <span>
                   {item.menuItem?.name || `Item #${item.menuItemId || 'N/A'}`}
                 </span>
                 {item.notes && (
-                  <p className="text-xs italic text-muted-foreground">
+                  <p className="text-muted-foreground text-xs italic">
                     Note: {item.notes}
                   </p>
                 )}
                 {item.customizations.length > 0 && (
-                  <ul className="ml-4 mt-1 list-disc text-xs text-muted-foreground">
+                  <ul className="text-muted-foreground mt-1 ml-4 list-disc text-xs">
                     {item.customizations.map((custom) => (
                       <li key={custom.id}>
                         {custom.customizationOption?.name ||

@@ -151,12 +151,8 @@ export const selectRefreshInterval = (state: KitchenState & KitchenActions) =>
   state.refreshInterval;
 
 export const selectKitchenStats = (state: KitchenState & KitchenActions) => {
-  const pending = state.orders.filter(
-    (o) => o.status === 'PENDING'
-  ).length;
-  const preparing = state.orders.filter(
-    (o) => o.status === 'PREPARING'
-  ).length;
+  const pending = state.orders.filter((o) => o.status === 'PENDING').length;
+  const preparing = state.orders.filter((o) => o.status === 'PREPARING').length;
   const ready = state.orders.filter((o) => o.status === 'READY').length;
 
   return {

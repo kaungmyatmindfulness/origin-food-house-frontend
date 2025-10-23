@@ -8,6 +8,26 @@ import {
 } from './client.js';
 import { client } from './client.gen.js';
 import type {
+  ActiveTableSessionControllerCloseData,
+  ActiveTableSessionControllerCloseErrors,
+  ActiveTableSessionControllerCloseResponses,
+  ActiveTableSessionControllerCreateManualSessionData,
+  ActiveTableSessionControllerCreateManualSessionErrors,
+  ActiveTableSessionControllerCreateManualSessionResponses,
+  ActiveTableSessionControllerFindActiveByStoreData,
+  ActiveTableSessionControllerFindActiveByStoreResponses,
+  ActiveTableSessionControllerFindByTokenData,
+  ActiveTableSessionControllerFindByTokenErrors,
+  ActiveTableSessionControllerFindByTokenResponses,
+  ActiveTableSessionControllerFindOneData,
+  ActiveTableSessionControllerFindOneErrors,
+  ActiveTableSessionControllerFindOneResponses,
+  ActiveTableSessionControllerJoinByTableData,
+  ActiveTableSessionControllerJoinByTableErrors,
+  ActiveTableSessionControllerJoinByTableResponses,
+  ActiveTableSessionControllerUpdateData,
+  ActiveTableSessionControllerUpdateErrors,
+  ActiveTableSessionControllerUpdateResponses,
   AuthControllerGetAuth0ConfigData,
   AuthControllerGetAuth0ConfigResponses,
   AuthControllerGetAuth0ProfileData,
@@ -19,6 +39,21 @@ import type {
   AuthControllerValidateAuth0TokenData,
   AuthControllerValidateAuth0TokenErrors,
   AuthControllerValidateAuth0TokenResponses,
+  CartControllerAddItemData,
+  CartControllerAddItemErrors,
+  CartControllerAddItemResponses,
+  CartControllerClearCartData,
+  CartControllerClearCartErrors,
+  CartControllerClearCartResponses,
+  CartControllerGetCartData,
+  CartControllerGetCartErrors,
+  CartControllerGetCartResponses,
+  CartControllerRemoveItemData,
+  CartControllerRemoveItemErrors,
+  CartControllerRemoveItemResponses,
+  CartControllerUpdateItemData,
+  CartControllerUpdateItemErrors,
+  CartControllerUpdateItemResponses,
   CategoryControllerCreateData,
   CategoryControllerCreateResponses,
   CategoryControllerFindAllData,
@@ -33,6 +68,12 @@ import type {
   CategoryControllerUpdateResponses,
   HealthControllerHealthCheckData,
   HealthControllerHealthCheckResponses,
+  KitchenControllerGetOrderDetailsData,
+  KitchenControllerGetOrderDetailsResponses,
+  KitchenControllerGetOrdersData,
+  KitchenControllerGetOrdersResponses,
+  KitchenControllerUpdateOrderStatusData,
+  KitchenControllerUpdateOrderStatusResponses,
   MenuControllerCreateMenuItemData,
   MenuControllerCreateMenuItemResponses,
   MenuControllerDeleteMenuItemData,
@@ -43,6 +84,36 @@ import type {
   MenuControllerGetStoreMenuItemsResponses,
   MenuControllerUpdateMenuItemData,
   MenuControllerUpdateMenuItemResponses,
+  OrderControllerCheckoutData,
+  OrderControllerCheckoutErrors,
+  OrderControllerCheckoutResponses,
+  OrderControllerFindBySessionData,
+  OrderControllerFindBySessionResponses,
+  OrderControllerFindByStoreData,
+  OrderControllerFindByStoreResponses,
+  OrderControllerFindForKdsData,
+  OrderControllerFindForKdsResponses,
+  OrderControllerFindOneData,
+  OrderControllerFindOneErrors,
+  OrderControllerFindOneResponses,
+  OrderControllerUpdateStatusData,
+  OrderControllerUpdateStatusErrors,
+  OrderControllerUpdateStatusResponses,
+  PaymentControllerCreateRefundData,
+  PaymentControllerCreateRefundErrors,
+  PaymentControllerCreateRefundResponses,
+  PaymentControllerFindPaymentsByOrderData,
+  PaymentControllerFindPaymentsByOrderErrors,
+  PaymentControllerFindPaymentsByOrderResponses,
+  PaymentControllerFindRefundsByOrderData,
+  PaymentControllerFindRefundsByOrderErrors,
+  PaymentControllerFindRefundsByOrderResponses,
+  PaymentControllerGetPaymentSummaryData,
+  PaymentControllerGetPaymentSummaryErrors,
+  PaymentControllerGetPaymentSummaryResponses,
+  PaymentControllerRecordPaymentData,
+  PaymentControllerRecordPaymentErrors,
+  PaymentControllerRecordPaymentResponses,
   StoreControllerCreateStoreData,
   StoreControllerCreateStoreErrors,
   StoreControllerCreateStoreResponses,
@@ -70,6 +141,8 @@ import type {
   TableControllerSyncTablesResponses,
   TableControllerUpdateTableData,
   TableControllerUpdateTableResponses,
+  TableControllerUpdateTableStatusData,
+  TableControllerUpdateTableStatusResponses,
   UploadControllerUploadImageData,
   UploadControllerUploadImageErrors,
   UploadControllerUploadImageResponses,
@@ -101,6 +174,176 @@ export type Options<
    * used to access values that aren't defined as part of the SDK function.
    */
   meta?: Record<string, unknown>;
+};
+
+/**
+ * Create manual session (counter, phone, takeout)
+ * Staff-initiated orders without table association. Requires OWNER, ADMIN, SERVER, or CASHIER role.
+ */
+export const activeTableSessionControllerCreateManualSession = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    ActiveTableSessionControllerCreateManualSessionData,
+    ThrowOnError
+  >
+) => {
+  return (options.client ?? client).post<
+    ActiveTableSessionControllerCreateManualSessionResponses,
+    ActiveTableSessionControllerCreateManualSessionErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/active-table-sessions/manual',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Join or create a session for a table
+ * Customers scan QR code on table. Returns existing active session or creates new one.
+ */
+export const activeTableSessionControllerJoinByTable = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ActiveTableSessionControllerJoinByTableData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    ActiveTableSessionControllerJoinByTableResponses,
+    ActiveTableSessionControllerJoinByTableErrors,
+    ThrowOnError
+  >({
+    url: '/active-table-sessions/join-by-table/{tableId}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Get session by ID
+ */
+export const activeTableSessionControllerFindOne = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ActiveTableSessionControllerFindOneData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    ActiveTableSessionControllerFindOneResponses,
+    ActiveTableSessionControllerFindOneErrors,
+    ThrowOnError
+  >({
+    url: '/active-table-sessions/{sessionId}',
+    ...options,
+  });
+};
+
+/**
+ * Update session (Restaurant Management System only)
+ */
+export const activeTableSessionControllerUpdate = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ActiveTableSessionControllerUpdateData, ThrowOnError>
+) => {
+  return (options.client ?? client).put<
+    ActiveTableSessionControllerUpdateResponses,
+    ActiveTableSessionControllerUpdateErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/active-table-sessions/{sessionId}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Get session by token
+ */
+export const activeTableSessionControllerFindByToken = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ActiveTableSessionControllerFindByTokenData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    ActiveTableSessionControllerFindByTokenResponses,
+    ActiveTableSessionControllerFindByTokenErrors,
+    ThrowOnError
+  >({
+    url: '/active-table-sessions/token/{token}',
+    ...options,
+  });
+};
+
+/**
+ * Get all active sessions for a store (POS)
+ */
+export const activeTableSessionControllerFindActiveByStore = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    ActiveTableSessionControllerFindActiveByStoreData,
+    ThrowOnError
+  >
+) => {
+  return (options.client ?? client).get<
+    ActiveTableSessionControllerFindActiveByStoreResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/active-table-sessions',
+    ...options,
+  });
+};
+
+/**
+ * Close session (Restaurant Management System only)
+ */
+export const activeTableSessionControllerClose = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ActiveTableSessionControllerCloseData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    ActiveTableSessionControllerCloseResponses,
+    ActiveTableSessionControllerCloseErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/active-table-sessions/{sessionId}/close',
+    ...options,
+  });
 };
 
 /**
@@ -278,6 +521,94 @@ export const userControllerGetCurrentUser = <
   >({
     url: '/users/me',
     ...options,
+  });
+};
+
+/**
+ * Clear all items from cart
+ */
+export const cartControllerClearCart = <ThrowOnError extends boolean = false>(
+  options: Options<CartControllerClearCartData, ThrowOnError>
+) => {
+  return (options.client ?? client).delete<
+    CartControllerClearCartResponses,
+    CartControllerClearCartErrors,
+    ThrowOnError
+  >({
+    url: '/cart',
+    ...options,
+  });
+};
+
+/**
+ * Get current cart for session
+ */
+export const cartControllerGetCart = <ThrowOnError extends boolean = false>(
+  options: Options<CartControllerGetCartData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    CartControllerGetCartResponses,
+    CartControllerGetCartErrors,
+    ThrowOnError
+  >({
+    url: '/cart',
+    ...options,
+  });
+};
+
+/**
+ * Add item to cart
+ */
+export const cartControllerAddItem = <ThrowOnError extends boolean = false>(
+  options: Options<CartControllerAddItemData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    CartControllerAddItemResponses,
+    CartControllerAddItemErrors,
+    ThrowOnError
+  >({
+    url: '/cart/items',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Remove item from cart
+ */
+export const cartControllerRemoveItem = <ThrowOnError extends boolean = false>(
+  options: Options<CartControllerRemoveItemData, ThrowOnError>
+) => {
+  return (options.client ?? client).delete<
+    CartControllerRemoveItemResponses,
+    CartControllerRemoveItemErrors,
+    ThrowOnError
+  >({
+    url: '/cart/items/{cartItemId}',
+    ...options,
+  });
+};
+
+/**
+ * Update cart item
+ */
+export const cartControllerUpdateItem = <ThrowOnError extends boolean = false>(
+  options: Options<CartControllerUpdateItemData, ThrowOnError>
+) => {
+  return (options.client ?? client).patch<
+    CartControllerUpdateItemResponses,
+    CartControllerUpdateItemErrors,
+    ThrowOnError
+  >({
+    url: '/cart/items/{cartItemId}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 };
 
@@ -461,6 +792,64 @@ export const healthControllerHealthCheck = <
 };
 
 /**
+ * Get orders for kitchen display
+ */
+export const kitchenControllerGetOrders = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<KitchenControllerGetOrdersData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    KitchenControllerGetOrdersResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: '/kitchen/orders',
+    ...options,
+  });
+};
+
+/**
+ * Get order details for kitchen display
+ */
+export const kitchenControllerGetOrderDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<KitchenControllerGetOrderDetailsData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    KitchenControllerGetOrderDetailsResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: '/kitchen/orders/{orderId}',
+    ...options,
+  });
+};
+
+/**
+ * Update order kitchen status
+ */
+export const kitchenControllerUpdateOrderStatus = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<KitchenControllerUpdateOrderStatusData, ThrowOnError>
+) => {
+  return (options.client ?? client).patch<
+    KitchenControllerUpdateOrderStatusResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: '/kitchen/orders/{orderId}/status',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
  * Get all menu items for a specific store (Public)
  */
 export const menuControllerGetStoreMenuItems = <
@@ -568,6 +957,268 @@ export const menuControllerUpdateMenuItem = <
       },
     ],
     url: '/menu-items/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Checkout cart and create order (SOS)
+ * Converts cart to order and clears the cart
+ */
+export const orderControllerCheckout = <ThrowOnError extends boolean = false>(
+  options: Options<OrderControllerCheckoutData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    OrderControllerCheckoutResponses,
+    OrderControllerCheckoutErrors,
+    ThrowOnError
+  >({
+    url: '/orders/checkout',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Get order by ID
+ */
+export const orderControllerFindOne = <ThrowOnError extends boolean = false>(
+  options: Options<OrderControllerFindOneData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    OrderControllerFindOneResponses,
+    OrderControllerFindOneErrors,
+    ThrowOnError
+  >({
+    url: '/orders/{orderId}',
+    ...options,
+  });
+};
+
+/**
+ * Get all orders for a session (SOS)
+ */
+export const orderControllerFindBySession = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<OrderControllerFindBySessionData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    OrderControllerFindBySessionResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: '/orders/session/{sessionId}',
+    ...options,
+  });
+};
+
+/**
+ * Get orders for Kitchen Display System (KDS)
+ * Returns active kitchen orders with optional status filtering. Optimized for real-time kitchen operations.
+ */
+export const orderControllerFindForKds = <ThrowOnError extends boolean = false>(
+  options: Options<OrderControllerFindForKdsData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    OrderControllerFindForKdsResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/orders/kds',
+    ...options,
+  });
+};
+
+/**
+ * Get all orders for a store with pagination (POS)
+ * Returns paginated list of orders for a specific store
+ */
+export const orderControllerFindByStore = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<OrderControllerFindByStoreData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    OrderControllerFindByStoreResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/orders',
+    ...options,
+  });
+};
+
+/**
+ * Update order status (POS)
+ * Update order status through kitchen workflow
+ */
+export const orderControllerUpdateStatus = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<OrderControllerUpdateStatusData, ThrowOnError>
+) => {
+  return (options.client ?? client).patch<
+    OrderControllerUpdateStatusResponses,
+    OrderControllerUpdateStatusErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/orders/{orderId}/status',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Get all payments for an order
+ */
+export const paymentControllerFindPaymentsByOrder = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PaymentControllerFindPaymentsByOrderData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    PaymentControllerFindPaymentsByOrderResponses,
+    PaymentControllerFindPaymentsByOrderErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/payments/orders/{orderId}',
+    ...options,
+  });
+};
+
+/**
+ * Record payment for an order (POS)
+ * Record a payment and update order status if fully paid
+ */
+export const paymentControllerRecordPayment = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PaymentControllerRecordPaymentData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    PaymentControllerRecordPaymentResponses,
+    PaymentControllerRecordPaymentErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/payments/orders/{orderId}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Get payment summary for an order
+ */
+export const paymentControllerGetPaymentSummary = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PaymentControllerGetPaymentSummaryData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    PaymentControllerGetPaymentSummaryResponses,
+    PaymentControllerGetPaymentSummaryErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/payments/orders/{orderId}/summary',
+    ...options,
+  });
+};
+
+/**
+ * Get all refunds for an order
+ */
+export const paymentControllerFindRefundsByOrder = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PaymentControllerFindRefundsByOrderData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    PaymentControllerFindRefundsByOrderResponses,
+    PaymentControllerFindRefundsByOrderErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/payments/orders/{orderId}/refunds',
+    ...options,
+  });
+};
+
+/**
+ * Create refund for an order (POS)
+ * Issue a refund for a paid order
+ */
+export const paymentControllerCreateRefund = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PaymentControllerCreateRefundData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    PaymentControllerCreateRefundResponses,
+    PaymentControllerCreateRefundErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/payments/orders/{orderId}/refunds',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -816,6 +1467,29 @@ export const tableControllerUpdateTable = <
     ThrowOnError
   >({
     url: '/stores/{storeId}/tables/{tableId}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Update table status (OWNER/ADMIN/SERVER Required)
+ * Updates table status with validation of state transitions. Valid transitions follow the table lifecycle: VACANT → SEATED → ORDERING → SERVED → READY_TO_PAY → CLEANING → VACANT
+ */
+export const tableControllerUpdateTableStatus = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<TableControllerUpdateTableStatusData, ThrowOnError>
+) => {
+  return (options.client ?? client).patch<
+    TableControllerUpdateTableStatusResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: '/stores/{storeId}/tables/{tableId}/status',
     ...options,
     headers: {
       'Content-Type': 'application/json',

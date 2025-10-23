@@ -50,7 +50,10 @@ export function useUpdateOrderStatus() {
 
     onError: (error) => {
       toast.error('Update Failed', {
-        description: error instanceof Error ? error.message : 'Failed to update order status',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Failed to update order status',
       });
     },
   });

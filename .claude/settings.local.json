@@ -75,7 +75,9 @@
       "Bash(npm run format:*)",
       "Bash(xargs ls:*)",
       "Bash(xargs cat:*)",
-      "Read(//Users/kaungmyat/Desktop/FILES/Codes/Personal/origin-food-house/**)"
+      "Read(//Users/kaungmyat/Desktop/FILES/Codes/Personal/origin-food-house/**)",
+      "Bash(rmdir:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []

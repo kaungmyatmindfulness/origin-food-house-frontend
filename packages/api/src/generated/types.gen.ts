@@ -4,6 +4,84 @@ export type ClientOptions = {
   baseUrl: string;
 };
 
+export type CreateManualSessionDto = {
+  /**
+   * Type of manual session (COUNTER, PHONE, or TAKEOUT)
+   */
+  sessionType: 'TABLE' | 'COUNTER' | 'PHONE' | 'TAKEOUT';
+  /**
+   * Optional customer name
+   */
+  customerName?: string;
+  /**
+   * Optional customer phone number
+   */
+  customerPhone?: string;
+  /**
+   * Number of guests in the session
+   */
+  guestCount?: number;
+};
+
+export type SessionResponseDto = {
+  /**
+   * Session ID
+   */
+  id: string;
+  /**
+   * Store ID
+   */
+  storeId: string;
+  /**
+   * Table ID
+   */
+  tableId: string;
+  /**
+   * Session status
+   */
+  status: 'ACTIVE' | 'CLOSED';
+  /**
+   * Number of guests
+   */
+  guestCount: number;
+  /**
+   * Session token for authentication
+   */
+  sessionToken: string;
+  /**
+   * Closed timestamp
+   */
+  closedAt: {
+    [key: string]: unknown;
+  };
+  /**
+   * Created timestamp
+   */
+  createdAt: string;
+  /**
+   * Updated timestamp
+   */
+  updatedAt: string;
+};
+
+export type JoinSessionDto = {
+  /**
+   * Number of guests in the session
+   */
+  guestCount?: number;
+};
+
+export type UpdateSessionDto = {
+  /**
+   * Number of guests in the session
+   */
+  guestCount?: number;
+  /**
+   * Session status
+   */
+  status?: 'ACTIVE' | 'CLOSED';
+};
+
 export type ChooseStoreDto = {
   /**
    * The ID (UUID) of the store the user wants to act under
@@ -79,7 +157,6 @@ export type UserProfileResponseDto = {
 
 export type CreateUserDto = {
   email: string;
-  password: string;
   name?: string;
 };
 
@@ -87,6 +164,76 @@ export type AddUserToStoreDto = {
   userId: string;
   storeId: string;
   role: 'OWNER' | 'ADMIN' | 'CHEF' | 'CASHIER' | 'SERVER';
+};
+
+export type CartItemCustomizationResponseDto = {
+  id: string;
+  customizationOptionId: string;
+  optionName: string;
+  additionalPrice: string;
+};
+
+export type CartItemResponseDto = {
+  id: string;
+  menuItemId: {
+    [key: string]: unknown;
+  };
+  menuItemName: string;
+  basePrice: string;
+  quantity: number;
+  notes: {
+    [key: string]: unknown;
+  };
+  customizations: Array<CartItemCustomizationResponseDto>;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CartResponseDto = {
+  id: string;
+  sessionId: string;
+  storeId: string;
+  subTotal: string;
+  items: Array<CartItemResponseDto>;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CartItemCustomizationDto = {
+  /**
+   * Customization option ID
+   */
+  customizationOptionId: string;
+};
+
+export type AddToCartDto = {
+  /**
+   * Menu item ID to add to cart
+   */
+  menuItemId: string;
+  /**
+   * Quantity of the item
+   */
+  quantity: number;
+  /**
+   * Special instructions or notes
+   */
+  notes?: string;
+  /**
+   * Selected customization options
+   */
+  customizations?: Array<CartItemCustomizationDto>;
+};
+
+export type UpdateCartItemDto = {
+  /**
+   * Updated quantity
+   */
+  quantity?: number;
+  /**
+   * Updated notes
+   */
+  notes?: string;
 };
 
 export type MenuItemNestedResponseDto = {
@@ -193,6 +340,68 @@ export type UploadImageResponseDto = {
   imageUrl: string;
 };
 
+export type KitchenOrderResponseDto = {
+  /**
+   * Order ID
+   */
+  id: string;
+  /**
+   * Store ID
+   */
+  storeId: string;
+  /**
+   * Order number
+   */
+  orderNumber: string;
+  /**
+   * Table name
+   */
+  tableName: string;
+  /**
+   * Order type
+   */
+  orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
+  /**
+   * Order status
+   */
+  status:
+    | 'PENDING'
+    | 'PREPARING'
+    | 'READY'
+    | 'SERVED'
+    | 'COMPLETED'
+    | 'CANCELLED';
+  /**
+   * Grand total
+   */
+  grandTotal: string;
+  /**
+   * Order created timestamp
+   */
+  createdAt: string;
+  /**
+   * Order updated timestamp
+   */
+  updatedAt: string;
+  /**
+   * Order items
+   */
+  orderItems: Array<unknown>;
+};
+
+export type UpdateKitchenStatusDto = {
+  /**
+   * New kitchen status
+   */
+  status:
+    | 'PENDING'
+    | 'PREPARING'
+    | 'READY'
+    | 'SERVED'
+    | 'COMPLETED'
+    | 'CANCELLED';
+};
+
 export type MenuItemDeletedResponseDto = {
   /**
    * The ID (UUID) of the deleted menu item.
@@ -217,6 +426,26 @@ export type MenuItemResponseDto = {
    * Indicates if the item is temporarily hidden (e.g., out of stock).
    */
   isHidden: boolean;
+  /**
+   * Indicates if the item is currently out of stock.
+   */
+  isOutOfStock: boolean;
+  /**
+   * Kitchen routing area for this item
+   */
+  routingArea:
+    | 'GRILL'
+    | 'FRY'
+    | 'SALAD'
+    | 'DRINKS'
+    | 'DESSERT'
+    | 'APPETIZER'
+    | 'SOUP'
+    | 'OTHER';
+  /**
+   * Expected preparation time in minutes
+   */
+  preparationTimeMinutes?: number;
   categoryId: string;
   storeId: string;
   sortOrder: number;
@@ -289,6 +518,22 @@ export type CreateMenuItemDto = {
    */
   isHidden?: boolean;
   /**
+   * Kitchen routing area for this item (e.g., GRILL, FRY, DRINKS). Defaults to OTHER.
+   */
+  routingArea?:
+    | 'GRILL'
+    | 'FRY'
+    | 'SALAD'
+    | 'DRINKS'
+    | 'DESSERT'
+    | 'APPETIZER'
+    | 'SOUP'
+    | 'OTHER';
+  /**
+   * Expected preparation time in minutes
+   */
+  preparationTimeMinutes?: number;
+  /**
    * Category for the item. Provide ID to link/update existing, or just name to create new.
    */
   category: UpsertCategoryDto;
@@ -314,6 +559,22 @@ export type UpdateMenuItemDto = {
    */
   isHidden?: boolean;
   /**
+   * Kitchen routing area for this item (e.g., GRILL, FRY, DRINKS).
+   */
+  routingArea?:
+    | 'GRILL'
+    | 'FRY'
+    | 'SALAD'
+    | 'DRINKS'
+    | 'DESSERT'
+    | 'APPETIZER'
+    | 'SOUP'
+    | 'OTHER';
+  /**
+   * Expected preparation time in minutes
+   */
+  preparationTimeMinutes?: number;
+  /**
    * Optional: Update or change category. Provide ID to link/update existing, or just name to create new.
    */
   category?: UpsertCategoryDto;
@@ -321,6 +582,209 @@ export type UpdateMenuItemDto = {
    * Optional: Full list of desired customization groups. Provide IDs to update existing groups/options. Groups/options missing IDs will be created. Existing groups/options NOT included in this array (by ID) WILL BE DELETED.
    */
   customizationGroups?: Array<UpsertCustomizationGroupDto>;
+};
+
+export type CheckoutCartDto = {
+  /**
+   * Order type
+   */
+  orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
+  /**
+   * Table name (from session)
+   */
+  tableName?: string;
+};
+
+export type OrderItemCustomizationResponseDto = {
+  id: string;
+  customizationOptionId: string;
+  finalPrice: string;
+};
+
+export type OrderItemResponseDto = {
+  id: string;
+  menuItemId: {
+    [key: string]: unknown;
+  };
+  price: string;
+  quantity: number;
+  finalPrice: string;
+  notes: {
+    [key: string]: unknown;
+  };
+  customizations: Array<OrderItemCustomizationResponseDto>;
+};
+
+export type OrderResponseDto = {
+  id: string;
+  orderNumber: string;
+  storeId: string;
+  sessionId: {
+    [key: string]: unknown;
+  };
+  tableName: string;
+  status:
+    | 'PENDING'
+    | 'PREPARING'
+    | 'READY'
+    | 'SERVED'
+    | 'COMPLETED'
+    | 'CANCELLED';
+  orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
+  paidAt: {
+    [key: string]: unknown;
+  };
+  subTotal: string;
+  vatRateSnapshot: string;
+  serviceChargeRateSnapshot: string;
+  vatAmount: string;
+  serviceChargeAmount: string;
+  grandTotal: string;
+  /**
+   * Total amount paid across all payments (supports bill splitting)
+   */
+  totalPaid: string;
+  /**
+   * Remaining balance to be paid
+   */
+  remainingBalance: string;
+  /**
+   * Whether the order is fully paid
+   */
+  isPaidInFull: boolean;
+  orderItems: Array<OrderItemResponseDto>;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type PaginationMeta = {
+  /**
+   * Total number of items
+   */
+  total: number;
+  /**
+   * Current page number
+   */
+  page: number;
+  /**
+   * Number of items per page
+   */
+  limit: number;
+  /**
+   * Total number of pages
+   */
+  totalPages: number;
+  /**
+   * Whether there is a next page
+   */
+  hasNext: boolean;
+  /**
+   * Whether there is a previous page
+   */
+  hasPrev: boolean;
+};
+
+export type PaginatedResponseDto = {
+  /**
+   * Array of items
+   */
+  items: Array<string>;
+  /**
+   * Pagination metadata
+   */
+  meta: PaginationMeta;
+};
+
+export type UpdateOrderStatusDto = {
+  /**
+   * New order status
+   */
+  status:
+    | 'PENDING'
+    | 'PREPARING'
+    | 'READY'
+    | 'SERVED'
+    | 'COMPLETED'
+    | 'CANCELLED';
+};
+
+export type RecordPaymentDto = {
+  /**
+   * Payment amount (as string for Decimal precision)
+   */
+  amount: string;
+  /**
+   * Payment method
+   */
+  paymentMethod:
+    | 'CASH'
+    | 'CREDIT_CARD'
+    | 'DEBIT_CARD'
+    | 'MOBILE_PAYMENT'
+    | 'OTHER';
+  /**
+   * Amount tendered by customer (for cash payments only)
+   */
+  amountTendered?: string;
+  /**
+   * External transaction ID (for card/mobile payments)
+   */
+  transactionId?: string;
+  /**
+   * Additional notes
+   */
+  notes?: string;
+};
+
+export type PaymentResponseDto = {
+  id: string;
+  orderId: string;
+  amount: string;
+  paymentMethod:
+    | 'CASH'
+    | 'CREDIT_CARD'
+    | 'DEBIT_CARD'
+    | 'MOBILE_PAYMENT'
+    | 'OTHER';
+  amountTendered: string;
+  change: string;
+  transactionId: {
+    [key: string]: unknown;
+  };
+  notes: {
+    [key: string]: unknown;
+  };
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CreateRefundDto = {
+  /**
+   * Refund amount (as string for Decimal precision)
+   */
+  amount: string;
+  /**
+   * Reason for refund
+   */
+  reason?: string;
+  /**
+   * Staff member who processed the refund
+   */
+  refundedBy?: string;
+};
+
+export type RefundResponseDto = {
+  id: string;
+  orderId: string;
+  amount: string;
+  reason: {
+    [key: string]: unknown;
+  };
+  refundedBy: {
+    [key: string]: unknown;
+  };
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type StoreInformationResponseDto = {
@@ -483,6 +947,19 @@ export type BatchUpsertTableDto = {
   tables: Array<UpsertTableDto>;
 };
 
+export type UpdateTableStatusDto = {
+  /**
+   * New status for the table
+   */
+  status:
+    | 'VACANT'
+    | 'SEATED'
+    | 'ORDERING'
+    | 'SERVED'
+    | 'READY_TO_PAY'
+    | 'CLEANING';
+};
+
 export type CreateTableDto = {
   /**
    * Display name or number for the table (unique within the store)
@@ -496,6 +973,206 @@ export type UpdateTableDto = {
    */
   name?: string;
 };
+
+export type ActiveTableSessionControllerCreateManualSessionData = {
+  body: CreateManualSessionDto;
+  path?: never;
+  query: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+  };
+  url: '/active-table-sessions/manual';
+};
+
+export type ActiveTableSessionControllerCreateManualSessionErrors = {
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+};
+
+export type ActiveTableSessionControllerCreateManualSessionResponses = {
+  /**
+   * Manual session created successfully
+   */
+  201: SessionResponseDto;
+};
+
+export type ActiveTableSessionControllerCreateManualSessionResponse =
+  ActiveTableSessionControllerCreateManualSessionResponses[keyof ActiveTableSessionControllerCreateManualSessionResponses];
+
+export type ActiveTableSessionControllerJoinByTableData = {
+  body: JoinSessionDto;
+  path: {
+    /**
+     * Table ID from QR code
+     */
+    tableId: string;
+  };
+  query?: never;
+  url: '/active-table-sessions/join-by-table/{tableId}';
+};
+
+export type ActiveTableSessionControllerJoinByTableErrors = {
+  /**
+   * Table not found
+   */
+  404: unknown;
+};
+
+export type ActiveTableSessionControllerJoinByTableResponses = {
+  /**
+   * Session joined/created successfully
+   */
+  201: SessionResponseDto;
+};
+
+export type ActiveTableSessionControllerJoinByTableResponse =
+  ActiveTableSessionControllerJoinByTableResponses[keyof ActiveTableSessionControllerJoinByTableResponses];
+
+export type ActiveTableSessionControllerFindOneData = {
+  body?: never;
+  path: {
+    /**
+     * Session ID
+     */
+    sessionId: string;
+  };
+  query?: never;
+  url: '/active-table-sessions/{sessionId}';
+};
+
+export type ActiveTableSessionControllerFindOneErrors = {
+  /**
+   * Session not found
+   */
+  404: unknown;
+};
+
+export type ActiveTableSessionControllerFindOneResponses = {
+  /**
+   * Session found
+   */
+  200: SessionResponseDto;
+};
+
+export type ActiveTableSessionControllerFindOneResponse =
+  ActiveTableSessionControllerFindOneResponses[keyof ActiveTableSessionControllerFindOneResponses];
+
+export type ActiveTableSessionControllerUpdateData = {
+  body: UpdateSessionDto;
+  path: {
+    /**
+     * Session ID
+     */
+    sessionId: string;
+  };
+  query?: never;
+  url: '/active-table-sessions/{sessionId}';
+};
+
+export type ActiveTableSessionControllerUpdateErrors = {
+  /**
+   * Session not found
+   */
+  404: unknown;
+};
+
+export type ActiveTableSessionControllerUpdateResponses = {
+  /**
+   * Session updated
+   */
+  200: SessionResponseDto;
+};
+
+export type ActiveTableSessionControllerUpdateResponse =
+  ActiveTableSessionControllerUpdateResponses[keyof ActiveTableSessionControllerUpdateResponses];
+
+export type ActiveTableSessionControllerFindByTokenData = {
+  body?: never;
+  path: {
+    /**
+     * Session token
+     */
+    token: string;
+  };
+  query?: never;
+  url: '/active-table-sessions/token/{token}';
+};
+
+export type ActiveTableSessionControllerFindByTokenErrors = {
+  /**
+   * Invalid session token
+   */
+  404: unknown;
+};
+
+export type ActiveTableSessionControllerFindByTokenResponses = {
+  /**
+   * Session found
+   */
+  200: SessionResponseDto;
+};
+
+export type ActiveTableSessionControllerFindByTokenResponse =
+  ActiveTableSessionControllerFindByTokenResponses[keyof ActiveTableSessionControllerFindByTokenResponses];
+
+export type ActiveTableSessionControllerFindActiveByStoreData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+  };
+  url: '/active-table-sessions';
+};
+
+export type ActiveTableSessionControllerFindActiveByStoreResponses = {
+  /**
+   * Active sessions retrieved
+   */
+  200: Array<SessionResponseDto>;
+};
+
+export type ActiveTableSessionControllerFindActiveByStoreResponse =
+  ActiveTableSessionControllerFindActiveByStoreResponses[keyof ActiveTableSessionControllerFindActiveByStoreResponses];
+
+export type ActiveTableSessionControllerCloseData = {
+  body?: never;
+  path: {
+    /**
+     * Session ID
+     */
+    sessionId: string;
+  };
+  query?: never;
+  url: '/active-table-sessions/{sessionId}/close';
+};
+
+export type ActiveTableSessionControllerCloseErrors = {
+  /**
+   * Session already closed
+   */
+  400: unknown;
+  /**
+   * Session not found
+   */
+  404: unknown;
+};
+
+export type ActiveTableSessionControllerCloseResponses = {
+  /**
+   * Session closed
+   */
+  200: SessionResponseDto;
+};
+
+export type ActiveTableSessionControllerCloseResponse =
+  ActiveTableSessionControllerCloseResponses[keyof ActiveTableSessionControllerCloseResponses];
 
 export type AuthControllerLoginWithStoreData = {
   body: ChooseStoreDto;
@@ -707,6 +1384,239 @@ export type UserControllerGetCurrentUserResponses = {
 export type UserControllerGetCurrentUserResponse =
   UserControllerGetCurrentUserResponses[keyof UserControllerGetCurrentUserResponses];
 
+export type CartControllerClearCartData = {
+  body?: never;
+  headers?: {
+    /**
+     * Session token for customer access (SOS app)
+     */
+    'x-session-token'?: string;
+  };
+  path?: never;
+  query: {
+    /**
+     * Active table session ID
+     */
+    sessionId: string;
+  };
+  url: '/cart';
+};
+
+export type CartControllerClearCartErrors = {
+  /**
+   * Authentication required
+   */
+  401: unknown;
+  /**
+   * Access denied
+   */
+  403: unknown;
+  /**
+   * Cart not found
+   */
+  404: unknown;
+};
+
+export type CartControllerClearCartResponses = {
+  /**
+   * Cart cleared successfully
+   */
+  200: CartResponseDto;
+};
+
+export type CartControllerClearCartResponse =
+  CartControllerClearCartResponses[keyof CartControllerClearCartResponses];
+
+export type CartControllerGetCartData = {
+  body?: never;
+  headers?: {
+    /**
+     * Session token for customer access (SOS app)
+     */
+    'x-session-token'?: string;
+  };
+  path?: never;
+  query: {
+    /**
+     * Active table session ID
+     */
+    sessionId: string;
+  };
+  url: '/cart';
+};
+
+export type CartControllerGetCartErrors = {
+  /**
+   * Authentication required
+   */
+  401: unknown;
+  /**
+   * Access denied
+   */
+  403: unknown;
+  /**
+   * Session not found
+   */
+  404: unknown;
+};
+
+export type CartControllerGetCartResponses = {
+  /**
+   * Cart retrieved successfully
+   */
+  200: CartResponseDto;
+};
+
+export type CartControllerGetCartResponse =
+  CartControllerGetCartResponses[keyof CartControllerGetCartResponses];
+
+export type CartControllerAddItemData = {
+  body: AddToCartDto;
+  headers?: {
+    /**
+     * Session token for customer access (SOS app)
+     */
+    'x-session-token'?: string;
+  };
+  path?: never;
+  query: {
+    /**
+     * Active table session ID
+     */
+    sessionId: string;
+  };
+  url: '/cart/items';
+};
+
+export type CartControllerAddItemErrors = {
+  /**
+   * Invalid input
+   */
+  400: unknown;
+  /**
+   * Authentication required
+   */
+  401: unknown;
+  /**
+   * Access denied
+   */
+  403: unknown;
+  /**
+   * Menu item or session not found
+   */
+  404: unknown;
+};
+
+export type CartControllerAddItemResponses = {
+  /**
+   * Item added to cart successfully
+   */
+  201: CartResponseDto;
+};
+
+export type CartControllerAddItemResponse =
+  CartControllerAddItemResponses[keyof CartControllerAddItemResponses];
+
+export type CartControllerRemoveItemData = {
+  body?: never;
+  headers?: {
+    /**
+     * Session token for customer access (SOS app)
+     */
+    'x-session-token'?: string;
+  };
+  path: {
+    /**
+     * Cart item ID
+     */
+    cartItemId: string;
+  };
+  query: {
+    /**
+     * Active table session ID
+     */
+    sessionId: string;
+  };
+  url: '/cart/items/{cartItemId}';
+};
+
+export type CartControllerRemoveItemErrors = {
+  /**
+   * Authentication required
+   */
+  401: unknown;
+  /**
+   * Access denied
+   */
+  403: unknown;
+  /**
+   * Cart item not found
+   */
+  404: unknown;
+};
+
+export type CartControllerRemoveItemResponses = {
+  /**
+   * Item removed from cart successfully
+   */
+  200: CartResponseDto;
+};
+
+export type CartControllerRemoveItemResponse =
+  CartControllerRemoveItemResponses[keyof CartControllerRemoveItemResponses];
+
+export type CartControllerUpdateItemData = {
+  body: UpdateCartItemDto;
+  headers?: {
+    /**
+     * Session token for customer access (SOS app)
+     */
+    'x-session-token'?: string;
+  };
+  path: {
+    /**
+     * Cart item ID
+     */
+    cartItemId: string;
+  };
+  query: {
+    /**
+     * Active table session ID
+     */
+    sessionId: string;
+  };
+  url: '/cart/items/{cartItemId}';
+};
+
+export type CartControllerUpdateItemErrors = {
+  /**
+   * Invalid input
+   */
+  400: unknown;
+  /**
+   * Authentication required
+   */
+  401: unknown;
+  /**
+   * Access denied
+   */
+  403: unknown;
+  /**
+   * Cart item not found
+   */
+  404: unknown;
+};
+
+export type CartControllerUpdateItemResponses = {
+  /**
+   * Cart item updated successfully
+   */
+  200: CartResponseDto;
+};
+
+export type CartControllerUpdateItemResponse =
+  CartControllerUpdateItemResponses[keyof CartControllerUpdateItemResponses];
+
 export type CategoryControllerFindAllData = {
   body?: never;
   path?: never;
@@ -910,6 +1820,93 @@ export type HealthControllerHealthCheckResponses = {
   200: unknown;
 };
 
+export type KitchenControllerGetOrdersData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+    /**
+     * Filter by order status
+     */
+    status?:
+      | 'PENDING'
+      | 'PREPARING'
+      | 'READY'
+      | 'SERVED'
+      | 'COMPLETED'
+      | 'CANCELLED';
+    /**
+     * Filter by menu item routing area
+     */
+    routingArea?:
+      | 'GRILL'
+      | 'FRY'
+      | 'SALAD'
+      | 'DRINKS'
+      | 'DESSERT'
+      | 'APPETIZER'
+      | 'SOUP'
+      | 'OTHER';
+  };
+  url: '/kitchen/orders';
+};
+
+export type KitchenControllerGetOrdersResponses = {
+  /**
+   * Orders retrieved successfully
+   */
+  200: Array<KitchenOrderResponseDto>;
+};
+
+export type KitchenControllerGetOrdersResponse =
+  KitchenControllerGetOrdersResponses[keyof KitchenControllerGetOrdersResponses];
+
+export type KitchenControllerGetOrderDetailsData = {
+  body?: never;
+  path: {
+    orderId: string;
+  };
+  query?: never;
+  url: '/kitchen/orders/{orderId}';
+};
+
+export type KitchenControllerGetOrderDetailsResponses = {
+  /**
+   * Order details retrieved successfully
+   */
+  200: KitchenOrderResponseDto;
+};
+
+export type KitchenControllerGetOrderDetailsResponse =
+  KitchenControllerGetOrderDetailsResponses[keyof KitchenControllerGetOrderDetailsResponses];
+
+export type KitchenControllerUpdateOrderStatusData = {
+  body: UpdateKitchenStatusDto;
+  path: {
+    orderId: string;
+  };
+  query: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+  };
+  url: '/kitchen/orders/{orderId}/status';
+};
+
+export type KitchenControllerUpdateOrderStatusResponses = {
+  /**
+   * Order status updated successfully
+   */
+  200: KitchenOrderResponseDto;
+};
+
+export type KitchenControllerUpdateOrderStatusResponse =
+  KitchenControllerUpdateOrderStatusResponses[keyof KitchenControllerUpdateOrderStatusResponses];
+
 export type MenuControllerGetStoreMenuItemsData = {
   body?: never;
   path?: never;
@@ -1036,6 +2033,363 @@ export type MenuControllerUpdateMenuItemResponses = {
 
 export type MenuControllerUpdateMenuItemResponse =
   MenuControllerUpdateMenuItemResponses[keyof MenuControllerUpdateMenuItemResponses];
+
+export type OrderControllerCheckoutData = {
+  body: CheckoutCartDto;
+  path?: never;
+  query: {
+    /**
+     * Active table session ID
+     */
+    sessionId: string;
+  };
+  url: '/orders/checkout';
+};
+
+export type OrderControllerCheckoutErrors = {
+  /**
+   * Cart is empty or invalid
+   */
+  400: unknown;
+  /**
+   * Session or cart not found
+   */
+  404: unknown;
+};
+
+export type OrderControllerCheckoutResponses = {
+  /**
+   * Order created successfully
+   */
+  201: OrderResponseDto;
+};
+
+export type OrderControllerCheckoutResponse =
+  OrderControllerCheckoutResponses[keyof OrderControllerCheckoutResponses];
+
+export type OrderControllerFindOneData = {
+  body?: never;
+  path: {
+    /**
+     * Order ID
+     */
+    orderId: string;
+  };
+  query?: never;
+  url: '/orders/{orderId}';
+};
+
+export type OrderControllerFindOneErrors = {
+  /**
+   * Order not found
+   */
+  404: unknown;
+};
+
+export type OrderControllerFindOneResponses = {
+  /**
+   * Order retrieved successfully
+   */
+  200: OrderResponseDto;
+};
+
+export type OrderControllerFindOneResponse =
+  OrderControllerFindOneResponses[keyof OrderControllerFindOneResponses];
+
+export type OrderControllerFindBySessionData = {
+  body?: never;
+  path: {
+    /**
+     * Active table session ID
+     */
+    sessionId: string;
+  };
+  query?: never;
+  url: '/orders/session/{sessionId}';
+};
+
+export type OrderControllerFindBySessionResponses = {
+  /**
+   * Orders retrieved successfully
+   */
+  200: Array<OrderResponseDto>;
+};
+
+export type OrderControllerFindBySessionResponse =
+  OrderControllerFindBySessionResponses[keyof OrderControllerFindBySessionResponses];
+
+export type OrderControllerFindForKdsData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Page number (1-indexed)
+     */
+    page?: number;
+    /**
+     * Items per page (max 100)
+     */
+    limit?: number;
+    /**
+     * Filter by order status (defaults to active orders)
+     */
+    status?:
+      | 'PENDING'
+      | 'PREPARING'
+      | 'READY'
+      | 'SERVED'
+      | 'COMPLETED'
+      | 'CANCELLED';
+    /**
+     * Store ID
+     */
+    storeId: string;
+  };
+  url: '/orders/kds';
+};
+
+export type OrderControllerFindForKdsResponses = {
+  /**
+   * KDS orders retrieved successfully
+   */
+  200: PaginatedResponseDto;
+};
+
+export type OrderControllerFindForKdsResponse =
+  OrderControllerFindForKdsResponses[keyof OrderControllerFindForKdsResponses];
+
+export type OrderControllerFindByStoreData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+    /**
+     * Page number (1-indexed)
+     */
+    page?: number;
+    /**
+     * Items per page (max 100)
+     */
+    limit?: number;
+  };
+  url: '/orders';
+};
+
+export type OrderControllerFindByStoreResponses = {
+  /**
+   * Orders retrieved successfully
+   */
+  200: PaginatedResponseDto;
+};
+
+export type OrderControllerFindByStoreResponse =
+  OrderControllerFindByStoreResponses[keyof OrderControllerFindByStoreResponses];
+
+export type OrderControllerUpdateStatusData = {
+  body: UpdateOrderStatusDto;
+  path: {
+    /**
+     * Order ID
+     */
+    orderId: string;
+  };
+  query?: never;
+  url: '/orders/{orderId}/status';
+};
+
+export type OrderControllerUpdateStatusErrors = {
+  /**
+   * Invalid status transition
+   */
+  400: unknown;
+  /**
+   * Order not found
+   */
+  404: unknown;
+};
+
+export type OrderControllerUpdateStatusResponses = {
+  /**
+   * Order status updated successfully
+   */
+  200: OrderResponseDto;
+};
+
+export type OrderControllerUpdateStatusResponse =
+  OrderControllerUpdateStatusResponses[keyof OrderControllerUpdateStatusResponses];
+
+export type PaymentControllerFindPaymentsByOrderData = {
+  body?: never;
+  path: {
+    /**
+     * Order ID
+     */
+    orderId: string;
+  };
+  query?: never;
+  url: '/payments/orders/{orderId}';
+};
+
+export type PaymentControllerFindPaymentsByOrderErrors = {
+  /**
+   * Forbidden - insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Order not found
+   */
+  404: unknown;
+};
+
+export type PaymentControllerFindPaymentsByOrderResponses = {
+  /**
+   * Payments retrieved successfully
+   */
+  200: Array<PaymentResponseDto>;
+};
+
+export type PaymentControllerFindPaymentsByOrderResponse =
+  PaymentControllerFindPaymentsByOrderResponses[keyof PaymentControllerFindPaymentsByOrderResponses];
+
+export type PaymentControllerRecordPaymentData = {
+  body: RecordPaymentDto;
+  path: {
+    /**
+     * Order ID
+     */
+    orderId: string;
+  };
+  query?: never;
+  url: '/payments/orders/{orderId}';
+};
+
+export type PaymentControllerRecordPaymentErrors = {
+  /**
+   * Invalid payment amount
+   */
+  400: unknown;
+  /**
+   * Forbidden - insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Order not found
+   */
+  404: unknown;
+};
+
+export type PaymentControllerRecordPaymentResponses = {
+  /**
+   * Payment recorded successfully
+   */
+  201: PaymentResponseDto;
+};
+
+export type PaymentControllerRecordPaymentResponse =
+  PaymentControllerRecordPaymentResponses[keyof PaymentControllerRecordPaymentResponses];
+
+export type PaymentControllerGetPaymentSummaryData = {
+  body?: never;
+  path: {
+    /**
+     * Order ID
+     */
+    orderId: string;
+  };
+  query?: never;
+  url: '/payments/orders/{orderId}/summary';
+};
+
+export type PaymentControllerGetPaymentSummaryErrors = {
+  /**
+   * Forbidden - insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Order not found
+   */
+  404: unknown;
+};
+
+export type PaymentControllerGetPaymentSummaryResponses = {
+  /**
+   * Payment summary retrieved successfully
+   */
+  200: unknown;
+};
+
+export type PaymentControllerFindRefundsByOrderData = {
+  body?: never;
+  path: {
+    /**
+     * Order ID
+     */
+    orderId: string;
+  };
+  query?: never;
+  url: '/payments/orders/{orderId}/refunds';
+};
+
+export type PaymentControllerFindRefundsByOrderErrors = {
+  /**
+   * Forbidden - insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Order not found
+   */
+  404: unknown;
+};
+
+export type PaymentControllerFindRefundsByOrderResponses = {
+  /**
+   * Refunds retrieved successfully
+   */
+  200: Array<RefundResponseDto>;
+};
+
+export type PaymentControllerFindRefundsByOrderResponse =
+  PaymentControllerFindRefundsByOrderResponses[keyof PaymentControllerFindRefundsByOrderResponses];
+
+export type PaymentControllerCreateRefundData = {
+  body: CreateRefundDto;
+  path: {
+    /**
+     * Order ID
+     */
+    orderId: string;
+  };
+  query?: never;
+  url: '/payments/orders/{orderId}/refunds';
+};
+
+export type PaymentControllerCreateRefundErrors = {
+  /**
+   * Invalid refund amount
+   */
+  400: unknown;
+  /**
+   * Forbidden - insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Order not found
+   */
+  404: unknown;
+};
+
+export type PaymentControllerCreateRefundResponses = {
+  /**
+   * Refund created successfully
+   */
+  201: RefundResponseDto;
+};
+
+export type PaymentControllerCreateRefundResponse =
+  PaymentControllerCreateRefundResponses[keyof PaymentControllerCreateRefundResponses];
 
 export type StoreControllerGetStoreDetailsData = {
   body?: never;
@@ -1368,3 +2722,34 @@ export type TableControllerUpdateTableResponses = {
 
 export type TableControllerUpdateTableResponse =
   TableControllerUpdateTableResponses[keyof TableControllerUpdateTableResponses];
+
+export type TableControllerUpdateTableStatusData = {
+  body: UpdateTableStatusDto;
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
+    storeId: string;
+    /**
+     * ID (UUID) of the table to update status
+     */
+    tableId: string;
+  };
+  query?: never;
+  url: '/stores/{storeId}/tables/{tableId}/status';
+};
+
+export type TableControllerUpdateTableStatusResponses = {
+  /**
+   * Table status updated successfully.
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: TableResponseDto;
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type TableControllerUpdateTableStatusResponse =
+  TableControllerUpdateTableStatusResponses[keyof TableControllerUpdateTableStatusResponses];

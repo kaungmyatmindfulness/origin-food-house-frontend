@@ -49,11 +49,7 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
     });
 
     newSocket.on('connect_error', (error) => {
-      console.error(
-        '[Socket] Connection Error:',
-        error.message,
-        error.cause
-      );
+      console.error('[Socket] Connection Error:', error.message, error.cause);
       setIsConnected(false);
     });
 

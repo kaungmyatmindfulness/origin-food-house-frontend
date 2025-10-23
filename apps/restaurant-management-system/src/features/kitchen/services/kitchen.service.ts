@@ -23,12 +23,9 @@ export async function getKdsOrders(
   if (params.limit) queryParams.limit = String(params.limit);
 
   const queryString = new URLSearchParams(queryParams).toString();
-  const res = await apiFetch<PaginatedOrders>(
-    `/orders/kds?${queryString}`,
-    {
-      method: 'GET',
-    }
-  );
+  const res = await apiFetch<PaginatedOrders>(`/orders/kds?${queryString}`, {
+    method: 'GET',
+  });
 
   return unwrapData(res, 'Failed to fetch KDS orders');
 }
@@ -44,13 +41,10 @@ export async function updateOrderStatus(
   orderId: string,
   dto: UpdateOrderStatusDto
 ): Promise<Order> {
-  const res = await apiFetch<Order>(
-    `/orders/${orderId}/status`,
-    {
-      method: 'PATCH',
-      body: JSON.stringify(dto),
-    }
-  );
+  const res = await apiFetch<Order>(`/orders/${orderId}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify(dto),
+  });
 
   return unwrapData(res, 'Failed to update order status');
 }
@@ -66,12 +60,9 @@ export async function getOrderById(
   orderId: string,
   storeId: string
 ): Promise<Order> {
-  const res = await apiFetch<Order>(
-    `/orders/${orderId}?storeId=${storeId}`,
-    {
-      method: 'GET',
-    }
-  );
+  const res = await apiFetch<Order>(`/orders/${orderId}?storeId=${storeId}`, {
+    method: 'GET',
+  });
 
   return unwrapData(res, 'Failed to fetch order');
 }

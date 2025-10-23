@@ -1,7 +1,12 @@
 'use client';
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/components/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@repo/ui/components/card';
 import { ChefHat, Check, Clock, TrendingUp } from 'lucide-react';
 
 import { selectKitchenStats, useKitchenStore } from '../store/kitchen.store';
@@ -65,7 +70,7 @@ export function KitchenStats() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 {stat.description}
               </p>
             </CardContent>

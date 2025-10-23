@@ -4,10 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useSocket } from '@/utils/socket-provider';
 
 import { kitchenKeys } from '../queries/kitchen.keys';
-import {
-  selectSoundEnabled,
-  useKitchenStore,
-} from '../store/kitchen.store';
+import { selectSoundEnabled, useKitchenStore } from '../store/kitchen.store';
 import type {
   OrderCreatedEvent,
   OrderStatusChangedEvent,
@@ -132,7 +129,8 @@ function playNotificationSound() {
     // Create a simple beep using Web Audio API
     const AudioContextClass =
       window.AudioContext ||
-      (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      (window as typeof window & { webkitAudioContext: typeof AudioContext })
+        .webkitAudioContext;
 
     const audioContext = new AudioContextClass();
     const oscillator = audioContext.createOscillator();

@@ -60,7 +60,7 @@ export default function ChooseStorePage() {
         if (user.selectedStoreRole !== 'CHEF') {
           router.replace('/hub/menu');
         } else {
-          router.replace('/hub/kds');
+          router.replace('/hub/kitchen');
         }
         return;
       }
@@ -100,7 +100,7 @@ export default function ChooseStorePage() {
       const role = updatedUser?.selectedStoreRole;
 
       if (role === 'CHEF') {
-        router.replace(`/hub/kds`);
+        router.replace(`/hub/kitchen`);
       } else {
         router.replace('/hub/menu');
       }

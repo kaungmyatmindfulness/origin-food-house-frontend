@@ -1,0 +1,415 @@
+'use client';
+
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { ShoppingCart, Trash2, Plus, Minus } from 'lucide-react';
+
+import {
+  selectSelectedStoreId,
+  useAuthStore,
+} from '@/features/auth/store/auth.store';
+import { getCategories } from '@/features/menu/services/category.service';
+import { getStoreMenuItems } from '@/features/menu/services/menu-item.service';
+import {
+  createManualSession,
+  type SessionType,
+  type CreateManualSessionDto,
+} from '@/features/orders/services/session.service';
+import {
+  addToCart,
+  getCart,
+  removeFromCart,
+  checkoutCart,
+} from '@/features/orders/services/order.service';
+import type {
+  CartResponseDto,
+  AddToCartDto,
+} from '@repo/api/generated/types.gen';
+import { menuKeys } from '@/features/menu/queries/menu.keys';
+import { Button } from '@repo/ui/components/button';
+import { Card } from '@repo/ui/components/card';
+import { Input } from '@repo/ui/components/input';
+import { Label } from '@repo/ui/components/label';
+import { RadioGroup, RadioGroupItem } from '@repo/ui/components/radio-group';
+import { useToast } from '@repo/ui/hooks/use-toast';
+import { formatCurrency } from '@/utils/formatting';
+import type { MenuItem } from '@/features/menu/types/menu-item.types';
+
+export default function CreateOrderPage() {
+  const t = useTranslations('orders');
+  const tCommon = useTranslations('common');
+  const router = useRouter();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const selectedStoreId = useAuthStore(selectSelectedStoreId);
+
+  // Form state
+  const [sessionType, setSessionType] = useState<SessionType>('COUNTER');
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [sessionId, setSessionId] = useState<string | null>(null);
+
+  // Fetch menu data
+  const { data: categories = [] } = useQuery({
+    queryKey: menuKeys.categories(selectedStoreId!),
+    queryFn: () => getCategories(selectedStoreId!),
+    enabled: !!selectedStoreId,
+  });
+
+  const { data: menuItems = [] } = useQuery({
+    queryKey: menuKeys.items(selectedStoreId!),
+    queryFn: () => getStoreMenuItems(selectedStoreId!),
+    enabled: !!selectedStoreId,
+  });
+
+  // Fetch cart
+  const { data: cart, refetch: refetchCart } = useQuery({
+    queryKey: ['cart', sessionId],
+    queryFn: () => getCart(sessionId!),
+    enabled: !!sessionId,
+  });
+
+  // Create session mutation
+  const createSessionMutation = useMutation({
+    mutationFn: async () => {
+      if (!selectedStoreId) throw new Error('No store selected');
+
+      const sessionData: CreateManualSessionDto = {
+        sessionType,
+        ...(customerName && { customerName }),
+        ...(customerPhone && { customerPhone }),
+        guestCount: 1,
+      };
+
+      return createManualSession(selectedStoreId, sessionData);
+    },
+    onSuccess: (session) => {
+      setSessionId(session.id);
+      toast({
+        title: t('sessionCreated'),
+        description: t('sessionCreatedDesc'),
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: tCommon('error'),
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Add to cart mutation
+  const addToCartMutation = useMutation({
+    mutationFn: async (data: AddToCartDto) => {
+      if (!sessionId) throw new Error('No active session');
+      return addToCart(sessionId, data);
+    },
+    onSuccess: () => {
+      refetchCart();
+      toast({
+        title: t('itemAdded'),
+        description: t('itemAddedDesc'),
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: tCommon('error'),
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Remove from cart mutation
+  const removeFromCartMutation = useMutation({
+    mutationFn: async (cartItemId: string) => {
+      if (!sessionId) throw new Error('No active session');
+      return removeFromCart(sessionId, cartItemId);
+    },
+    onSuccess: () => {
+      refetchCart();
+      toast({
+        title: t('itemRemoved'),
+        description: t('itemRemovedDesc'),
+      });
+    },
+  });
+
+  // Checkout mutation
+  const checkoutMutation = useMutation({
+    mutationFn: async () => {
+      if (!sessionId) throw new Error('No active session');
+      return checkoutCart(sessionId);
+    },
+    onSuccess: (order) => {
+      toast({
+        title: t('orderCreated'),
+        description: t('orderCreatedDesc', { orderId: order.id }),
+      });
+      // Navigate to payment page or order details
+      router.push(`/hub/orders/${order.id}/payment`);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: tCommon('error'),
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Handlers
+  const handleAddItem = useCallback(
+    (item: MenuItem) => {
+      if (!sessionId) {
+        // If no session, create one first
+        createSessionMutation.mutate();
+        // Will add item after session is created
+        return;
+      }
+
+      addToCartMutation.mutate({
+        menuItemId: item.id,
+        quantity: 1,
+        customizations: [],
+      });
+    },
+    [sessionId, createSessionMutation, addToCartMutation]
+  );
+
+  const handleRemoveItem = useCallback(
+    (cartItemId: string) => {
+      removeFromCartMutation.mutate(cartItemId);
+    },
+    [removeFromCartMutation]
+  );
+
+  const handleCheckout = useCallback(() => {
+    checkoutMutation.mutate();
+  }, [checkoutMutation]);
+
+  // Calculate totals
+  const cartItems = cart?.items || [];
+  const subtotal = cart?.subTotal || '0';
+  const vatAmount = cart?.vatAmount || '0';
+  const serviceChargeAmount = cart?.serviceChargeAmount || '0';
+  const grandTotal = cart?.grandTotal || '0';
+
+  return (
+    <div className="container mx-auto space-y-6 p-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">{t('createOrder')}</h1>
+        <Button variant="outline" onClick={() => router.back()}>
+          {tCommon('cancel')}
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Left: Session & Menu */}
+        <div className="space-y-6 lg:col-span-2">
+          {/* Session Type & Customer Info */}
+          {!sessionId && (
+            <Card className="p-6">
+              <h2 className="mb-4 text-xl font-semibold">{t('sessionInfo')}</h2>
+
+              <div className="space-y-4">
+                {/* Session Type */}
+                <div>
+                  <Label>{t('sessionType')}</Label>
+                  <RadioGroup
+                    value={sessionType}
+                    onValueChange={(value) =>
+                      setSessionType(value as SessionType)
+                    }
+                    className="mt-2 flex gap-4"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="COUNTER" id="counter" />
+                      <Label htmlFor="counter">{t('counterOrder')}</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="PHONE" id="phone" />
+                      <Label htmlFor="phone">{t('phoneOrder')}</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="TAKEOUT" id="takeout" />
+                      <Label htmlFor="takeout">{t('takeoutOrder')}</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                {/* Customer Info */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="customerName">{t('customerName')}</Label>
+                    <Input
+                      id="customerName"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder={t('customerNamePlaceholder')}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="customerPhone">{t('customerPhone')}</Label>
+                    <Input
+                      id="customerPhone"
+                      value={customerPhone}
+                      onChange={(e) => setCustomerPhone(e.target.value)}
+                      placeholder={t('customerPhonePlaceholder')}
+                    />
+                  </div>
+                </div>
+
+                <Button
+                  onClick={() => createSessionMutation.mutate()}
+                  disabled={createSessionMutation.isPending}
+                  className="w-full"
+                >
+                  {createSessionMutation.isPending
+                    ? t('creating')
+                    : t('startSession')}
+                </Button>
+              </div>
+            </Card>
+          )}
+
+          {/* Menu Items */}
+          {sessionId && (
+            <Card className="p-6">
+              <h2 className="mb-4 text-xl font-semibold">{t('selectItems')}</h2>
+
+              {categories.map((category) => {
+                const categoryItems = menuItems.filter(
+                  (item) => item.category?.id === category.id
+                );
+
+                if (categoryItems.length === 0) return null;
+
+                return (
+                  <div key={category.id} className="mb-6">
+                    <h3 className="mb-3 text-lg font-semibold">
+                      {category.name}
+                    </h3>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      {categoryItems.map((item) => (
+                        <Card
+                          key={item.id}
+                          className="cursor-pointer p-4 transition-shadow hover:shadow-md"
+                          onClick={() => handleAddItem(item as unknown as MenuItem)}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h4 className="font-medium">{item.name}</h4>
+                              {item.description && (
+                                <p className="text-muted-foreground mt-1 text-sm">
+                                  {item.description}
+                                </p>
+                              )}
+                            </div>
+                            <div className="text-right">
+                              <p className="font-semibold">
+                                {formatCurrency(item.basePrice)}
+                              </p>
+                              <Button size="sm" className="mt-2">
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </Card>
+          )}
+        </div>
+
+        {/* Right: Cart */}
+        <div className="lg:col-span-1">
+          <Card className="sticky top-6 p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center gap-2 text-xl font-semibold">
+                <ShoppingCart className="h-5 w-5" />
+                {t('cart')}
+              </h2>
+              <span className="text-muted-foreground text-sm">
+                {cartItems.length} {t('items')}
+              </span>
+            </div>
+
+            {cartItems.length === 0 ? (
+              <p className="text-muted-foreground py-8 text-center">
+                {t('emptyCart')}
+              </p>
+            ) : (
+              <>
+                <div className="mb-4 max-h-96 space-y-3 overflow-y-auto">
+                  {cartItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="bg-muted flex items-start justify-between rounded-lg p-3"
+                    >
+                      <div className="flex-1">
+                        <p className="font-medium">{item.menuItem?.name}</p>
+                        <p className="text-muted-foreground text-sm">
+                          Qty: {item.quantity}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 text-right">
+                        <p className="font-semibold">
+                          {formatCurrency(item.finalPrice)}
+                        </p>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleRemoveItem(item.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-2 border-t pt-4">
+                  <div className="flex justify-between text-sm">
+                    <span>{t('subtotal')}</span>
+                    <span>{formatCurrency(subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>{t('vat')}</span>
+                    <span>{formatCurrency(vatAmount)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>{t('serviceCharge')}</span>
+                    <span>{formatCurrency(serviceChargeAmount)}</span>
+                  </div>
+                  <div className="flex justify-between border-t pt-2 text-lg font-bold">
+                    <span>{t('total')}</span>
+                    <span>{formatCurrency(grandTotal)}</span>
+                  </div>
+                </div>
+
+                <Button
+                  className="mt-4 w-full"
+                  size="lg"
+                  onClick={handleCheckout}
+                  disabled={checkoutMutation.isPending}
+                >
+                  {checkoutMutation.isPending
+                    ? t('processing')
+                    : t('placeOrder')}
+                </Button>
+              </>
+            )}
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
