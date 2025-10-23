@@ -91,7 +91,7 @@ The project has 50+ production-ready components:
 ```typescript
 // ✅ Use existing components
 import { Button, Dialog, Form, Input, Select } from '@repo/ui/components/*';
-import { useToast } from '@repo/ui/hooks/use-toast';
+import { toast } from '@repo/ui/lib/toast';
 
 // ❌ Don't create custom button/input/dialog components
 // They already exist in @repo/ui with proper variants!
@@ -255,7 +255,109 @@ export function MyComponent() {
 - Add to ALL 4 language files (en, zh, my, th)
 - Use descriptive keys
 
-### 7. Skeleton Loading States
+### 7. Toast Notifications (Sonner) ⭐
+
+**CRITICAL**: Use the correct Sonner API, not the old react-hot-toast pattern.
+
+```typescript
+import { toast } from '@repo/ui/lib/toast';
+
+// ✅ CORRECT - Sonner API
+toast.success('Order created', {
+  description: 'Order #123 has been created successfully',
+});
+
+toast.error('Failed to save', {
+  description: error.message,
+});
+
+toast.info('Session active');
+toast.warning('Low stock');
+
+// ❌ WRONG - Old react-hot-toast API (DO NOT USE)
+toast({
+  title: 'Error',
+  description: 'Something went wrong',
+  variant: 'destructive', // ❌ This doesn't exist in Sonner
+});
+```
+
+**Available Methods**:
+
+- `toast(message)` - Basic toast
+- `toast.success(message, options?)` - Success (green)
+- `toast.error(message, options?)` - Error (red)
+- `toast.warning(message, options?)` - Warning (yellow)
+- `toast.info(message, options?)` - Info (blue)
+- `toast.promise(promise, options)` - Promise-based toast
+
+**Options Object**:
+
+```typescript
+{
+  description?: string;  // Additional detail
+  action?: {             // Action button
+    label: string;
+    onClick: () => void;
+  };
+  duration?: number;     // Auto-dismiss time (ms)
+}
+```
+
+### 8. Logging & Debugging
+
+**IMPORTANT**: Never use `console.log()` in production code. Use the debug utility (SOS) or structured logging.
+
+```typescript
+// Self-Ordering System (SOS)
+import { debug } from '@/utils/debug';
+
+debug.log('Cart updated', cart); // Only in dev
+debug.warn('Low stock', item); // Only in dev
+debug.error('API failed', error); // Always logged
+
+// Restaurant Management System (RMS)
+// For debugging, use descriptive console methods:
+console.error('Failed to load menu:', error); // Errors only
+// Avoid console.log - remove before commit
+```
+
+**Rules**:
+
+- ❌ Never commit `console.log()` statements
+- ✅ Use `debug.error()` for errors (SOS)
+- ✅ Use `console.error()` for errors (RMS)
+- ✅ Remove debug logs before production
+
+### 9. Component Event Handlers
+
+**Pattern**: Match callback signatures to component APIs
+
+```typescript
+// ✅ CORRECT - Match Radix UI Switch API
+const handleToggle = (checked: boolean) => {
+  updateStatus(checked);
+};
+
+<Switch onCheckedChange={handleToggle} />
+
+// ❌ WRONG - Type mismatch
+const handleToggle = (e: React.MouseEvent) => {
+  e.stopPropagation();  // ❌ 'e' is actually a boolean!
+};
+
+<Switch onCheckedChange={() => handleToggle({} as React.MouseEvent)} />
+```
+
+**Common Component Signatures** (Radix UI / shadcn):
+
+- `Switch.onCheckedChange`: `(checked: boolean) => void`
+- `Checkbox.onCheckedChange`: `(checked: boolean) => void`
+- `RadioGroup.onValueChange`: `(value: string) => void`
+- `Select.onValueChange`: `(value: string) => void`
+- `Dialog.onOpenChange`: `(open: boolean) => void`
+
+### 10. Skeleton Loading States
 
 ```typescript
 if (isLoading) return <MenuSkeleton />;
@@ -263,7 +365,7 @@ if (isLoading) return <MenuSkeleton />;
 
 Always use skeleton placeholders for non-trivial loading states.
 
-### 8. React Query Configuration
+### 11. React Query Configuration
 
 **Default settings in providers.tsx**:
 
@@ -287,7 +389,7 @@ const queryClient = new QueryClient({
 
 **Server-side handling**: Separate query client instances for server/browser to prevent hydration issues.
 
-### 9. Optimistic Updates Pattern (Self-Ordering System Cart)
+### 12. Optimistic Updates Pattern (Self-Ordering System Cart)
 
 For real-time feel with WebSocket sync:
 
@@ -318,7 +420,7 @@ optimisticAddItem: async (cartItem) => {
 
 **Pattern**: Optimistic update → API call → Rollback on error → WebSocket confirmation
 
-### 10. WebSocket Integration (Self-Ordering System)
+### 13. WebSocket Integration (Self-Ordering System)
 
 **Setup**: SocketProvider in utils/socket-provider.tsx
 
@@ -338,7 +440,7 @@ socket?.on('cart:updated', (cart) => {
 
 **Events**: `connect`, `disconnect`, `connect_error`, `error`, `cart:updated`
 
-### 11. Testing Infrastructure (Restaurant Management System Only)
+### 14. Testing Infrastructure (Restaurant Management System Only)
 
 **Setup**: Jest + @testing-library/react + jsdom
 
@@ -512,7 +614,7 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 
 **Shared (@repo/ui)**:
 
-- `useToast()` - Toast notifications
+- `toast` - Toast notifications (Sonner)
 - `useMobile()` - Mobile breakpoint detection
 
 ## Utility Functions
@@ -842,6 +944,170 @@ Prevents query client recreation during React suspense.
 - **Stores**: 4 Zustand stores
 - **Languages**: 4 (en, zh, my, th)
 - **Auto-generated DTOs**: 50+
+- **Test Coverage**: RMS ~94 tests | SOS 0 tests ⚠️
+
+## ⚠️ Known Issues & Technical Debt
+
+### Critical Issues
+
+#### 1. API Type Mismatch (RMS Build Failing)
+
+**Problem**: Auto-generated types are stale, causing TypeScript errors.
+
+**Affected Files**:
+
+- `apps/restaurant-management-system/src/app/[locale]/hub/(owner-admin)/orders/create/page.tsx`
+
+**Errors**:
+
+```typescript
+// CartResponseDto missing fields
+Property 'vatAmount' does not exist on type 'CartResponseDto'
+Property 'serviceChargeAmount' does not exist on type 'CartResponseDto'
+Property 'grandTotal' does not exist on type 'CartResponseDto'
+
+// CartItemResponseDto field mismatches
+Property 'menuItem' does not exist. Did you mean 'menuItemId'?
+Property 'finalPrice' does not exist on type 'CartItemResponseDto'
+```
+
+**Solution**:
+
+```bash
+cd origin-food-house-frontend
+npm run generate:api  # Regenerate types from backend OpenAPI spec
+```
+
+**Prevention**: Always run `npm run generate:api` after backend API changes.
+
+#### 2. Self-Ordering System Has ZERO Tests ⚠️
+
+**Problem**: Customer-facing app with critical real-time features has no automated tests.
+
+**Risk**: High - Cart functionality, WebSocket sync, session management untested.
+
+**Priority**: HIGH
+
+**TODO**:
+
+- Set up Jest + React Testing Library
+- Add cart functionality tests
+- Add WebSocket sync tests
+- Add session management tests
+- Target: Minimum 60% coverage for critical paths
+
+### Medium Priority Issues
+
+#### 3. Console Logs in Production Code
+
+**Count**: 81 console.log statements across codebase
+
+**Examples**:
+
+```typescript
+// apps/restaurant-management-system/src/features/menu/components/item-card.tsx:61
+console.error(`Failed to delete item ${item.id}:`, error);
+
+// apps/restaurant-management-system/src/features/menu/components/item-card.tsx:86
+console.error(`Failed to toggle out-of-stock for ${item.id}:`, error);
+```
+
+**Solution**: Replace with debug utility or structured logging.
+
+```typescript
+// ✅ Better approach
+import { debug } from '@/utils/debug'; // SOS only
+debug.error('Failed to delete item', { itemId: item.id, error });
+```
+
+#### 4. Inconsistent Error Handling
+
+**Problem**: Mix of `unwrapData()` and manual error checking in services.
+
+**Examples**:
+
+```typescript
+// ✅ GOOD - Uses unwrapData()
+const res = await apiFetch<CategoryResponseDto>('/categories', {...});
+return unwrapData(res, 'Failed to create category');
+
+// ❌ INCONSISTENT - Manual check
+const res = await apiFetch<MenuItemDto[]>('/menu-items', {...});
+if (!res.success) throw new Error(res.message);
+return res.data;
+```
+
+**Solution**: Standardize on `unwrapData()` pattern across all services.
+
+#### 5. Missing Zustand Middleware (SOS)
+
+**Problem**: SOS Cart and Session stores lack `persist` middleware.
+
+**Risk**: Cart data lost on page refresh, poor UX.
+
+**Affected Stores**:
+
+- `apps/self-ordering-system/src/features/cart/store/cart.store.ts`
+- `apps/self-ordering-system/src/features/session/store/session.store.ts`
+
+**Solution**:
+
+```typescript
+export const useCartStore = create<CartState & CartActions>()(
+  devtools(
+    persist(
+      // ← Add this
+      immer((set) => ({
+        // ... state
+      })),
+      {
+        name: 'cart-storage',
+        partialize: (state) => ({ cart: state.cart }),
+      }
+    ),
+    { name: 'cart-store' }
+  )
+);
+```
+
+### Low Priority Issues
+
+#### 6. RMS Test Suite Issues
+
+**Status**: 6/7 test suites passing
+
+**Failing Test**: `dashboard-header.test.tsx` - TextEncoder polyfill issue
+
+**Tests Passing**: 94 tests
+
+**TODO**: Fix TextEncoder polyfill for full test coverage.
+
+#### 7. Type Safety Improvements Needed
+
+**Issue**: Some files have implicit `any` types:
+
+- `apps/restaurant-management-system/src/app/[locale]/hub/(owner-admin)/orders/create/page.tsx:339` - Parameter 'item' implicitly has an 'any' type
+
+**Solution**: Add explicit types:
+
+```typescript
+// ❌ BEFORE
+const calculateTotal = (item) => item.price * item.quantity;
+
+// ✅ AFTER
+const calculateTotal = (item: CartItemResponseDto) =>
+  Number(item.finalPrice) * item.quantity;
+```
+
+## Recent Improvements (January 2025)
+
+### ✅ Fixed Issues
+
+1. **Toast API Corrected** - Migrated 12 toast calls from old react-hot-toast API to Sonner API
+2. **Import Patterns Fixed** - Corrected @repo/api and @repo/ui imports across codebase
+3. **Component Event Handlers** - Fixed Switch component event handler type mismatches
+4. **Linting Clean** - All 26 ESLint warnings resolved (0 warnings across all packages)
+5. **Centralized Toast Export** - Created `@repo/ui/lib/toast` for consistent imports
 
 ## Documentation
 

@@ -3,7 +3,7 @@
 import { Loader2, Plus } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 import { z } from 'zod';
 
 import { ImageUpload } from '@/common/components/widgets/image-upload';

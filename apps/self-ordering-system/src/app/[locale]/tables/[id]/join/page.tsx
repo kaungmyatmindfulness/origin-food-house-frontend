@@ -3,7 +3,7 @@
 import { Loader2, ShoppingBasket } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 
 import { joinTableSession } from '@/features/session/services/session.service';
 import { JoinSessionResponse } from '@/features/session/types/session.types';

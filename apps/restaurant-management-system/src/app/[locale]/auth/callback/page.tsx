@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { handleAuth0Callback } from '@/features/auth/services/auth0.service';

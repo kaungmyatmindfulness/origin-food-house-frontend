@@ -21,7 +21,7 @@ import { formatCurrency } from '@/utils/formatting'; // Adjust path
 import { Button } from '@repo/ui/components/button'; // Adjust path
 import { Sheet, SheetTrigger } from '@repo/ui/components/sheet'; // Adjust path
 import { useCartStore } from '@/features/cart/store/cart.store';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 
 export default function RestaurantMenuPage() {
   const params = useParams();

@@ -4,7 +4,7 @@ import { isEmpty } from 'lodash-es';
 import { Check, Edit, Loader2, MoreVertical, Trash2, X } from 'lucide-react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 import { z } from 'zod';
 
 import {

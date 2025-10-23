@@ -47,9 +47,9 @@ function fixImports() {
     let content = readFileSync(file, 'utf-8');
     let modified = false;
 
-    // Special case: fix './client.js' to './client/index.js' in root level files
+    // Special case: fix './client.js' to '@hey-api/client-fetch' (package import)
     if (content.includes("from './client.js'")) {
-      content = content.replace(/from '\.\/client\.js'/g, "from './client/index.js'");
+      content = content.replace(/from '\.\/client\.js'/g, "from '@hey-api/client-fetch'");
       modified = true;
     }
 

@@ -4,7 +4,7 @@ import type {
   UpdateOrderStatusDto,
   CartResponseDto,
   AddToCartDto,
-} from '@repo/api/generated/types.gen.js';
+} from '@repo/api/generated/types';
 
 /**
  * Add item to cart

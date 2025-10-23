@@ -3,8 +3,8 @@
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ShoppingCart, Trash2, Plus, Minus } from 'lucide-react';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { ShoppingCart, Trash2, Plus } from 'lucide-react';
 
 import {
   selectSelectedStoreId,
@@ -23,17 +23,14 @@ import {
   removeFromCart,
   checkoutCart,
 } from '@/features/orders/services/order.service';
-import type {
-  CartResponseDto,
-  AddToCartDto,
-} from '@repo/api/generated/types.gen';
+import type { AddToCartDto } from '@repo/api/generated/types';
 import { menuKeys } from '@/features/menu/queries/menu.keys';
 import { Button } from '@repo/ui/components/button';
 import { Card } from '@repo/ui/components/card';
 import { Input } from '@repo/ui/components/input';
 import { Label } from '@repo/ui/components/label';
 import { RadioGroup, RadioGroupItem } from '@repo/ui/components/radio-group';
-import { useToast } from '@repo/ui/hooks/use-toast';
+import { toast } from '@repo/ui/lib/toast';
 import { formatCurrency } from '@/utils/formatting';
 import type { MenuItem } from '@/features/menu/types/menu-item.types';
 
@@ -41,8 +38,6 @@ export default function CreateOrderPage() {
   const t = useTranslations('orders');
   const tCommon = useTranslations('common');
   const router = useRouter();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
 
@@ -88,16 +83,13 @@ export default function CreateOrderPage() {
     },
     onSuccess: (session) => {
       setSessionId(session.id);
-      toast({
-        title: t('sessionCreated'),
+      toast.success(t('sessionCreated'), {
         description: t('sessionCreatedDesc'),
       });
     },
     onError: (error: Error) => {
-      toast({
-        title: tCommon('error'),
+      toast.error(tCommon('error'), {
         description: error.message,
-        variant: 'destructive',
       });
     },
   });
@@ -110,16 +102,13 @@ export default function CreateOrderPage() {
     },
     onSuccess: () => {
       refetchCart();
-      toast({
-        title: t('itemAdded'),
+      toast.success(t('itemAdded'), {
         description: t('itemAddedDesc'),
       });
     },
     onError: (error: Error) => {
-      toast({
-        title: tCommon('error'),
+      toast.error(tCommon('error'), {
         description: error.message,
-        variant: 'destructive',
       });
     },
   });
@@ -132,8 +121,7 @@ export default function CreateOrderPage() {
     },
     onSuccess: () => {
       refetchCart();
-      toast({
-        title: t('itemRemoved'),
+      toast.success(t('itemRemoved'), {
         description: t('itemRemovedDesc'),
       });
     },
@@ -146,18 +134,15 @@ export default function CreateOrderPage() {
       return checkoutCart(sessionId);
     },
     onSuccess: (order) => {
-      toast({
-        title: t('orderCreated'),
+      toast.success(t('orderCreated'), {
         description: t('orderCreatedDesc', { orderId: order.id }),
       });
       // Navigate to payment page or order details
       router.push(`/hub/orders/${order.id}/payment`);
     },
     onError: (error: Error) => {
-      toast({
-        title: tCommon('error'),
+      toast.error(tCommon('error'), {
         description: error.message,
-        variant: 'destructive',
       });
     },
   });

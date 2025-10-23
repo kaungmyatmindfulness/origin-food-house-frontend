@@ -14,7 +14,6 @@ import {
   format,
   startOfDay,
   endOfDay,
-  subDays,
   startOfWeek,
   endOfWeek,
   startOfMonth,
@@ -22,8 +21,6 @@ import {
 } from 'date-fns';
 import Papa from 'papaparse';
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
   PieChart,
@@ -95,8 +92,6 @@ export default function ReportsPage() {
   const t = useTranslations('reports');
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
   const [datePreset, setDatePreset] = useState<DateRangePreset>('month');
-  const [customStartDate, setCustomStartDate] = useState<Date | null>(null);
-  const [customEndDate, setCustomEndDate] = useState<Date | null>(null);
 
   // Calculate date range based on preset
   const { startDate, endDate } = useMemo(() => {
@@ -110,13 +105,13 @@ export default function ReportsPage() {
         return { startDate: startOfMonth(now), endDate: endOfMonth(now) };
       case 'custom':
         return {
-          startDate: customStartDate || startOfMonth(now),
-          endDate: customEndDate || endOfMonth(now),
+          startDate: startOfMonth(now),
+          endDate: endOfMonth(now),
         };
       default:
         return { startDate: startOfMonth(now), endDate: endOfMonth(now) };
     }
-  }, [datePreset, customStartDate, customEndDate]);
+  }, [datePreset]);
 
   // Fetch sales summary
   const {

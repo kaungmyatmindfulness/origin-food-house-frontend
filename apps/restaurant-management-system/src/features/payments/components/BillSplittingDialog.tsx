@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 import { useTranslations } from 'next-intl';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Trash2, CheckCircle2 } from 'lucide-react';
@@ -28,13 +28,6 @@ import {
 import { Input } from '@repo/ui/components/input';
 import { RadioGroup, RadioGroupItem } from '@repo/ui/components/radio-group';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@repo/ui/components/select';
-import {
   Card,
   CardContent,
   CardHeader,
@@ -46,7 +39,7 @@ import { Alert, AlertDescription } from '@repo/ui/components/alert';
 import type {
   OrderResponseDto,
   RecordPaymentDto,
-} from '@repo/api/generated/types.gen.js';
+} from '@repo/api/generated/types';
 import { recordPayment } from '../services/payment.service';
 
 interface BillSplittingDialogProps {

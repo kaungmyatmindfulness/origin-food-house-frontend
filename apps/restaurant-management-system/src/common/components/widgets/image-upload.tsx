@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone, FileRejection } from 'react-dropzone';
 import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 import { useMutation } from '@tanstack/react-query';
 
 import { cn } from '@repo/ui/lib/utils';

@@ -9,7 +9,7 @@ import { recordPayment } from '@/features/payments/services/payment.service';
 import type {
   OrderResponseDto,
   RecordPaymentDto,
-} from '@repo/api/generated/types.gen';
+} from '@repo/api/generated/types';
 import {
   Dialog,
   DialogContent,
@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from '@repo/ui/components/select';
 import { Textarea } from '@repo/ui/components/textarea';
-import { useToast } from '@repo/ui/hooks/use-toast';
+import { toast } from '@repo/ui/lib/toast';
 import { formatCurrency } from '@/utils/formatting';
 
 interface PaymentDialogProps {
@@ -54,7 +54,6 @@ export function PaymentDialog({
 }: PaymentDialogProps) {
   const t = useTranslations('payments');
   const tCommon = useTranslations('common');
-  const { toast } = useToast();
   const queryClient = useQueryClient();
 
   // Form state
@@ -93,8 +92,7 @@ export function PaymentDialog({
       return recordPayment(order.id, paymentData);
     },
     onSuccess: () => {
-      toast({
-        title: t('paymentRecorded'),
+      toast.success(t('paymentRecorded'), {
         description: t('paymentRecordedDesc'),
       });
       queryClient.invalidateQueries({ queryKey: ['order', order.id] });
@@ -104,10 +102,8 @@ export function PaymentDialog({
       resetForm();
     },
     onError: (error: Error) => {
-      toast({
-        title: tCommon('error'),
+      toast.error(tCommon('error'), {
         description: error.message,
-        variant: 'destructive',
       });
     },
   });
@@ -124,28 +120,22 @@ export function PaymentDialog({
     e.preventDefault();
 
     if (!parsedAmount || parsedAmount <= 0) {
-      toast({
-        title: tCommon('error'),
+      toast.error(tCommon('error'), {
         description: t('invalidAmount'),
-        variant: 'destructive',
       });
       return;
     }
 
     if (parsedAmount > remainingBalance) {
-      toast({
-        title: tCommon('error'),
+      toast.error(tCommon('error'), {
         description: t('amountExceedsBalance'),
-        variant: 'destructive',
       });
       return;
     }
 
     if (paymentMethod === 'CASH' && !isValidTendered) {
-      toast({
-        title: tCommon('error'),
+      toast.error(tCommon('error'), {
         description: t('tenderedTooLow'),
-        variant: 'destructive',
       });
       return;
     }

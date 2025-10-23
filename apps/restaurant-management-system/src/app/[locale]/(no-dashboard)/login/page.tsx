@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 import { useTranslations } from 'next-intl';
 import { motion } from 'motion/react';
 

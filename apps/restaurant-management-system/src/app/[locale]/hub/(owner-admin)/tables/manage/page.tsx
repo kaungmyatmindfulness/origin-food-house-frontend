@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, Info, Loader2, Plus, Trash2 } from 'lucide-react';
 import { useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 import { z } from 'zod';
 import { useTranslations } from 'next-intl';
 import {

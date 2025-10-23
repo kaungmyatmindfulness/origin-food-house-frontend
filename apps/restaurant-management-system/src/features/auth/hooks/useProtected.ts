@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {

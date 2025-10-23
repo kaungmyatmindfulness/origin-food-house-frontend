@@ -4,7 +4,7 @@ import type {
   RecordPaymentDto,
   CreateRefundDto,
   RefundResponseDto,
-} from '@repo/api/generated/types.gen.js';
+} from '@repo/api/generated/types';
 
 /**
  * Record a payment for an order

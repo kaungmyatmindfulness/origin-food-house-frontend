@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ImageUpload } from './image-upload';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 
 // Mock dependencies
 jest.mock('sonner', () => ({

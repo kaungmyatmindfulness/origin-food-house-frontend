@@ -77,7 +77,9 @@
       "Bash(xargs cat:*)",
       "Read(//Users/kaungmyat/Desktop/FILES/Codes/Personal/origin-food-house/**)",
       "Bash(rmdir:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "WebFetch(domain:ui.shadcn.com)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

@@ -2,7 +2,7 @@
 import { Loader2, Percent } from 'lucide-react';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 import { z } from 'zod';
 import { useTranslations } from 'next-intl';
 

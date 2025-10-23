@@ -1,5 +1,5 @@
 import { apiFetch, unwrapData } from '@/utils/apiFetch';
-import type { SessionResponseDto } from '@repo/api/generated/types.gen';
+import type { SessionResponseDto } from '@repo/api/generated/types';
 
 export type SessionType = 'COUNTER' | 'PHONE' | 'TAKEOUT' | 'TABLE';
 

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 import { useTranslations } from 'next-intl';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -46,21 +46,11 @@ import { Alert, AlertDescription } from '@repo/ui/components/alert';
 import { createRefund } from '../services/payment.service';
 import { updateOrderStatus } from '@/features/orders/services/order.service';
 
-type OrderStatus =
-  | 'PENDING'
-  | 'PREPARING'
-  | 'READY'
-  | 'SERVED'
-  | 'COMPLETED'
-  | 'CANCELLED';
-
 interface RefundVoidDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   orderId: string;
-  orderStatus: OrderStatus;
   totalPaid: string;
-  grandTotal: string;
 }
 
 const REFUND_REASONS = [
@@ -70,8 +60,6 @@ const REFUND_REASONS = [
   'QUALITY_ISSUE',
   'OTHER',
 ] as const;
-
-type RefundReason = (typeof REFUND_REASONS)[number];
 
 // Refund form schema
 const refundSchema = z.object({
@@ -100,9 +88,7 @@ export function RefundVoidDialog({
   open,
   onOpenChange,
   orderId,
-  orderStatus,
   totalPaid,
-  grandTotal,
 }: RefundVoidDialogProps) {
   const t = useTranslations('payments.refundVoid');
   const queryClient = useQueryClient();
@@ -163,7 +149,7 @@ export function RefundVoidDialog({
 
   // Void mutation
   const voidMutation = useMutation({
-    mutationFn: async (values: VoidFormValues) => {
+    mutationFn: async () => {
       return await updateOrderStatus(orderId, { status: 'CANCELLED' });
     },
     onSuccess: () => {

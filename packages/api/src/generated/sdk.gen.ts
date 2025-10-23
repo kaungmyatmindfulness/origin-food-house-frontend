@@ -5,7 +5,7 @@ import {
   formDataBodySerializer,
   type Options as Options2,
   type TDataShape,
-} from './client.js';
+} from '@hey-api/client-fetch';
 import { client } from './client.gen.js';
 import type {
   ActiveTableSessionControllerCloseData,

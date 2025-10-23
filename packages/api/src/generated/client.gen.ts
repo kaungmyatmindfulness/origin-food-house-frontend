@@ -5,7 +5,7 @@ import {
   type Config,
   createClient,
   createConfig,
-} from './client.js';
+} from '@hey-api/client-fetch';
 import type { ClientOptions as ClientOptions2 } from './types.gen.js';
 
 /**

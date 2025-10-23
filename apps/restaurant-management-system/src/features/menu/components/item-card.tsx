@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { Edit, Loader2, MoreVertical, Trash2 } from 'lucide-react';
 import React from 'react';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 
 import {
   selectSelectedStoreId,
@@ -114,12 +114,8 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
     e.stopPropagation();
   };
 
-  const handleToggleOutOfStock = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newStatus = !(
-      (item as MenuItem & { isOutOfStock?: boolean }).isOutOfStock ?? false
-    );
-    toggleOutOfStockMutation.mutate(newStatus);
+  const handleToggleOutOfStock = (checked: boolean) => {
+    toggleOutOfStockMutation.mutate(checked);
   };
 
   const actionsDisabled = deleteItemMutation.isPending || !selectedStoreId;
@@ -219,9 +215,7 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
                 (item as MenuItem & { isOutOfStock?: boolean }).isOutOfStock ??
                 false
               }
-              onCheckedChange={() =>
-                handleToggleOutOfStock({} as React.MouseEvent)
-              }
+              onCheckedChange={handleToggleOutOfStock}
               disabled={toggleOutOfStockMutation.isPending || !selectedStoreId}
               aria-label={`Toggle out of stock for ${item.name}`}
             />

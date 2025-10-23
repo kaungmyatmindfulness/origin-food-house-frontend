@@ -10,7 +10,7 @@ import {
   OptimisticAddCartItem,
   useCartStore,
 } from '@/features/cart/store/cart.store';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 
 interface MenuItemCardProps {
   item: MenuItem;

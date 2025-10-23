@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 
 import { loginWithStoreAuth0 } from '@/features/auth/services/auth0.service';
 import {

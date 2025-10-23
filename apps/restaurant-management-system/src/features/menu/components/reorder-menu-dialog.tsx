@@ -21,7 +21,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 import { cloneDeep, isEmpty } from 'lodash-es';
 
 import {

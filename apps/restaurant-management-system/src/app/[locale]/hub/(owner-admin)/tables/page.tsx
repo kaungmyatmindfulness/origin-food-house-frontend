@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Grid3X3, List, MoreVertical, RefreshCcw, Users } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 
 import {
   selectSelectedStoreId,
@@ -24,7 +24,6 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/card';
@@ -47,12 +46,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@repo/ui/components/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@repo/ui/components/dropdown-menu';
 
 const STATUS_COLORS: Record<TableStatus, string> = {
   [TableStatus.VACANT]: 'bg-gray-500',

@@ -4,7 +4,7 @@ import React, { useRef, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { QRCodeCanvas } from 'qrcode.react';
 import { useReactToPrint } from 'react-to-print';
-import { toast } from 'sonner';
+import { toast } from '@repo/ui/lib/toast';
 import { AlertCircle, Printer, Download } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
