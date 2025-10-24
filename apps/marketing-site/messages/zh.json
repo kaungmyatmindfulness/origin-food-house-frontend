@@ -1,0 +1,184 @@
+{
+  "marketing": {
+    "header": {
+      "features": "功能",
+      "pricing": "价格",
+      "faq": "常见问题",
+      "signIn": "登录",
+      "requestDemo": "申请演示"
+    },
+    "hero": {
+      "headline": "改变您的餐厅运营方式",
+      "subheadline": "通过我们的一体化平台简化订餐、厨房运营和支付流程。二维码点餐、实时厨房显示和强大的分析功能。",
+      "ctaPrimary": "申请演示",
+      "ctaSecondary": "观看视频"
+    },
+    "features": {
+      "title": "您餐厅所需的一切",
+      "subtitle": "三个强大的应用程序协同工作，改变您的运营方式",
+      "sos": {
+        "title": "顾客点餐应用",
+        "description": "让顾客通过扫描二维码直接在手机上浏览菜单、定制订单并支付。",
+        "benefits": {
+          "instant": "即时二维码点餐 - 无需下载应用",
+          "multilingual": "多语言支持，服务国际顾客",
+          "realtime": "多设备实时购物车同步"
+        }
+      },
+      "rms": {
+        "title": "餐厅管理系统",
+        "description": "强大的仪表板，让员工在一个地方管理订单、桌位、菜单和报表。",
+        "benefits": {
+          "comprehensive": "完整的订单和支付管理",
+          "rolebased": "员工的基于角色的访问控制",
+          "reporting": "高级报表和分析"
+        }
+      },
+      "kds": {
+        "title": "厨房显示系统",
+        "description": "通过实时订单跟踪和准备状态更新，让您的厨房运行顺畅。",
+        "benefits": {
+          "efficient": "简化的订单准备工作流程",
+          "tracking": "带颜色指示器的可视化状态跟踪",
+          "coordination": "复杂订单的多工位协调"
+        }
+      }
+    },
+    "pricing": {
+      "title": "简单透明的定价",
+      "subtitle": "选择适合您餐厅规模和需求的计划",
+      "mostPopular": "最受欢迎",
+      "perMonth": "/月",
+      "getStarted": "开始使用",
+      "contactSales": "所有计划包含14天免费试用。如需定制企业解决方案，请联系销售。",
+      "starter": {
+        "name": "入门版",
+        "description": "适合小型咖啡厅和单店",
+        "price": "$99",
+        "features": {
+          "tables": "最多20张桌位",
+          "qr": "二维码点餐",
+          "basic": "基础报表",
+          "support": "电子邮件支持"
+        }
+      },
+      "growth": {
+        "name": "成长版",
+        "description": "适合成长型餐厅",
+        "price": "$299",
+        "features": {
+          "unlimited": "无限桌位",
+          "qr": "二维码点餐",
+          "advanced": "高级厨房显示",
+          "priority": "优先支持",
+          "loyalty": "会员计划",
+          "analytics": "高级分析"
+        }
+      },
+      "enterprise": {
+        "name": "企业版",
+        "description": "适合连锁餐厅和特许经营",
+        "price": "定制",
+        "features": {
+          "custom": "定制集成",
+          "dedicated": "专属客户经理",
+          "api": "API访问",
+          "sla": "99.9% SLA保证",
+          "training": "员工培训",
+          "migration": "数据迁移支持"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "全球餐厅的信赖之选",
+      "subtitle": "了解餐厅老板对Origin Food House的评价",
+      "sarah": {
+        "quote": "Origin Food House改变了我们的运营方式。翻台率提高了25%，员工可以专注于提供优质服务，而不是接单。",
+        "name": "Sarah Mitchell",
+        "role": "老板"
+      },
+      "michael": {
+        "quote": "厨房显示系统改变了游戏规则。我们的厨师可以实时看到所有订单，我们将出票时间减少了30%。顾客喜欢二维码点餐！",
+        "name": "Michael Chen",
+        "role": "经理"
+      },
+      "priya": {
+        "quote": "设置非常简单，多语言支持非常适合我们的国际客户。分析功能帮助我们优化菜单和定价。",
+        "name": "Priya Reddy",
+        "role": "老板"
+      }
+    },
+    "faq": {
+      "title": "常见问题",
+      "subtitle": "关于Origin Food House您需要了解的一切",
+      "stillHaveQuestions": "还有问题？",
+      "contactUs": "联系我们的销售团队",
+      "setup": {
+        "question": "设置需要多长时间？",
+        "answer": "大多数餐厅可在24-48小时内启动并运行。我们的团队将指导您完成菜单上传、二维码生成和员工入职培训。"
+      },
+      "hardware": {
+        "question": "我需要特殊硬件吗？",
+        "answer": "不需要特殊硬件！系统可在任何带有网络浏览器的设备上运行。客人使用自己的手机点餐，员工可以使用平板电脑、手机或电脑访问仪表板。"
+      },
+      "languages": {
+        "question": "支持哪些语言？",
+        "answer": "该平台支持英语、中文、缅甸语和泰语。菜单可以翻译成所有四种语言，非常适合国际化场所。"
+      },
+      "pricing": {
+        "question": "有隐藏费用吗？",
+        "answer": "没有隐藏费用。我们的定价透明 - 您根据您的等级支付固定的月度订阅费。没有交易费，没有支付处理费，没有意外费用。"
+      },
+      "support": {
+        "question": "你们提供什么样的支持？",
+        "answer": "所有计划都包括电子邮件支持。成长计划获得优先支持，响应时间为4小时。企业客户获得专属客户经理和电话支持。"
+      },
+      "integration": {
+        "question": "我可以与现有系统集成吗？",
+        "answer": "是的！企业计划包括定制API访问和集成。我们可以连接到您现有的POS系统、会计软件或库存系统。"
+      },
+      "training": {
+        "question": "你们提供员工培训吗？",
+        "answer": "是的！所有计划都包括文档和视频教程。企业客户可为整个团队获得个性化的现场或虚拟培训课程。"
+      },
+      "trial": {
+        "question": "有免费试用吗？",
+        "answer": "是的！所有计划都包括14天免费试用，可完全访问所有功能。开始试用无需信用卡。"
+      }
+    },
+    "demo": {
+      "title": "申请演示",
+      "subtitle": "了解Origin Food House的实际应用。与我们的团队安排个性化演示。",
+      "formTitle": "立即开始",
+      "formDescription": "填写下面的表格，我们将在24小时内与您联系以安排演示。",
+      "restaurantName": "餐厅名称",
+      "restaurantNamePlaceholder": "您的餐厅",
+      "email": "电子邮件地址",
+      "emailPlaceholder": "your@email.com",
+      "phone": "电话号码",
+      "phonePlaceholder": "+86 138 0000 0000",
+      "message": "留言",
+      "optional": "可选",
+      "messagePlaceholder": "告诉我们您的餐厅和您正在寻找什么...",
+      "submit": "申请演示",
+      "successTitle": "演示申请已提交！",
+      "successDescription": "我们将在24小时内与您联系以安排个性化演示。",
+      "errorTitle": "提交失败",
+      "errorDescription": "请重试或直接发送电子邮件至 demo@originfoodhouse.com"
+    },
+    "footer": {
+      "tagline": "用现代技术简化您的餐厅运营",
+      "product": "产品",
+      "features": "功能",
+      "pricing": "价格",
+      "faq": "常见问题",
+      "company": "公司",
+      "about": "关于我们",
+      "contact": "联系方式",
+      "legal": "法律",
+      "privacy": "隐私政策",
+      "terms": "服务条款",
+      "rights": "版权所有。"
+    }
+  }
+}

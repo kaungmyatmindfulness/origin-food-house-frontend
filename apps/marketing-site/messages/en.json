@@ -1,0 +1,184 @@
+{
+  "marketing": {
+    "header": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "signIn": "Sign In",
+      "requestDemo": "Request Demo"
+    },
+    "hero": {
+      "headline": "Transform Your Restaurant Operations",
+      "subheadline": "Streamline ordering, kitchen operations, and payments with our all-in-one platform. QR code ordering, real-time kitchen displays, and powerful analytics.",
+      "ctaPrimary": "Request Demo",
+      "ctaSecondary": "Watch Video"
+    },
+    "features": {
+      "title": "Everything Your Restaurant Needs",
+      "subtitle": "Three powerful applications working together to transform your operations",
+      "sos": {
+        "title": "Customer Ordering App",
+        "description": "Let guests browse menus, customize orders, and pay directly from their phones via QR code scanning.",
+        "benefits": {
+          "instant": "Instant QR code ordering - no app download required",
+          "multilingual": "Multi-language support for international guests",
+          "realtime": "Real-time cart sync across multiple devices"
+        }
+      },
+      "rms": {
+        "title": "Restaurant Management System",
+        "description": "Powerful dashboard for staff to manage orders, tables, menus, and reports all in one place.",
+        "benefits": {
+          "comprehensive": "Complete order and payment management",
+          "rolebased": "Role-based access control for staff",
+          "reporting": "Advanced reporting and analytics"
+        }
+      },
+      "kds": {
+        "title": "Kitchen Display System",
+        "description": "Keep your kitchen running smoothly with real-time order tracking and preparation status updates.",
+        "benefits": {
+          "efficient": "Streamlined order preparation workflow",
+          "tracking": "Visual status tracking with color indicators",
+          "coordination": "Multi-station coordination for complex orders"
+        }
+      }
+    },
+    "pricing": {
+      "title": "Simple, Transparent Pricing",
+      "subtitle": "Choose the plan that fits your restaurant size and needs",
+      "mostPopular": "Most Popular",
+      "perMonth": "/month",
+      "getStarted": "Get Started",
+      "contactSales": "All plans include 14-day free trial. Contact sales for custom enterprise solutions.",
+      "starter": {
+        "name": "Starter",
+        "description": "Perfect for small cafes and single locations",
+        "price": "$99",
+        "features": {
+          "tables": "Up to 20 tables",
+          "qr": "QR code ordering",
+          "basic": "Basic reporting",
+          "support": "Email support"
+        }
+      },
+      "growth": {
+        "name": "Growth",
+        "description": "Ideal for growing restaurants",
+        "price": "$299",
+        "features": {
+          "unlimited": "Unlimited tables",
+          "qr": "QR code ordering",
+          "advanced": "Advanced kitchen display",
+          "priority": "Priority support",
+          "loyalty": "Loyalty program",
+          "analytics": "Advanced analytics"
+        }
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "description": "For restaurant chains and franchises",
+        "price": "Custom",
+        "features": {
+          "custom": "Custom integrations",
+          "dedicated": "Dedicated account manager",
+          "api": "API access",
+          "sla": "99.9% SLA guarantee",
+          "training": "Staff training",
+          "migration": "Data migration support"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "Trusted by Restaurants Worldwide",
+      "subtitle": "See what restaurant owners are saying about Origin Food House",
+      "sarah": {
+        "quote": "Origin Food House transformed our operations. Table turnover increased by 25% and our staff can focus on delivering great service instead of taking orders.",
+        "name": "Sarah Mitchell",
+        "role": "Owner"
+      },
+      "michael": {
+        "quote": "The kitchen display system is a game-changer. Our chefs can see all orders in real-time, and we've reduced ticket times by 30%. Customers love the QR ordering!",
+        "name": "Michael Chen",
+        "role": "Manager"
+      },
+      "priya": {
+        "quote": "Setup was incredibly easy, and the multi-language support is perfect for our international clientele. The analytics help us optimize our menu and pricing.",
+        "name": "Priya Reddy",
+        "role": "Owner"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Everything you need to know about Origin Food House",
+      "stillHaveQuestions": "Still have questions?",
+      "contactUs": "Contact our sales team",
+      "setup": {
+        "question": "How long does setup take?",
+        "answer": "Most restaurants are up and running within 24-48 hours. Our team guides you through menu upload, QR code generation, and staff onboarding."
+      },
+      "hardware": {
+        "question": "Do I need special hardware?",
+        "answer": "No special hardware required! The system works on any device with a web browser. Guests use their own phones for ordering, and staff can use tablets, phones, or computers for the dashboard."
+      },
+      "languages": {
+        "question": "What languages are supported?",
+        "answer": "The platform supports English, Chinese, Myanmar, and Thai. Menus can be translated into all four languages, perfect for international locations."
+      },
+      "pricing": {
+        "question": "Are there any hidden fees?",
+        "answer": "No hidden fees. Our pricing is transparent - you pay a fixed monthly subscription based on your tier. No transaction fees, no payment processing fees, no surprise charges."
+      },
+      "support": {
+        "question": "What kind of support do you offer?",
+        "answer": "All plans include email support. Growth plans get priority support with 4-hour response time. Enterprise customers get a dedicated account manager and phone support."
+      },
+      "integration": {
+        "question": "Can I integrate with my existing systems?",
+        "answer": "Yes! Enterprise plans include custom API access and integrations. We can connect to your existing POS, accounting software, or inventory systems."
+      },
+      "training": {
+        "question": "Do you provide staff training?",
+        "answer": "Yes! All plans include documentation and video tutorials. Enterprise customers get personalized on-site or virtual training sessions for your entire team."
+      },
+      "trial": {
+        "question": "Is there a free trial?",
+        "answer": "Yes! All plans include a 14-day free trial with full access to all features. No credit card required to start your trial."
+      }
+    },
+    "demo": {
+      "title": "Request a Demo",
+      "subtitle": "See Origin Food House in action. Schedule a personalized demo with our team.",
+      "formTitle": "Get Started Today",
+      "formDescription": "Fill out the form below and we'll contact you within 24 hours to schedule your demo.",
+      "restaurantName": "Restaurant Name",
+      "restaurantNamePlaceholder": "Your Restaurant",
+      "email": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "phone": "Phone Number",
+      "phonePlaceholder": "+1 (555) 000-0000",
+      "message": "Message",
+      "optional": "optional",
+      "messagePlaceholder": "Tell us about your restaurant and what you're looking for...",
+      "submit": "Request Demo",
+      "successTitle": "Demo request submitted!",
+      "successDescription": "We'll contact you within 24 hours to schedule your personalized demo.",
+      "errorTitle": "Failed to submit",
+      "errorDescription": "Please try again or email us directly at demo@originfoodhouse.com"
+    },
+    "footer": {
+      "tagline": "Streamline your restaurant operations with modern technology",
+      "product": "Product",
+      "features": "Features",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "company": "Company",
+      "about": "About Us",
+      "contact": "Contact",
+      "legal": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "rights": "All rights reserved."
+    }
+  }
+}
