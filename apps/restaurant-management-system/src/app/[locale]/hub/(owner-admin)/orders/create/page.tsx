@@ -180,9 +180,8 @@ export default function CreateOrderPage() {
   // Calculate totals
   const cartItems = cart?.items || [];
   const subtotal = cart?.subTotal || '0';
-  const vatAmount = cart?.vatAmount || '0';
-  const serviceChargeAmount = cart?.serviceChargeAmount || '0';
-  const grandTotal = cart?.grandTotal || '0';
+  // Note: Cart response doesn't include calculated tax/service charge fields
+  // These would need to be calculated client-side or fetched from order endpoint
 
   return (
     <div className="container mx-auto space-y-6 p-6">
@@ -342,14 +341,14 @@ export default function CreateOrderPage() {
                       className="bg-muted flex items-start justify-between rounded-lg p-3"
                     >
                       <div className="flex-1">
-                        <p className="font-medium">{item.menuItem?.name}</p>
+                        <p className="font-medium">{item.menuItemName}</p>
                         <p className="text-muted-foreground text-sm">
                           Qty: {item.quantity}
                         </p>
                       </div>
                       <div className="flex items-center gap-2 text-right">
                         <p className="font-semibold">
-                          {formatCurrency(item.finalPrice)}
+                          {formatCurrency(item.basePrice)}
                         </p>
                         <Button
                           size="sm"
@@ -364,21 +363,9 @@ export default function CreateOrderPage() {
                 </div>
 
                 <div className="space-y-2 border-t pt-4">
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between border-t pt-2 text-lg font-bold">
                     <span>{t('subtotal')}</span>
                     <span>{formatCurrency(subtotal)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>{t('vat')}</span>
-                    <span>{formatCurrency(vatAmount)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>{t('serviceCharge')}</span>
-                    <span>{formatCurrency(serviceChargeAmount)}</span>
-                  </div>
-                  <div className="flex justify-between border-t pt-2 text-lg font-bold">
-                    <span>{t('total')}</span>
-                    <span>{formatCurrency(grandTotal)}</span>
                   </div>
                 </div>
 

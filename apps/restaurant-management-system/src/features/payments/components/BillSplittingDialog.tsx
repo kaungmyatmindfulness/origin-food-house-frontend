@@ -157,8 +157,10 @@ export function BillSplittingDialog({
   // Update diner amount (custom split)
   const handleDinerAmountChange = (index: number, value: string) => {
     const newDiners = [...diners];
-    newDiners[index].amount = value;
-    setDiners(newDiners);
+    if (newDiners[index]) {
+      newDiners[index].amount = value;
+      setDiners(newDiners);
+    }
   };
 
   // Payment recording mutation
@@ -171,7 +173,9 @@ export function BillSplittingDialog({
 
       const dinerIndex = currentDinerIndex;
       const newDiners = [...diners];
-      newDiners[dinerIndex].paid = true;
+      if (newDiners[dinerIndex]) {
+        newDiners[dinerIndex].paid = true;
+      }
       setDiners(newDiners);
 
       toast.success(t('paymentRecorded', { diner: dinerIndex + 1 }));

@@ -176,7 +176,7 @@ export function RefundVoidDialog({
   };
 
   const handleVoidSubmit = async (values: VoidFormValues) => {
-    await voidMutation.mutateAsync(values);
+    await voidMutation.mutateAsync();
   };
 
   // Reset forms when dialog opens
