@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { ShoppingCart, Trash2, Plus } from 'lucide-react';
+import { ShoppingCart, Trash2, Plus, Percent, Split } from 'lucide-react';
 
 import {
   selectSelectedStoreId,
@@ -33,10 +33,14 @@ import { RadioGroup, RadioGroupItem } from '@repo/ui/components/radio-group';
 import { toast } from '@repo/ui/lib/toast';
 import { formatCurrency } from '@/utils/formatting';
 import type { MenuItem } from '@/features/menu/types/menu-item.types';
+import { DiscountDialog } from '@/features/discounts/components/DiscountDialog';
+import { BillSplittingDialog } from '@/features/payments/components/BillSplittingDialog';
 
 export default function CreateOrderPage() {
   const t = useTranslations('orders');
   const tCommon = useTranslations('common');
+  const tDiscount = useTranslations('payments.discounts');
+  const tBillSplit = useTranslations('payments.billSplitting');
   const router = useRouter();
 
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
@@ -46,6 +50,11 @@ export default function CreateOrderPage() {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [placedOrderId, setPlacedOrderId] = useState<string | null>(null);
+
+  // Dialog state for discount and bill splitting
+  const [discountDialogOpen, setDiscountDialogOpen] = useState(false);
+  const [billSplitDialogOpen, setBillSplitDialogOpen] = useState(false);
 
   // Fetch menu data
   const { data: categories = [] } = useQuery({
@@ -134,11 +143,11 @@ export default function CreateOrderPage() {
       return checkoutCart(sessionId);
     },
     onSuccess: (order) => {
+      setPlacedOrderId(order.id);
       toast.success(t('orderCreated'), {
         description: t('orderCreatedDesc', { orderId: order.id }),
       });
-      // Navigate to payment page or order details
-      router.push(`/hub/orders/${order.id}/payment`);
+      // Order created - can now apply discounts or split bill
     },
     onError: (error: Error) => {
       toast.error(tCommon('error'), {
@@ -369,21 +378,105 @@ export default function CreateOrderPage() {
                   </div>
                 </div>
 
-                <Button
-                  className="mt-4 w-full"
-                  size="lg"
-                  onClick={handleCheckout}
-                  disabled={checkoutMutation.isPending}
-                >
-                  {checkoutMutation.isPending
-                    ? t('processing')
-                    : t('placeOrder')}
-                </Button>
+                {!placedOrderId ? (
+                  <Button
+                    className="mt-4 w-full"
+                    size="lg"
+                    onClick={handleCheckout}
+                    disabled={checkoutMutation.isPending}
+                  >
+                    {checkoutMutation.isPending
+                      ? t('processing')
+                      : t('placeOrder')}
+                  </Button>
+                ) : (
+                  <>
+                    {/* Payment actions after order placed */}
+                    <div className="mt-4 space-y-2">
+                      <Button
+                        className="w-full"
+                        variant="outline"
+                        onClick={() => setDiscountDialogOpen(true)}
+                      >
+                        <Percent className="mr-2 h-4 w-4" />
+                        {tDiscount('applyDiscount')}
+                      </Button>
+                      <Button
+                        className="w-full"
+                        variant="outline"
+                        onClick={() => setBillSplitDialogOpen(true)}
+                      >
+                        <Split className="mr-2 h-4 w-4" />
+                        {tBillSplit('title')}
+                      </Button>
+                    </div>
+                  </>
+                )}
               </>
             )}
           </Card>
         </div>
       </div>
+
+      {/* Discount Dialog - Mock order object since backend not running */}
+      {placedOrderId && cart && (
+        <>
+          <DiscountDialog
+            open={discountDialogOpen}
+            onOpenChange={setDiscountDialogOpen}
+            orderId={placedOrderId}
+            order={{
+              id: placedOrderId,
+              orderNumber: '1',
+              storeId: selectedStoreId || '',
+              sessionId: { id: sessionId || '' },
+              tableName: 'Manual Order',
+              status: 'PENDING',
+              orderType: sessionType === 'COUNTER' ? 'DINE_IN' : 'TAKEAWAY',
+              paidAt: {},
+              subTotal: cart.subTotal || '0',
+              vatRateSnapshot: '0',
+              serviceChargeRateSnapshot: '0',
+              vatAmount: '0',
+              serviceChargeAmount: '0',
+              grandTotal: cart.subTotal || '0',
+              totalPaid: '0',
+              remainingBalance: cart.subTotal || '0',
+              isPaidInFull: false,
+              orderItems: [],
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            }}
+          />
+          <BillSplittingDialog
+            open={billSplitDialogOpen}
+            onOpenChange={setBillSplitDialogOpen}
+            orderId={placedOrderId}
+            order={{
+              id: placedOrderId,
+              orderNumber: '1',
+              storeId: selectedStoreId || '',
+              sessionId: { id: sessionId || '' },
+              tableName: 'Manual Order',
+              status: 'PENDING',
+              orderType: sessionType === 'COUNTER' ? 'DINE_IN' : 'TAKEAWAY',
+              paidAt: {},
+              subTotal: cart.subTotal || '0',
+              vatRateSnapshot: '0',
+              serviceChargeRateSnapshot: '0',
+              vatAmount: '0',
+              serviceChargeAmount: '0',
+              grandTotal: cart.subTotal || '0',
+              totalPaid: '0',
+              remainingBalance: cart.subTotal || '0',
+              isPaidInFull: false,
+              orderItems: [],
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            }}
+          />
+        </>
+      )}
     </div>
   );
 }

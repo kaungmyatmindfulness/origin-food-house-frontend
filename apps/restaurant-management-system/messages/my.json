@@ -357,19 +357,33 @@
   },
   "orders": {
     "createOrder": "အော်ဒါဖန်တီးရန်",
+    "createManualOrder": "လက်ဖြင့် အော်ဒါဖန်တီးရန်",
+    "createManualOrderDescription": "စားပွဲသတ်မှတ်ခြင်းမရှိဘဲ ကောင်တာ၊ ဖုန်း သို့မဟုတ် ယူသွားရန် အော်ဒါဖန်တီးပါ",
+    "salesPageDescription": "ကောင်တာ၊ ဖုန်း နှင့် ယူသွားရန် ဖောက်သည်များအတွက် လက်ဖြင့် အော်ဒါများ ဖန်တီးပြီး စီမံခန့်ခွဲပါ",
     "sessionInfo": "အစည်းအဝေးအချက်အလက်",
     "sessionType": "အော်ဒါအမျိုးအစား",
-    "counterOrder": "ကောင်တာအော်ဒါ",
-    "phoneOrder": "ဖုန်းအော်ဒါ",
-    "takeoutOrder": "ယူသွားရန်အော်ဒါ",
+    "counterOrder": "ကောင်တာ",
+    "phoneOrder": "ဖုန်း",
+    "takeoutOrder": "ယူသွားရန်",
     "customerName": "ဖောက်သည်အမည်",
-    "customerNamePlaceholder": "ဖောက်သည်အမည် ထည့်ပါ (ရွေးချယ်နိုင်)",
-    "customerPhone": "ဖောက်သည်ဖုန်း",
-    "customerPhonePlaceholder": "ဖုန်းနံပါတ် ထည့်ပါ (ရွေးချယ်နိုင်)",
+    "customerNamePlaceholder": "ဖောက်သည်အမည် ထည့်ပါ",
+    "customerPhone": "ဖုန်းနံပါတ်",
+    "customerPhonePlaceholder": "+95 9 123 456 789",
+    "phoneNumber": "ဖုန်းနံပါတ်",
+    "phoneNumberPlaceholder": "+95 9 123 456 789",
+    "guestCount": "ဧည့်သည်အရေအတွက်",
+    "optional": "ရွေးချယ်နိုင်",
     "startSession": "စတင်မည်",
+    "startOrder": "အော်ဒါစတင်မည်",
     "creating": "ဖန်တီးနေသည်...",
+    "cancel": "ပယ်ဖျက်မည်",
     "sessionCreated": "အစည်းအဝေး ဖန်တီးပြီး",
     "sessionCreatedDesc": "အစည်းအဝေး အောင်မြင်စွာ စတင်ပြီး",
+    "manualSessionCreated": "လက်ဖြင့် အော်ဒါအစည်းအဝေး ဖန်တီးပြီး",
+    "manualSessionCreatedDescription": "{type} အော်ဒါအစည်းအဝေး ဖန်တီးပြီး (ID: {sessionId})",
+    "manualSessionFailed": "အစည်းအဝေး ဖန်တီးမှု မအောင်မြင်ပါ",
+    "manualSessionFailedDescription": "လက်ဖြင့် အော်ဒါအစည်းအဝေး ဖန်တီး၍ မရပါ။ ထပ်မံကြိုးစားပါ။",
+    "orderHistoryPlaceholder": "အော်ဒါသမိုင်း နှင့် လက်ရှိအော်ဒါများ ဤနေရာတွင် ပေါ်လာပါမည်",
     "selectItems": "မီနူးပစ္စည်းများ ရွေးချယ်ပါ",
     "cart": "ခြင်းတောင်း",
     "items": "ပစ္စည်းများ",
@@ -414,6 +428,8 @@
     "invalidAmount": "မမှန်ကန်သော ပမာဏ။ 0 ထက် ပိုရမည်။",
     "amountExceedsBalance": "ပမာဏသည် ကျန်ရှိငွေထက် ကျော်လွန်နေသည်။",
     "tenderedTooLow": "လက်ခံရရှိငွေသည် ပေးချေငွေထက် နည်းနေသည်။",
+    "quickAmounts": "အမြန်ပမာဏများ",
+    "underpaymentWarning": "{shortfall} လိုအပ်နေပါသည်",
     "refundVoid": {
       "title": "ငွေပြန်အမ်းခြင်း သို့မဟုတ် အော်ဒါပယ်ဖျက်ခြင်း",
       "description": "ငွေပေးချေပြီးအော်ဒါအတွက် ငွေပြန်အမ်းခြင်း သို့မဟုတ် မပေးရသေးသောအော်ဒါကို ပယ်ဖျက်ခြင်း",
@@ -483,6 +499,23 @@
       "allPaymentsRecorded": "ငွေပေးချေမှုအားလုံး အောင်မြင်စွာမှတ်တမ်းတင်ပြီးပါပြီ",
       "paymentFailed": "ငွေပေးချေမှုမှတ်တမ်းတင်ခြင်း မအောင်မြင်ပါ",
       "backToSplit": "ခွဲခြင်းသို့ ပြန်သွားမည်"
+    },
+    "discounts": {
+      "applyDiscount": "လျှော့စျေးသုံးမည်",
+      "discountType": "လျှော့စျေးအမျိုးအစား",
+      "percentage": "ရာခိုင်နှုန်း",
+      "fixedAmount": "သတ်မှတ်ငွေပမာဏ",
+      "percentageValue": "ရာခိုင်နှုန်း (%)",
+      "amountValue": "ပမာဏ ($)",
+      "reason": "အကြောင်းရင်း",
+      "reasonPlaceholder": "ဥပမာ: သစ္စာရှိဖောက်သည်၊ မန်နေဂျာ လျှော့စျေး၊ အထူးအခါသမယ",
+      "discountAmount": "လျှော့စျေးပမာဏ",
+      "newSubtotal": "စုစုပေါင်းအသစ်",
+      "discount": "လျှော့စျေး",
+      "ownerApprovalRequired": "ပိုင်ရှင်ခွင့်ပြုချက်လိုအပ်သည် (>50% လျှော့စျေး)",
+      "adminApprovalRequired": "အက်ဒမင်ခွင့်ပြုချက်လိုအပ်သည် (10-50% လျှော့စျေး)",
+      "discountApplied": "လျှော့စျေးသုံးစွဲပြီးပါပြီ",
+      "cancel": "မလုပ်တော့ပါ"
     }
   },
   "reports": {
@@ -516,7 +549,8 @@
     "tabs": {
       "sales": "ရောင်းအားအကျဉ်း",
       "popular": "လူကြိုက်များသော ပစ္စည်းများ",
-      "payments": "ငွေပေးချေမှု အသေးစိတ်"
+      "payments": "ငွေပေးချေမှု အသေးစိတ်",
+      "status": "အော်ဒါအခြေအနေ"
     },
     "paymentMethods": {
       "cash": "ငွေသား",
@@ -524,6 +558,18 @@
       "mobile_payment": "မိုဘိုင်းငွေပေးချေမှု",
       "bank_transfer": "ဘဏ်လွှဲပြောင်းခြင်း",
       "other": "အခြား"
+    },
+    "orderStatusTitle": "အော်ဒါအခြေအနေ ဖြန့်ဝေမှု",
+    "orderStatusDescription": "လက်ရှိအခြေအနေအလိုက် အော်ဒါများ၏ ဖြန့်ဝေမှု",
+    "status": "အခြေအနေ",
+    "count": "အရေအတွက်",
+    "orderStatuses": {
+      "pending": "ဆိုင်းငံ့ထားသော",
+      "confirmed": "အတည်ပြုပြီး",
+      "preparing": "ပြင်ဆင်နေသော",
+      "ready": "အသင့်ဖြစ်သော",
+      "served": "ပေးပို့ပြီး",
+      "cancelled": "ပယ်ဖျက်ပြီး"
     }
   },
   "landing": {

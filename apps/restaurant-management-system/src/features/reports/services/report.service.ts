@@ -7,6 +7,7 @@ import type {
   SalesSummaryDto,
   PopularItemsDto,
   PaymentBreakdownDto,
+  OrderStatusDistributionDto,
 } from '../types/report.types';
 
 const BASE_PATH = '/reports';
@@ -77,4 +78,26 @@ export async function getPaymentBreakdown(
     { method: 'GET' }
   );
   return unwrapData(res, 'Failed to fetch payment breakdown');
+}
+
+/**
+ * Get order status distribution report
+ */
+export async function getOrderStatusReport(
+  storeId: string,
+  startDate: Date,
+  endDate: Date
+): Promise<OrderStatusDistributionDto[]> {
+  const res = await apiFetch<OrderStatusDistributionDto[]>(
+    {
+      path: `${BASE_PATH}/order-status-distribution`,
+      query: {
+        storeId,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      },
+    },
+    { method: 'GET' }
+  );
+  return unwrapData(res, 'Failed to fetch order status distribution');
 }

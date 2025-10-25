@@ -357,19 +357,33 @@
   },
   "orders": {
     "createOrder": "创建订单",
+    "createManualOrder": "创建手动订单",
+    "createManualOrderDescription": "创建柜台、电话或外卖订单，无需分配餐桌",
+    "salesPageDescription": "为柜台、电话和外卖客户创建和管理手动订单",
     "sessionInfo": "会话信息",
     "sessionType": "订单类型",
-    "counterOrder": "柜台订单",
-    "phoneOrder": "电话订单",
-    "takeoutOrder": "外卖订单",
+    "counterOrder": "柜台",
+    "phoneOrder": "电话",
+    "takeoutOrder": "外卖",
     "customerName": "客户姓名",
-    "customerNamePlaceholder": "输入客户姓名（可选）",
-    "customerPhone": "客户电话",
-    "customerPhonePlaceholder": "输入电话号码（可选）",
+    "customerNamePlaceholder": "输入客户姓名",
+    "customerPhone": "电话号码",
+    "customerPhonePlaceholder": "+86 123 4567 8900",
+    "phoneNumber": "电话号码",
+    "phoneNumberPlaceholder": "+86 123 4567 8900",
+    "guestCount": "客人数量",
+    "optional": "可选",
     "startSession": "开始会话",
+    "startOrder": "开始订单",
     "creating": "创建中...",
+    "cancel": "取消",
     "sessionCreated": "会话已创建",
     "sessionCreatedDesc": "会话成功启动",
+    "manualSessionCreated": "手动订单会话已创建",
+    "manualSessionCreatedDescription": "{type}订单会话已创建（ID：{sessionId}）",
+    "manualSessionFailed": "创建会话失败",
+    "manualSessionFailedDescription": "无法创建手动订单会话。请重试。",
+    "orderHistoryPlaceholder": "订单历史和活动订单将显示在这里",
     "selectItems": "选择菜单项目",
     "cart": "购物车",
     "items": "项",
@@ -414,6 +428,8 @@
     "invalidAmount": "无效金额。必须大于0。",
     "amountExceedsBalance": "金额超过剩余余额。",
     "tenderedTooLow": "实收金额少于付款金额。",
+    "quickAmounts": "快速金额",
+    "underpaymentWarning": "金额不足 {shortfall}",
     "refundVoid": {
       "title": "退款或作废订单",
       "description": "处理已付款订单的退款或作废未付款订单",
@@ -483,6 +499,23 @@
       "allPaymentsRecorded": "所有付款已成功记录",
       "paymentFailed": "付款记录失败",
       "backToSplit": "返回分账"
+    },
+    "discounts": {
+      "applyDiscount": "应用折扣",
+      "discountType": "折扣类型",
+      "percentage": "百分比",
+      "fixedAmount": "固定金额",
+      "percentageValue": "百分比 (%)",
+      "amountValue": "金额 ($)",
+      "reason": "原因",
+      "reasonPlaceholder": "例如：忠诚客户、经理优惠、特殊场合",
+      "discountAmount": "折扣金额",
+      "newSubtotal": "新小计",
+      "discount": "折扣",
+      "ownerApprovalRequired": "需要店主批准（>50%折扣）",
+      "adminApprovalRequired": "需要管理员批准（10-50%折扣）",
+      "discountApplied": "折扣应用成功",
+      "cancel": "取消"
     }
   },
   "reports": {
@@ -516,7 +549,8 @@
     "tabs": {
       "sales": "销售摘要",
       "popular": "热门商品",
-      "payments": "支付明细"
+      "payments": "支付明细",
+      "status": "订单状态"
     },
     "paymentMethods": {
       "cash": "现金",
@@ -524,6 +558,18 @@
       "mobile_payment": "移动支付",
       "bank_transfer": "银行转账",
       "other": "其他"
+    },
+    "orderStatusTitle": "订单状态分布",
+    "orderStatusDescription": "按当前状态分布的订单",
+    "status": "状态",
+    "count": "数量",
+    "orderStatuses": {
+      "pending": "待处理",
+      "confirmed": "已确认",
+      "preparing": "准备中",
+      "ready": "已准备",
+      "served": "已送达",
+      "cancelled": "已取消"
     }
   },
   "landing": {

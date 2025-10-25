@@ -175,7 +175,7 @@ export function RefundVoidDialog({
     await refundMutation.mutateAsync(values);
   };
 
-  const handleVoidSubmit = async (values: VoidFormValues) => {
+  const handleVoidSubmit = async () => {
     await voidMutation.mutateAsync();
   };
 

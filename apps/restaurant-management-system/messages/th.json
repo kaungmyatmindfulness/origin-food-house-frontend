@@ -357,19 +357,33 @@
   },
   "orders": {
     "createOrder": "สร้างออเดอร์",
+    "createManualOrder": "สร้างออเดอร์ด้วยตนเอง",
+    "createManualOrderDescription": "สร้างออเดอร์เคาน์เตอร์ โทรศัพท์ หรือซื้อกลับโดยไม่ต้องระบุโต๊ะ",
+    "salesPageDescription": "สร้างและจัดการออเดอร์ด้วยตนเองสำหรับลูกค้าเคาน์เตอร์ โทรศัพท์ และซื้อกลับ",
     "sessionInfo": "ข้อมูลเซสชัน",
     "sessionType": "ประเภทออเดอร์",
-    "counterOrder": "ออเดอร์เคาน์เตอร์",
-    "phoneOrder": "ออเดอร์ทางโทรศัพท์",
-    "takeoutOrder": "ออเดอร์ซื้อกลับ",
+    "counterOrder": "เคาน์เตอร์",
+    "phoneOrder": "โทรศัพท์",
+    "takeoutOrder": "ซื้อกลับ",
     "customerName": "ชื่อลูกค้า",
-    "customerNamePlaceholder": "ระบุชื่อลูกค้า (ไม่บังคับ)",
-    "customerPhone": "เบอร์โทรลูกค้า",
-    "customerPhonePlaceholder": "ระบุเบอร์โทรศัพท์ (ไม่บังคับ)",
+    "customerNamePlaceholder": "ระบุชื่อลูกค้า",
+    "customerPhone": "เบอร์โทรศัพท์",
+    "customerPhonePlaceholder": "+66 2 123 4567",
+    "phoneNumber": "เบอร์โทรศัพท์",
+    "phoneNumberPlaceholder": "+66 2 123 4567",
+    "guestCount": "จำนวนแขก",
+    "optional": "ไม่บังคับ",
     "startSession": "เริ่มเซสชัน",
+    "startOrder": "เริ่มออเดอร์",
     "creating": "กำลังสร้าง...",
+    "cancel": "ยกเลิก",
     "sessionCreated": "สร้างเซสชันแล้ว",
     "sessionCreatedDesc": "เริ่มเซสชันสำเร็จ",
+    "manualSessionCreated": "สร้างเซสชันออเดอร์ด้วยตนเองแล้ว",
+    "manualSessionCreatedDescription": "สร้างเซสชันออเดอร์ {type} แล้ว (ID: {sessionId})",
+    "manualSessionFailed": "การสร้างเซสชันล้มเหลว",
+    "manualSessionFailedDescription": "ไม่สามารถสร้างเซสชันออเดอร์ด้วยตนเอง กรุณาลองอีกครั้ง",
+    "orderHistoryPlaceholder": "ประวัติออเดอร์และออเดอร์ที่กำลังดำเนินการจะแสดงที่นี่",
     "selectItems": "เลือกเมนู",
     "cart": "ตะกร้า",
     "items": "รายการ",
@@ -414,6 +428,8 @@
     "invalidAmount": "จำนวนเงินไม่ถูกต้อง ต้องมากกว่า 0",
     "amountExceedsBalance": "จำนวนเงินเกินยอดคงเหลือ",
     "tenderedTooLow": "เงินที่รับน้อยกว่าจำนวนชำระ",
+    "quickAmounts": "จำนวนเงินด่วน",
+    "underpaymentWarning": "ขาดอีก {shortfall}",
     "refundVoid": {
       "title": "คืนเงินหรือยกเลิกออเดอร์",
       "description": "ดำเนินการคืนเงินสำหรับออเดอร์ที่ชำระแล้ว หรือยกเลิกออเดอร์ที่ยังไม่ชำระ",
@@ -483,6 +499,23 @@
       "allPaymentsRecorded": "บันทึกการชำระเงินทั้งหมดสำเร็จ",
       "paymentFailed": "บันทึกการชำระเงินล้มเหลว",
       "backToSplit": "กลับไปที่การแบ่งบิล"
+    },
+    "discounts": {
+      "applyDiscount": "ใช้ส่วนลด",
+      "discountType": "ประเภทส่วนลด",
+      "percentage": "เปอร์เซ็นต์",
+      "fixedAmount": "จำนวนเงินคงที่",
+      "percentageValue": "เปอร์เซ็นต์ (%)",
+      "amountValue": "จำนวนเงิน (บาท)",
+      "reason": "เหตุผล",
+      "reasonPlaceholder": "เช่น ลูกค้าประจำ, ส่วนลดจากผู้จัดการ, โอกาสพิเศษ",
+      "discountAmount": "จำนวนส่วนลด",
+      "newSubtotal": "ยอดรวมใหม่",
+      "discount": "ส่วนลด",
+      "ownerApprovalRequired": "ต้องการการอนุมัติจากเจ้าของ (>50% ส่วนลด)",
+      "adminApprovalRequired": "ต้องการการอนุมัติจากผู้ดูแลระบบ (10-50% ส่วนลด)",
+      "discountApplied": "ใช้ส่วนลดสำเร็จ",
+      "cancel": "ยกเลิก"
     }
   },
   "reports": {
@@ -516,7 +549,8 @@
     "tabs": {
       "sales": "สรุปยอดขาย",
       "popular": "สินค้ายอดนิยม",
-      "payments": "รายละเอียดการชำระเงิน"
+      "payments": "รายละเอียดการชำระเงิน",
+      "status": "สถานะคำสั่งซื้อ"
     },
     "paymentMethods": {
       "cash": "เงินสด",
@@ -524,6 +558,18 @@
       "mobile_payment": "ชำระเงินผ่านมือถือ",
       "bank_transfer": "โอนผ่านธนาคาร",
       "other": "อื่นๆ"
+    },
+    "orderStatusTitle": "การกระจายสถานะคำสั่งซื้อ",
+    "orderStatusDescription": "การกระจายคำสั่งซื้อตามสถานะปัจจุบัน",
+    "status": "สถานะ",
+    "count": "จำนวน",
+    "orderStatuses": {
+      "pending": "รอดำเนินการ",
+      "confirmed": "ยืนยันแล้ว",
+      "preparing": "กำลังเตรียม",
+      "ready": "พร้อมแล้ว",
+      "served": "เสิร์ฟแล้ว",
+      "cancelled": "ยกเลิกแล้ว"
     }
   },
   "landing": {

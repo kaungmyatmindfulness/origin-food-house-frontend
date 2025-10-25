@@ -357,19 +357,33 @@
   },
   "orders": {
     "createOrder": "Create Order",
+    "createManualOrder": "Create Manual Order",
+    "createManualOrderDescription": "Create a counter, phone, or takeout order without table assignment",
+    "salesPageDescription": "Create and manage manual orders for counter, phone, and takeout customers",
     "sessionInfo": "Session Information",
     "sessionType": "Order Type",
-    "counterOrder": "Counter Order",
-    "phoneOrder": "Phone Order",
-    "takeoutOrder": "Takeout Order",
+    "counterOrder": "Counter",
+    "phoneOrder": "Phone",
+    "takeoutOrder": "Takeout",
     "customerName": "Customer Name",
-    "customerNamePlaceholder": "Enter customer name (optional)",
-    "customerPhone": "Customer Phone",
-    "customerPhonePlaceholder": "Enter phone number (optional)",
+    "customerNamePlaceholder": "Enter customer name",
+    "customerPhone": "Phone Number",
+    "customerPhonePlaceholder": "+1 234 567 8900",
+    "phoneNumber": "Phone Number",
+    "phoneNumberPlaceholder": "+1 234 567 8900",
+    "guestCount": "Number of Guests",
+    "optional": "Optional",
     "startSession": "Start Session",
+    "startOrder": "Start Order",
     "creating": "Creating...",
+    "cancel": "Cancel",
     "sessionCreated": "Session Created",
     "sessionCreatedDesc": "Session started successfully",
+    "manualSessionCreated": "Manual Order Session Created",
+    "manualSessionCreatedDescription": "{type} order session created (ID: {sessionId})",
+    "manualSessionFailed": "Failed to Create Session",
+    "manualSessionFailedDescription": "Could not create manual order session. Please try again.",
+    "orderHistoryPlaceholder": "Order history and active orders will appear here",
     "selectItems": "Select Menu Items",
     "cart": "Cart",
     "items": "items",
@@ -414,6 +428,8 @@
     "invalidAmount": "Invalid amount. Must be greater than 0.",
     "amountExceedsBalance": "Amount exceeds remaining balance.",
     "tenderedTooLow": "Amount tendered is less than payment amount.",
+    "quickAmounts": "Quick Amounts",
+    "underpaymentWarning": "Amount is {shortfall} short",
     "refundVoid": {
       "title": "Refund or Void Order",
       "description": "Process a refund for a paid order or void an unpaid order",
@@ -483,6 +499,23 @@
       "allPaymentsRecorded": "All payments recorded successfully",
       "paymentFailed": "Failed to record payment",
       "backToSplit": "Back to Split"
+    },
+    "discounts": {
+      "applyDiscount": "Apply Discount",
+      "discountType": "Discount Type",
+      "percentage": "Percentage",
+      "fixedAmount": "Fixed Amount",
+      "percentageValue": "Percentage (%)",
+      "amountValue": "Amount ($)",
+      "reason": "Reason",
+      "reasonPlaceholder": "e.g., Loyalty customer, Manager comp, Special occasion",
+      "discountAmount": "Discount Amount",
+      "newSubtotal": "New Subtotal",
+      "discount": "Discount",
+      "ownerApprovalRequired": "Owner approval required (>50% discount)",
+      "adminApprovalRequired": "Admin approval required (10-50% discount)",
+      "discountApplied": "Discount applied successfully",
+      "cancel": "Cancel"
     }
   },
   "reports": {
@@ -516,7 +549,8 @@
     "tabs": {
       "sales": "Sales Summary",
       "popular": "Popular Items",
-      "payments": "Payment Breakdown"
+      "payments": "Payment Breakdown",
+      "status": "Order Status"
     },
     "paymentMethods": {
       "cash": "Cash",
@@ -524,6 +558,18 @@
       "mobile_payment": "Mobile Payment",
       "bank_transfer": "Bank Transfer",
       "other": "Other"
+    },
+    "orderStatusTitle": "Order Status Distribution",
+    "orderStatusDescription": "Distribution of orders by current status",
+    "status": "Status",
+    "count": "Count",
+    "orderStatuses": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "served": "Served",
+      "cancelled": "Cancelled"
     }
   },
   "landing": {

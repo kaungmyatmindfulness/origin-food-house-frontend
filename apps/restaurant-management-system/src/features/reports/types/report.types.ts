@@ -53,4 +53,19 @@ export interface SalesTrendDataPoint {
   orders: number;
 }
 
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  PREPARING = 'PREPARING',
+  READY = 'READY',
+  SERVED = 'SERVED',
+  CANCELLED = 'CANCELLED',
+}
+
+export interface OrderStatusDistributionDto {
+  status: OrderStatus;
+  count: number;
+  percentage: number;
+}
+
 export type DateRangePreset = 'today' | 'week' | 'month' | 'custom';

@@ -43,4 +43,15 @@ export const reportKeys = {
         endDate: endDate.toISOString(),
       },
     ] as const,
+
+  orderStatus: (storeId: string, startDate: Date, endDate: Date) =>
+    [
+      ...reportKeys.all,
+      'order-status',
+      {
+        storeId,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      },
+    ] as const,
 };

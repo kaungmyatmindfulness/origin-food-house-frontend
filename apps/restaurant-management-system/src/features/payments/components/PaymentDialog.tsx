@@ -72,6 +72,11 @@ export function PaymentDialog({
   const isValidTendered =
     paymentMethod !== 'CASH' || parsedTendered >= parsedAmount;
 
+  // Quick amount options based on remaining balance
+  const quickAmounts = [20, 50, 100, 200, 500].filter(
+    (amt) => amt >= parsedAmount
+  );
+
   // Set default amount to remaining balance
   useEffect(() => {
     if (open && !amount) {
@@ -85,6 +90,7 @@ export function PaymentDialog({
       const paymentData: RecordPaymentDto = {
         amount: amount,
         paymentMethod,
+        ...(paymentMethod === 'CASH' && amountTendered && { amountTendered }),
         ...(transactionId && { transactionId }),
         ...(notes && { notes }),
       };
@@ -231,30 +237,58 @@ export function PaymentDialog({
 
             {/* Amount Tendered (Cash Only) */}
             {paymentMethod === 'CASH' && (
-              <div className="space-y-2">
-                <Label htmlFor="amountTendered">{t('amountTendered')}</Label>
-                <Input
-                  id="amountTendered"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={amountTendered}
-                  onChange={(e) => setAmountTendered(e.target.value)}
-                  placeholder="0.00"
-                  required={paymentMethod === 'CASH'}
-                />
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="amountTendered">{t('amountTendered')}</Label>
+                  <Input
+                    id="amountTendered"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={amountTendered}
+                    onChange={(e) => setAmountTendered(e.target.value)}
+                    placeholder="0.00"
+                    required={paymentMethod === 'CASH'}
+                    autoFocus
+                  />
+                </div>
+
+                {/* Quick Amount Buttons */}
+                {quickAmounts.length > 0 && (
+                  <div className="space-y-2">
+                    <Label className="text-muted-foreground text-xs">
+                      {t('quickAmounts')}
+                    </Label>
+                    <div className="flex flex-wrap gap-2">
+                      {quickAmounts.map((amt) => (
+                        <Button
+                          key={amt}
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setAmountTendered(amt.toString())}
+                          className="min-w-[80px] flex-1"
+                        >
+                          {formatCurrency(amt.toString())}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Change Display */}
                 {parsedTendered > 0 && (
                   <div
-                    className={`flex items-center gap-2 rounded-lg p-3 ${
+                    className={`flex items-center gap-2 rounded-lg p-4 ${
                       isValidTendered
                         ? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300'
                         : 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300'
                     }`}
                   >
-                    <DollarSign className="h-5 w-5" />
+                    <DollarSign className="h-6 w-6" />
                     <div className="flex-1">
-                      <p className="font-semibold">{t('change')}</p>
-                      <p className="text-2xl font-bold">
+                      <p className="text-sm font-semibold">{t('change')}</p>
+                      <p className="text-3xl font-bold">
                         {isValidTendered
                           ? formatCurrency(change.toFixed(2))
                           : t('insufficient')}
@@ -262,7 +296,19 @@ export function PaymentDialog({
                     </div>
                   </div>
                 )}
-              </div>
+
+                {/* Underpayment Warning */}
+                {parsedTendered > 0 && !isValidTendered && (
+                  <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300">
+                    ⚠️{' '}
+                    {t('underpaymentWarning', {
+                      shortfall: formatCurrency(
+                        (parsedAmount - parsedTendered).toFixed(2)
+                      ),
+                    })}
+                  </div>
+                )}
+              </>
             )}
 
             {/* Transaction ID (Non-Cash) */}

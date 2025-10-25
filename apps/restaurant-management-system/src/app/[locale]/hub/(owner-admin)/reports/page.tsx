@@ -42,11 +42,13 @@ import {
   getSalesSummary,
   getPopularItems,
   getPaymentBreakdown,
+  getOrderStatusReport,
 } from '@/features/reports/services/report.service';
 import { reportKeys } from '@/features/reports/queries/report.keys';
 import type {
   DateRangePreset,
   PaymentMethod,
+  OrderStatus,
 } from '@/features/reports/types/report.types';
 
 import {
@@ -146,6 +148,17 @@ export default function ReportsPage() {
     enabled: !!selectedStoreId,
   });
 
+  // Fetch order status distribution
+  const {
+    data: orderStatusData,
+    isLoading: isLoadingOrderStatus,
+    isError: isErrorOrderStatus,
+  } = useQuery({
+    queryKey: reportKeys.orderStatus(selectedStoreId!, startDate, endDate),
+    queryFn: () => getOrderStatusReport(selectedStoreId!, startDate, endDate),
+    enabled: !!selectedStoreId,
+  });
+
   // Export to CSV
   const handleExportCSV = () => {
     if (!popularItems) return;
@@ -215,6 +228,7 @@ export default function ReportsPage() {
           <TabsTrigger value="sales">{t('tabs.sales')}</TabsTrigger>
           <TabsTrigger value="popular">{t('tabs.popular')}</TabsTrigger>
           <TabsTrigger value="payments">{t('tabs.payments')}</TabsTrigger>
+          <TabsTrigger value="status">{t('tabs.status')}</TabsTrigger>
         </TabsList>
 
         {/* Sales Summary Tab */}
@@ -490,6 +504,113 @@ export default function ReportsPage() {
                           </TableCell>
                           <TableCell className="text-right">
                             {item.transactionCount}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {item.percentage.toFixed(1)}%
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Order Status Tab */}
+        <TabsContent value="status" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('orderStatusTitle')}</CardTitle>
+              <CardDescription>{t('orderStatusDescription')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoadingOrderStatus ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-64 w-full" />
+                  <Skeleton className="h-48 w-full" />
+                </div>
+              ) : isErrorOrderStatus ? (
+                <p className="text-destructive py-8 text-center">
+                  {t('errorLoading')}
+                </p>
+              ) : (
+                <>
+                  {/* Pie Chart */}
+                  <div className="mb-6 h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={orderStatusData || []}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={(entry) =>
+                            `${entry.status}: ${entry.percentage.toFixed(1)}%`
+                          }
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="percentage"
+                        >
+                          {orderStatusData?.map((entry, index) => {
+                            const colors = {
+                              PENDING: '#FCD34D',
+                              CONFIRMED: '#3B82F6',
+                              PREPARING: '#F97316',
+                              READY: '#A855F7',
+                              SERVED: '#10B981',
+                              CANCELLED: '#EF4444',
+                            };
+                            return (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={colors[entry.status as OrderStatus]}
+                              />
+                            );
+                          })}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* Data Table */}
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>{t('status')}</TableHead>
+                        <TableHead className="text-right">
+                          {t('count')}
+                        </TableHead>
+                        <TableHead className="text-right">
+                          {t('percentage')}
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {orderStatusData?.map((item) => (
+                        <TableRow key={item.status}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              <div
+                                className="h-3 w-3 rounded-full"
+                                style={{
+                                  backgroundColor: {
+                                    PENDING: '#FCD34D',
+                                    CONFIRMED: '#3B82F6',
+                                    PREPARING: '#F97316',
+                                    READY: '#A855F7',
+                                    SERVED: '#10B981',
+                                    CANCELLED: '#EF4444',
+                                  }[item.status],
+                                }}
+                              />
+                              {t(`orderStatuses.${item.status.toLowerCase()}`)}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {item.count}
                           </TableCell>
                           <TableCell className="text-right">
                             {item.percentage.toFixed(1)}%
