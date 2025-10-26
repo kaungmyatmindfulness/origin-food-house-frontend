@@ -72,12 +72,12 @@ src/
 
 **Core**: Next.js 15 (Turbopack), React 19, TypeScript 5.8+
 **State**: Zustand (persist, immer, devtools), React Query (@tanstack/react-query)
-**Styling**: Tailwind CSS v4, Motion, shadcn/ui (50+ components)
+**Styling**: Tailwind CSS v4, Motion, shadcn/ui (52 components)
 **Forms**: react-hook-form, Zod, @hookform/resolvers
 **i18n**: next-intl (en, zh, my, th)
 **Testing (Restaurant Management System)**: Jest, @testing-library/react, jsdom
 **Utilities**: lodash-es, qs, sonner, usehooks-ts
-**Restaurant Management System-specific**: @auth0/auth0-spa-js, @dnd-kit (drag-drop), qrcode.react, react-to-print, react-dropzone
+**Restaurant Management System-specific**: @auth0/auth0-spa-js, @dnd-kit (drag-drop), qrcode.react, react-to-print, react-dropzone, papaparse (CSV), recharts (charts)
 **Self-Ordering System-specific**: socket.io-client (real-time), react-scroll, decimal.js (currency)
 
 ## Key Patterns
@@ -86,7 +86,7 @@ src/
 
 **ALWAYS use components from `@repo/ui` before creating new ones.**
 
-The project has 50+ production-ready components:
+The project has 52 production-ready components:
 
 ```typescript
 // ✅ Use existing components
@@ -97,7 +97,9 @@ import { toast } from '@repo/ui/lib/toast';
 // They already exist in @repo/ui with proper variants!
 ```
 
-**Available components**: Button, Dialog, Form, Input, Textarea, Select, Checkbox, Switch, RadioGroup, Alert, Card, Accordion, Tabs, Table, Avatar, Badge, Spinner, Skeleton, Toast, and 30+ more.
+**Available components**: Button, Dialog, Form, Input, Textarea, Select, Checkbox, Switch, RadioGroup, Alert, Card, Accordion, Tabs, Table, Avatar, Badge, Spinner, Skeleton, Toast, Chart, Carousel, Combobox, Command, Drawer, Empty, HoverCard, InputOTP, KBD, Menubar, NavigationMenu, Pagination, Popover, Progress, Resizable, ScrollArea, Sheet, Sidebar, Slider, ToggleGroup, and more.
+
+**Complete list**: accordion, alert-dialog, alert, aspect-ratio, avatar, badge, breadcrumb, button, calendar, card, carousel, chart, checkbox, collapsible, combobox, command, confirmation-dialog, context-menu, dialog, drawer, dropdown-menu, empty, form, hover-card, input-otp, input, item, kbd, label, menubar, navigation-menu, pagination, popover, progress, radio-group, resizable, scroll-area, select, separator, sheet, sidebar, skeleton, slider, sonner, spinner, switch, table, tabs, textarea, toggle-group, toggle, tooltip.
 
 **Before creating a component**:
 
@@ -939,12 +941,14 @@ Prevents query client recreation during React suspense.
 
 - **Apps**: 2 (Restaurant Management System, Self-Ordering System)
 - **Shared Packages**: 4 (api, ui, eslint-config, typescript-config)
-- **UI Components**: 50+ in @repo/ui
-- **Services**: 14 across both apps
-- **Stores**: 4 Zustand stores
+- **UI Components**: 52 in @repo/ui
+- **Features (RMS)**: 15 (auth, audit-logs, discounts, kitchen, menu, orders, payments, personnel, reports, store, tables, tiers, user)
+- **Services**: 17+ across both apps
+- **Stores**: 4+ Zustand stores
 - **Languages**: 4 (en, zh, my, th)
 - **Auto-generated DTOs**: 50+
-- **Test Coverage**: RMS ~94 tests | SOS 0 tests ⚠️
+- **Test Suites**: RMS 10 suites (4 failing, 6 passing) | SOS 0 tests ⚠️
+- **Test Count**: RMS 107 tests (100 passing, 7 failing) | SOS 0 tests ⚠️
 
 ## ⚠️ Known Issues & Technical Debt
 
@@ -1074,13 +1078,22 @@ export const useCartStore = create<CartState & CartActions>()(
 
 #### 6. RMS Test Suite Issues
 
-**Status**: 6/7 test suites passing
+**Status**: 6/10 test suites passing, 4 failing
 
-**Failing Test**: `dashboard-header.test.tsx` - TextEncoder polyfill issue
+**Failing Test Suites**:
 
-**Tests Passing**: 94 tests
+1. `audit-logs/__tests__/audit-log.service.test.ts` - New feature tests need fixes
+2. `dashboard-header.test.tsx` - TextEncoder polyfill issue (known)
+3. `tiers/__tests__/tier-usage-widget.test.tsx` - New feature tests need fixes
+4. `store/components/settings/__tests__/tax-and-service-tab.test.tsx` - Validation tests failing
 
-**TODO**: Fix TextEncoder polyfill for full test coverage.
+**Tests**: 107 total (100 passing, 7 failing)
+
+**TODO**:
+
+- Fix TextEncoder polyfill for dashboard-header test
+- Fix new feature tests (audit-logs, tiers, tax-and-service-tab)
+- Target: 10/10 test suites passing
 
 #### 7. Type Safety Improvements Needed
 
@@ -1099,15 +1112,47 @@ const calculateTotal = (item: CartItemResponseDto) =>
   Number(item.finalPrice) * item.quantity;
 ```
 
-## Recent Improvements (January 2025)
+## Recent Additions (October 2025)
 
-### ✅ Fixed Issues
+### 🆕 New Features
+
+**Restaurant Management System (RMS):**
+
+1. **Audit Logs** (`features/audit-logs/`)
+   - Service for fetching audit logs with filters
+   - Query key factories for cache management
+   - Type definitions for audit log entities
+   - Test suite included
+
+2. **Personnel Management** (`features/personnel/`)
+   - Staff invitation dialog with role assignment
+   - Role change functionality
+   - User suspension/activation
+   - Personnel service with full CRUD operations
+   - Query key factories
+
+3. **Tier System** (`features/tiers/`)
+   - Tier gate component for feature access control
+   - Tier upgrade dialog with plan comparison
+   - Usage widget showing current tier limits
+   - Tier service for plan management
+   - Test suite for tier usage widget
+
+4. **Enhanced Store Settings** (`features/store/components/settings/`)
+   - Tax and service charge configuration tab (with tests)
+   - Business hours management tab
+   - Loyalty program configuration tab
+   - Branding customization tab
+
+### 🔧 Recent Improvements (January 2025)
 
 1. **Toast API Corrected** - Migrated 12 toast calls from old react-hot-toast API to Sonner API
 2. **Import Patterns Fixed** - Corrected @repo/api and @repo/ui imports across codebase
 3. **Component Event Handlers** - Fixed Switch component event handler type mismatches
 4. **Linting Clean** - All 26 ESLint warnings resolved (0 warnings across all packages)
 5. **Centralized Toast Export** - Created `@repo/ui/lib/toast` for consistent imports
+6. **UI Component Library Expanded** - Now includes 52 production-ready components
+7. **New Dependencies Added** - papaparse (CSV), recharts (charts), react-dropzone (file uploads)
 
 ## Documentation
 

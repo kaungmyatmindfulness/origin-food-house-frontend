@@ -268,22 +268,81 @@
     },
     "settingsPage": {
       "title": "Store Settings",
-      "subtitle": "Manage currency, tax, and service charge settings.",
-      "financialTitle": "Financial Settings",
-      "financialDescription": "Configure how prices and totals are calculated and displayed.",
-      "currencyLabel": "Default Currency",
-      "currencyPlaceholder": "Select a currency",
-      "currencyDescription": "The primary currency used for pricing and transactions.",
-      "vatLabel": "VAT Rate (%)",
-      "vatPlaceholder": "e.g., 7 or 7.5",
-      "vatDescription": "Enter percentage (e.g., 7 for 7%, 10.5 for 10.5%). Leave empty or 0 if no VAT.",
-      "serviceChargeLabel": "Service Charge Rate (%)",
-      "serviceChargePlaceholder": "e.g., 10 or 5.5",
-      "serviceChargeDescription": "Enter percentage (e.g., 10 for 10%). Leave empty or 0 for no service charge.",
-      "saveSettings": "Save Settings",
-      "updateSuccess": "Store settings updated successfully!",
-      "cannotUpdate": "Cannot update: Store not selected.",
-      "errorLoading": "Error loading store settings."
+      "subtitle": "Manage your store configuration and preferences.",
+      "errorLoading": "Error loading store settings.",
+      "tabs": {
+        "taxAndService": "Tax & Service",
+        "businessHours": "Business Hours",
+        "branding": "Branding",
+        "loyalty": "Loyalty Program"
+      },
+      "taxAndService": {
+        "title": "Tax & Service Charge",
+        "description": "Configure VAT and service charge rates for your store.",
+        "vatLabel": "VAT Rate (%)",
+        "vatPlaceholder": "e.g., 7",
+        "vatDescription": "Enter percentage (e.g., 7 for 7%). Range: 0-30%.",
+        "serviceChargeLabel": "Service Charge Rate (%)",
+        "serviceChargePlaceholder": "e.g., 10",
+        "serviceChargeDescription": "Enter percentage (e.g., 10 for 10%). Range: 0-30%.",
+        "previewTitle": "Preview Calculation",
+        "subtotal": "Subtotal",
+        "vat": "VAT",
+        "serviceCharge": "Service Charge",
+        "total": "Total",
+        "save": "Save Changes",
+        "updateSuccess": "Tax and service charge updated successfully!",
+        "updateError": "Failed to update tax and service charge."
+      },
+      "businessHours": {
+        "title": "Business Hours",
+        "description": "Set your store's operating hours for each day of the week.",
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday",
+        "closed": "Closed",
+        "openTime": "Opens",
+        "closeTime": "Closes",
+        "save": "Save Changes",
+        "updateSuccess": "Business hours updated successfully!",
+        "updateError": "Failed to update business hours."
+      },
+      "branding": {
+        "title": "Store Branding",
+        "description": "Upload your store logo and cover photo to personalize your brand.",
+        "logo": "Store Logo",
+        "logoDescription": "Recommended: Square image, 512x512px, max 5MB. Formats: PNG, JPEG, WebP.",
+        "cover": "Cover Photo",
+        "coverDescription": "Recommended: 1920x600px, max 10MB. Formats: PNG, JPEG, WebP.",
+        "uploadLogo": "Upload Logo",
+        "uploadCover": "Upload Cover",
+        "save": "Save Changes",
+        "uploadSuccess": "Branding assets uploaded successfully!",
+        "uploadError": "Failed to upload branding assets.",
+        "fileTooLarge": "File size exceeds the maximum limit.",
+        "noFilesSelected": "Please select at least one file to upload."
+      },
+      "loyalty": {
+        "title": "Loyalty Program",
+        "description": "Configure your customer loyalty rewards program.",
+        "premiumFeature": "Premium Feature",
+        "tierRestriction": "Loyalty program is only available on Standard and Premium tiers. Upgrade your plan to enable this feature.",
+        "enable": "Enable Loyalty Program",
+        "enableDescription": "Turn on the loyalty rewards program for your customers.",
+        "pointRate": "Point Rate",
+        "pointRateDescription": "Points earned per currency unit spent (e.g., 0.1 = 1 point per 10 THB).",
+        "redemptionRate": "Redemption Rate",
+        "redemptionRateDescription": "Currency value per 100 points redeemed (e.g., 0.1 = 10 THB per 100 points).",
+        "expiryDays": "Points Expiry (days)",
+        "expiryDaysDescription": "Number of days before loyalty points expire (0-3650 days).",
+        "save": "Save Changes",
+        "updateSuccess": "Loyalty program settings updated successfully!",
+        "updateError": "Failed to update loyalty program settings."
+      }
     }
   },
   "errors": {
@@ -746,6 +805,217 @@
       "cookiePolicy": "Cookie Policy",
       "copyright": "© {year} Origin Food House. All rights reserved.",
       "multiLanguageSupport": "Available in English, Chinese, Myanmar, Thai"
+    }
+  },
+  "personnel": {
+    "title": "Personnel Management",
+    "description": "Manage staff members, roles, and permissions",
+    "inviteStaff": "Invite Staff",
+    "staffList": "Staff Members",
+    "pendingInvitations": "Pending Invitations",
+    "noStoreSelected": "Please select a store to view personnel",
+    "noStaffFound": "No staff members found",
+    "searchPlaceholder": "Search by name or email...",
+    "filterByRole": "Filter by Role",
+    "filterByStatus": "Filter by Status",
+    "allRoles": "All Roles",
+    "allStatuses": "All Statuses",
+    "roles": {
+      "OWNER": "Owner",
+      "ADMIN": "Admin",
+      "CHEF": "Chef",
+      "CASHIER": "Cashier",
+      "SERVER": "Server"
+    },
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "pending": "Pending"
+    },
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "title": "Actions",
+      "changeRole": "Change Role",
+      "suspend": "Suspend",
+      "reactivate": "Reactivate"
+    },
+    "inviteDialog": {
+      "title": "Invite Staff Member",
+      "description": "Send an invitation to join your team",
+      "email": "Email Address",
+      "role": "Role",
+      "selectRole": "Select a role",
+      "submit": "Send Invitation",
+      "success": "Invitation sent successfully",
+      "error": "Failed to send invitation"
+    },
+    "changeRoleDialog": {
+      "title": "Change Role",
+      "description": "Change role for {name}",
+      "currentRole": "Current Role",
+      "newRole": "New Role",
+      "submit": "Change Role",
+      "success": "Role changed successfully",
+      "error": "Failed to change role",
+      "ownerWarning": "Changing role to Owner will transfer primary ownership. This action requires confirmation."
+    },
+    "suspendDialog": {
+      "title": "Suspend User",
+      "description": "Suspend access for {name}",
+      "warning": "This will immediately revoke all access to the store for this user.",
+      "reason": "Reason for Suspension",
+      "reasonPlaceholder": "Enter detailed reason for suspension...",
+      "submit": "Confirm Suspension",
+      "success": "User suspended successfully",
+      "error": "Failed to suspend user"
+    },
+    "reactivate": {
+      "success": "User reactivated successfully",
+      "error": "Failed to reactivate user"
+    },
+    "tierLimit": {
+      "message": "Staff Limit Reached",
+      "description": "Your current tier allows a limited number of staff members. Upgrade to add more.",
+      "upgrade": "Upgrade Plan"
+    },
+    "common": {
+      "cancel": "Cancel",
+      "submitting": "Submitting..."
+    }
+  },
+  "auditLogs": {
+    "title": "Audit Logs",
+    "subtitle": "View and export system activity logs",
+    "noStoreSelected": "Please select a store to view audit logs",
+    "export": "Export to CSV",
+    "exporting": "Exporting...",
+    "exportSuccess": "Audit logs exported successfully",
+    "exportError": "Failed to export audit logs",
+    "tableTitle": "Activity Log",
+    "showingResults": "Showing {from} - {to} of {total} entries",
+    "loadingResults": "Loading audit logs...",
+    "errorLoading": "Failed to load audit logs",
+    "errorLoadingDescription": "Please try again or contact support if the problem persists",
+    "noLogs": "No audit logs found",
+    "noLogsDescription": "Try adjusting your filters or date range",
+    "filters": {
+      "title": "Filters",
+      "description": "Filter audit logs by action, date, or keyword",
+      "action": "Action Type",
+      "actionPlaceholder": "Select action",
+      "allActions": "All Actions",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "keyword": "Search",
+      "keywordPlaceholder": "Search in details..."
+    },
+    "columns": {
+      "timestamp": "Timestamp",
+      "user": "User",
+      "action": "Action",
+      "details": "Details",
+      "ipAddress": "IP Address"
+    },
+    "actions": {
+      "STORE_SETTING_CHANGED": "Setting Changed",
+      "MENU_PRICE_CHANGED": "Price Changed",
+      "USER_ROLE_CHANGED": "Role Changed",
+      "USER_SUSPENDED": "User Suspended",
+      "PAYMENT_REFUNDED": "Refund Issued",
+      "CATEGORY_CREATED": "Category Created",
+      "CATEGORY_UPDATED": "Category Updated",
+      "CATEGORY_DELETED": "Category Deleted",
+      "MENU_ITEM_CREATED": "Menu Item Created",
+      "MENU_ITEM_UPDATED": "Menu Item Updated",
+      "MENU_ITEM_DELETED": "Menu Item Deleted",
+      "TABLE_CREATED": "Table Created",
+      "TABLE_UPDATED": "Table Updated",
+      "TABLE_DELETED": "Table Deleted",
+      "ORDER_CREATED": "Order Created",
+      "ORDER_STATUS_CHANGED": "Order Status Changed",
+      "PAYMENT_RECORDED": "Payment Recorded"
+    },
+    "pagination": {
+      "page": "Page {current} of {total}",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+  "tierUsage": {
+    "title": "Plan Usage",
+    "description": "Monitor your current plan usage and limits",
+    "errorLoading": "Failed to load plan usage",
+    "used": "used",
+    "upgrade": "Upgrade Plan",
+    "resources": {
+      "tables": "Tables",
+      "menuItems": "Menu Items",
+      "staff": "Staff Members",
+      "monthlyOrders": "Monthly Orders"
+    },
+    "tiers": {
+      "FREE": "Free",
+      "STANDARD": "Standard",
+      "PREMIUM": "Premium"
+    },
+    "upgradeDialog": {
+      "title": "Upgrade Your Plan",
+      "description": "Choose the plan that fits your business needs",
+      "featureLockedDescription": "{feature} is not available on your current plan",
+      "recommended": "Recommended",
+      "currentPlan": "Current Plan",
+      "notAvailable": "Not Available",
+      "upgrade": "Upgrade Now",
+      "note": "Payment processing will be implemented in Slice E. Contact support to upgrade now.",
+      "limits": "Usage Limits",
+      "tables": "tables",
+      "menuItems": "menu items",
+      "staff": "staff members",
+      "ordersPerMonth": "orders/month",
+      "unlimited": "Unlimited",
+      "features": {
+        "title": "Features",
+        "free": {
+          "basic": "Basic menu management",
+          "qrOrdering": "QR code ordering",
+          "basicReports": "Basic reports",
+          "emailSupport": "Email support"
+        },
+        "standard": {
+          "everything": "Everything in Free, plus:",
+          "kds": "Kitchen Display System (KDS)",
+          "advancedReports": "Advanced reports & analytics",
+          "staffManagement": "Advanced staff management",
+          "prioritySupport": "Priority email support"
+        },
+        "premium": {
+          "everything": "Everything in Standard, plus:",
+          "unlimited": "Unlimited resources",
+          "multiLocation": "Multi-location support",
+          "apiAccess": "API access",
+          "customization": "Custom branding",
+          "dedicatedSupport": "Dedicated account manager"
+        }
+      }
+    },
+    "tierGate": {
+      "description": "This feature is available on {tiers} plans only",
+      "or": "or",
+      "viewPlans": "View plans and upgrade",
+      "tiers": {
+        "STANDARD": "Standard",
+        "PREMIUM": "Premium"
+      }
+    },
+    "kds": {
+      "featureName": "Kitchen Display System (KDS)",
+      "featureDescription": "Real-time kitchen order management system available on Standard and Premium plans"
     }
   }
 }

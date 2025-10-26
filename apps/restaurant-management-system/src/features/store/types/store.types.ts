@@ -1,126 +1,109 @@
-export interface CreateStoreDto {
-  name: string;
-  address?: string;
-  phone?: string;
-}
+// Import generated types from OpenAPI spec
+import type {
+  GetStoreDetailsResponseDto as GeneratedStoreDetailsDto,
+  StoreSettingResponseDto as GeneratedStoreSettingDto,
+  StoreInformationResponseDto as GeneratedStoreInformationDto,
+  UpdateStoreInformationDto,
+  UpdateStoreSettingDto,
+} from '@repo/api/generated/types';
 
-/** Represents a store returned by the backend */
+// Re-export generated types for backwards compatibility
+export type { UpdateStoreInformationDto, UpdateStoreSettingDto };
 
-export interface Information {
-  id: string;
-  storeId: string;
-  name: string;
+/**
+ * Extended StoreInformationResponseDto with correct field types.
+ *
+ * The generated types incorrectly type these fields as `{ [key: string]: unknown }`.
+ * This extension provides the correct string types for these fields.
+ *
+ * @see GeneratedStoreInformationDto for base fields from backend
+ */
+export interface StoreInformationResponseDto
+  extends Omit<
+    GeneratedStoreInformationDto,
+    'logoUrl' | 'address' | 'phone' | 'email' | 'website'
+  > {
+  logoUrl?: string;
   address?: string;
   phone?: string;
   email?: string;
   website?: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 /**
- * Represents the detailed store information.
- * Assuming this structure based on UpdateStoreInformationDto and common patterns.
- * Corresponds roughly to the 'information' part of the old Store type.
- * NOTE: Adjust if the actual GetStoreDetailsResponseDto structure differs significantly.
+ * Extended StoreSettingResponseDto with fields pending backend implementation.
+ *
+ * These fields are used in the frontend for features being developed:
+ * - Loyalty program configuration
+ * - Business hours management
+ *
+ * @see GeneratedStoreSettingDto for base fields from backend
  */
-export interface StoreInformationDto {
-  id: string;
-  storeId: string;
-  name: string;
+export interface StoreSettingResponseDto extends GeneratedStoreSettingDto {
+  /** Loyalty program enabled flag (pending backend) */
+  loyaltyEnabled?: boolean;
+  /** Points earned per currency unit (pending backend) */
+  loyaltyPointRate?: string;
+  /** Redemption rate for points (pending backend) */
+  loyaltyRedemptionRate?: string;
+  /** Days until loyalty points expire (pending backend) */
+  loyaltyExpiryDays?: number;
+  /** Weekly business hours (pending backend) */
+  businessHours?: {
+    monday: { closed: boolean; open?: string; close?: string };
+    tuesday: { closed: boolean; open?: string; close?: string };
+    wednesday: { closed: boolean; open?: string; close?: string };
+    thursday: { closed: boolean; open?: string; close?: string };
+    friday: { closed: boolean; open?: string; close?: string };
+    saturday: { closed: boolean; open?: string; close?: string };
+    sunday: { closed: boolean; open?: string; close?: string };
+  };
+}
+
+/**
+ * Extended GetStoreDetailsResponseDto with fields pending backend implementation.
+ *
+ * These fields are used in the frontend for features being developed:
+ * - Store branding (logo, cover image)
+ * - Tier-based features
+ *
+ * @see GeneratedStoreDetailsDto for base fields from backend
+ */
+export interface GetStoreDetailsResponseDto
+  extends Omit<GeneratedStoreDetailsDto, 'setting' | 'information'> {
+  /** Store logo URL (pending backend) */
   logoUrl?: string;
-  address?: string | null;
-  phone?: string | null;
-  email?: string | null;
-  website?: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-/**
- * Represents the store settings data returned by the API.
- * Maps to: Schema StoreSettingResponseDto (assuming structure based on Update DTO)
- * NOTE: Adjust based on actual API response.
- */
-export interface StoreSettingResponseDto {
-  currency: string;
-  vatRate: string | null;
-  serviceChargeRate: string | null;
-}
-
-/**
- * Represents the full store details returned by GET /stores/{id}.
- * Maps to: Schema GetStoreDetailsResponseDto (assuming structure)
- * NOTE: Adjust based on actual API response.
- */
-export interface GetStoreDetailsResponseDto {
-  id: string;
-  slug: string;
-  information: StoreInformationDto;
+  /** Store cover image URL (pending backend) */
+  coverImageUrl?: string;
+  /** Store tier for feature gating (pending backend) */
+  tier?: 'FREE' | 'STANDARD' | 'PREMIUM';
+  /** Extended store information with correct field types */
+  information: StoreInformationResponseDto;
+  /** Extended store settings with additional fields */
   setting: StoreSettingResponseDto;
 }
 
 /**
- * DTO for the request body when updating store information.
- * Maps to: Schema UpdateStoreInformationDto (Request Body for PUT /stores/{id}/information)
+ * Alias for GetStoreDetailsResponseDto for backwards compatibility.
+ * Use GetStoreDetailsResponseDto directly in new code for clarity.
  */
-export interface UpdateStoreInformationDto {
-  /** Store's display name (Required) */
-  name: string;
-  logoUrl?: string;
-  address?: string;
-  phone?: string;
-  email?: string;
-  website?: string;
-}
+export type Store = GetStoreDetailsResponseDto;
 
 /**
- * Available currency codes based on the spec's enum.
- * Optional: Use this for better type safety than just string.
+ * DTO for creating a new store.
+ * Maps to backend CreateStoreDto.
  */
-export type StoreCurrency =
-  | 'THB'
-  | 'MMK'
-  | 'USD'
-  | 'EUR'
-  | 'GBP'
-  | 'JPY'
-  | 'CNY'
-  | 'AUD'
-  | 'CAD'
-  | 'NZD'
-  | 'SGD'
-  | 'HKD'
-  | 'INR'
-  | 'IDR'
-  | 'PHP'
-  | 'MYR'
-  | 'VND'
-  | 'PKR'
-  | 'BDT'
-  | 'AED'
-  | 'SAR';
-
-/**
- * DTO for the request body when updating store settings.
- * Maps to: Schema UpdateStoreSettingDto (Request Body for PUT /stores/{id}/settings)
- */
-export interface UpdateStoreSettingDto {
-  /** Update the default currency for the store. */
-  currency?: StoreCurrency | string;
-  /** Update VAT rate (e.g., "0.07"). Send null to remove. */
-  vatRate?: string | null;
-  /** Update Service Charge rate (e.g., "0.10"). Send null to remove. */
-  serviceChargeRate?: string | null;
-}
-
 export interface CreateStoreDto {
   name: string;
+  address?: string;
+  phone?: string;
 }
 
+/**
+ * DTO for inviting or assigning roles to users.
+ * Used in personnel management features.
+ */
 export interface InviteOrAssignRoleDto {
   email: string;
   role: 'OWNER' | 'ADMIN' | 'CASHIER' | 'CHEF';
 }
-
-export type Store = GetStoreDetailsResponseDto;

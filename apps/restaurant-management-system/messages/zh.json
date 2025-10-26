@@ -268,22 +268,81 @@
     },
     "settingsPage": {
       "title": "店铺设置",
-      "subtitle": "管理货币、税费和服务费设置。",
-      "financialTitle": "财务设置",
-      "financialDescription": "配置价格和总额的计算和显示方式。",
-      "currencyLabel": "默认货币",
-      "currencyPlaceholder": "选择货币",
-      "currencyDescription": "用于定价和交易的主要货币。",
-      "vatLabel": "增值税率（%）",
-      "vatPlaceholder": "例如：7 或 7.5",
-      "vatDescription": "输入百分比（例如，7 代表 7%，10.5 代表 10.5%）。如果没有增值税，请留空或输入 0。",
-      "serviceChargeLabel": "服务费率（%）",
-      "serviceChargePlaceholder": "例如：10 或 5.5",
-      "serviceChargeDescription": "输入百分比（例如，10 代表 10%）。如果没有服务费，请留空或输入 0。",
-      "saveSettings": "保存设置",
-      "updateSuccess": "店铺设置更新成功！",
-      "cannotUpdate": "无法更新：未选择店铺。",
-      "errorLoading": "加载店铺设置时出错。"
+      "subtitle": "管理您的店铺配置和偏好设置。",
+      "errorLoading": "加载店铺设置时出错。",
+      "tabs": {
+        "taxAndService": "税费与服务费",
+        "businessHours": "营业时间",
+        "branding": "品牌形象",
+        "loyalty": "会员积分计划"
+      },
+      "taxAndService": {
+        "title": "税费与服务费",
+        "description": "配置您店铺的增值税和服务费率。",
+        "vatLabel": "增值税率（%）",
+        "vatPlaceholder": "例如：7",
+        "vatDescription": "输入百分比（例如，7 代表 7%）。范围：0-30%。",
+        "serviceChargeLabel": "服务费率（%）",
+        "serviceChargePlaceholder": "例如：10",
+        "serviceChargeDescription": "输入百分比（例如，10 代表 10%）。范围：0-30%。",
+        "previewTitle": "预览计算",
+        "subtotal": "小计",
+        "vat": "增值税",
+        "serviceCharge": "服务费",
+        "total": "总计",
+        "save": "保存更改",
+        "updateSuccess": "税费和服务费更新成功！",
+        "updateError": "更新税费和服务费失败。"
+      },
+      "businessHours": {
+        "title": "营业时间",
+        "description": "设置您店铺每天的营业时间。",
+        "monday": "星期一",
+        "tuesday": "星期二",
+        "wednesday": "星期三",
+        "thursday": "星期四",
+        "friday": "星期五",
+        "saturday": "星期六",
+        "sunday": "星期日",
+        "closed": "休息",
+        "openTime": "开门",
+        "closeTime": "关门",
+        "save": "保存更改",
+        "updateSuccess": "营业时间更新成功！",
+        "updateError": "更新营业时间失败。"
+      },
+      "branding": {
+        "title": "店铺品牌",
+        "description": "上传您的店铺logo和封面照片，打造您的品牌形象。",
+        "logo": "店铺Logo",
+        "logoDescription": "建议：方形图片，512x512像素，最大5MB。格式：PNG、JPEG、WebP。",
+        "cover": "封面照片",
+        "coverDescription": "建议：1920x600像素，最大10MB。格式：PNG、JPEG、WebP。",
+        "uploadLogo": "上传Logo",
+        "uploadCover": "上传封面",
+        "save": "保存更改",
+        "uploadSuccess": "品牌资产上传成功！",
+        "uploadError": "上传品牌资产失败。",
+        "fileTooLarge": "文件大小超过最大限制。",
+        "noFilesSelected": "请至少选择一个文件上传。"
+      },
+      "loyalty": {
+        "title": "会员积分计划",
+        "description": "配置您的顾客积分奖励计划。",
+        "premiumFeature": "高级功能",
+        "tierRestriction": "会员积分计划仅适用于标准版和高级版。升级您的套餐以启用此功能。",
+        "enable": "启用会员积分计划",
+        "enableDescription": "为您的顾客开启积分奖励计划。",
+        "pointRate": "积分比率",
+        "pointRateDescription": "每消费货币单位获得的积分（例如，0.1 = 每消费10泰铢获得1积分）。",
+        "redemptionRate": "兑换比率",
+        "redemptionRateDescription": "每100积分可兑换的货币价值（例如，0.1 = 100积分兑换10泰铢）。",
+        "expiryDays": "积分有效期（天）",
+        "expiryDaysDescription": "积分过期前的天数（0-3650天）。",
+        "save": "保存更改",
+        "updateSuccess": "会员积分计划设置更新成功！",
+        "updateError": "更新会员积分计划设置失败。"
+      }
     }
   },
   "errors": {
@@ -746,6 +805,135 @@
       "cookiePolicy": "Cookie政策",
       "copyright": "© {year} Origin Food House。保留所有权利。",
       "multiLanguageSupport": "支持英语、中文、缅甸语、泰语"
+    }
+  },
+  "auditLogs": {
+    "title": "审计日志",
+    "subtitle": "查看和导出系统活动日志",
+    "noStoreSelected": "请选择商店查看审计日志",
+    "export": "导出为CSV",
+    "exporting": "导出中...",
+    "exportSuccess": "审计日志导出成功",
+    "exportError": "导出审计日志失败",
+    "tableTitle": "活动日志",
+    "showingResults": "显示 {from} - {to} 共 {total} 条",
+    "loadingResults": "加载审计日志中...",
+    "errorLoading": "加载审计日志失败",
+    "errorLoadingDescription": "请重试或联系支持",
+    "noLogs": "未找到审计日志",
+    "noLogsDescription": "尝试调整筛选条件或日期范围",
+    "filters": {
+      "title": "筛选",
+      "description": "按操作、日期或关键词筛选审计日志",
+      "action": "操作类型",
+      "actionPlaceholder": "选择操作",
+      "allActions": "所有操作",
+      "startDate": "开始日期",
+      "endDate": "结束日期",
+      "keyword": "搜索",
+      "keywordPlaceholder": "在详情中搜索..."
+    },
+    "columns": {
+      "timestamp": "时间戳",
+      "user": "用户",
+      "action": "操作",
+      "details": "详情",
+      "ipAddress": "IP地址"
+    },
+    "actions": {
+      "STORE_SETTING_CHANGED": "设置已更改",
+      "MENU_PRICE_CHANGED": "价格已更改",
+      "USER_ROLE_CHANGED": "角色已更改",
+      "USER_SUSPENDED": "用户已暂停",
+      "PAYMENT_REFUNDED": "已退款",
+      "CATEGORY_CREATED": "类别已创建",
+      "CATEGORY_UPDATED": "类别已更新",
+      "CATEGORY_DELETED": "类别已删除",
+      "MENU_ITEM_CREATED": "菜单项已创建",
+      "MENU_ITEM_UPDATED": "菜单项已更新",
+      "MENU_ITEM_DELETED": "菜单项已删除",
+      "TABLE_CREATED": "桌子已创建",
+      "TABLE_UPDATED": "桌子已更新",
+      "TABLE_DELETED": "桌子已删除",
+      "ORDER_CREATED": "订单已创建",
+      "ORDER_STATUS_CHANGED": "订单状态已更改",
+      "PAYMENT_RECORDED": "付款已记录"
+    },
+    "pagination": {
+      "page": "第 {current} 页，共 {total} 页",
+      "previous": "上一页",
+      "next": "下一页"
+    }
+  },
+  "tierUsage": {
+    "title": "计划使用情况",
+    "description": "监控当前计划的使用情况和限制",
+    "errorLoading": "加载计划使用情况失败",
+    "used": "已使用",
+    "upgrade": "升级计划",
+    "resources": {
+      "tables": "桌子",
+      "menuItems": "菜单项",
+      "staff": "员工",
+      "monthlyOrders": "每月订单"
+    },
+    "tiers": {
+      "FREE": "免费",
+      "STANDARD": "标准",
+      "PREMIUM": "高级"
+    },
+    "upgradeDialog": {
+      "title": "升级您的计划",
+      "description": "选择适合您业务需求的计划",
+      "featureLockedDescription": "{feature}在您当前的计划中不可用",
+      "recommended": "推荐",
+      "currentPlan": "当前计划",
+      "notAvailable": "不可用",
+      "upgrade": "立即升级",
+      "note": "支付处理将在Slice E中实现。现在联系支持以升级。",
+      "limits": "使用限制",
+      "tables": "桌子",
+      "menuItems": "菜单项",
+      "staff": "员工",
+      "ordersPerMonth": "订单/月",
+      "unlimited": "无限制",
+      "features": {
+        "title": "功能",
+        "free": {
+          "basic": "基本菜单管理",
+          "qrOrdering": "二维码点餐",
+          "basicReports": "基本报告",
+          "emailSupport": "电子邮件支持"
+        },
+        "standard": {
+          "everything": "免费版所有功能，还有：",
+          "kds": "厨房显示系统 (KDS)",
+          "advancedReports": "高级报告和分析",
+          "staffManagement": "高级员工管理",
+          "prioritySupport": "优先电子邮件支持"
+        },
+        "premium": {
+          "everything": "标准版所有功能，还有：",
+          "unlimited": "无限资源",
+          "multiLocation": "多店支持",
+          "apiAccess": "API访问",
+          "customization": "自定义品牌",
+          "dedicatedSupport": "专属客户经理"
+        }
+      }
+    },
+    "tierGate": {
+      "description": "此功能仅在{tiers}计划中可用",
+      "or": "或",
+      "viewPlans": "查看计划并升级",
+      "tiers": {
+        "STANDARD": "标准",
+        "PREMIUM": "高级"
+      }
+    },
+    "kds": {
+      "featureName": "厨房显示系统 (KDS)",
+      "featureDescription": "标准和高级计划提供的实时厨房订单管理系统"
     }
   }
 }

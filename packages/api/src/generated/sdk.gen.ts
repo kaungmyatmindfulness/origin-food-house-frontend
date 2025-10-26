@@ -5,7 +5,7 @@ import {
   formDataBodySerializer,
   type Options as Options2,
   type TDataShape,
-} from './client.js';
+} from '@hey-api/client-fetch';
 import { client } from './client.gen.js';
 import type {
   ActiveTableSessionControllerCloseData,
@@ -28,6 +28,10 @@ import type {
   ActiveTableSessionControllerUpdateData,
   ActiveTableSessionControllerUpdateErrors,
   ActiveTableSessionControllerUpdateResponses,
+  AuditLogControllerExportAuditLogsData,
+  AuditLogControllerExportAuditLogsResponses,
+  AuditLogControllerGetStoreAuditLogsData,
+  AuditLogControllerGetStoreAuditLogsResponses,
   AuthControllerGetAuth0ConfigData,
   AuthControllerGetAuth0ConfigResponses,
   AuthControllerGetAuth0ProfileData,
@@ -84,6 +88,9 @@ import type {
   MenuControllerGetStoreMenuItemsResponses,
   MenuControllerUpdateMenuItemData,
   MenuControllerUpdateMenuItemResponses,
+  OrderControllerApplyDiscountData,
+  OrderControllerApplyDiscountErrors,
+  OrderControllerApplyDiscountResponses,
   OrderControllerCheckoutData,
   OrderControllerCheckoutErrors,
   OrderControllerCheckoutResponses,
@@ -96,9 +103,15 @@ import type {
   OrderControllerFindOneData,
   OrderControllerFindOneErrors,
   OrderControllerFindOneResponses,
+  OrderControllerRemoveDiscountData,
+  OrderControllerRemoveDiscountErrors,
+  OrderControllerRemoveDiscountResponses,
   OrderControllerUpdateStatusData,
   OrderControllerUpdateStatusErrors,
   OrderControllerUpdateStatusResponses,
+  PaymentControllerCalculateSplitData,
+  PaymentControllerCalculateSplitErrors,
+  PaymentControllerCalculateSplitResponses,
   PaymentControllerCreateRefundData,
   PaymentControllerCreateRefundErrors,
   PaymentControllerCreateRefundResponses,
@@ -114,6 +127,17 @@ import type {
   PaymentControllerRecordPaymentData,
   PaymentControllerRecordPaymentErrors,
   PaymentControllerRecordPaymentResponses,
+  PaymentControllerRecordSplitPaymentData,
+  PaymentControllerRecordSplitPaymentErrors,
+  PaymentControllerRecordSplitPaymentResponses,
+  ReportControllerGetOrderStatusReportData,
+  ReportControllerGetOrderStatusReportResponses,
+  ReportControllerGetPaymentBreakdownData,
+  ReportControllerGetPaymentBreakdownResponses,
+  ReportControllerGetPopularItemsData,
+  ReportControllerGetPopularItemsResponses,
+  ReportControllerGetSalesSummaryData,
+  ReportControllerGetSalesSummaryResponses,
   StoreControllerCreateStoreData,
   StoreControllerCreateStoreErrors,
   StoreControllerCreateStoreResponses,
@@ -123,12 +147,24 @@ import type {
   StoreControllerInviteOrAssignRoleByEmailData,
   StoreControllerInviteOrAssignRoleByEmailErrors,
   StoreControllerInviteOrAssignRoleByEmailResponses,
+  StoreControllerUpdateBusinessHoursData,
+  StoreControllerUpdateBusinessHoursErrors,
+  StoreControllerUpdateBusinessHoursResponses,
+  StoreControllerUpdateLoyaltyRulesData,
+  StoreControllerUpdateLoyaltyRulesErrors,
+  StoreControllerUpdateLoyaltyRulesResponses,
   StoreControllerUpdateStoreInformationData,
   StoreControllerUpdateStoreInformationErrors,
   StoreControllerUpdateStoreInformationResponses,
   StoreControllerUpdateStoreSettingsData,
   StoreControllerUpdateStoreSettingsErrors,
   StoreControllerUpdateStoreSettingsResponses,
+  StoreControllerUpdateTaxAndServiceChargeData,
+  StoreControllerUpdateTaxAndServiceChargeErrors,
+  StoreControllerUpdateTaxAndServiceChargeResponses,
+  StoreControllerUploadBrandingData,
+  StoreControllerUploadBrandingErrors,
+  StoreControllerUploadBrandingResponses,
   TableControllerCreateTableData,
   TableControllerCreateTableResponses,
   TableControllerDeleteTableData,
@@ -143,20 +179,36 @@ import type {
   TableControllerUpdateTableResponses,
   TableControllerUpdateTableStatusData,
   TableControllerUpdateTableStatusResponses,
+  TierControllerGetStoreTierData,
+  TierControllerGetStoreTierResponses,
+  TierControllerGetStoreUsageData,
+  TierControllerGetStoreUsageResponses,
   UploadControllerUploadImageData,
   UploadControllerUploadImageErrors,
   UploadControllerUploadImageResponses,
   UserControllerAddUserToStoreData,
   UserControllerAddUserToStoreErrors,
   UserControllerAddUserToStoreResponses,
+  UserControllerChangeRoleData,
+  UserControllerChangeRoleErrors,
+  UserControllerChangeRoleResponses,
   UserControllerGetCurrentUserData,
   UserControllerGetCurrentUserResponses,
   UserControllerGetUserStoresData,
   UserControllerGetUserStoresErrors,
   UserControllerGetUserStoresResponses,
+  UserControllerInviteStaffData,
+  UserControllerInviteStaffErrors,
+  UserControllerInviteStaffResponses,
+  UserControllerReactivateUserData,
+  UserControllerReactivateUserErrors,
+  UserControllerReactivateUserResponses,
   UserControllerRegisterData,
   UserControllerRegisterErrors,
   UserControllerRegisterResponses,
+  UserControllerSuspendUserData,
+  UserControllerSuspendUserErrors,
+  UserControllerSuspendUserResponses,
 } from './types.gen.js';
 
 export type Options<
@@ -520,6 +572,192 @@ export const userControllerGetCurrentUser = <
     ThrowOnError
   >({
     url: '/users/me',
+    ...options,
+  });
+};
+
+/**
+ * Invite a staff member to join a store (Owner/Admin only)
+ */
+export const userControllerInviteStaff = <ThrowOnError extends boolean = false>(
+  options: Options<UserControllerInviteStaffData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    UserControllerInviteStaffResponses,
+    UserControllerInviteStaffErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/users/stores/{storeId}/invite-staff',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Change a user's role within a store (Owner only)
+ */
+export const userControllerChangeRole = <ThrowOnError extends boolean = false>(
+  options: Options<UserControllerChangeRoleData, ThrowOnError>
+) => {
+  return (options.client ?? client).patch<
+    UserControllerChangeRoleResponses,
+    UserControllerChangeRoleErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/users/stores/{storeId}/users/{targetUserId}/role',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Suspend a user account (Owner/Admin only)
+ */
+export const userControllerSuspendUser = <ThrowOnError extends boolean = false>(
+  options: Options<UserControllerSuspendUserData, ThrowOnError>
+) => {
+  return (options.client ?? client).patch<
+    UserControllerSuspendUserResponses,
+    UserControllerSuspendUserErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/users/stores/{storeId}/users/{targetUserId}/suspend',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Reactivate a suspended user account (Owner/Admin only)
+ */
+export const userControllerReactivateUser = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<UserControllerReactivateUserData, ThrowOnError>
+) => {
+  return (options.client ?? client).patch<
+    UserControllerReactivateUserResponses,
+    UserControllerReactivateUserErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/users/stores/{storeId}/users/{targetUserId}/reactivate',
+    ...options,
+  });
+};
+
+export const tierControllerGetStoreTier = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<TierControllerGetStoreTierData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    TierControllerGetStoreTierResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/tier/{storeId}',
+    ...options,
+  });
+};
+
+export const tierControllerGetStoreUsage = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<TierControllerGetStoreUsageData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    TierControllerGetStoreUsageResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/tier/{storeId}/usage',
+    ...options,
+  });
+};
+
+export const auditLogControllerGetStoreAuditLogs = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AuditLogControllerGetStoreAuditLogsData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    AuditLogControllerGetStoreAuditLogsResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/audit-logs/{storeId}',
+    ...options,
+  });
+};
+
+export const auditLogControllerExportAuditLogs = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AuditLogControllerExportAuditLogsData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    AuditLogControllerExportAuditLogsResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/audit-logs/{storeId}/export',
     ...options,
   });
 };
@@ -1098,6 +1336,60 @@ export const orderControllerUpdateStatus = <
 };
 
 /**
+ * Apply discount to order (POS)
+ * Apply percentage or fixed amount discount to an order. Implements 3-tier authorization: Small (<10%) = CASHIER, Medium (10-50%) = ADMIN, Large (>50%) = OWNER
+ */
+export const orderControllerApplyDiscount = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<OrderControllerApplyDiscountData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    OrderControllerApplyDiscountResponses,
+    OrderControllerApplyDiscountErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/orders/{orderId}/apply-discount',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Remove discount from order (POS)
+ * Remove previously applied discount. Requires ADMIN or OWNER role.
+ */
+export const orderControllerRemoveDiscount = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<OrderControllerRemoveDiscountData, ThrowOnError>
+) => {
+  return (options.client ?? client).delete<
+    OrderControllerRemoveDiscountResponses,
+    OrderControllerRemoveDiscountErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/orders/{orderId}/discount',
+    ...options,
+  });
+};
+
+/**
  * Get all payments for an order
  */
 export const paymentControllerFindPaymentsByOrder = <
@@ -1228,6 +1520,136 @@ export const paymentControllerCreateRefund = <
 };
 
 /**
+ * Calculate bill split amounts for an order
+ * Calculate how to split an order bill among guests (EVEN, BY_ITEM, or CUSTOM)
+ */
+export const paymentControllerCalculateSplit = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PaymentControllerCalculateSplitData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    PaymentControllerCalculateSplitResponses,
+    PaymentControllerCalculateSplitErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/payments/orders/{orderId}/calculate-split',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Record a split payment for an order
+ * Record a split payment as part of a bill splitting transaction
+ */
+export const paymentControllerRecordSplitPayment = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PaymentControllerRecordSplitPaymentData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    PaymentControllerRecordSplitPaymentResponses,
+    PaymentControllerRecordSplitPaymentErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/payments/orders/{orderId}/split-payment',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Get sales summary report
+ */
+export const reportControllerGetSalesSummary = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ReportControllerGetSalesSummaryData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    ReportControllerGetSalesSummaryResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: '/reports/sales-summary',
+    ...options,
+  });
+};
+
+/**
+ * Get payment method breakdown report
+ */
+export const reportControllerGetPaymentBreakdown = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ReportControllerGetPaymentBreakdownData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    ReportControllerGetPaymentBreakdownResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: '/reports/payment-breakdown',
+    ...options,
+  });
+};
+
+/**
+ * Get popular menu items report
+ */
+export const reportControllerGetPopularItems = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ReportControllerGetPopularItemsData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    ReportControllerGetPopularItemsResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: '/reports/popular-items',
+    ...options,
+  });
+};
+
+/**
+ * Get order status distribution report
+ */
+export const reportControllerGetOrderStatusReport = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<ReportControllerGetOrderStatusReportData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    ReportControllerGetOrderStatusReportResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: '/reports/order-status',
+    ...options,
+  });
+};
+
+/**
  * Get public details for a specific store by ID
  */
 export const storeControllerGetStoreDetails = <
@@ -1350,6 +1772,114 @@ export const storeControllerInviteOrAssignRoleByEmail = <
       },
     ],
     url: '/stores/{id}/invite-assign-role',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Update tax and service charge rates (OWNER or ADMIN only)
+ */
+export const storeControllerUpdateTaxAndServiceCharge = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<StoreControllerUpdateTaxAndServiceChargeData, ThrowOnError>
+) => {
+  return (options.client ?? client).patch<
+    StoreControllerUpdateTaxAndServiceChargeResponses,
+    StoreControllerUpdateTaxAndServiceChargeErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{id}/settings/tax-and-service',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Update business hours (OWNER or ADMIN only)
+ */
+export const storeControllerUpdateBusinessHours = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<StoreControllerUpdateBusinessHoursData, ThrowOnError>
+) => {
+  return (options.client ?? client).patch<
+    StoreControllerUpdateBusinessHoursResponses,
+    StoreControllerUpdateBusinessHoursErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{id}/settings/business-hours',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Upload branding images (logo and/or cover) (OWNER or ADMIN only)
+ */
+export const storeControllerUploadBranding = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<StoreControllerUploadBrandingData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    StoreControllerUploadBrandingResponses,
+    StoreControllerUploadBrandingErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{id}/settings/branding',
+    ...options,
+  });
+};
+
+/**
+ * Update loyalty program rules (OWNER only)
+ */
+export const storeControllerUpdateLoyaltyRules = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<StoreControllerUpdateLoyaltyRulesData, ThrowOnError>
+) => {
+  return (options.client ?? client).patch<
+    StoreControllerUpdateLoyaltyRulesResponses,
+    StoreControllerUpdateLoyaltyRulesErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{id}/settings/loyalty-rules',
     ...options,
     headers: {
       'Content-Type': 'application/json',

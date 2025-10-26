@@ -268,22 +268,81 @@
     },
     "settingsPage": {
       "title": "ตั้งค่าร้าน",
-      "subtitle": "จัดการการตั้งค่าสกุลเงิน ภาษี และค่าบริการ",
-      "financialTitle": "การตั้งค่าทางการเงิน",
-      "financialDescription": "กำหนดวิธีการคำนวณและแสดงราคาและยอดรวม",
-      "currencyLabel": "สกุลเงินหลัก",
-      "currencyPlaceholder": "เลือกสกุลเงิน",
-      "currencyDescription": "สกุลเงินหลักที่ใช้สำหรับราคาและธุรกรรม",
-      "vatLabel": "อัตราภาษีมูลค่าเพิ่ม (%)",
-      "vatPlaceholder": "เช่น 7 หรือ 7.5",
-      "vatDescription": "ใส่เปอร์เซ็นต์ (เช่น 7 สำหรับ 7%, 10.5 สำหรับ 10.5%) ปล่อยว่างหรือ 0 ถ้าไม่มีภาษีมูลค่าเพิ่ม",
-      "serviceChargeLabel": "อัตราค่าบริการ (%)",
-      "serviceChargePlaceholder": "เช่น 10 หรือ 5.5",
-      "serviceChargeDescription": "ใส่เปอร์เซ็นต์ (เช่น 10 สำหรับ 10%) ปล่อยว่างหรือ 0 ถ้าไม่มีค่าบริการ",
-      "saveSettings": "บันทึกการตั้งค่า",
-      "updateSuccess": "อัปเดตการตั้งค่าร้านสำเร็จ!",
-      "cannotUpdate": "ไม่สามารถอัปเดต: ยังไม่ได้เลือกร้าน",
-      "errorLoading": "เกิดข้อผิดพลาดในการโหลดการตั้งค่าร้าน"
+      "subtitle": "จัดการการตั้งค่าและความชอบของร้านค้าของคุณ",
+      "errorLoading": "เกิดข้อผิดพลาดในการโหลดการตั้งค่าร้าน",
+      "tabs": {
+        "taxAndService": "ภาษีและค่าบริการ",
+        "businessHours": "เวลาทำการ",
+        "branding": "แบรนด์",
+        "loyalty": "โปรแกรมสะสมแต้ม"
+      },
+      "taxAndService": {
+        "title": "ภาษีและค่าบริการ",
+        "description": "กำหนดอัตราภาษีมูลค่าเพิ่มและค่าบริการสำหรับร้านของคุณ",
+        "vatLabel": "อัตราภาษีมูลค่าเพิ่ม (%)",
+        "vatPlaceholder": "เช่น 7",
+        "vatDescription": "ใส่เปอร์เซ็นต์ (เช่น 7 สำหรับ 7%) ช่วง: 0-30%",
+        "serviceChargeLabel": "อัตราค่าบริการ (%)",
+        "serviceChargePlaceholder": "เช่น 10",
+        "serviceChargeDescription": "ใส่เปอร์เซ็นต์ (เช่น 10 สำหรับ 10%) ช่วง: 0-30%",
+        "previewTitle": "แสดงตัวอย่างการคำนวณ",
+        "subtotal": "ยอดรวมย่อย",
+        "vat": "ภาษีมูลค่าเพิ่ม",
+        "serviceCharge": "ค่าบริการ",
+        "total": "ยอดรวมทั้งหมด",
+        "save": "บันทึกการเปลี่ยนแปลง",
+        "updateSuccess": "อัปเดตภาษีและค่าบริการสำเร็จ!",
+        "updateError": "ไม่สามารถอัปเดตภาษีและค่าบริการ"
+      },
+      "businessHours": {
+        "title": "เวลาทำการ",
+        "description": "กำหนดเวลาทำการของร้านสำหรับแต่ละวันในสัปดาห์",
+        "monday": "วันจันทร์",
+        "tuesday": "วันอังคาร",
+        "wednesday": "วันพุธ",
+        "thursday": "วันพฤหัสบดี",
+        "friday": "วันศุกร์",
+        "saturday": "วันเสาร์",
+        "sunday": "วันอาทิตย์",
+        "closed": "ปิด",
+        "openTime": "เปิด",
+        "closeTime": "ปิด",
+        "save": "บันทึกการเปลี่ยนแปลง",
+        "updateSuccess": "อัปเดตเวลาทำการสำเร็จ!",
+        "updateError": "ไม่สามารถอัปเดตเวลาทำการ"
+      },
+      "branding": {
+        "title": "แบรนด์ร้านค้า",
+        "description": "อัปโหลดโลโก้และภาพปกของร้านเพื่อปรับแต่งแบรนด์ของคุณ",
+        "logo": "โลโก้ร้าน",
+        "logoDescription": "แนะนำ: ภาพสี่เหลี่ยมจัตุรัส 512x512px สูงสุด 5MB รูปแบบ: PNG, JPEG, WebP",
+        "cover": "ภาพปก",
+        "coverDescription": "แนะนำ: 1920x600px สูงสุด 10MB รูปแบบ: PNG, JPEG, WebP",
+        "uploadLogo": "อัปโหลดโลโก้",
+        "uploadCover": "อัปโหลดภาพปก",
+        "save": "บันทึกการเปลี่ยนแปลง",
+        "uploadSuccess": "อัปโหลดสินทรัพย์แบรนด์สำเร็จ!",
+        "uploadError": "ไม่สามารถอัปโหลดสินทรัพย์แบรนด์",
+        "fileTooLarge": "ขนาดไฟล์เกินขีดจำกัดสูงสุด",
+        "noFilesSelected": "กรุณาเลือกไฟล์อย่างน้อยหนึ่งไฟล์เพื่ออัปโหลด"
+      },
+      "loyalty": {
+        "title": "โปรแกรมสะสมแต้ม",
+        "description": "กำหนดโปรแกรมรีวอร์ดสะสมแต้มสำหรับลูกค้าของคุณ",
+        "premiumFeature": "ฟีเจอร์พรีเมียม",
+        "tierRestriction": "โปรแกรมสะสมแต้มมีเฉพาะในแพ็กเกจ Standard และ Premium เท่านั้น อัปเกรดแผนของคุณเพื่อเปิดใช้งานฟีเจอร์นี้",
+        "enable": "เปิดใช้งานโปรแกรมสะสมแต้ม",
+        "enableDescription": "เปิดโปรแกรมรีวอร์ดสะสมแต้มสำหรับลูกค้าของคุณ",
+        "pointRate": "อัตราคะแนน",
+        "pointRateDescription": "คะแนนที่ได้รับต่อหนึ่งหน่วยเงิน (เช่น 0.1 = 1 คะแนนต่อ 10 บาท)",
+        "redemptionRate": "อัตราการแลก",
+        "redemptionRateDescription": "มูลค่าเงินต่อ 100 คะแนนที่แลกได้ (เช่น 0.1 = 10 บาทต่อ 100 คะแนน)",
+        "expiryDays": "วันหมดอายุคะแนน (วัน)",
+        "expiryDaysDescription": "จำนวนวันก่อนที่คะแนนจะหมดอายุ (0-3650 วัน)",
+        "save": "บันทึกการเปลี่ยนแปลง",
+        "updateSuccess": "อัปเดตการตั้งค่าโปรแกรมสะสมแต้มสำเร็จ!",
+        "updateError": "ไม่สามารถอัปเดตการตั้งค่าโปรแกรมสะสมแต้ม"
+      }
     }
   },
   "errors": {
@@ -746,6 +805,135 @@
       "cookiePolicy": "นโยบายคุกกี้",
       "copyright": "© {year} Origin Food House สงวนลิขสิทธิ์",
       "multiLanguageSupport": "มีให้บริการในภาษาอังกฤษ จีน พม่า ไทย"
+    }
+  },
+  "auditLogs": {
+    "title": "บันทึกการตรวจสอบ",
+    "subtitle": "ดูและส่งออกบันทึกกิจกรรมระบบ",
+    "noStoreSelected": "กรุณาเลือกร้านเพื่อดูบันทึกการตรวจสอบ",
+    "export": "ส่งออกเป็น CSV",
+    "exporting": "กำลังส่งออก...",
+    "exportSuccess": "ส่งออกบันทึกการตรวจสอบสำเร็จ",
+    "exportError": "ส่งออกบันทึกการตรวจสอบไม่สำเร็จ",
+    "tableTitle": "บันทึกกิจกรรม",
+    "showingResults": "แสดง {from} - {to} จาก {total} รายการ",
+    "loadingResults": "กำลังโหลดบันทึกการตรวจสอบ...",
+    "errorLoading": "โหลดบันทึกการตรวจสอบไม่สำเร็จ",
+    "errorLoadingDescription": "กรุณาลองอีกครั้งหรือติดต่อฝ่ายสนับสนุนหากปัญหายังคงอยู่",
+    "noLogs": "ไม่พบบันทึกการตรวจสอบ",
+    "noLogsDescription": "ลองปรับตัวกรองหรือช่วงวันที่ของคุณ",
+    "filters": {
+      "title": "ตัวกรอง",
+      "description": "กรองบันทึกการตรวจสอบตามการดำเนินการ วันที่ หรือคำสำคัญ",
+      "action": "ประเภทการดำเนินการ",
+      "actionPlaceholder": "เลือกการดำเนินการ",
+      "allActions": "การดำเนินการทั้งหมด",
+      "startDate": "วันที่เริ่มต้น",
+      "endDate": "วันที่สิ้นสุด",
+      "keyword": "ค้นหา",
+      "keywordPlaceholder": "ค้นหาในรายละเอียด..."
+    },
+    "columns": {
+      "timestamp": "เวลา",
+      "user": "ผู้ใช้",
+      "action": "การดำเนินการ",
+      "details": "รายละเอียด",
+      "ipAddress": "ที่อยู่ IP"
+    },
+    "actions": {
+      "STORE_SETTING_CHANGED": "เปลี่ยนการตั้งค่า",
+      "MENU_PRICE_CHANGED": "เปลี่ยนราคา",
+      "USER_ROLE_CHANGED": "เปลี่ยนบทบาท",
+      "USER_SUSPENDED": "ระงับผู้ใช้",
+      "PAYMENT_REFUNDED": "คืนเงินแล้ว",
+      "CATEGORY_CREATED": "สร้างหมวดหมู่แล้ว",
+      "CATEGORY_UPDATED": "อัปเดตหมวดหมู่แล้ว",
+      "CATEGORY_DELETED": "ลบหมวดหมู่แล้ว",
+      "MENU_ITEM_CREATED": "สร้างรายการเมนูแล้ว",
+      "MENU_ITEM_UPDATED": "อัปเดตรายการเมนูแล้ว",
+      "MENU_ITEM_DELETED": "ลบรายการเมนูแล้ว",
+      "TABLE_CREATED": "สร้างโต๊ะแล้ว",
+      "TABLE_UPDATED": "อัปเดตโต๊ะแล้ว",
+      "TABLE_DELETED": "ลบโต๊ะแล้ว",
+      "ORDER_CREATED": "สร้างคำสั่งซื้อแล้ว",
+      "ORDER_STATUS_CHANGED": "เปลี่ยนสถานะคำสั่งซื้อแล้ว",
+      "PAYMENT_RECORDED": "บันทึกการชำระเงินแล้ว"
+    },
+    "pagination": {
+      "page": "หน้า {current} จาก {total}",
+      "previous": "ก่อนหน้า",
+      "next": "ถัดไป"
+    }
+  },
+  "tierUsage": {
+    "title": "การใช้งานแพ็กเกจ",
+    "description": "ตรวจสอบการใช้งานและข้อจำกัดแพ็กเกจปัจจุบัน",
+    "errorLoading": "โหลดการใช้งานแพ็กเกจไม่สำเร็จ",
+    "used": "ใช้แล้ว",
+    "upgrade": "อัปเกรดแพ็กเกจ",
+    "resources": {
+      "tables": "โต๊ะ",
+      "menuItems": "รายการเมนู",
+      "staff": "พนักงาน",
+      "monthlyOrders": "คำสั่งซื้อต่อเดือน"
+    },
+    "tiers": {
+      "FREE": "ฟรี",
+      "STANDARD": "มาตรฐาน",
+      "PREMIUM": "พรีเมียม"
+    },
+    "upgradeDialog": {
+      "title": "อัปเกรดแพ็กเกจของคุณ",
+      "description": "เลือกแพ็กเกจที่เหมาะกับความต้องการทางธุรกิจของคุณ",
+      "featureLockedDescription": "{feature} ไม่พร้อมใช้งานในแพ็กเกจปัจจุบันของคุณ",
+      "recommended": "แนะนำ",
+      "currentPlan": "แพ็กเกจปัจจุบัน",
+      "notAvailable": "ไม่พร้อมใช้งาน",
+      "upgrade": "อัปเกรดทันที",
+      "note": "การประมวลผลการชำระเงินจะดำเนินการใน Slice E ติดต่อฝ่ายสนับสนุนเพื่ออัปเกรดตอนนี้",
+      "limits": "ข้อจำกัดการใช้งาน",
+      "tables": "โต๊ะ",
+      "menuItems": "รายการเมนู",
+      "staff": "พนักงาน",
+      "ordersPerMonth": "คำสั่งซื้อ/เดือน",
+      "unlimited": "ไม่จำกัด",
+      "features": {
+        "title": "ฟีเจอร์",
+        "free": {
+          "basic": "การจัดการเมนูพื้นฐาน",
+          "qrOrdering": "สั่งอาหารด้วย QR Code",
+          "basicReports": "รายงานพื้นฐาน",
+          "emailSupport": "การสนับสนุนทางอีเมล"
+        },
+        "standard": {
+          "everything": "ทุกอย่างในแพ็กเกจฟรี บวกกับ:",
+          "kds": "ระบบแสดงผลครัว (KDS)",
+          "advancedReports": "รายงานและการวิเคราะห์ขั้นสูง",
+          "staffManagement": "การจัดการพนักงานขั้นสูง",
+          "prioritySupport": "การสนับสนุนทางอีเมลแบบเร่งด่วน"
+        },
+        "premium": {
+          "everything": "ทุกอย่างในแพ็กเกจมาตรฐาน บวกกับ:",
+          "unlimited": "ทรัพยากรไม่จำกัด",
+          "multiLocation": "รองรับหลายสาขา",
+          "apiAccess": "การเข้าถึง API",
+          "customization": "แบรนด์กำหนดเอง",
+          "dedicatedSupport": "ผู้จัดการบัญชีเฉพาะ"
+        }
+      }
+    },
+    "tierGate": {
+      "description": "ฟีเจอร์นี้พร้อมใช้งานในแพ็กเกจ {tiers} เท่านั้น",
+      "or": "หรือ",
+      "viewPlans": "ดูแพ็กเกจและอัปเกรด",
+      "tiers": {
+        "STANDARD": "มาตรฐาน",
+        "PREMIUM": "พรีเมียม"
+      }
+    },
+    "kds": {
+      "featureName": "ระบบแสดงผลครัว (KDS)",
+      "featureDescription": "ระบบจัดการคำสั่งซื้อครัวแบบเรียลไทม์ พร้อมใช้งานในแพ็กเกจมาตรฐานและพรีเมียม"
     }
   }
 }

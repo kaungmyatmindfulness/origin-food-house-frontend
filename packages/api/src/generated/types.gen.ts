@@ -166,6 +166,31 @@ export type AddUserToStoreDto = {
   role: 'OWNER' | 'ADMIN' | 'CHEF' | 'CASHIER' | 'SERVER';
 };
 
+export type InviteStaffDto = {
+  /**
+   * Email address of the staff member to invite
+   */
+  email: string;
+  /**
+   * Role to assign to the staff member
+   */
+  role: 'OWNER' | 'ADMIN' | 'CHEF' | 'CASHIER' | 'SERVER';
+};
+
+export type ChangeRoleDto = {
+  /**
+   * New role to assign to the user
+   */
+  role: 'OWNER' | 'ADMIN' | 'CHEF' | 'CASHIER' | 'SERVER';
+};
+
+export type SuspendUserDto = {
+  /**
+   * Reason for suspending the user
+   */
+  reason: string;
+};
+
 export type CartItemCustomizationResponseDto = {
   id: string;
   customizationOptionId: string;
@@ -640,6 +665,18 @@ export type OrderResponseDto = {
   vatAmount: string;
   serviceChargeAmount: string;
   grandTotal: string;
+  discountType: 'PERCENTAGE' | 'FIXED_AMOUNT';
+  discountValue: string;
+  discountAmount: string;
+  discountReason: {
+    [key: string]: unknown;
+  };
+  discountAppliedBy: {
+    [key: string]: unknown;
+  };
+  discountAppliedAt: {
+    [key: string]: unknown;
+  };
   /**
    * Total amount paid across all payments (supports bill splitting)
    */
@@ -706,6 +743,10 @@ export type UpdateOrderStatusDto = {
     | 'SERVED'
     | 'COMPLETED'
     | 'CANCELLED';
+};
+
+export type ApplyDiscountDto = {
+  [key: string]: unknown;
 };
 
 export type RecordPaymentDto = {
@@ -785,6 +826,209 @@ export type RefundResponseDto = {
   };
   createdAt: string;
   updatedAt: string;
+};
+
+export type CalculateSplitDto = {
+  /**
+   * Split type to calculate
+   */
+  splitType: 'EVEN' | 'BY_ITEM' | 'CUSTOM';
+  /**
+   * Split data based on split type
+   */
+  splitData: {
+    [key: string]: unknown;
+  };
+};
+
+export type RecordSplitPaymentDto = {
+  /**
+   * Payment method
+   */
+  paymentMethod:
+    | 'CASH'
+    | 'CREDIT_CARD'
+    | 'DEBIT_CARD'
+    | 'MOBILE_PAYMENT'
+    | 'OTHER';
+  /**
+   * Payment amount (as string for Decimal precision)
+   */
+  amount: string;
+  /**
+   * Amount tendered by customer (for cash payments only)
+   */
+  amountTendered?: string;
+  /**
+   * Change to return (calculated automatically for cash)
+   */
+  change?: string;
+  /**
+   * Split type
+   */
+  splitType: 'EVEN' | 'BY_ITEM' | 'CUSTOM';
+  /**
+   * Guest number for this split payment (1, 2, 3, etc.)
+   */
+  guestNumber: number;
+  /**
+   * Split metadata (JSON object with calculation details)
+   */
+  splitMetadata?: {
+    [key: string]: unknown;
+  };
+  /**
+   * External transaction ID (for card/mobile payments)
+   */
+  transactionId?: string;
+};
+
+export type SalesSummaryDto = {
+  /**
+   * Total sales amount
+   */
+  totalSales: string;
+  /**
+   * Total number of orders
+   */
+  orderCount: number;
+  /**
+   * Average order value
+   */
+  averageOrderValue: string;
+  /**
+   * Total VAT collected
+   */
+  totalVat: string;
+  /**
+   * Total service charge collected
+   */
+  totalServiceCharge: string;
+  /**
+   * Date range start
+   */
+  startDate: string;
+  /**
+   * Date range end
+   */
+  endDate: string;
+};
+
+export type PaymentMethodBreakdownDto = {
+  /**
+   * Payment method
+   */
+  paymentMethod:
+    | 'CASH'
+    | 'CREDIT_CARD'
+    | 'DEBIT_CARD'
+    | 'MOBILE_PAYMENT'
+    | 'OTHER';
+  /**
+   * Total amount for this payment method
+   */
+  totalAmount: string;
+  /**
+   * Number of transactions
+   */
+  transactionCount: number;
+  /**
+   * Percentage of total sales
+   */
+  percentage: number;
+};
+
+export type PaymentBreakdownDto = {
+  /**
+   * Breakdown by payment method
+   */
+  breakdown: Array<PaymentMethodBreakdownDto>;
+  /**
+   * Date range start
+   */
+  startDate: string;
+  /**
+   * Date range end
+   */
+  endDate: string;
+};
+
+export type PopularItemDto = {
+  /**
+   * Menu item ID
+   */
+  menuItemId: string;
+  /**
+   * Menu item name
+   */
+  menuItemName: string;
+  /**
+   * Total quantity sold
+   */
+  quantitySold: number;
+  /**
+   * Total revenue from this item
+   */
+  totalRevenue: string;
+  /**
+   * Number of orders containing this item
+   */
+  orderCount: number;
+};
+
+export type PopularItemsDto = {
+  /**
+   * List of popular items
+   */
+  items: Array<PopularItemDto>;
+  /**
+   * Date range start
+   */
+  startDate: string;
+  /**
+   * Date range end
+   */
+  endDate: string;
+};
+
+export type OrderStatusCountDto = {
+  /**
+   * Order status
+   */
+  status:
+    | 'PENDING'
+    | 'PREPARING'
+    | 'READY'
+    | 'SERVED'
+    | 'COMPLETED'
+    | 'CANCELLED';
+  /**
+   * Number of orders with this status
+   */
+  count: number;
+  /**
+   * Percentage of total orders
+   */
+  percentage: number;
+};
+
+export type OrderStatusReportDto = {
+  /**
+   * Order status distribution
+   */
+  statusDistribution: Array<OrderStatusCountDto>;
+  /**
+   * Total number of orders
+   */
+  totalOrders: number;
+  /**
+   * Date range start
+   */
+  startDate: string;
+  /**
+   * Date range end
+   */
+  endDate: string;
 };
 
 export type StoreInformationResponseDto = {
@@ -908,6 +1152,78 @@ export type InviteOrAssignRoleDto = {
    * The new role for the user in this store
    */
   role: 'OWNER' | 'ADMIN' | 'CHEF' | 'CASHIER' | 'SERVER';
+};
+
+export type UpdateTaxAndServiceChargeDto = {
+  /**
+   * VAT rate as decimal string (e.g., "0.07" for 7%)
+   */
+  vatRate: string;
+  /**
+   * Service charge rate as decimal string (e.g., "0.10" for 10%)
+   */
+  serviceChargeRate: string;
+};
+
+export type DayHoursDto = {
+  /**
+   * Whether the store is closed on this day
+   */
+  closed: boolean;
+  /**
+   * Opening time in HH:MM format (required if not closed)
+   */
+  open?: string;
+  /**
+   * Closing time in HH:MM format (required if not closed)
+   */
+  close?: string;
+};
+
+export type BusinessHoursDto = {
+  /**
+   * Business hours for Monday
+   */
+  monday: DayHoursDto;
+  /**
+   * Business hours for Tuesday
+   */
+  tuesday: DayHoursDto;
+  /**
+   * Business hours for Wednesday
+   */
+  wednesday: DayHoursDto;
+  /**
+   * Business hours for Thursday
+   */
+  thursday: DayHoursDto;
+  /**
+   * Business hours for Friday
+   */
+  friday: DayHoursDto;
+  /**
+   * Business hours for Saturday
+   */
+  saturday: DayHoursDto;
+  /**
+   * Business hours for Sunday
+   */
+  sunday: DayHoursDto;
+};
+
+export type UpdateLoyaltyRulesDto = {
+  /**
+   * Points earned per currency unit (e.g., "0.1" = 1 point per 10 THB)
+   */
+  pointRate: string;
+  /**
+   * Currency value per point for redemption (e.g., "0.1" = 100 points = 10 THB)
+   */
+  redemptionRate: string;
+  /**
+   * Number of days before loyalty points expire (0-3650)
+   */
+  expiryDays: number;
 };
 
 export type TableResponseDto = {
@@ -1383,6 +1699,240 @@ export type UserControllerGetCurrentUserResponses = {
 
 export type UserControllerGetCurrentUserResponse =
   UserControllerGetCurrentUserResponses[keyof UserControllerGetCurrentUserResponses];
+
+export type UserControllerInviteStaffData = {
+  body: InviteStaffDto;
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
+    storeId: string;
+  };
+  query?: never;
+  url: '/users/stores/{storeId}/invite-staff';
+};
+
+export type UserControllerInviteStaffErrors = {
+  /**
+   * Invalid input or user already a member
+   */
+  400: unknown;
+  /**
+   * Insufficient permissions or tier limit reached
+   */
+  403: unknown;
+};
+
+export type UserControllerInviteStaffResponses = {
+  /**
+   * Staff invitation sent successfully.
+   */
+  201: StandardApiResponse;
+};
+
+export type UserControllerInviteStaffResponse =
+  UserControllerInviteStaffResponses[keyof UserControllerInviteStaffResponses];
+
+export type UserControllerChangeRoleData = {
+  body: ChangeRoleDto;
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
+    storeId: string;
+    /**
+     * ID (UUID) of the user whose role to change
+     */
+    targetUserId: string;
+  };
+  query?: never;
+  url: '/users/stores/{storeId}/users/{targetUserId}/role';
+};
+
+export type UserControllerChangeRoleErrors = {
+  /**
+   * Cannot change own role
+   */
+  400: unknown;
+  /**
+   * Insufficient permissions (Owner only)
+   */
+  403: unknown;
+  /**
+   * User not found in store
+   */
+  404: unknown;
+};
+
+export type UserControllerChangeRoleResponses = {
+  /**
+   * User role updated successfully.
+   */
+  200: StandardApiResponse;
+};
+
+export type UserControllerChangeRoleResponse =
+  UserControllerChangeRoleResponses[keyof UserControllerChangeRoleResponses];
+
+export type UserControllerSuspendUserData = {
+  body: SuspendUserDto;
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
+    storeId: string;
+    /**
+     * ID (UUID) of the user to suspend
+     */
+    targetUserId: string;
+  };
+  query?: never;
+  url: '/users/stores/{storeId}/users/{targetUserId}/suspend';
+};
+
+export type UserControllerSuspendUserErrors = {
+  /**
+   * Cannot suspend yourself
+   */
+  400: unknown;
+  /**
+   * Insufficient permissions (Owner/Admin only)
+   */
+  403: unknown;
+  /**
+   * User not found
+   */
+  404: unknown;
+};
+
+export type UserControllerSuspendUserResponses = {
+  /**
+   * User suspended successfully.
+   */
+  200: StandardApiResponse;
+};
+
+export type UserControllerSuspendUserResponse =
+  UserControllerSuspendUserResponses[keyof UserControllerSuspendUserResponses];
+
+export type UserControllerReactivateUserData = {
+  body?: never;
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
+    storeId: string;
+    /**
+     * ID (UUID) of the user to reactivate
+     */
+    targetUserId: string;
+  };
+  query?: never;
+  url: '/users/stores/{storeId}/users/{targetUserId}/reactivate';
+};
+
+export type UserControllerReactivateUserErrors = {
+  /**
+   * Insufficient permissions (Owner/Admin only)
+   */
+  403: unknown;
+  /**
+   * User not found
+   */
+  404: unknown;
+};
+
+export type UserControllerReactivateUserResponses = {
+  /**
+   * User reactivated successfully.
+   */
+  200: StandardApiResponse;
+};
+
+export type UserControllerReactivateUserResponse =
+  UserControllerReactivateUserResponses[keyof UserControllerReactivateUserResponses];
+
+export type TierControllerGetStoreTierData = {
+  body?: never;
+  path: {
+    storeId: string;
+  };
+  query?: never;
+  url: '/tier/{storeId}';
+};
+
+export type TierControllerGetStoreTierResponses = {
+  200: unknown;
+};
+
+export type TierControllerGetStoreUsageData = {
+  body?: never;
+  path: {
+    storeId: string;
+  };
+  query?: never;
+  url: '/tier/{storeId}/usage';
+};
+
+export type TierControllerGetStoreUsageResponses = {
+  200: unknown;
+};
+
+export type AuditLogControllerGetStoreAuditLogsData = {
+  body?: never;
+  path: {
+    storeId: string;
+  };
+  query?: {
+    page?: number;
+    limit?: number;
+    action?:
+      | 'STORE_SETTING_CHANGED'
+      | 'MENU_PRICE_CHANGED'
+      | 'MENU_ITEM_86D'
+      | 'PAYMENT_REFUNDED'
+      | 'ORDER_VOIDED'
+      | 'USER_ROLE_CHANGED'
+      | 'USER_SUSPENDED'
+      | 'USER_REACTIVATED'
+      | 'TIER_UPGRADED'
+      | 'TIER_DOWNGRADED';
+    userId?: string;
+  };
+  url: '/audit-logs/{storeId}';
+};
+
+export type AuditLogControllerGetStoreAuditLogsResponses = {
+  200: unknown;
+};
+
+export type AuditLogControllerExportAuditLogsData = {
+  body?: never;
+  path: {
+    storeId: string;
+  };
+  query?: {
+    action?:
+      | 'STORE_SETTING_CHANGED'
+      | 'MENU_PRICE_CHANGED'
+      | 'MENU_ITEM_86D'
+      | 'PAYMENT_REFUNDED'
+      | 'ORDER_VOIDED'
+      | 'USER_ROLE_CHANGED'
+      | 'USER_SUSPENDED'
+      | 'USER_REACTIVATED'
+      | 'TIER_UPGRADED'
+      | 'TIER_DOWNGRADED';
+    userId?: string;
+    startDate?: string;
+    endDate?: string;
+  };
+  url: '/audit-logs/{storeId}/export';
+};
+
+export type AuditLogControllerExportAuditLogsResponses = {
+  200: unknown;
+};
 
 export type CartControllerClearCartData = {
   body?: never;
@@ -2221,6 +2771,90 @@ export type OrderControllerUpdateStatusResponses = {
 export type OrderControllerUpdateStatusResponse =
   OrderControllerUpdateStatusResponses[keyof OrderControllerUpdateStatusResponses];
 
+export type OrderControllerApplyDiscountData = {
+  body: ApplyDiscountDto;
+  path: {
+    /**
+     * Order ID
+     */
+    orderId: string;
+  };
+  query: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+  };
+  url: '/orders/{orderId}/apply-discount';
+};
+
+export type OrderControllerApplyDiscountErrors = {
+  /**
+   * Invalid discount or order already paid
+   */
+  400: unknown;
+  /**
+   * Insufficient permissions for discount amount
+   */
+  403: unknown;
+  /**
+   * Order not found
+   */
+  404: unknown;
+};
+
+export type OrderControllerApplyDiscountResponses = {
+  /**
+   * Discount applied successfully
+   */
+  200: OrderResponseDto;
+};
+
+export type OrderControllerApplyDiscountResponse =
+  OrderControllerApplyDiscountResponses[keyof OrderControllerApplyDiscountResponses];
+
+export type OrderControllerRemoveDiscountData = {
+  body?: never;
+  path: {
+    /**
+     * Order ID
+     */
+    orderId: string;
+  };
+  query: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+  };
+  url: '/orders/{orderId}/discount';
+};
+
+export type OrderControllerRemoveDiscountErrors = {
+  /**
+   * Order already paid
+   */
+  400: unknown;
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Order not found
+   */
+  404: unknown;
+};
+
+export type OrderControllerRemoveDiscountResponses = {
+  /**
+   * Discount removed successfully
+   */
+  200: OrderResponseDto;
+};
+
+export type OrderControllerRemoveDiscountResponse =
+  OrderControllerRemoveDiscountResponses[keyof OrderControllerRemoveDiscountResponses];
+
 export type PaymentControllerFindPaymentsByOrderData = {
   body?: never;
   path: {
@@ -2391,6 +3025,197 @@ export type PaymentControllerCreateRefundResponses = {
 export type PaymentControllerCreateRefundResponse =
   PaymentControllerCreateRefundResponses[keyof PaymentControllerCreateRefundResponses];
 
+export type PaymentControllerCalculateSplitData = {
+  body: CalculateSplitDto;
+  path: {
+    /**
+     * Order ID
+     */
+    orderId: string;
+  };
+  query?: never;
+  url: '/payments/orders/{orderId}/calculate-split';
+};
+
+export type PaymentControllerCalculateSplitErrors = {
+  /**
+   * Invalid split data
+   */
+  400: unknown;
+  /**
+   * Order not found
+   */
+  404: unknown;
+};
+
+export type PaymentControllerCalculateSplitResponses = {
+  /**
+   * Split calculation completed successfully
+   */
+  200: unknown;
+};
+
+export type PaymentControllerRecordSplitPaymentData = {
+  body: RecordSplitPaymentDto;
+  path: {
+    /**
+     * Order ID
+     */
+    orderId: string;
+  };
+  query?: never;
+  url: '/payments/orders/{orderId}/split-payment';
+};
+
+export type PaymentControllerRecordSplitPaymentErrors = {
+  /**
+   * Invalid payment or overpayment
+   */
+  400: unknown;
+  /**
+   * Forbidden - insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Order not found
+   */
+  404: unknown;
+};
+
+export type PaymentControllerRecordSplitPaymentResponses = {
+  /**
+   * Split payment recorded successfully
+   */
+  201: PaymentResponseDto;
+};
+
+export type PaymentControllerRecordSplitPaymentResponse =
+  PaymentControllerRecordSplitPaymentResponses[keyof PaymentControllerRecordSplitPaymentResponses];
+
+export type ReportControllerGetSalesSummaryData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+    /**
+     * Start date (ISO 8601)
+     */
+    startDate: string;
+    /**
+     * End date (ISO 8601)
+     */
+    endDate: string;
+  };
+  url: '/reports/sales-summary';
+};
+
+export type ReportControllerGetSalesSummaryResponses = {
+  /**
+   * Sales summary retrieved successfully
+   */
+  200: SalesSummaryDto;
+};
+
+export type ReportControllerGetSalesSummaryResponse =
+  ReportControllerGetSalesSummaryResponses[keyof ReportControllerGetSalesSummaryResponses];
+
+export type ReportControllerGetPaymentBreakdownData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+    /**
+     * Start date (ISO 8601)
+     */
+    startDate: string;
+    /**
+     * End date (ISO 8601)
+     */
+    endDate: string;
+  };
+  url: '/reports/payment-breakdown';
+};
+
+export type ReportControllerGetPaymentBreakdownResponses = {
+  /**
+   * Payment breakdown retrieved successfully
+   */
+  200: PaymentBreakdownDto;
+};
+
+export type ReportControllerGetPaymentBreakdownResponse =
+  ReportControllerGetPaymentBreakdownResponses[keyof ReportControllerGetPaymentBreakdownResponses];
+
+export type ReportControllerGetPopularItemsData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+    /**
+     * Number of items to return (default 10)
+     */
+    limit?: number;
+    /**
+     * Start date (ISO 8601)
+     */
+    startDate: string;
+    /**
+     * End date (ISO 8601)
+     */
+    endDate: string;
+  };
+  url: '/reports/popular-items';
+};
+
+export type ReportControllerGetPopularItemsResponses = {
+  /**
+   * Popular items retrieved successfully
+   */
+  200: PopularItemsDto;
+};
+
+export type ReportControllerGetPopularItemsResponse =
+  ReportControllerGetPopularItemsResponses[keyof ReportControllerGetPopularItemsResponses];
+
+export type ReportControllerGetOrderStatusReportData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+    /**
+     * Start date (ISO 8601)
+     */
+    startDate: string;
+    /**
+     * End date (ISO 8601)
+     */
+    endDate: string;
+  };
+  url: '/reports/order-status';
+};
+
+export type ReportControllerGetOrderStatusReportResponses = {
+  /**
+   * Order status report retrieved successfully
+   */
+  200: OrderStatusReportDto;
+};
+
+export type ReportControllerGetOrderStatusReportResponse =
+  ReportControllerGetOrderStatusReportResponses[keyof ReportControllerGetOrderStatusReportResponses];
+
 export type StoreControllerGetStoreDetailsData = {
   body?: never;
   path: {
@@ -2548,6 +3373,142 @@ export type StoreControllerInviteOrAssignRoleByEmailResponses = {
 
 export type StoreControllerInviteOrAssignRoleByEmailResponse =
   StoreControllerInviteOrAssignRoleByEmailResponses[keyof StoreControllerInviteOrAssignRoleByEmailResponses];
+
+export type StoreControllerUpdateTaxAndServiceChargeData = {
+  body: UpdateTaxAndServiceChargeDto;
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/stores/{id}/settings/tax-and-service';
+};
+
+export type StoreControllerUpdateTaxAndServiceChargeErrors = {
+  /**
+   * Unauthorized - Invalid or missing JWT.
+   */
+  401: unknown;
+};
+
+export type StoreControllerUpdateTaxAndServiceChargeResponses = {
+  /**
+   * Tax and service charge rates updated successfully.
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: StoreSettingResponseDto;
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type StoreControllerUpdateTaxAndServiceChargeResponse =
+  StoreControllerUpdateTaxAndServiceChargeResponses[keyof StoreControllerUpdateTaxAndServiceChargeResponses];
+
+export type StoreControllerUpdateBusinessHoursData = {
+  body: BusinessHoursDto;
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/stores/{id}/settings/business-hours';
+};
+
+export type StoreControllerUpdateBusinessHoursErrors = {
+  /**
+   * Unauthorized - Invalid or missing JWT.
+   */
+  401: unknown;
+};
+
+export type StoreControllerUpdateBusinessHoursResponses = {
+  /**
+   * Business hours updated successfully.
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: StoreSettingResponseDto;
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type StoreControllerUpdateBusinessHoursResponse =
+  StoreControllerUpdateBusinessHoursResponses[keyof StoreControllerUpdateBusinessHoursResponses];
+
+export type StoreControllerUploadBrandingData = {
+  body?: never;
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/stores/{id}/settings/branding';
+};
+
+export type StoreControllerUploadBrandingErrors = {
+  /**
+   * Unauthorized - Invalid or missing JWT.
+   */
+  401: unknown;
+};
+
+export type StoreControllerUploadBrandingResponses = {
+  /**
+   * Branding uploaded successfully.
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: StoreInformationResponseDto;
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type StoreControllerUploadBrandingResponse =
+  StoreControllerUploadBrandingResponses[keyof StoreControllerUploadBrandingResponses];
+
+export type StoreControllerUpdateLoyaltyRulesData = {
+  body: UpdateLoyaltyRulesDto;
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/stores/{id}/settings/loyalty-rules';
+};
+
+export type StoreControllerUpdateLoyaltyRulesErrors = {
+  /**
+   * Unauthorized - Invalid or missing JWT.
+   */
+  401: unknown;
+};
+
+export type StoreControllerUpdateLoyaltyRulesResponses = {
+  /**
+   * Loyalty rules updated successfully.
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: StoreSettingResponseDto;
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type StoreControllerUpdateLoyaltyRulesResponse =
+  StoreControllerUpdateLoyaltyRulesResponses[keyof StoreControllerUpdateLoyaltyRulesResponses];
 
 export type TableControllerFindAllByStoreData = {
   body?: never;
