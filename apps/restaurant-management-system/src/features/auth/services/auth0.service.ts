@@ -99,7 +99,7 @@ export async function isAuth0Authenticated(): Promise<boolean> {
 
 /**
  * Logs out from both Auth0 and backend
- * Clears all tokens and redirects to login page
+ * Clears all tokens and redirects to home page
  *
  * @param returnToUrl - Optional URL to redirect after logout
  */
@@ -115,13 +115,13 @@ export async function logoutFromAuth0(returnToUrl?: string): Promise<void> {
     // Logout from Auth0
     await auth0Client.logout({
       logoutParams: {
-        returnTo: returnToUrl || `${window.location.origin}/login`,
+        returnTo: returnToUrl || `${window.location.origin}/`,
       },
     });
   } catch (error) {
     console.error('Failed to logout from Auth0:', error);
-    // Force redirect to login even if logout fails
-    window.location.href = returnToUrl || '/login';
+    // Force redirect to home page even if logout fails
+    window.location.href = returnToUrl || '/';
   }
 }
 

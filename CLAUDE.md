@@ -108,7 +108,69 @@ import { toast } from '@repo/ui/lib/toast';
 3. Use size variants (sm, default, lg) when available
 4. Only create custom components for feature-specific, complex UI
 
-### 2. Auto-Generated API Types ⭐
+### 2. Design System & className Guidelines ⭐
+
+**READ FIRST**: See `DESIGN_SYSTEM.md` for complete guidelines.
+
+**Core Rule**: **Use component props over custom className overrides**
+
+```typescript
+// ✅ CORRECT - Use variant props
+<Button variant="destructive">Delete</Button>
+<Badge variant="outline">Status</Badge>
+<Card>
+  <CardHeader>
+    <CardTitle>Title</CardTitle>
+  </CardHeader>
+  <CardContent>Content</CardContent>
+</Card>
+
+// ❌ WRONG - Don't override component styles
+<Button className="bg-red-600 hover:bg-red-700">Delete</Button>
+<Badge className="border border-gray-300">Status</Badge>
+<Card>
+  <div className="p-6">
+    <h2 className="text-xl font-bold mb-4">Title</h2>
+  </div>
+</Card>
+```
+
+**Semantic Colors Only**:
+
+```typescript
+// ✅ CORRECT - Use semantic tokens
+<div className="bg-background text-foreground">
+<p className="text-muted-foreground">
+<Button variant="destructive">
+
+// ❌ WRONG - Never use raw Tailwind colors
+<div className="bg-white text-gray-900">
+<p className="text-gray-500">
+<Button className="bg-red-600">
+```
+
+**When className IS Acceptable**:
+
+- Layout utilities (`flex`, `grid`, `absolute`, `sticky`)
+- Responsive utilities (`hidden md:block`, `grid-cols-1 md:grid-cols-2`)
+- Spacing from standard scale (`space-y-4`, `gap-6`, `p-8`)
+- State variations (`hover:bg-accent`, `focus:ring-2`)
+
+**Before adding custom className, ask**:
+
+1. Does this component have a variant/size prop?
+2. Am I using semantic color tokens?
+3. Is this spacing standard (4, 6, 8, 12, 16, 24)?
+4. Could I use layout utilities instead?
+
+**See `DESIGN_SYSTEM.md`** for:
+
+- Complete component patterns
+- Spacing & typography scales
+- Common anti-patterns
+- Code review checklist
+
+### 3. Auto-Generated API Types ⭐
 
 **Always use auto-generated types from OpenAPI spec:**
 
@@ -140,7 +202,7 @@ export async function createCategory(
 - Compile-time type safety
 - Run `npm run generate:api` when backend changes
 
-### 3. Query Key Factories
+### 4. Query Key Factories
 
 **Reference**: [TkDodo's Effective React Query Keys](https://tkdodo.eu/blog/effective-react-query-keys)
 
@@ -174,7 +236,7 @@ queryClient.invalidateQueries({ queryKey: menuKeys.categories(storeId) }); // Sp
 
 **Benefits**: Type-safe, hierarchical invalidation, prevents typos
 
-### 4. Zustand Stores
+### 5. Zustand Stores
 
 **Pattern**: devtools → persist → immer
 
@@ -225,7 +287,7 @@ export const selectIsAuthenticated = (state: AuthState) =>
 - Middleware order: devtools → persist → immer
 - Always export selectors for all state fields
 
-### 5. Constants (Never Hardcode)
+### 6. Constants (Never Hardcode)
 
 ```typescript
 // common/constants/routes.ts
@@ -239,7 +301,7 @@ export const ERROR_MESSAGES = {
 } as const;
 ```
 
-### 6. Internationalization
+### 7. Internationalization
 
 ```typescript
 'use client';
@@ -257,7 +319,7 @@ export function MyComponent() {
 - Add to ALL 4 language files (en, zh, my, th)
 - Use descriptive keys
 
-### 7. Toast Notifications (Sonner) ⭐
+### 8. Toast Notifications (Sonner) ⭐
 
 **CRITICAL**: Use the correct Sonner API, not the old react-hot-toast pattern.
 
@@ -306,7 +368,7 @@ toast({
 }
 ```
 
-### 8. Logging & Debugging
+### 9. Logging & Debugging
 
 **IMPORTANT**: Never use `console.log()` in production code. Use the debug utility (SOS) or structured logging.
 
@@ -331,7 +393,7 @@ console.error('Failed to load menu:', error); // Errors only
 - ✅ Use `console.error()` for errors (RMS)
 - ✅ Remove debug logs before production
 
-### 9. Component Event Handlers
+### 10. Component Event Handlers
 
 **Pattern**: Match callback signatures to component APIs
 
@@ -359,7 +421,7 @@ const handleToggle = (e: React.MouseEvent) => {
 - `Select.onValueChange`: `(value: string) => void`
 - `Dialog.onOpenChange`: `(open: boolean) => void`
 
-### 10. Skeleton Loading States
+### 11. Skeleton Loading States
 
 ```typescript
 if (isLoading) return <MenuSkeleton />;
@@ -367,7 +429,7 @@ if (isLoading) return <MenuSkeleton />;
 
 Always use skeleton placeholders for non-trivial loading states.
 
-### 11. React Query Configuration
+### 12. React Query Configuration
 
 **Default settings in providers.tsx**:
 
@@ -391,7 +453,7 @@ const queryClient = new QueryClient({
 
 **Server-side handling**: Separate query client instances for server/browser to prevent hydration issues.
 
-### 12. Optimistic Updates Pattern (Self-Ordering System Cart)
+### 13. Optimistic Updates Pattern (Self-Ordering System Cart)
 
 For real-time feel with WebSocket sync:
 
@@ -422,7 +484,7 @@ optimisticAddItem: async (cartItem) => {
 
 **Pattern**: Optimistic update → API call → Rollback on error → WebSocket confirmation
 
-### 13. WebSocket Integration (Self-Ordering System)
+### 14. WebSocket Integration (Self-Ordering System)
 
 **Setup**: SocketProvider in utils/socket-provider.tsx
 
@@ -442,7 +504,7 @@ socket?.on('cart:updated', (cart) => {
 
 **Events**: `connect`, `disconnect`, `connect_error`, `error`, `cart:updated`
 
-### 14. Testing Infrastructure (Restaurant Management System Only)
+### 15. Testing Infrastructure (Restaurant Management System Only)
 
 **Setup**: Jest + @testing-library/react + jsdom
 
@@ -488,12 +550,78 @@ socket?.on('cart:updated', (cart) => {
 - **Client** (`'use client'`): hooks, events, interactivity
 - **Server** (default): static content, layouts
 
+### Design System (NEW)
+
+- **Use component props over custom className** - Always prefer variant/size props
+- **Semantic colors only** - Use `bg-background`, `text-muted-foreground` (never raw colors)
+- **Standard spacing scale** - Use 4, 6, 8, 12, 16, 24 (never arbitrary values)
+- **Component composition** - Use Card, CardHeader, CardContent structure
+- **See `DESIGN_SYSTEM.md`** for complete guidelines
+
 ### Type Safety
 
 - Use `.ts`/`.tsx` extensions
 - Explicit types for API responses
 - Type imports: `import type { ... }`
 - Avoid `any`, use `unknown` if needed
+
+### Code Comments
+
+**Philosophy**: Code should be self-documenting. Comments are for **why**, not **what**.
+
+**Rules**:
+
+- ❌ **Never use inline comments** (`//`) to explain obvious code
+- ❌ **Never use JSX comments** (`{/* Comment */}`) to label sections
+- ✅ **Use JSDoc** only when explaining complex logic or external integrations
+- ✅ **Use descriptive names** instead of comments
+
+**Examples**:
+
+```typescript
+// ❌ BAD - Obvious comments
+// Form validation schema
+const schema = z.object({...});
+
+// Name fields
+<div className="grid grid-cols-2">
+
+// ❌ BAD - Unnecessary JSX comments
+{/* Email Field */}
+<FormField name="email" />
+
+{/* Actions */}
+<div className="flex gap-4">
+
+// ✅ GOOD - JSDoc for complex/external integrations only
+/**
+ * Submits form data to HubSpot Forms API
+ * @see https://developers.hubspot.com/docs/api/marketing/forms
+ */
+const onSubmit = async (data: FormValues) => {
+  // Implementation
+};
+
+// ✅ GOOD - Self-documenting code
+const contactFormSchema = z.object({
+  email: z.string().email(),
+  message: z.string().min(10),
+});
+```
+
+**When JSDoc IS acceptable**:
+
+- External API integrations (HubSpot, Stripe, Auth0)
+- Complex algorithms or business logic
+- Public library functions
+- Non-obvious TypeScript generics
+
+**When JSDoc is NOT needed**:
+
+- Obvious variable names
+- Standard React patterns
+- Simple CRUD operations
+- Standard form handling
 
 ### Authentication & Authorization
 
@@ -812,6 +940,10 @@ echo "Task is ready for completion!"
 ✅ Translations added for all 4 languages (if UI changes)
 ✅ API types regenerated (if backend changed)
 ✅ Used @repo/ui components (checked first)
+✅ Design system guidelines followed (see DESIGN_SYSTEM.md)
+✅ Component props used over custom className
+✅ Semantic colors used (no raw Tailwind colors)
+✅ Standard spacing scale followed (4, 6, 8, 12, 16, 24)
 ✅ Used auto-generated API types
 ✅ Created query key factories (if React Query used)
 ✅ Exported selectors (if Zustand store created)
@@ -830,6 +962,8 @@ FRONTEND TASK COMPLETION VERIFIED ✅
 When adding a new feature:
 
 - [ ] **Check `@repo/ui` components first** - don't recreate basics (50+ components available)
+- [ ] **Follow design system guidelines** - use component props over custom className (see `DESIGN_SYSTEM.md`)
+- [ ] **Use semantic colors only** - `bg-background`, `text-muted-foreground`, never raw Tailwind colors
 - [ ] Create `features/[feature]/` folder following feature-sliced design
 - [ ] Use auto-generated types from `@repo/api/generated/types` (never manual types)
 - [ ] Add `services/*.service.ts` with JSDoc comments and typed return values
@@ -1157,6 +1291,7 @@ const calculateTotal = (item: CartItemResponseDto) =>
 ## Documentation
 
 - `README.md` - Quick start, overview
+- `DESIGN_SYSTEM.md` - **Design system guidelines, component usage patterns, color tokens** ⭐
 - `OPENAPI_SETUP.md` - Type generation setup
 - `I18N_GUIDE.md` - Internationalization guide
 - `packages/api/README.md` - API package docs

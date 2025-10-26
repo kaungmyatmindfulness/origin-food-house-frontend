@@ -43,13 +43,13 @@ export function DashboardHeader() {
       } else {
         // Traditional logout - just clear local auth state
         clearAuth();
-        window.location.href = '/login';
+        window.location.href = '/';
       }
     } catch (error) {
       console.error('Logout error:', error);
       // Fallback: clear auth and redirect
       clearAuth();
-      window.location.href = '/login';
+      window.location.href = '/';
     } finally {
       setIsLoggingOut(false);
     }

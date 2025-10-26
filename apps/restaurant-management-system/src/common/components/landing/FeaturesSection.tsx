@@ -90,14 +90,16 @@ export function FeaturesSection() {
                 className="group border-2 transition-all hover:border-amber-200 hover:shadow-xl"
               >
                 <CardContent className="space-y-4 p-8">
-                  <div
-                    className={`inline-flex h-14 w-14 items-center justify-center rounded-lg ${feature.bgColor} transition-transform group-hover:scale-110`}
-                  >
-                    <Icon className={feature.color} size={28} />
+                  <div className="flex items-center space-x-4">
+                    <div
+                      className={`inline-flex h-14 w-14 items-center justify-center rounded-lg ${feature.bgColor} transition-transform group-hover:scale-110`}
+                    >
+                      <Icon className={feature.color} size={28} />
+                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      {feature.badge}
+                    </Badge>
                   </div>
-                  <Badge variant="outline" className="text-xs">
-                    {feature.badge}
-                  </Badge>
                   <h3 className="text-xl font-bold text-gray-900">
                     {feature.title}
                   </h3>

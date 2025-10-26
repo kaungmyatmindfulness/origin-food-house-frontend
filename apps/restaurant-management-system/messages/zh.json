@@ -648,7 +648,7 @@
       "trustSignal2": "翻桌率提高25%",
       "trustSignal3": "零订单错误",
       "primaryCta": "登录您的餐厅",
-      "secondaryCta": "申请演示",
+      "secondaryCta": "联系我们",
       "socialProof": "深受东南亚500多家餐厅信赖"
     },
     "trustIndicators": {
@@ -783,8 +783,32 @@
       "heading": "准备好改变您的餐厅运营了吗？",
       "subheading": "加入已经使用Origin Food House的数百家餐厅",
       "primaryCta": "登录您的餐厅",
-      "secondaryCta": "申请演示",
+      "secondaryCta": "联系我们",
       "trustIndicator": "无需信用卡 • 由Auth0提供安全认证"
+    },
+    "contactUs": {
+      "title": "联系我们",
+      "description": "与我们的团队取得联系，我们将帮助您开始使用Origin Food House",
+      "firstName": "名字",
+      "firstNamePlaceholder": "张",
+      "lastName": "姓氏",
+      "lastNamePlaceholder": "三",
+      "email": "电子邮箱",
+      "emailPlaceholder": "zhang.san@example.com",
+      "phone": "电话号码",
+      "phonePlaceholder": "+86 138 0000 0000",
+      "company": "公司名称",
+      "companyPlaceholder": "您的餐厅",
+      "message": "留言",
+      "messagePlaceholder": "告诉我们您的餐厅以及我们如何帮助您...",
+      "optional": "（选填）",
+      "cancel": "取消",
+      "submit": "发送消息",
+      "submitting": "发送中...",
+      "successTitle": "消息已发送！",
+      "successDescription": "感谢您联系我们。我们会尽快回复您。",
+      "errorTitle": "发送失败",
+      "errorDescription": "出现了问题。请重试或直接发送电子邮件给我们。"
     },
     "footer": {
       "tagline": "深受全球餐厅信赖的现代餐厅管理平台",

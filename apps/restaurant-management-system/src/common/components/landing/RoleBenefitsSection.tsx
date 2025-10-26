@@ -61,12 +61,12 @@ export function RoleBenefitsSection() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-8 grid h-auto w-full grid-cols-2 gap-2 bg-transparent sm:grid-cols-3 lg:grid-cols-5">
+          <TabsList className="mb-8 grid h-auto w-full grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
             {roles.map((role) => (
               <TabsTrigger
                 key={role.key}
                 value={role.key}
-                className="cursor-pointer rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm transition-all duration-200 hover:border-amber-300 hover:bg-amber-50 hover:shadow-md data-[state=active]:border-amber-600 data-[state=active]:bg-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg sm:text-base"
+                className="cursor-pointer rounded-lg px-4 py-3 text-sm text-gray-700 transition-all duration-200 hover:border-amber-300 hover:bg-amber-50 hover:shadow-md data-[state=active]:border-amber-600 data-[state=active]:bg-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg sm:text-base"
               >
                 <role.icon className="mr-2" size={18} />
                 {role.label}

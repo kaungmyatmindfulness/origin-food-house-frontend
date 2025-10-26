@@ -5,8 +5,8 @@
 
 export const ROUTES = {
   // Public routes
-  LOGIN: '/login',
-  REGISTER: '/register',
+  HOME: '/',
+  LOGIN: '/',
 
   // Store selection
   STORE_CHOOSE: '/store/choose',

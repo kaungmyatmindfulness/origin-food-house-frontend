@@ -13,10 +13,8 @@ import { Footer } from '@/common/components/landing/Footer';
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Fixed Navigation */}
       <Navigation />
 
-      {/* Main Content */}
       <main>
         <HeroSection />
         <TrustIndicators />
@@ -27,7 +25,6 @@ export default function HomePage() {
         <FinalCTASection />
       </main>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

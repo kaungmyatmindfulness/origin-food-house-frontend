@@ -648,7 +648,7 @@
       "trustSignal2": "25% Faster Turnover",
       "trustSignal3": "Zero Order Errors",
       "primaryCta": "Sign In to Your Restaurant",
-      "secondaryCta": "Request a Demo",
+      "secondaryCta": "Contact Us",
       "socialProof": "Trusted by 500+ restaurants across Southeast Asia"
     },
     "trustIndicators": {
@@ -783,8 +783,32 @@
       "heading": "Ready to Transform Your Restaurant Operations?",
       "subheading": "Join hundreds of restaurants already using Origin Food House",
       "primaryCta": "Sign In to Your Restaurant",
-      "secondaryCta": "Request a Demo",
+      "secondaryCta": "Contact Us",
       "trustIndicator": "No credit card required • Secure authentication powered by Auth0"
+    },
+    "contactUs": {
+      "title": "Contact Us",
+      "description": "Get in touch with our team and we'll help you get started with Origin Food House",
+      "firstName": "First Name",
+      "firstNamePlaceholder": "John",
+      "lastName": "Last Name",
+      "lastNamePlaceholder": "Doe",
+      "email": "Email Address",
+      "emailPlaceholder": "john.doe@example.com",
+      "phone": "Phone Number",
+      "phonePlaceholder": "+1 234 567 8900",
+      "company": "Company Name",
+      "companyPlaceholder": "Your Restaurant",
+      "message": "Message",
+      "messagePlaceholder": "Tell us about your restaurant and how we can help...",
+      "optional": "(Optional)",
+      "cancel": "Cancel",
+      "submit": "Send Message",
+      "submitting": "Sending...",
+      "successTitle": "Message Sent!",
+      "successDescription": "Thank you for contacting us. We'll get back to you soon.",
+      "errorTitle": "Failed to Send",
+      "errorDescription": "Something went wrong. Please try again or email us directly."
     },
     "footer": {
       "tagline": "Modern restaurant management platform trusted by restaurants worldwide",

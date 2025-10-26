@@ -648,7 +648,7 @@
       "trustSignal2": "หมุนเวียนโต๊ะเร็วขึ้น 25%",
       "trustSignal3": "ข้อผิดพลาดศูนย์",
       "primaryCta": "เข้าสู่ระบบร้านอาหารของคุณ",
-      "secondaryCta": "ขอการสาธิต",
+      "secondaryCta": "ติดต่อเรา",
       "socialProof": "ได้รับความไว้วางใจจากร้านอาหารกว่า 500 แห่งทั่วเอเชียตะวันออกเฉียงใต้"
     },
     "trustIndicators": {
@@ -783,8 +783,32 @@
       "heading": "พร้อมที่จะเปลี่ยนแปลงการดำเนินงานร้านอาหารของคุณแล้วหรือยัง?",
       "subheading": "เข้าร่วมกับร้านอาหารหลายร้อยแห่งที่ใช้ Origin Food House อยู่แล้ว",
       "primaryCta": "เข้าสู่ระบบร้านอาหารของคุณ",
-      "secondaryCta": "ขอการสาธิต",
+      "secondaryCta": "ติดต่อเรา",
       "trustIndicator": "ไม่ต้องใช้บัตรเครดิต • การรับรองความปลอดภัยโดย Auth0"
+    },
+    "contactUs": {
+      "title": "ติดต่อเรา",
+      "description": "ติดต่อทีมงานของเราและเราจะช่วยให้คุณเริ่มต้นใช้งาน Origin Food House",
+      "firstName": "ชื่อจริง",
+      "firstNamePlaceholder": "สมชาย",
+      "lastName": "นามสกุล",
+      "lastNamePlaceholder": "ใจดี",
+      "email": "อีเมล",
+      "emailPlaceholder": "somchai.jaidee@example.com",
+      "phone": "เบอร์โทรศัพท์",
+      "phonePlaceholder": "+66 81 234 5678",
+      "company": "ชื่อบริษัท",
+      "companyPlaceholder": "ร้านอาหารของคุณ",
+      "message": "ข้อความ",
+      "messagePlaceholder": "บอกเราเกี่ยวกับร้านอาหารของคุณและวิธีที่เราสามารถช่วยได้...",
+      "optional": "(ไม่บังคับ)",
+      "cancel": "ยกเลิก",
+      "submit": "ส่งข้อความ",
+      "submitting": "กำลังส่ง...",
+      "successTitle": "ส่งข้อความแล้ว!",
+      "successDescription": "ขอบคุณที่ติดต่อเรา เราจะติดต่อกลับโดยเร็วที่สุด",
+      "errorTitle": "ส่งไม่สำเร็จ",
+      "errorDescription": "เกิดข้อผิดพลาด กรุณาลองอีกครั้งหรือส่งอีเมลหาเราโดยตรง"
     },
     "footer": {
       "tagline": "แพลตฟอร์มการจัดการร้านอาหารสมัยใหม่ที่ได้รับความไว้วางใจจากร้านอาหารทั่วโลก",

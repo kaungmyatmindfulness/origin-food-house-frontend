@@ -1,11 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@repo/ui/components/button';
-import { ArrowRight, Lock } from 'lucide-react';
+import { ArrowRight, Lock, MessageCircle } from 'lucide-react';
+import { ContactUsDialog } from './ContactUsDialog';
+import { loginWithAuth0 } from '@/features/auth/services/auth0.service';
 
 export function HeroSection() {
   const t = useTranslations('landing.hero');
+  const [contactDialogOpen, setContactDialogOpen] = useState(false);
 
   return (
     <section
@@ -45,6 +49,7 @@ export function HeroSection() {
             <Button
               size="lg"
               className="w-full bg-amber-600 px-8 py-6 text-lg text-white shadow-lg transition-all hover:bg-amber-700 hover:shadow-xl sm:w-auto"
+              onClick={loginWithAuth0}
             >
               <Lock className="mr-2" size={20} />
               {t('primaryCta')}
@@ -53,8 +58,10 @@ export function HeroSection() {
             <Button
               size="lg"
               variant="outline"
-              className="w-full border-2 border-amber-600 px-8 py-6 text-lg text-amber-600 hover:bg-amber-50 sm:w-auto"
+              className="w-full border-2 border-amber-600 px-8 py-6 text-lg text-amber-600 hover:bg-amber-50 hover:text-black sm:w-auto"
+              onClick={() => setContactDialogOpen(true)}
             >
+              <MessageCircle className="mr-2" size={20} />
               {t('secondaryCta')}
             </Button>
           </div>
@@ -63,6 +70,12 @@ export function HeroSection() {
           <p className="pt-8 text-sm text-gray-500">{t('socialProof')}</p>
         </div>
       </div>
+
+      {/* Contact Us Dialog */}
+      <ContactUsDialog
+        open={contactDialogOpen}
+        onOpenChange={setContactDialogOpen}
+      />
     </section>
   );
 }

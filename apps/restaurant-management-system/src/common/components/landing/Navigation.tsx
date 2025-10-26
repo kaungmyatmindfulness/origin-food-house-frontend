@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@repo/ui/components/button';
 import { Menu, X } from 'lucide-react';
 import { LanguageSwitcher } from '../LanguageSwitcher';
+import { loginWithAuth0 } from '@/features/auth/services/auth0.service';
 
 export function Navigation() {
   const t = useTranslations('landing.navigation');
@@ -76,7 +77,11 @@ export function Navigation() {
               {t('testimonials')}
             </button>
             <LanguageSwitcher />
-            <Button size="lg" className="bg-amber-600 hover:bg-amber-700">
+            <Button
+              size="lg"
+              className="bg-amber-600 hover:bg-amber-700"
+              onClick={loginWithAuth0}
+            >
               {t('signIn')}
             </Button>
           </div>
@@ -119,6 +124,7 @@ export function Navigation() {
               <Button
                 size="lg"
                 className="w-full bg-amber-600 hover:bg-amber-700"
+                onClick={loginWithAuth0}
               >
                 {t('signIn')}
               </Button>

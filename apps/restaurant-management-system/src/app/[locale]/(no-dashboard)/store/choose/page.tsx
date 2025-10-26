@@ -139,7 +139,7 @@ export default function ChooseStorePage() {
           <AlertCircle className="mx-auto mb-2 h-10 w-10" />
           {t('couldNotLoadSession')}
           <div className="mt-4">
-            <Button onClick={() => router.push('/login')} variant="outline">
+            <Button onClick={() => router.push('/')} variant="outline">
               {t('goToLogin')}
             </Button>
           </div>
