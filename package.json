@@ -26,6 +26,7 @@
   ],
   "dependencies": {
     "@app/restaurant-management-system": "^0.1.0",
-    "@app/self-ordering-system": "^0.1.0"
+    "@app/self-ordering-system": "^0.1.0",
+    "@app/admin-platform": "^0.1.0"
   }
 }

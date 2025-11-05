@@ -18,6 +18,7 @@ import { TaxAndServiceTab } from '@/features/store/components/settings/tax-and-s
 import { BusinessHoursTab } from '@/features/store/components/settings/business-hours-tab';
 import { BrandingTab } from '@/features/store/components/settings/branding-tab';
 import { LoyaltyProgramTab } from '@/features/store/components/settings/loyalty-program-tab';
+import { SubscriptionTab } from '@/features/subscription/components/SubscriptionTab';
 import type { GetStoreDetailsResponseDto } from '@/features/store/types/store.types';
 
 const storeDetailsQueryKey = (storeId: string | null) => [
@@ -75,11 +76,14 @@ export default function StoreSettingsPage() {
       </header>
 
       <Tabs defaultValue="tax" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="tax">{t('tabs.taxAndService')}</TabsTrigger>
           <TabsTrigger value="hours">{t('tabs.businessHours')}</TabsTrigger>
           <TabsTrigger value="branding">{t('tabs.branding')}</TabsTrigger>
           <TabsTrigger value="loyalty">{t('tabs.loyalty')}</TabsTrigger>
+          <TabsTrigger value="subscription">
+            {t('tabs.subscription')}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="tax" className="mt-6">
@@ -114,6 +118,10 @@ export default function StoreSettingsPage() {
             redemptionRate={settings?.loyaltyRedemptionRate}
             expiryDays={settings?.loyaltyExpiryDays}
           />
+        </TabsContent>
+
+        <TabsContent value="subscription" className="mt-6">
+          <SubscriptionTab storeId={selectedStoreId} />
         </TabsContent>
       </Tabs>
     </div>
