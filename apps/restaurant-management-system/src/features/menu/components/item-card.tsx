@@ -59,7 +59,9 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
     },
     onError: (error) => {
       console.error(`Failed to delete item ${item.id}:`, error);
-
+      toast.error('Failed to delete item', {
+        description: error instanceof Error ? error.message : 'Unknown error',
+      });
       setIsConfirmDeleteDialogOpen(false);
     },
   });
@@ -171,7 +173,7 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
 
                 <Button
                   variant="ghost"
-                  className="flex w-full items-center justify-start px-2 py-1.5 text-sm font-normal text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/50"
+                  className="text-destructive hover:bg-destructive/10 flex w-full items-center justify-start px-2 py-1.5 text-sm font-normal"
                   onClick={handleDeleteRequest}
                   disabled={actionsDisabled}
                 >

@@ -89,9 +89,9 @@ export default function Auth0CallbackPage() {
 
         {error && !isProcessing && (
           <>
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+            <div className="bg-destructive/10 mx-auto flex h-12 w-12 items-center justify-center rounded-full">
               <svg
-                className="h-6 w-6 text-red-600"
+                className="text-destructive h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -104,11 +104,13 @@ export default function Auth0CallbackPage() {
                 />
               </svg>
             </div>
-            <h2 className="text-xl font-semibold text-red-800">
+            <h2 className="text-destructive text-xl font-semibold">
               Authentication Failed
             </h2>
-            <p className="text-sm text-gray-600">{error}</p>
-            <p className="text-xs text-gray-500">Redirecting to login...</p>
+            <p className="text-foreground text-sm">{error}</p>
+            <p className="text-muted-foreground text-xs">
+              Redirecting to login...
+            </p>
           </>
         )}
       </div>

@@ -138,8 +138,13 @@ export function useRejectPayment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ paymentId, reason }: { paymentId: string; reason: string }) =>
-      adminAPI.rejectPayment(paymentId, reason),
+    mutationFn: ({
+      paymentId,
+      reason,
+    }: {
+      paymentId: string;
+      reason: string;
+    }) => adminAPI.rejectPayment(paymentId, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminKeys.payments() });
     },

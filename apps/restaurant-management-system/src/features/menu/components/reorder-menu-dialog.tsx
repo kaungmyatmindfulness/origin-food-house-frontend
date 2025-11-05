@@ -268,6 +268,9 @@ export function ReorderMenuDialog({
     },
     onError: (error) => {
       console.error('Failed to save menu order:', error);
+      toast.error('Failed to save menu order', {
+        description: error instanceof Error ? error.message : 'Unknown error',
+      });
     },
   });
 

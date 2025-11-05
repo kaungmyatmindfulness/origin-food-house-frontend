@@ -122,7 +122,6 @@ export default function StoreTablesPage() {
       const initialTables =
         fetchedTables?.map((table) => ({ id: table.id, name: table.name })) ??
         [];
-      console.log('Populating form with tables:', initialTables);
       form.reset({ tables: initialTables });
     }
   }, [fetchedTables, form, isTablesSuccess, selectedStoreId]);
@@ -165,7 +164,6 @@ export default function StoreTablesPage() {
     const apiPayload: BatchUpsertTableDto = {
       tables: values.tables.map((t) => ({ id: t.id, name: t.name.trim() })),
     };
-    console.log('Submitting sync tables payload:', apiPayload);
     syncTablesMutation.mutate(apiPayload);
   }
 

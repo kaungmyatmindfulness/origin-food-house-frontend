@@ -55,8 +55,6 @@ export default function ChooseStorePage() {
       }
 
       if (selectedStoreId && user?.selectedStoreRole) {
-        console.log('ChooseStorePage: Store already selected, redirecting...');
-
         if (user.selectedStoreRole !== 'CHEF') {
           router.replace('/hub/menu');
         } else {

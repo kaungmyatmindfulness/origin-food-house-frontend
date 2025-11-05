@@ -317,6 +317,9 @@ export function MenuItemFormDialog({
     },
     onError: (error) => {
       console.error('Create item failed:', error);
+      toast.error('Failed to create menu item', {
+        description: error instanceof Error ? error.message : 'Unknown error',
+      });
     },
   });
 
@@ -339,6 +342,9 @@ export function MenuItemFormDialog({
     },
     onError: (error) => {
       console.error('Update item failed:', error);
+      toast.error('Failed to update menu item', {
+        description: error instanceof Error ? error.message : 'Unknown error',
+      });
     },
   });
 

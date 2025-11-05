@@ -236,6 +236,21 @@
       "noStoresFound": "未找到您账户的店铺。",
       "selectToProceed": "选择一个店铺以继续。"
     },
+    "create": {
+      "title": "创建您的第一家店铺",
+      "subtitle": "让我们开始创建您的餐厅店铺。",
+      "storeNameLabel": "店铺名称",
+      "storeNamePlaceholder": "例如：市中心餐厅",
+      "storeNameDescription": "输入店铺的唯一名称（1-100个字符）。",
+      "createButton": "创建店铺",
+      "creating": "创建中...",
+      "createSuccess": "店铺创建成功！",
+      "createError": "创建店铺失败。请重试。",
+      "validation": {
+        "nameRequired": "店铺名称为必填项。",
+        "nameTooLong": "店铺名称不能超过100个字符。"
+      }
+    },
     "info": {
       "title": "店铺信息",
       "subtitle": "更新您店铺的基本详情和标志。",

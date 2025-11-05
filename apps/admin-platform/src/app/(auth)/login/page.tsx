@@ -31,23 +31,19 @@ export default function AdminLoginPage() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="mt-4 text-muted-foreground">Loading...</p>
+          <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
+          <p className="text-muted-foreground mt-4">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/20">
+    <div className="bg-muted/20 flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-center text-2xl">
-            Admin Platform
-          </CardTitle>
-          <p className="text-center text-muted-foreground">
-            Origin Food House
-          </p>
+          <CardTitle className="text-center text-2xl">Admin Platform</CardTitle>
+          <p className="text-muted-foreground text-center">Origin Food House</p>
         </CardHeader>
         <CardContent>
           <Button onClick={handleLogin} className="w-full" size="lg">

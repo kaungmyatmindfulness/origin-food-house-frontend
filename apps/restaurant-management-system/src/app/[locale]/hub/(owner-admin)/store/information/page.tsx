@@ -123,7 +123,6 @@ export default function UpdateStoreInformationPage() {
   useEffect(() => {
     if (storeDetails?.information) {
       const info = storeDetails.information;
-      console.log('Populating form with:', info);
       form.reset({
         name: info.name ?? '',
         logoUrl: info.logoUrl ?? '', // Assuming API returns logoUrl in information object
@@ -167,7 +166,6 @@ export default function UpdateStoreInformationPage() {
       toast.error(t('cannotUpdate'));
       return;
     }
-    console.log('Submitting updated store info:', values);
     // The 'values' object already matches UpdateStoreInformationDto structure
     updateInfoMutation.mutate(values);
   }

@@ -1,7 +1,11 @@
 import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import type { AdminState, AdminActions, AdminProfile } from '@/types/admin.types';
+import type {
+  AdminState,
+  AdminActions,
+  AdminProfile,
+} from '@/types/admin.types';
 
 const initialState: AdminState = {
   adminProfile: null,

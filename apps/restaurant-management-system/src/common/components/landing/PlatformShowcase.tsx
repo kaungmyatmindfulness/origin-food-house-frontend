@@ -78,7 +78,7 @@ export function PlatformShowcase() {
                 <div className="mb-4 flex items-center space-x-4">
                   <Smartphone size={40} />
                   <div>
-                    <Badge className="mb-2 bg-white text-blue-600">
+                    <Badge className="text-primary mb-2 bg-white">
                       {t('sosLabel')}
                     </Badge>
                     <h3 className="text-2xl font-bold sm:text-3xl">
@@ -90,25 +90,33 @@ export function PlatformShowcase() {
               </div>
 
               <div className="space-y-4 p-8">
-                <h4 className="mb-4 font-semibold text-gray-900">
+                <h4 className="text-foreground mb-4 font-semibold">
                   {t('sosKeyFeatures')}
                 </h4>
                 <ul className="space-y-3">
                   <li className="flex items-start space-x-2">
-                    <div className="mt-2 h-2 w-2 rounded-full bg-blue-600" />
-                    <span className="text-gray-700">{t('sosFeature1')}</span>
+                    <div className="bg-primary mt-2 h-2 w-2 rounded-full" />
+                    <span className="text-muted-foreground">
+                      {t('sosFeature1')}
+                    </span>
                   </li>
                   <li className="flex items-start space-x-2">
-                    <div className="mt-2 h-2 w-2 rounded-full bg-blue-600" />
-                    <span className="text-gray-700">{t('sosFeature2')}</span>
+                    <div className="bg-primary mt-2 h-2 w-2 rounded-full" />
+                    <span className="text-muted-foreground">
+                      {t('sosFeature2')}
+                    </span>
                   </li>
                   <li className="flex items-start space-x-2">
-                    <div className="mt-2 h-2 w-2 rounded-full bg-blue-600" />
-                    <span className="text-gray-700">{t('sosFeature3')}</span>
+                    <div className="bg-primary mt-2 h-2 w-2 rounded-full" />
+                    <span className="text-muted-foreground">
+                      {t('sosFeature3')}
+                    </span>
                   </li>
                   <li className="flex items-start space-x-2">
-                    <div className="mt-2 h-2 w-2 rounded-full bg-blue-600" />
-                    <span className="text-gray-700">{t('sosFeature4')}</span>
+                    <div className="bg-primary mt-2 h-2 w-2 rounded-full" />
+                    <span className="text-muted-foreground">
+                      {t('sosFeature4')}
+                    </span>
                   </li>
                 </ul>
 

@@ -206,7 +206,7 @@ export function CategoryCard({
             type="submit"
             variant="ghost"
             size="icon"
-            className="h-8 w-8 shrink-0 text-green-600 hover:bg-green-100"
+            className="text-primary hover:bg-primary/10 h-8 w-8 shrink-0"
             aria-label="Confirm rename"
             disabled={renameCategoryMutation.isPending}
           >
@@ -220,7 +220,7 @@ export function CategoryCard({
             type="reset"
             variant="ghost"
             size="icon"
-            className="h-8 w-8 shrink-0 text-red-600 hover:bg-red-100"
+            className="text-muted-foreground hover:bg-muted h-8 w-8 shrink-0"
             aria-label="Cancel rename"
             disabled={renameCategoryMutation.isPending}
           >
@@ -280,7 +280,7 @@ export function CategoryCard({
               {/* Delete Button */}
               <Button
                 variant="ghost"
-                className="flex w-full items-center justify-start px-2 py-1.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/50"
+                className="text-destructive hover:bg-destructive/10 flex w-full items-center justify-start px-2 py-1.5 text-sm"
                 onClick={handleDeleteRequest}
                 disabled={
                   deleteCategoryMutation.isPending ||

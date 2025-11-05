@@ -92,17 +92,9 @@ export function PaymentProofViewer({
       case 'PENDING_VERIFICATION':
         return <Badge variant="secondary">{t('statusPending')}</Badge>;
       case 'VERIFIED':
-        return (
-          <Badge variant="default" className="bg-green-600">
-            {t('statusVerified')}
-          </Badge>
-        );
+        return <Badge variant="default">{t('statusVerified')}</Badge>;
       case 'REJECTED':
-        return (
-          <Badge variant="destructive" className="bg-red-600">
-            {t('statusRejected')}
-          </Badge>
-        );
+        return <Badge variant="destructive">{t('statusRejected')}</Badge>;
       default:
         return <Badge>{status}</Badge>;
     }

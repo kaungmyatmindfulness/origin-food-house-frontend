@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { DashboardHeader } from './dashboard-header';
 
 // Mock the auth store
@@ -8,6 +8,14 @@ jest.mock('@/features/auth/store/auth.store', () => ({
   useAuthStore: () => ({
     clearAuth: mockClearAuth,
   }),
+}));
+
+// Mock Auth0 service functions
+const mockIsAuth0Authenticated = jest.fn();
+const mockLogoutFromAuth0 = jest.fn();
+jest.mock('@/features/auth/services/auth0.service', () => ({
+  isAuth0Authenticated: () => mockIsAuth0Authenticated(),
+  logoutFromAuth0: () => mockLogoutFromAuth0(),
 }));
 
 // Mock the child components
@@ -37,6 +45,12 @@ jest.mock('next/image', () => ({
 describe('DashboardHeader', () => {
   beforeEach(() => {
     mockClearAuth.mockClear();
+    mockIsAuth0Authenticated.mockClear();
+    mockLogoutFromAuth0.mockClear();
+
+    // Default: user is not authenticated with Auth0
+    mockIsAuth0Authenticated.mockResolvedValue(false);
+    mockLogoutFromAuth0.mockResolvedValue(undefined);
   });
 
   describe('Rendering', () => {
@@ -152,14 +166,46 @@ describe('DashboardHeader', () => {
   });
 
   describe('Logout Functionality', () => {
-    it('should call clearAuth when logout is triggered', () => {
+    const originalLocation = window.location;
+
+    beforeEach(() => {
+      // Mock window.location.href - suppress the warning
+      delete (window as { location?: unknown }).location;
+      (window as { location: Partial<Location> }).location = { href: '' };
+    });
+
+    afterEach(() => {
+      (window as { location: Location }).location = originalLocation;
+    });
+
+    it('should call clearAuth when logout is triggered for non-Auth0 user', async () => {
+      mockIsAuth0Authenticated.mockResolvedValue(false);
+
       render(<DashboardHeader />);
 
       // Find and click the logout button from the mocked AccountPopover
       const logoutButton = screen.getByRole('button', { name: /logout/i });
       fireEvent.click(logoutButton);
 
-      expect(mockClearAuth).toHaveBeenCalledTimes(1);
+      await waitFor(() => {
+        expect(mockClearAuth).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it('should call logoutFromAuth0 when logout is triggered for Auth0 user', async () => {
+      mockIsAuth0Authenticated.mockResolvedValue(true);
+
+      render(<DashboardHeader />);
+
+      const logoutButton = screen.getByRole('button', { name: /logout/i });
+      fireEvent.click(logoutButton);
+
+      await waitFor(() => {
+        expect(mockLogoutFromAuth0).toHaveBeenCalledTimes(1);
+      });
+
+      // Should not call clearAuth for Auth0 users (handled by Auth0 service)
+      expect(mockClearAuth).not.toHaveBeenCalled();
     });
 
     it('should not call clearAuth on initial render', () => {

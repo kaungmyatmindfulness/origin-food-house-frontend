@@ -10,6 +10,7 @@ export const ROUTES = {
 
   // Store selection
   STORE_CHOOSE: '/store/choose',
+  STORE_CREATE: '/store/create',
 
   // Dashboard routes
   HUB: '/hub',

@@ -127,7 +127,6 @@ export function ImageUpload({
       }
       setError(message);
       toast.error(message);
-      console.warn('File rejected:', rejectedFiles);
     },
     [maxSize]
   );

@@ -113,7 +113,9 @@ export interface UserDetailDto extends UserDto {
 export const adminAPI = {
   listStores: async (query: ListStoresQuery) => {
     const params = new URLSearchParams(
-      Object.entries(query).filter(([, v]) => v != null).map(([k, v]) => [k, String(v)])
+      Object.entries(query)
+        .filter(([, v]) => v != null)
+        .map(([k, v]) => [k, String(v)])
     );
     return apiFetch<{ stores: StoreDto[]; total: number }>(
       `/admin/stores?${params}`
@@ -146,7 +148,9 @@ export const adminAPI = {
 
   listUsers: async (query: ListUsersQuery) => {
     const params = new URLSearchParams(
-      Object.entries(query).filter(([, v]) => v != null).map(([k, v]) => [k, String(v)])
+      Object.entries(query)
+        .filter(([, v]) => v != null)
+        .map(([k, v]) => [k, String(v)])
     );
     return apiFetch<{ users: UserDto[]; total: number }>(
       `/admin/users?${params}`
@@ -195,7 +199,9 @@ export const adminAPI = {
 
   getPaymentQueue: async (query: GetPaymentQueueQuery) => {
     const params = new URLSearchParams(
-      Object.entries(query).filter(([, v]) => v != null).map(([k, v]) => [k, String(v)])
+      Object.entries(query)
+        .filter(([, v]) => v != null)
+        .map(([k, v]) => [k, String(v)])
     );
     return apiFetch<{ payments: PaymentRequestDto[]; total: number }>(
       `/admin/payments?${params}`

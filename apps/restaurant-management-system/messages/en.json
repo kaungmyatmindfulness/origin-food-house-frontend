@@ -236,6 +236,21 @@
       "noStoresFound": "No stores found for your account.",
       "selectToProceed": "Select a store to proceed."
     },
+    "create": {
+      "title": "Create Your First Store",
+      "subtitle": "Let's get started by creating your restaurant store.",
+      "storeNameLabel": "Store Name",
+      "storeNamePlaceholder": "e.g., Downtown Restaurant",
+      "storeNameDescription": "Enter a unique name for your store (1-100 characters).",
+      "createButton": "Create Store",
+      "creating": "Creating...",
+      "createSuccess": "Store created successfully!",
+      "createError": "Failed to create store. Please try again.",
+      "validation": {
+        "nameRequired": "Store name is required.",
+        "nameTooLong": "Store name cannot exceed 100 characters."
+      }
+    },
     "info": {
       "title": "Store Information",
       "subtitle": "Update your store's basic details and logo.",

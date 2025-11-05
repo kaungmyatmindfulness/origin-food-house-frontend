@@ -24,22 +24,22 @@ export function HeroSection() {
           </h1>
 
           {/* Sub-headline */}
-          <p className="mx-auto max-w-3xl text-lg text-gray-600 sm:text-xl md:text-2xl">
+          <p className="text-muted-foreground mx-auto max-w-3xl text-lg sm:text-xl md:text-2xl">
             {t('subtitle')}
           </p>
 
           {/* Trust Signals */}
-          <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600 sm:text-base">
+          <div className="text-muted-foreground flex flex-wrap items-center justify-center gap-4 text-sm sm:text-base">
             <div className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-green-500" />
+              <div className="bg-primary h-2 w-2 rounded-full" />
               <span>{t('trustSignal1')}</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-green-500" />
+              <div className="bg-primary h-2 w-2 rounded-full" />
               <span>{t('trustSignal2')}</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-green-500" />
+              <div className="bg-primary h-2 w-2 rounded-full" />
               <span>{t('trustSignal3')}</span>
             </div>
           </div>
