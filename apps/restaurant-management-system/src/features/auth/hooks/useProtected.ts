@@ -99,6 +99,7 @@ export function useProtected(
       onRedirect?.();
 
       if (userQueryError instanceof UnauthorizedError) {
+        useAuthStore.getState().setAuthenticated(false);
         queryClient.clear();
         router.replace(loginRedirectTo);
       } else if (
@@ -131,6 +132,8 @@ export function useProtected(
         router.replace(loginRedirectTo);
         return;
       }
+
+      useAuthStore.getState().setAuthenticated(true);
 
       if (needsRoleCheck) {
         const userRole = user?.selectedStoreRole;
@@ -171,11 +174,11 @@ export function useProtected(
   ]);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (isMounted && isFinished && !isAuthenticated) {
       queryClient.clear();
       router.replace(loginRedirectTo);
     }
-  }, [isAuthenticated, loginRedirectTo, queryClient, router]);
+  }, [isMounted, isFinished, isAuthenticated, loginRedirectTo, queryClient, router]);
 
   useEffect(() => {
     setIsMounted(true);
