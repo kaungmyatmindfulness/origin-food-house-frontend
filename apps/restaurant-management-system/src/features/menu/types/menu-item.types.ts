@@ -97,4 +97,5 @@ export interface MenuItem {
   storeId: string;
   createdAt: string;
   updatedAt: string;
+  isOutOfStock?: boolean;
 }

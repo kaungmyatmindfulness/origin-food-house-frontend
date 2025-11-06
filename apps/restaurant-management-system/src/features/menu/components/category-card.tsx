@@ -2,6 +2,7 @@
 
 import { isEmpty } from 'lodash-es';
 import { Check, Edit, Loader2, MoreVertical, Trash2, X } from 'lucide-react';
+import { motion } from 'framer-motion';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from '@repo/ui/lib/toast';
@@ -15,6 +16,7 @@ import {
   deleteCategory,
   updateCategory,
 } from '@/features/menu/services/category.service';
+import { menuKeys } from '@/features/menu/queries/menu.keys';
 import { ItemCard } from '@/features/menu/components/item-card';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@repo/ui/components/button';
@@ -32,6 +34,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@repo/ui/components/popover';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@repo/ui/components/tooltip';
 import { cn } from '@repo/ui/lib/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -87,13 +95,17 @@ export function CategoryCard({
     onSuccess: () => {
       toast.success(`Category renamed to "${renameForm.getValues('name')}".`);
       queryClient.invalidateQueries({
-        queryKey: ['categories'],
+        queryKey: menuKeys.all,
       });
       renameForm.reset({ name: category.name });
       setIsEditingName(false);
     },
-    onError: () => {
+    onError: (error) => {
+      toast.error('Failed to rename category', {
+        description: error instanceof Error ? error.message : 'Unknown error',
+      });
       renameForm.reset({ name: category.name });
+      setIsEditingName(false);
     },
   });
 
@@ -109,11 +121,14 @@ export function CategoryCard({
     onSuccess: () => {
       toast.success(`Category "${category.name}" deleted.`);
       queryClient.invalidateQueries({
-        queryKey: ['categories'],
+        queryKey: menuKeys.all,
       });
       setIsConfirmDeleteDialogOpen(false);
     },
-    onError: () => {
+    onError: (error) => {
+      toast.error('Failed to delete category', {
+        description: error instanceof Error ? error.message : 'Unknown error',
+      });
       setIsConfirmDeleteDialogOpen(false);
     },
   });
@@ -156,20 +171,29 @@ export function CategoryCard({
           <h2 className="truncate text-lg font-semibold" title={category.name}>
             {category.name}
           </h2>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 shrink-0 text-gray-500 hover:text-gray-800"
-            onClick={handleStartEditing}
-            aria-label={`Edit name for category ${category.name}`}
-            disabled={
-              !selectedStoreId ||
-              renameCategoryMutation.isPending ||
-              deleteCategoryMutation.isPending
-            }
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:text-foreground h-11 w-11 shrink-0 sm:h-10 sm:w-10"
+                  onClick={handleStartEditing}
+                  aria-label={`Edit name for category ${category.name}`}
+                  disabled={
+                    !selectedStoreId ||
+                    renameCategoryMutation.isPending ||
+                    deleteCategoryMutation.isPending
+                  }
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Edit category name</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </>
       );
     }
@@ -233,13 +257,12 @@ export function CategoryCard({
 
   return (
     <>
-      {/* Added Fragment to contain section + dialog */}
-      <section
+      <motion.section
         aria-labelledby={`category-title-${category.id}`}
-        className={cn(
-          'pt-4 pb-6',
-          !isLastCategory && 'border-b border-gray-200 dark:border-gray-700'
-        )}
+        className={cn('pt-4 pb-6', !isLastCategory && 'border-b')}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
       >
         {/* Header Row */}
         <div className="flex items-center justify-between gap-2">
@@ -254,45 +277,51 @@ export function CategoryCard({
           </div>
 
           {/* Actions Popover */}
-          <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 shrink-0"
-                aria-label="Category actions"
-                disabled={
-                  !selectedStoreId ||
-                  deleteCategoryMutation.isPending ||
-                  renameCategoryMutation.isPending
-                }
-              >
-                {/* Show loader if either mutation is pending */}
-                {deleteCategoryMutation.isPending ||
-                renameCategoryMutation.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <MoreVertical className="h-4 w-4" />
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-1">
-              {/* Delete Button */}
-              <Button
-                variant="ghost"
-                className="text-destructive hover:bg-destructive/10 flex w-full items-center justify-start px-2 py-1.5 text-sm"
-                onClick={handleDeleteRequest}
-                disabled={
-                  deleteCategoryMutation.isPending ||
-                  renameCategoryMutation.isPending
-                }
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete Category
-              </Button>
-              {/* Add other actions like Move Up/Down if needed */}
-            </PopoverContent>
-          </Popover>
+          <TooltipProvider>
+            <Tooltip>
+              <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+                <TooltipTrigger asChild>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-muted-foreground hover:text-foreground h-11 w-11 shrink-0 sm:h-10 sm:w-10"
+                      aria-label="Category actions"
+                      disabled={
+                        !selectedStoreId ||
+                        deleteCategoryMutation.isPending ||
+                        renameCategoryMutation.isPending
+                      }
+                    >
+                      {deleteCategoryMutation.isPending ||
+                      renameCategoryMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <MoreVertical className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                </TooltipTrigger>
+                <PopoverContent className="w-auto p-1">
+                  <Button
+                    variant="ghost"
+                    className="text-destructive hover:bg-destructive/10 flex w-full items-center justify-start px-2 py-1.5 text-sm"
+                    onClick={handleDeleteRequest}
+                    disabled={
+                      deleteCategoryMutation.isPending ||
+                      renameCategoryMutation.isPending
+                    }
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Category
+                  </Button>
+                </PopoverContent>
+              </Popover>
+              <TooltipContent>
+                <p>Category actions</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
         {/* Items Grid or Empty Message */}
@@ -307,7 +336,7 @@ export function CategoryCard({
             ))}
           </div>
         )}
-      </section>
+      </motion.section>
       {/* --- Confirmation Dialog (Rendered conditionally based on state) --- */}
       <ConfirmationDialog
         open={isConfirmDeleteDialogOpen}

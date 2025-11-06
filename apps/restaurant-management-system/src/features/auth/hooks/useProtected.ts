@@ -178,7 +178,14 @@ export function useProtected(
       queryClient.clear();
       router.replace(loginRedirectTo);
     }
-  }, [isMounted, isFinished, isAuthenticated, loginRedirectTo, queryClient, router]);
+  }, [
+    isMounted,
+    isFinished,
+    isAuthenticated,
+    loginRedirectTo,
+    queryClient,
+    router,
+  ]);
 
   useEffect(() => {
     setIsMounted(true);

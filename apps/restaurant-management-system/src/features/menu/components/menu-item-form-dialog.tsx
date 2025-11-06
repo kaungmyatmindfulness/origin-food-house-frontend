@@ -1,6 +1,6 @@
 'use client';
 
-import { Loader2, Plus } from 'lucide-react';
+import { AlertCircle, Loader2, Plus } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from '@repo/ui/lib/toast';
@@ -23,6 +23,7 @@ import {
 } from '@/features/menu/types/menu-item.types';
 import { CustomizationGroupField } from '@/features/menu/components/customization-group-field';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Alert, AlertDescription, AlertTitle } from '@repo/ui/components/alert';
 import { Button } from '@repo/ui/components/button';
 import { Checkbox } from '@repo/ui/components/checkbox';
 import { Combobox } from '@repo/ui/components/combobox';
@@ -466,6 +467,25 @@ export function MenuItemFormDialog({
               : 'Update the details for this menu item.'}
           </DialogDescription>
         </DialogHeader>
+
+        {Object.keys(form.formState.errors).length > 0 && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Please fix the following errors:</AlertTitle>
+            <AlertDescription>
+              <ul className="list-inside list-disc space-y-1">
+                {Object.entries(form.formState.errors).map(([field, error]) => (
+                  <li key={field}>
+                    {field === 'customizationGroups' && error.message
+                      ? error.message
+                      : error?.message || `${field} has an error`}
+                  </li>
+                ))}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        )}
+
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleFormSubmit)}
@@ -478,7 +498,9 @@ export function MenuItemFormDialog({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>
+                      Name <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="e.g. Classic Burger" {...field} />
                     </FormControl>
@@ -491,7 +513,9 @@ export function MenuItemFormDialog({
                 name="basePrice"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Base Price ($)</FormLabel>
+                    <FormLabel>
+                      Base Price ($) <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="number"

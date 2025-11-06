@@ -16,6 +16,7 @@ export interface Category {
     sortOrder: number;
     createdAt: string;
     updatedAt: string;
+    isOutOfStock?: boolean;
   }>;
 }
 

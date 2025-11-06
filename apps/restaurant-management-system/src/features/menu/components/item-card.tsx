@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Edit, Loader2, MoreVertical, Trash2 } from 'lucide-react';
+import { Edit, Loader2, MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import React from 'react';
 import { toast } from '@repo/ui/lib/toast';
 
@@ -13,7 +13,11 @@ import {
   deleteMenuItem,
   toggleMenuItemOutOfStock,
 } from '@/features/menu/services/menu-item.service';
+import { menuKeys } from '@/features/menu/queries/menu.keys';
 import { MenuItem } from '@/features/menu/types/menu-item.types';
+import type { Category } from '@/features/menu/types/category.types';
+import { formatCurrency } from '@/utils/formatting';
+import { Badge } from '@repo/ui/components/badge';
 import { Button } from '@repo/ui/components/button';
 import { ConfirmationDialog } from '@repo/ui/components/confirmation-dialog';
 import {
@@ -21,6 +25,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@repo/ui/components/popover';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@repo/ui/components/tooltip';
 import { Switch } from '@repo/ui/components/switch';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -53,12 +63,11 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
     onSuccess: () => {
       toast.success(`Item "${item.name}" deleted successfully.`);
       queryClient.invalidateQueries({
-        queryKey: ['categories'],
+        queryKey: menuKeys.all,
       });
       setIsConfirmDeleteDialogOpen(false);
     },
     onError: (error) => {
-      console.error(`Failed to delete item ${item.id}:`, error);
       toast.error('Failed to delete item', {
         description: error instanceof Error ? error.message : 'Unknown error',
       });
@@ -66,30 +75,67 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
     },
   });
 
-  const toggleOutOfStockMutation = useMutation<void, ApiError | Error, boolean>(
-    {
-      mutationFn: async (isOutOfStock: boolean) => {
-        if (!selectedStoreId) {
-          throw new Error('Store is not selected.');
+  const toggleOutOfStockMutation = useMutation<
+    void,
+    ApiError | Error,
+    boolean,
+    { previousData?: unknown }
+  >({
+    mutationFn: async (isOutOfStock: boolean) => {
+      if (!selectedStoreId) {
+        throw new Error('Store is not selected.');
+      }
+      await toggleMenuItemOutOfStock(item.id, selectedStoreId, isOutOfStock);
+    },
+    onMutate: async (isOutOfStock) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: menuKeys.all });
+
+      // Snapshot previous value
+      const previousData = queryClient.getQueryData(
+        menuKeys.categories(selectedStoreId!)
+      );
+
+      // Optimistically update
+      queryClient.setQueryData(
+        menuKeys.categories(selectedStoreId!),
+        (old: Category[] | undefined) => {
+          if (!old) return old;
+          return old.map((cat) => ({
+            ...cat,
+            menuItems: (cat.menuItems ?? []).map((i) =>
+              i.id === item.id ? { ...i, isOutOfStock } : i
+            ),
+          }));
         }
-        await toggleMenuItemOutOfStock(item.id, selectedStoreId, isOutOfStock);
-      },
-      onSuccess: (_, isOutOfStock) => {
-        toast.success(
-          isOutOfStock
-            ? `"${item.name}" marked as out of stock (86'd)`
-            : `"${item.name}" is back in stock`
+      );
+
+      return { previousData };
+    },
+    onSuccess: (_, isOutOfStock) => {
+      toast.success(
+        isOutOfStock
+          ? `"${item.name}" marked as out of stock`
+          : `"${item.name}" is back in stock`
+      );
+    },
+    onError: (error, _variables, context) => {
+      // Rollback on error
+      if (context?.previousData) {
+        queryClient.setQueryData(
+          menuKeys.categories(selectedStoreId!),
+          context.previousData
         );
-        queryClient.invalidateQueries({
-          queryKey: ['categories'],
-        });
-      },
-      onError: (error) => {
-        console.error(`Failed to toggle out-of-stock for ${item.id}:`, error);
-        toast.error('Failed to update stock status');
-      },
-    }
-  );
+      }
+      toast.error('Failed to update stock status', {
+        description: error instanceof Error ? error.message : 'Unknown error',
+      });
+    },
+    onSettled: () => {
+      // Refetch to ensure consistency
+      queryClient.invalidateQueries({ queryKey: menuKeys.all });
+    },
+  });
 
   const handleCardClick = () => {
     if (deleteItemMutation.isPending) return;
@@ -122,11 +168,13 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
 
   const actionsDisabled = deleteItemMutation.isPending || !selectedStoreId;
 
+  const isOutOfStock = item.isOutOfStock;
+
   return (
     <>
       <motion.div
-        className="cursor-pointer overflow-hidden rounded-lg border border-gray-200 bg-white text-left shadow-sm dark:border-gray-700 dark:bg-gray-800"
-        whileHover={{ scale: 1.02, boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}
+        className="group bg-card cursor-pointer overflow-hidden rounded-lg border text-left shadow-sm transition-shadow hover:shadow-md"
+        whileHover={{ y: -2 }}
         whileTap={{ scale: 0.98 }}
         onClick={handleCardClick}
         layout
@@ -135,16 +183,51 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
           <img
             src={item.imageUrl || '/no-image.svg'}
             alt={item.name}
-            className="h-full w-full border-b border-gray-200 object-cover"
+            className="h-full w-full border-b object-cover"
             loading="lazy"
           />
 
+          {/* Out of Stock Badge */}
+          {isOutOfStock && (
+            <Badge
+              variant="secondary"
+              className="absolute top-2 left-2 bg-yellow-500 text-yellow-900 hover:bg-yellow-500"
+            >
+              Out of Stock
+            </Badge>
+          )}
+
+          {/* Quick Edit Button */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="absolute top-1 right-10 h-8 w-8 rounded-full opacity-0 shadow-md transition-opacity group-hover:opacity-100"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditClick(e);
+                  }}
+                  aria-label={`Quick edit ${item.name}`}
+                  disabled={actionsDisabled}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Quick edit</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          {/* More Actions Menu */}
           <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant="secondary"
                 size="icon"
-                className="absolute top-1 right-1 h-7 w-7 rounded-full opacity-80 shadow-md hover:opacity-100"
+                className="absolute top-1 right-1 h-8 w-8 rounded-full opacity-80 shadow-md hover:opacity-100"
                 onClick={handlePopoverTriggerClick}
                 aria-label={`Actions for ${item.name}`}
                 disabled={actionsDisabled}
@@ -185,41 +268,42 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
           </Popover>
         </div>
 
-        <div className="p-3">
+        <div className="space-y-2 p-3">
           <h3
-            className="truncate text-sm font-semibold text-gray-800 dark:text-gray-100"
+            className="text-foreground truncate text-base font-semibold"
             title={item.name}
           >
             {item.name}
           </h3>
           {item.description && (
-            <p className="mt-1 line-clamp-2 text-xs text-gray-600 dark:text-gray-400">
+            <p className="text-muted-foreground line-clamp-2 text-xs">
               {item.description}
             </p>
           )}
-          <p className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
-            {Number(item.basePrice).toFixed(2)} THB
+          <p className="text-foreground text-lg font-bold">
+            {formatCurrency(Number(item.basePrice))}
           </p>
 
           <div
-            className="mt-3 flex items-center justify-between border-t border-gray-200 pt-2 dark:border-gray-700"
+            className="flex items-center justify-between border-t pt-2"
             onClick={(e) => e.stopPropagation()}
           >
-            <label
-              htmlFor={`out-of-stock-${item.id}`}
-              className="text-xs font-medium text-gray-700 dark:text-gray-300"
-            >
-              Out of Stock (86)
-            </label>
+            <div className="flex flex-1 flex-col">
+              <span className="text-foreground text-xs font-medium">
+                {isOutOfStock ? 'Out of Stock' : 'In Stock'}
+              </span>
+              <span className="text-muted-foreground text-xs">
+                {isOutOfStock
+                  ? 'Hidden from customers'
+                  : 'Visible to customers'}
+              </span>
+            </div>
             <Switch
               id={`out-of-stock-${item.id}`}
-              checked={
-                (item as MenuItem & { isOutOfStock?: boolean }).isOutOfStock ??
-                false
-              }
+              checked={isOutOfStock ?? false}
               onCheckedChange={handleToggleOutOfStock}
               disabled={toggleOutOfStockMutation.isPending || !selectedStoreId}
-              aria-label={`Toggle out of stock for ${item.name}`}
+              aria-label={`Mark ${item.name} as ${isOutOfStock ? 'in stock' : 'out of stock'}`}
             />
           </div>
         </div>
