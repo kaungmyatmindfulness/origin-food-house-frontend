@@ -35,8 +35,10 @@ import { formatCurrency } from '@/utils/formatting';
 import type { MenuItem } from '@/features/menu/types/menu-item.types';
 import { DiscountDialog } from '@/features/discounts/components/DiscountDialog';
 import { BillSplittingDialog } from '@/features/payments/components/BillSplittingDialog';
+import { SocketProvider } from '@/utils/socket-provider';
+import { useOrderSocket } from '@/features/orders/hooks/useOrderSocket';
 
-export default function CreateOrderPage() {
+function CreateOrderContent() {
   const t = useTranslations('orders');
   const tCommon = useTranslations('common');
   const tDiscount = useTranslations('payments.discounts');
@@ -44,6 +46,8 @@ export default function CreateOrderPage() {
   const router = useRouter();
 
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
+
+  useOrderSocket(selectedStoreId);
 
   // Form state
   const [sessionType, setSessionType] = useState<SessionType>('COUNTER');
@@ -490,5 +494,14 @@ export default function CreateOrderPage() {
         </>
       )}
     </div>
+  );
+}
+
+
+export default function CreateOrderPage() {
+  return (
+    <SocketProvider>
+      <CreateOrderContent />
+    </SocketProvider>
   );
 }

@@ -20,6 +20,8 @@ import {
   type ViewMode,
   type TableWithStatusDto,
 } from '@/features/tables/types/table-state.types';
+import { SocketProvider } from '@/utils/socket-provider';
+import { useTableSocket } from '@/features/tables/hooks/useTableSocket';
 
 import {
   Card,
@@ -56,10 +58,12 @@ const STATUS_COLORS: Record<TableStatus, string> = {
   [TableStatus.CLEANING]: 'bg-red-500',
 };
 
-export default function TableStatePage() {
+function TableStateContent() {
   const t = useTranslations('tables.statePage');
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
   const queryClient = useQueryClient();
+
+  useTableSocket(selectedStoreId);
 
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [statusFilter, setStatusFilter] = useState<TableStatus | 'all'>('all');
@@ -455,5 +459,13 @@ export default function TableStatePage() {
         </Card>
       )}
     </div>
+  );
+}
+
+export default function TableStatePage() {
+  return (
+    <SocketProvider namespace="/table">
+      <TableStateContent />
+    </SocketProvider>
   );
 }

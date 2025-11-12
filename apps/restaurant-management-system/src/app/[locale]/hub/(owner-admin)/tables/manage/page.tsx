@@ -15,6 +15,8 @@ import {
   syncTables,
 } from '@/features/tables/services/table.service';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { SocketProvider } from '@/utils/socket-provider';
+import { useTableSocket } from '@/features/tables/hooks/useTableSocket';
 import { Alert, AlertDescription, AlertTitle } from '@repo/ui/components/alert';
 import { Button } from '@repo/ui/components/button';
 import {
@@ -82,10 +84,12 @@ const createTableBatchSchema = (
 type TableBatchFormData = z.infer<ReturnType<typeof createTableBatchSchema>>;
 const storeTablesQueryKey = (storeId: string | null) => ['tables', storeId];
 
-export default function StoreTablesPage() {
+function StoreTablesContent() {
   const t = useTranslations('tables.managePage');
   const queryClient = useQueryClient();
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
+
+  useTableSocket(selectedStoreId);
 
   const tableBatchSchema = createTableBatchSchema(t);
 
@@ -346,5 +350,13 @@ export default function StoreTablesPage() {
         </Form>
       </Card>
     </div>
+  );
+}
+
+export default function StoreTablesPage() {
+  return (
+    <SocketProvider namespace="/table">
+      <StoreTablesContent />
+    </SocketProvider>
   );
 }

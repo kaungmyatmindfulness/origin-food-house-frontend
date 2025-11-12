@@ -424,9 +424,14 @@ export function MenuItemFormDialog({
   if (mode === 'edit' && isItemLoading) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="flex items-center justify-center p-10">
-          <Loader2 className="text-primary h-8 w-8 animate-spin" />
-          <span className="ml-2">Loading item data...</span>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Loading Menu Item</DialogTitle>
+          </DialogHeader>
+          <div className="flex items-center justify-center p-10">
+            <Loader2 className="text-primary h-8 w-8 animate-spin" />
+            <span className="ml-2">Loading item data...</span>
+          </div>
         </DialogContent>
       </Dialog>
     );

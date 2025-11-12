@@ -50,6 +50,8 @@ import type {
   PaymentMethod,
   OrderStatus,
 } from '@/features/reports/types/report.types';
+import { SocketProvider } from '@/utils/socket-provider';
+import { useDashboardSocket } from '@/features/reports/hooks/useDashboardSocket';
 
 import {
   Card,
@@ -90,10 +92,12 @@ const COLORS = {
   OTHER: '#6B7280',
 };
 
-export default function ReportsPage() {
+function ReportsContent() {
   const t = useTranslations('reports');
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
   const [datePreset, setDatePreset] = useState<DateRangePreset>('month');
+
+  useDashboardSocket(selectedStoreId);
 
   // Calculate date range based on preset
   const { startDate, endDate } = useMemo(() => {
@@ -626,5 +630,13 @@ export default function ReportsPage() {
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+export default function ReportsPage() {
+  return (
+    <SocketProvider>
+      <ReportsContent />
+    </SocketProvider>
   );
 }

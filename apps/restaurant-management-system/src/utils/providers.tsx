@@ -8,8 +8,6 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query';
 
-import { SocketProvider } from './socket-provider';
-
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
@@ -52,8 +50,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SocketProvider>{children}</SocketProvider>
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 }
