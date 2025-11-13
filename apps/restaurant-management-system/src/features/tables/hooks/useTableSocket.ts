@@ -47,7 +47,11 @@ export function useTableSocket(storeId: string | null) {
 
     socket.emit('table:join-store', { storeId });
 
-    const handleTableJoined = ({ storeId: joinedStoreId }: { storeId: string }) => {
+    const handleTableJoined = ({
+      storeId: joinedStoreId,
+    }: {
+      storeId: string;
+    }) => {
       console.log(`[TableSocket] Joined store-${joinedStoreId}`);
     };
 

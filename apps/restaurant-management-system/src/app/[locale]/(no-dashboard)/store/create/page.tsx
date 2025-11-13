@@ -42,6 +42,8 @@ export default function CreateStorePage() {
       .string()
       .min(1, t('validation.nameRequired'))
       .max(100, t('validation.nameTooLong')),
+    address: z.string().optional(),
+    phone: z.string().optional(),
   });
 
   type FormValues = z.infer<typeof createStoreSchema>;
@@ -50,6 +52,8 @@ export default function CreateStorePage() {
     resolver: zodResolver(createStoreSchema),
     defaultValues: {
       name: '',
+      address: '',
+      phone: '',
     },
   });
 
@@ -72,7 +76,7 @@ export default function CreateStorePage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 dark:from-gray-900 dark:to-gray-800">
+    <main className="bg-background min-h-screen p-4">
       <section className="mx-auto mt-10 max-w-md">
         <Card>
           <CardHeader className="text-center">
@@ -100,6 +104,43 @@ export default function CreateStorePage() {
                       <FormDescription>
                         {t('storeNameDescription')}
                       </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('addressLabel')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder={t('addressPlaceholder')}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        {t('addressDescription')}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('phoneLabel')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="tel"
+                          placeholder={t('phonePlaceholder')}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>{t('phoneDescription')}</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

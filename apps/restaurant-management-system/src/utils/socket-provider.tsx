@@ -52,8 +52,7 @@ export const SocketProvider = ({
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const connectionUrl =
-      namespace === '/' ? WS_URL : `${WS_URL}${namespace}`;
+    const connectionUrl = namespace === '/' ? WS_URL : `${WS_URL}${namespace}`;
 
     console.log(
       `[Socket] Connecting to WebSocket (${namespace || 'main'} namespace)...`,

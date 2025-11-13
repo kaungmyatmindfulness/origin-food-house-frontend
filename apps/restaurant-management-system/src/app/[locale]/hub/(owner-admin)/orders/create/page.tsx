@@ -497,7 +497,6 @@ function CreateOrderContent() {
   );
 }
 
-
 export default function CreateOrderPage() {
   return (
     <SocketProvider>
