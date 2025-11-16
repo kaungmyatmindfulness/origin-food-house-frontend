@@ -82,7 +82,9 @@ export function CartSheetContent({
                   <div className="bg-muted relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md">
                     {getImageUrl(cartItem.menuItem?.imagePath, 'small') ? (
                       <Image
-                        src={getImageUrl(cartItem.menuItem?.imagePath, 'small')!}
+                        src={
+                          getImageUrl(cartItem.menuItem?.imagePath, 'small')!
+                        }
                         alt={cartItem.menuItem?.name ?? 'Item image'}
                         fill
                         className="object-cover"

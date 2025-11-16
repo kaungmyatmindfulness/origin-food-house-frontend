@@ -37,8 +37,8 @@ export function createUploadService(
         }
       );
 
-      if (!res.data?.imageUrl) {
-        throw new Error('Image URL is missing in the response');
+      if (!res.data?.basePath) {
+        throw new Error('Base path is missing in the response');
       }
 
       return res.data;

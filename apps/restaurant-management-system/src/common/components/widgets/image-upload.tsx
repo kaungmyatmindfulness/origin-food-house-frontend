@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
+import Image from 'next/image';
 import { useDropzone, FileRejection } from 'react-dropzone';
 import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { toast } from '@repo/ui/lib/toast';
 import { useMutation } from '@tanstack/react-query';
+import { getImageUrl } from '@repo/api/utils/s3-url';
 
 import { cn } from '@repo/ui/lib/utils';
 import { uploadImage } from '@/common/services/common.service';
@@ -90,10 +92,9 @@ export function ImageUpload({
       setIsLoading(true);
 
       try {
-        const { imageUrl: newIdentifier } =
-          await uploadImageMutation.mutateAsync(file);
+        const { basePath } = await uploadImageMutation.mutateAsync(file);
 
-        onChange(newIdentifier);
+        onChange(basePath);
       } catch (uploadError) {
         console.error('Upload failed:', uploadError);
         const errorMsg =
@@ -187,32 +188,28 @@ export function ImageUpload({
     }
 
     if (value) {
-      const displayUrl = value;
+      const displayUrl = getImageUrl(value, 'medium');
 
       return (
         <div className="group relative h-32 w-32">
-          {' '}
-          {/* Container to hold image + button */}
-          {/* Attempt to display the image using the constructed or provided URL */}
-          <img
-            src={displayUrl}
-            alt={value.split('/').pop() || 'Uploaded image'}
-            className="h-full w-full rounded object-cover"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-              const placeholder = e.currentTarget
-                .nextElementSibling as HTMLElement;
-              if (placeholder) placeholder.style.display = 'flex';
-            }}
-          />
-          {/* Fallback / Placeholder if image fails to load */}
-          <div
-            style={{ display: 'none' }}
-            className="flex h-full w-full flex-col items-center justify-center rounded bg-gray-100 text-center text-gray-500 dark:bg-gray-700"
-          >
-            <ImageIcon className="mb-1 h-10 w-10 text-gray-400" />
-            <span className="text-xs break-all">{value.split('/').pop()}</span>
-          </div>
+          {/* Attempt to display the image using the constructed URL from basePath */}
+          {displayUrl ? (
+            <Image
+              src={displayUrl}
+              alt={value.split('/').pop() || 'Uploaded image'}
+              width={128}
+              height={128}
+              className="h-full w-full rounded object-cover"
+              unoptimized
+            />
+          ) : (
+            <div className="flex h-full w-full flex-col items-center justify-center rounded bg-gray-100 text-center text-gray-500 dark:bg-gray-700">
+              <ImageIcon className="mb-1 h-10 w-10 text-gray-400" />
+              <span className="text-xs break-all">
+                {value.split('/').pop()}
+              </span>
+            </div>
+          )}
           {!disabled && (
             <button
               type="button"
