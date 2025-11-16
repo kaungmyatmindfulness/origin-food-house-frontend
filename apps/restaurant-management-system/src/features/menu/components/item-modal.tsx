@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Loader2, AlertCircle } from 'lucide-react';
+import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 
 import {
@@ -16,6 +17,7 @@ import { ScrollArea } from '@repo/ui/components/scroll-area';
 
 import { getMenuItemById } from '@/features/menu/services/menu-item.service';
 import { formatCurrency } from '@/utils/formatting';
+import { getImageUrl } from '@repo/api/utils/s3-url';
 
 interface ItemModalProps {
   id: string | null;
@@ -95,17 +97,15 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
     if (isSuccess && item) {
       return (
         <>
-          {item.imageUrl && (
-            <div className="-mx-6 -mt-6 mb-4">
-              <img
-                src={item.imageUrl}
+          {getImageUrl(item.imagePath, 'large') && (
+            <div className="relative -mx-6 -mt-6 mb-4 h-48 w-full">
+              <Image
+                src={getImageUrl(item.imagePath, 'large')!}
                 alt={item.name}
-                className="h-48 w-full rounded-t-lg object-cover"
-                loading="lazy"
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = '/placeholder-image.svg';
-                }}
+                fill
+                className="rounded-t-lg object-cover"
+                sizes="(max-width: 640px) 100vw, 600px"
+                priority
               />
             </div>
           )}

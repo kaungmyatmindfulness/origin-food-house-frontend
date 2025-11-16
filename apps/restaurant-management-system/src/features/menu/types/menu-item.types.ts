@@ -65,7 +65,7 @@ export interface CreateMenuItemDto {
   name: string;
   description?: string;
   basePrice: string;
-  imageUrl?: string;
+  imagePath?: string;
   category: UpsertCategoryDto;
   customizationGroups?: UpsertCustomizationGroupDto[];
   isHidden?: boolean;
@@ -81,7 +81,7 @@ export interface MenuItemDto {
   name: string;
   description?: string | null;
   basePrice: string;
-  imageUrl?: string | null;
+  imagePath?: string | null;
   category: CategoryDto;
   customizationGroups: CustomizationGroupDto[];
   isHidden: boolean;
@@ -92,7 +92,7 @@ export interface MenuItem {
   name: string;
   description?: string | null;
   basePrice: string;
-  imageUrl?: string | null;
+  imagePath?: string | null;
   categoryId: string;
   storeId: string;
   createdAt: string;

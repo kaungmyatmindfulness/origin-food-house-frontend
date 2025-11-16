@@ -22,7 +22,7 @@ echo "✅ OpenAPI spec fetched successfully"
 
 echo "🔧 Fixing OpenAPI spec issues..."
 
-# Fix invalid $ref to String schema using Python
+# Fix invalid $ref to String and Object schemas, and fix incorrect type declarations
 python3 << EOF
 import json
 
@@ -30,17 +30,34 @@ import json
 with open('$API_DIR/openapi-spec.json', 'r') as f:
     spec = json.load(f)
 
-# Remove the invalid String schema reference by replacing it with inline type
-def replace_string_refs(obj):
+# Fix incorrect type declarations (type: object with maxLength should be type: string)
+def fix_incorrect_types(obj):
     if isinstance(obj, dict):
-        if '\$ref' in obj and obj['\$ref'] == '#/components/schemas/String':
-            return {'type': 'string'}
-        return {k: replace_string_refs(v) for k, v in obj.items()}
+        # If this is a property with type: object but has maxLength (string indicator), fix it
+        if obj.get('type') == 'object' and 'maxLength' in obj:
+            # This should be a string type
+            return {k: v for k, v in obj.items() if k != 'type'} | {'type': 'string'}
+        return {k: fix_incorrect_types(v) for k, v in obj.items()}
     elif isinstance(obj, list):
-        return [replace_string_refs(item) for item in obj]
+        return [fix_incorrect_types(item) for item in obj]
     return obj
 
-spec = replace_string_refs(spec)
+spec = fix_incorrect_types(spec)
+
+# Remove invalid schema references by replacing them with inline types
+def replace_invalid_refs(obj):
+    if isinstance(obj, dict):
+        if '\$ref' in obj:
+            if obj['\$ref'] == '#/components/schemas/String':
+                return {'type': 'string'}
+            elif obj['\$ref'] == '#/components/schemas/Object':
+                return {'type': 'object', 'additionalProperties': True}
+        return {k: replace_invalid_refs(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [replace_invalid_refs(item) for item in obj]
+    return obj
+
+spec = replace_invalid_refs(spec)
 
 # Write the fixed spec
 with open('$API_DIR/openapi-spec-fixed.json', 'w') as f:

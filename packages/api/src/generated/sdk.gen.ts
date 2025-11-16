@@ -28,6 +28,81 @@ import type {
   ActiveTableSessionControllerUpdateData,
   ActiveTableSessionControllerUpdateErrors,
   ActiveTableSessionControllerUpdateResponses,
+  AdminAuthControllerGetPermissionsData,
+  AdminAuthControllerGetPermissionsErrors,
+  AdminAuthControllerGetPermissionsResponses,
+  AdminAuthControllerGetProfileData,
+  AdminAuthControllerGetProfileErrors,
+  AdminAuthControllerGetProfileResponses,
+  AdminAuthControllerValidateTokenData,
+  AdminAuthControllerValidateTokenErrors,
+  AdminAuthControllerValidateTokenResponses,
+  AdminPaymentControllerGetPaymentDetailData,
+  AdminPaymentControllerGetPaymentDetailErrors,
+  AdminPaymentControllerGetPaymentDetailResponses,
+  AdminPaymentControllerGetPaymentQueueData,
+  AdminPaymentControllerGetPaymentQueueErrors,
+  AdminPaymentControllerGetPaymentQueueResponses,
+  AdminPaymentControllerRejectPaymentData,
+  AdminPaymentControllerRejectPaymentErrors,
+  AdminPaymentControllerRejectPaymentResponses,
+  AdminPaymentControllerVerifyPaymentData,
+  AdminPaymentControllerVerifyPaymentErrors,
+  AdminPaymentControllerVerifyPaymentResponses,
+  AdminStoreControllerBanStoreData,
+  AdminStoreControllerBanStoreErrors,
+  AdminStoreControllerBanStoreResponses,
+  AdminStoreControllerDowngradeTierData,
+  AdminStoreControllerDowngradeTierErrors,
+  AdminStoreControllerDowngradeTierResponses,
+  AdminStoreControllerGetStoreAnalyticsData,
+  AdminStoreControllerGetStoreAnalyticsErrors,
+  AdminStoreControllerGetStoreAnalyticsResponses,
+  AdminStoreControllerGetStoreDetailData,
+  AdminStoreControllerGetStoreDetailErrors,
+  AdminStoreControllerGetStoreDetailResponses,
+  AdminStoreControllerListStoresData,
+  AdminStoreControllerListStoresErrors,
+  AdminStoreControllerListStoresResponses,
+  AdminStoreControllerReactivateStoreData,
+  AdminStoreControllerReactivateStoreErrors,
+  AdminStoreControllerReactivateStoreResponses,
+  AdminStoreControllerSuspendStoreData,
+  AdminStoreControllerSuspendStoreErrors,
+  AdminStoreControllerSuspendStoreResponses,
+  AdminUserControllerBanUserData,
+  AdminUserControllerBanUserErrors,
+  AdminUserControllerBanUserResponses,
+  AdminUserControllerForcePasswordResetData,
+  AdminUserControllerForcePasswordResetErrors,
+  AdminUserControllerForcePasswordResetResponses,
+  AdminUserControllerGetUserActivityData,
+  AdminUserControllerGetUserActivityErrors,
+  AdminUserControllerGetUserActivityResponses,
+  AdminUserControllerGetUserDetailData,
+  AdminUserControllerGetUserDetailErrors,
+  AdminUserControllerGetUserDetailResponses,
+  AdminUserControllerListUsersData,
+  AdminUserControllerListUsersErrors,
+  AdminUserControllerListUsersResponses,
+  AdminUserControllerReactivateUserData,
+  AdminUserControllerReactivateUserErrors,
+  AdminUserControllerReactivateUserResponses,
+  AdminUserControllerSuspendUserData,
+  AdminUserControllerSuspendUserErrors,
+  AdminUserControllerSuspendUserResponses,
+  AdminVerificationControllerGetAdminMetricsData,
+  AdminVerificationControllerGetAdminMetricsResponses,
+  AdminVerificationControllerGetPaymentProofData,
+  AdminVerificationControllerGetPaymentProofResponses,
+  AdminVerificationControllerGetPaymentQueueData,
+  AdminVerificationControllerGetPaymentQueueResponses,
+  AdminVerificationControllerGetPaymentRequestDetailData,
+  AdminVerificationControllerGetPaymentRequestDetailResponses,
+  AdminVerificationControllerRejectPaymentData,
+  AdminVerificationControllerRejectPaymentResponses,
+  AdminVerificationControllerVerifyPaymentData,
+  AdminVerificationControllerVerifyPaymentResponses,
   AuditLogControllerExportAuditLogsData,
   AuditLogControllerExportAuditLogsResponses,
   AuditLogControllerGetStoreAuditLogsData,
@@ -109,6 +184,12 @@ import type {
   OrderControllerUpdateStatusData,
   OrderControllerUpdateStatusErrors,
   OrderControllerUpdateStatusResponses,
+  OwnershipTransferControllerCancelTransferData,
+  OwnershipTransferControllerCancelTransferResponses,
+  OwnershipTransferControllerInitiateTransferData,
+  OwnershipTransferControllerInitiateTransferResponses,
+  OwnershipTransferControllerVerifyOtpData,
+  OwnershipTransferControllerVerifyOtpResponses,
   PaymentControllerCalculateSplitData,
   PaymentControllerCalculateSplitErrors,
   PaymentControllerCalculateSplitResponses,
@@ -130,6 +211,18 @@ import type {
   PaymentControllerRecordSplitPaymentData,
   PaymentControllerRecordSplitPaymentErrors,
   PaymentControllerRecordSplitPaymentResponses,
+  PaymentRequestControllerCreatePaymentRequestData,
+  PaymentRequestControllerCreatePaymentRequestResponses,
+  PaymentRequestControllerGetPaymentRequestData,
+  PaymentRequestControllerGetPaymentRequestResponses,
+  PaymentRequestControllerGetStorePaymentRequestsData,
+  PaymentRequestControllerGetStorePaymentRequestsResponses,
+  PaymentRequestControllerUploadPaymentProofData,
+  PaymentRequestControllerUploadPaymentProofResponses,
+  RefundControllerGetStoreRefundRequestsData,
+  RefundControllerGetStoreRefundRequestsResponses,
+  RefundControllerRequestRefundData,
+  RefundControllerRequestRefundResponses,
   ReportControllerGetOrderStatusReportData,
   ReportControllerGetOrderStatusReportResponses,
   ReportControllerGetPaymentBreakdownData,
@@ -165,6 +258,8 @@ import type {
   StoreControllerUploadBrandingData,
   StoreControllerUploadBrandingErrors,
   StoreControllerUploadBrandingResponses,
+  SubscriptionControllerGetStoreSubscriptionData,
+  SubscriptionControllerGetStoreSubscriptionResponses,
   TableControllerCreateTableData,
   TableControllerCreateTableResponses,
   TableControllerDeleteTableData,
@@ -183,6 +278,10 @@ import type {
   TierControllerGetStoreTierResponses,
   TierControllerGetStoreUsageData,
   TierControllerGetStoreUsageResponses,
+  TrialControllerCheckEligibilityData,
+  TrialControllerCheckEligibilityResponses,
+  TrialControllerGetTrialInfoData,
+  TrialControllerGetTrialInfoResponses,
   UploadControllerUploadImageData,
   UploadControllerUploadImageErrors,
   UploadControllerUploadImageResponses,
@@ -262,7 +361,7 @@ export const activeTableSessionControllerCreateManualSession = <
 
 /**
  * Join or create a session for a table
- * Customers scan QR code on table. Returns existing active session or creates new one.
+ * Customers scan QR code on table. Returns existing active session or creates new one. SECURITY: Session token is only returned here.
  */
 export const activeTableSessionControllerJoinByTable = <
   ThrowOnError extends boolean = false,
@@ -285,6 +384,7 @@ export const activeTableSessionControllerJoinByTable = <
 
 /**
  * Get session by ID
+ * SECURITY: Session token is excluded from response
  */
 export const activeTableSessionControllerFindOne = <
   ThrowOnError extends boolean = false,
@@ -303,6 +403,7 @@ export const activeTableSessionControllerFindOne = <
 
 /**
  * Update session (Restaurant Management System only)
+ * SECURITY: Session token is excluded from response. Store isolation enforced.
  */
 export const activeTableSessionControllerUpdate = <
   ThrowOnError extends boolean = false,
@@ -331,6 +432,7 @@ export const activeTableSessionControllerUpdate = <
 
 /**
  * Get session by token
+ * SECURITY: Session token is excluded from response
  */
 export const activeTableSessionControllerFindByToken = <
   ThrowOnError extends boolean = false,
@@ -349,6 +451,7 @@ export const activeTableSessionControllerFindByToken = <
 
 /**
  * Get all active sessions for a store (POS)
+ * SECURITY: Session tokens are excluded from response
  */
 export const activeTableSessionControllerFindActiveByStore = <
   ThrowOnError extends boolean = false,
@@ -376,6 +479,7 @@ export const activeTableSessionControllerFindActiveByStore = <
 
 /**
  * Close session (Restaurant Management System only)
+ * SECURITY: Session token is excluded from response. Store isolation enforced.
  */
 export const activeTableSessionControllerClose = <
   ThrowOnError extends boolean = false,
@@ -763,6 +867,1076 @@ export const auditLogControllerExportAuditLogs = <
 };
 
 /**
+ * Validate Auth0 token and sync admin user
+ * Validates admin Auth0 token from separate admin tenant, syncs user to database, and returns internal JWT with permissions
+ */
+export const adminAuthControllerValidateToken = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminAuthControllerValidateTokenData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    AdminAuthControllerValidateTokenResponses,
+    AdminAuthControllerValidateTokenErrors,
+    ThrowOnError
+  >({
+    url: '/admin/auth/validate',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Get current admin profile
+ * Returns profile information for the authenticated admin user
+ */
+export const adminAuthControllerGetProfile = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<AdminAuthControllerGetProfileData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    AdminAuthControllerGetProfileResponses,
+    AdminAuthControllerGetProfileErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/auth/profile',
+    ...options,
+  });
+};
+
+/**
+ * Get admin permissions for frontend RBAC
+ * Returns list of permissions based on admin role for frontend authorization checks
+ */
+export const adminAuthControllerGetPermissions = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<AdminAuthControllerGetPermissionsData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    AdminAuthControllerGetPermissionsResponses,
+    AdminAuthControllerGetPermissionsErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/auth/permissions',
+    ...options,
+  });
+};
+
+/**
+ * List all stores
+ * Get paginated list of all stores with filters
+ */
+export const adminStoreControllerListStores = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<AdminStoreControllerListStoresData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    AdminStoreControllerListStoresResponses,
+    AdminStoreControllerListStoresErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/stores',
+    ...options,
+  });
+};
+
+/**
+ * Get store detail
+ * Get detailed information for a specific store
+ */
+export const adminStoreControllerGetStoreDetail = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminStoreControllerGetStoreDetailData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    AdminStoreControllerGetStoreDetailResponses,
+    AdminStoreControllerGetStoreDetailErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/stores/{id}',
+    ...options,
+  });
+};
+
+/**
+ * Suspend store
+ * Temporarily suspend a store and its operations
+ */
+export const adminStoreControllerSuspendStore = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminStoreControllerSuspendStoreData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    AdminStoreControllerSuspendStoreResponses,
+    AdminStoreControllerSuspendStoreErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/stores/{id}/suspend',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Ban store
+ * Permanently ban a store from the platform
+ */
+export const adminStoreControllerBanStore = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminStoreControllerBanStoreData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    AdminStoreControllerBanStoreResponses,
+    AdminStoreControllerBanStoreErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/stores/{id}/ban',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Reactivate store
+ * Reactivate a suspended or banned store
+ */
+export const adminStoreControllerReactivateStore = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminStoreControllerReactivateStoreData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    AdminStoreControllerReactivateStoreResponses,
+    AdminStoreControllerReactivateStoreErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/stores/{id}/reactivate',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Downgrade store tier
+ * Force downgrade a store to a lower tier
+ */
+export const adminStoreControllerDowngradeTier = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminStoreControllerDowngradeTierData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    AdminStoreControllerDowngradeTierResponses,
+    AdminStoreControllerDowngradeTierErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/stores/{id}/downgrade',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Get store analytics
+ * Get analytics and statistics for a specific store
+ */
+export const adminStoreControllerGetStoreAnalytics = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminStoreControllerGetStoreAnalyticsData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    AdminStoreControllerGetStoreAnalyticsResponses,
+    AdminStoreControllerGetStoreAnalyticsErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/stores/{id}/analytics',
+    ...options,
+  });
+};
+
+/**
+ * List all users
+ * Get paginated list of all users with filters
+ */
+export const adminUserControllerListUsers = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<AdminUserControllerListUsersData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    AdminUserControllerListUsersResponses,
+    AdminUserControllerListUsersErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/users',
+    ...options,
+  });
+};
+
+/**
+ * Get user detail
+ * Get detailed information for a specific user
+ */
+export const adminUserControllerGetUserDetail = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminUserControllerGetUserDetailData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    AdminUserControllerGetUserDetailResponses,
+    AdminUserControllerGetUserDetailErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/users/{id}',
+    ...options,
+  });
+};
+
+/**
+ * Suspend user
+ * Temporarily suspend a user account
+ */
+export const adminUserControllerSuspendUser = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminUserControllerSuspendUserData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    AdminUserControllerSuspendUserResponses,
+    AdminUserControllerSuspendUserErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/users/{id}/suspend',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Ban user
+ * Permanently ban a user from the platform
+ */
+export const adminUserControllerBanUser = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminUserControllerBanUserData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    AdminUserControllerBanUserResponses,
+    AdminUserControllerBanUserErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/users/{id}/ban',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Reactivate user
+ * Reactivate a suspended user account
+ */
+export const adminUserControllerReactivateUser = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminUserControllerReactivateUserData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    AdminUserControllerReactivateUserResponses,
+    AdminUserControllerReactivateUserErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/users/{id}/reactivate',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Force password reset
+ * Invalidate user JWT tokens to force re-authentication
+ */
+export const adminUserControllerForcePasswordReset = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminUserControllerForcePasswordResetData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    AdminUserControllerForcePasswordResetResponses,
+    AdminUserControllerForcePasswordResetErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/users/{id}/password-reset',
+    ...options,
+  });
+};
+
+/**
+ * Get user activity
+ * Get activity history and statistics for a specific user
+ */
+export const adminUserControllerGetUserActivity = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminUserControllerGetUserActivityData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    AdminUserControllerGetUserActivityResponses,
+    AdminUserControllerGetUserActivityErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/users/{id}/activity',
+    ...options,
+  });
+};
+
+/**
+ * Get payment queue
+ * Get list of pending payment requests awaiting admin verification
+ */
+export const adminPaymentControllerGetPaymentQueue = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<AdminPaymentControllerGetPaymentQueueData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    AdminPaymentControllerGetPaymentQueueResponses,
+    AdminPaymentControllerGetPaymentQueueErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/payments',
+    ...options,
+  });
+};
+
+/**
+ * Get payment detail
+ * Get detailed information for a specific payment request
+ */
+export const adminPaymentControllerGetPaymentDetail = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminPaymentControllerGetPaymentDetailData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    AdminPaymentControllerGetPaymentDetailResponses,
+    AdminPaymentControllerGetPaymentDetailErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/payments/{id}',
+    ...options,
+  });
+};
+
+/**
+ * Verify payment
+ * Approve a pending payment request
+ */
+export const adminPaymentControllerVerifyPayment = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminPaymentControllerVerifyPaymentData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    AdminPaymentControllerVerifyPaymentResponses,
+    AdminPaymentControllerVerifyPaymentErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/payments/{id}/verify',
+    ...options,
+  });
+};
+
+/**
+ * Reject payment
+ * Reject a pending payment request
+ */
+export const adminPaymentControllerRejectPayment = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminPaymentControllerRejectPaymentData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    AdminPaymentControllerRejectPaymentResponses,
+    AdminPaymentControllerRejectPaymentErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/payments/{id}/reject',
+    ...options,
+  });
+};
+
+/**
+ * Create payment request for tier upgrade (Owner/Admin only)
+ */
+export const paymentRequestControllerCreatePaymentRequest = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PaymentRequestControllerCreatePaymentRequestData,
+    ThrowOnError
+  >
+) => {
+  return (options.client ?? client).post<
+    PaymentRequestControllerCreatePaymentRequestResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/payment-requests',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Upload payment proof (Owner/Admin only)
+ */
+export const paymentRequestControllerUploadPaymentProof = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PaymentRequestControllerUploadPaymentProofData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    PaymentRequestControllerUploadPaymentProofResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/payment-requests/{id}/upload-proof',
+    ...options,
+  });
+};
+
+/**
+ * Get payment request details (Owner/Admin only)
+ */
+export const paymentRequestControllerGetPaymentRequest = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<PaymentRequestControllerGetPaymentRequestData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    PaymentRequestControllerGetPaymentRequestResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/payment-requests/{id}',
+    ...options,
+  });
+};
+
+/**
+ * Get all payment requests for store (Owner/Admin only)
+ */
+export const paymentRequestControllerGetStorePaymentRequests = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    PaymentRequestControllerGetStorePaymentRequestsData,
+    ThrowOnError
+  >
+) => {
+  return (options.client ?? client).get<
+    PaymentRequestControllerGetStorePaymentRequestsResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/payment-requests/store/{storeId}',
+    ...options,
+  });
+};
+
+/**
+ * Get payment requests queue (PLATFORM_ADMIN only)
+ */
+export const adminVerificationControllerGetPaymentQueue = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<
+    AdminVerificationControllerGetPaymentQueueData,
+    ThrowOnError
+  >
+) => {
+  return (options?.client ?? client).get<
+    AdminVerificationControllerGetPaymentQueueResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/payment-requests',
+    ...options,
+  });
+};
+
+/**
+ * Get payment request detail (PLATFORM_ADMIN only)
+ */
+export const adminVerificationControllerGetPaymentRequestDetail = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    AdminVerificationControllerGetPaymentRequestDetailData,
+    ThrowOnError
+  >
+) => {
+  return (options.client ?? client).get<
+    AdminVerificationControllerGetPaymentRequestDetailResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/payment-requests/{id}',
+    ...options,
+  });
+};
+
+/**
+ * Get payment proof presigned URL (PLATFORM_ADMIN only)
+ */
+export const adminVerificationControllerGetPaymentProof = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminVerificationControllerGetPaymentProofData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    AdminVerificationControllerGetPaymentProofResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/payment-requests/{id}/payment-proof',
+    ...options,
+  });
+};
+
+/**
+ * Approve payment request (PLATFORM_ADMIN only)
+ */
+export const adminVerificationControllerVerifyPayment = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminVerificationControllerVerifyPaymentData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    AdminVerificationControllerVerifyPaymentResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/payment-requests/{id}/verify',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Reject payment request (PLATFORM_ADMIN only)
+ */
+export const adminVerificationControllerRejectPayment = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<AdminVerificationControllerRejectPaymentData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    AdminVerificationControllerRejectPaymentResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/payment-requests/{id}/reject',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Get admin dashboard metrics (PLATFORM_ADMIN only)
+ */
+export const adminVerificationControllerGetAdminMetrics = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<
+    AdminVerificationControllerGetAdminMetricsData,
+    ThrowOnError
+  >
+) => {
+  return (options?.client ?? client).get<
+    AdminVerificationControllerGetAdminMetricsResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/admin/payment-requests/metrics/dashboard',
+    ...options,
+  });
+};
+
+/**
+ * Check if user is eligible for trial
+ */
+export const trialControllerCheckEligibility = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<TrialControllerCheckEligibilityData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    TrialControllerCheckEligibilityResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/trials/eligibility',
+    ...options,
+  });
+};
+
+/**
+ * Get trial info for store (Owner/Admin only)
+ */
+export const trialControllerGetTrialInfo = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<TrialControllerGetTrialInfoData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    TrialControllerGetTrialInfoResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/trials/store/{storeId}',
+    ...options,
+  });
+};
+
+/**
+ * Initiate ownership transfer (Owner only)
+ */
+export const ownershipTransferControllerInitiateTransfer = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    OwnershipTransferControllerInitiateTransferData,
+    ThrowOnError
+  >
+) => {
+  return (options.client ?? client).post<
+    OwnershipTransferControllerInitiateTransferResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/ownership-transfers',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Verify OTP and complete ownership transfer (Owner only)
+ */
+export const ownershipTransferControllerVerifyOtp = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<OwnershipTransferControllerVerifyOtpData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    OwnershipTransferControllerVerifyOtpResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/ownership-transfers/{id}/verify-otp',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Cancel ownership transfer (Owner only)
+ */
+export const ownershipTransferControllerCancelTransfer = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<OwnershipTransferControllerCancelTransferData, ThrowOnError>
+) => {
+  return (options.client ?? client).delete<
+    OwnershipTransferControllerCancelTransferResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/ownership-transfers/{id}',
+    ...options,
+  });
+};
+
+/**
+ * Request refund (Owner/Admin only)
+ */
+export const refundControllerRequestRefund = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<RefundControllerRequestRefundData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    RefundControllerRequestRefundResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/refund-requests',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Get refund requests for store (Owner/Admin only)
+ */
+export const refundControllerGetStoreRefundRequests = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<RefundControllerGetStoreRefundRequestsData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    RefundControllerGetStoreRefundRequestsResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/refund-requests/store/{storeId}',
+    ...options,
+  });
+};
+
+/**
+ * Get subscription for store (Owner/Admin only)
+ */
+export const subscriptionControllerGetStoreSubscription = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<SubscriptionControllerGetStoreSubscriptionData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    SubscriptionControllerGetStoreSubscriptionResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/subscriptions/store/{storeId}',
+    ...options,
+  });
+};
+
+/**
+ * Upload an image file with configurable resizing
+ * Uploads an image file and generates optimized versions based on the selected preset. Supports menu items, store logos, cover photos, and payment proofs (no resize).
+ */
+export const uploadControllerUploadImage = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<UploadControllerUploadImageData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    UploadControllerUploadImageResponses,
+    UploadControllerUploadImageErrors,
+    ThrowOnError
+  >({
+    ...formDataBodySerializer,
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/upload/image',
+    ...options,
+    headers: {
+      'Content-Type': null,
+      ...options.headers,
+    },
+  });
+};
+
+export const healthControllerHealthCheck = <
+  ThrowOnError extends boolean = false,
+>(
+  options?: Options<HealthControllerHealthCheckData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    HealthControllerHealthCheckResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: '/health',
+    ...options,
+  });
+};
+
+/**
  * Clear all items from cart
  */
 export const cartControllerClearCart = <ThrowOnError extends boolean = false>(
@@ -986,50 +2160,6 @@ export const categoryControllerSortCategories = <
 };
 
 /**
- * Upload an image file
- */
-export const uploadControllerUploadImage = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<UploadControllerUploadImageData, ThrowOnError>
-) => {
-  return (options.client ?? client).post<
-    UploadControllerUploadImageResponses,
-    UploadControllerUploadImageErrors,
-    ThrowOnError
-  >({
-    ...formDataBodySerializer,
-    security: [
-      {
-        scheme: 'bearer',
-        type: 'http',
-      },
-    ],
-    url: '/upload/image',
-    ...options,
-    headers: {
-      'Content-Type': null,
-      ...options.headers,
-    },
-  });
-};
-
-export const healthControllerHealthCheck = <
-  ThrowOnError extends boolean = false,
->(
-  options?: Options<HealthControllerHealthCheckData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    HealthControllerHealthCheckResponses,
-    unknown,
-    ThrowOnError
-  >({
-    url: '/health',
-    ...options,
-  });
-};
-
-/**
  * Get orders for kitchen display
  */
 export const kitchenControllerGetOrders = <
@@ -1204,8 +2334,8 @@ export const menuControllerUpdateMenuItem = <
 };
 
 /**
- * Checkout cart and create order (SOS)
- * Converts cart to order and clears the cart
+ * Checkout cart and create order
+ * Converts cart to order and clears the cart. SECURITY FIX: Requires session token (customers) or JWT (staff)
  */
 export const orderControllerCheckout = <ThrowOnError extends boolean = false>(
   options: Options<OrderControllerCheckoutData, ThrowOnError>

@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Edit, Loader2, MoreVertical, Pencil, Trash2 } from 'lucide-react';
+import Image from 'next/image';
 import React from 'react';
 import { toast } from '@repo/ui/lib/toast';
 
@@ -36,6 +37,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type { ApiError } from '@/utils/apiFetch';
 import { useMenuStore } from '@/features/menu/store/menu.store';
+import { getImageUrl } from '@repo/api/utils/s3-url';
 
 interface ItemCardProps {
   item: MenuItem;
@@ -180,12 +182,19 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
         layout
       >
         <div className="relative h-32 w-full">
-          <img
-            src={item.imageUrl || '/no-image.svg'}
-            alt={item.name}
-            className="h-full w-full border-b object-cover"
-            loading="lazy"
-          />
+          {getImageUrl(item.imagePath, 'medium') ? (
+            <Image
+              src={getImageUrl(item.imagePath, 'medium')!}
+              alt={item.name}
+              fill
+              className="border-b object-cover"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            />
+          ) : (
+            <div className="bg-muted flex h-full w-full items-center justify-center border-b">
+              <span className="text-muted-foreground text-sm">No image</span>
+            </div>
+          )}
 
           {/* Out of Stock Badge */}
           {isOutOfStock && (

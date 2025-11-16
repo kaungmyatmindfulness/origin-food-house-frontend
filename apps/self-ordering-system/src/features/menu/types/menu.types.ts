@@ -11,7 +11,7 @@ export interface MenuItem {
   name: string;
   description: string;
   basePrice: string;
-  imageUrl?: string;
+  imagePath?: string;
   categoryId: string;
   storeId: string;
   sortOrder: number;
@@ -20,7 +20,7 @@ export interface MenuItem {
 
 export type MenuItemBasic = Pick<
   MenuItem,
-  'id' | 'name' | 'basePrice' | 'imageUrl'
+  'id' | 'name' | 'basePrice' | 'imagePath'
 >;
 
 export interface CustomizationGroup {

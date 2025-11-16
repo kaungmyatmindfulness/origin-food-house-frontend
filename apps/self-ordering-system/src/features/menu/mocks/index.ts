@@ -20,7 +20,7 @@ export const MOCK_CATEGORIES: Category[] = [
         name: 'Spring Rolls',
         description: 'Crispy fried rolls with vegetable filling.',
         basePrice: '6.50',
-        imageUrl:
+        imagePath:
           'https://images.unsplash.com/photo-1685381980702-6140133c3cbb?q=80&w=3750&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         categoryId: 'cat1',
         storeId: 'store1',
@@ -32,7 +32,7 @@ export const MOCK_CATEGORIES: Category[] = [
         name: 'Garlic Bread',
         description: 'Toasted bread with garlic butter.',
         basePrice: '4.00',
-        imageUrl:
+        imagePath:
           'https://images.unsplash.com/photo-1685381980702-6140133c3cbb?q=80&w=3750&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         categoryId: 'cat1',
         storeId: 'store1',
@@ -52,7 +52,7 @@ export const MOCK_CATEGORIES: Category[] = [
         name: 'Cheeseburger',
         description: 'Classic beef burger with cheese, lettuce, and tomato.',
         basePrice: '12.99',
-        imageUrl:
+        imagePath:
           'https://images.unsplash.com/photo-1685381980702-6140133c3cbb?q=80&w=3750&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         categoryId: 'cat2',
         storeId: 'store1',
@@ -119,7 +119,7 @@ export const MOCK_CATEGORIES: Category[] = [
         name: 'Margherita Pizza',
         description: 'Simple pizza with tomato, mozzarella, and basil.',
         basePrice: '14.50',
-        imageUrl:
+        imagePath:
           'https://images.unsplash.com/photo-1685381980702-6140133c3cbb?q=80&w=3750&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         categoryId: 'cat2',
         storeId: 'store1',
@@ -131,7 +131,7 @@ export const MOCK_CATEGORIES: Category[] = [
         name: 'Pasta Carbonara',
         description: 'Creamy pasta with bacon and parmesan.',
         basePrice: '15.00',
-        imageUrl:
+        imagePath:
           'https://images.unsplash.com/photo-1685381980702-6140133c3cbb?q=80&w=3750&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         categoryId: 'cat2',
         storeId: 'store1',
@@ -151,7 +151,7 @@ export const MOCK_CATEGORIES: Category[] = [
         name: 'Chocolate Cake',
         description: 'Rich chocolate cake slice.',
         basePrice: '7.00',
-        imageUrl:
+        imagePath:
           'https://images.unsplash.com/photo-1685381980702-6140133c3cbb?q=80&w=3750&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         categoryId: 'cat3',
         storeId: 'store1',
@@ -171,7 +171,7 @@ export const MOCK_CATEGORIES: Category[] = [
         name: 'Cola',
         description: 'Refreshing cola drink.',
         basePrice: '2.50',
-        imageUrl:
+        imagePath:
           'https://images.unsplash.com/photo-1685381980702-6140133c3cbb?q=80&w=3750&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         categoryId: 'cat4',
         storeId: 'store1',
@@ -183,7 +183,7 @@ export const MOCK_CATEGORIES: Category[] = [
         name: 'Orange Juice',
         description: 'Freshly squeezed orange juice.',
         basePrice: '3.50',
-        imageUrl:
+        imagePath:
           'https://images.unsplash.com/photo-1685381980702-6140133c3cbb?q=80&w=3750&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         categoryId: 'cat4',
         storeId: 'store1',

@@ -81,7 +81,7 @@ const menuItemSchema = z
     basePrice: z
       .number({ invalid_type_error: 'Base price required' })
       .min(0.01, 'Must be at least 0.01'),
-    imageUrl: z.string().optional(),
+    imagePath: z.string().optional(),
 
     categoryId: z.string().optional(),
     newCategoryName: z
@@ -221,7 +221,7 @@ export function MenuItemFormDialog({
       name: '',
       description: '',
       basePrice: undefined,
-      imageUrl: '',
+      imagePath: '',
       categoryId: '',
       newCategoryName: '',
       isNewCategory: false,
@@ -242,7 +242,7 @@ export function MenuItemFormDialog({
           ? parseFloat(itemToEdit.basePrice) || undefined
           : undefined,
 
-        imageUrl: itemToEdit.imageUrl ?? undefined,
+        imagePath: itemToEdit.imagePath ?? undefined,
 
         categoryId: itemToEdit.category.id
           ? String(itemToEdit.category.id)
@@ -378,7 +378,7 @@ export function MenuItemFormDialog({
       name: values.name,
       description: values.description || undefined,
       basePrice: String(values.basePrice),
-      imageUrl: values.imageUrl || undefined,
+      imagePath: values.imagePath || undefined,
       category: submitCategory,
       routingArea: values.routingArea || undefined,
       preparationTimeMinutes: values.preparationTimeMinutes || undefined,
@@ -626,7 +626,7 @@ export function MenuItemFormDialog({
 
             <FormField
               control={form.control}
-              name="imageUrl"
+              name="imagePath"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>

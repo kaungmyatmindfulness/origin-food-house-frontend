@@ -13,6 +13,7 @@ import {
   SheetTitle,
 } from '@repo/ui/components/sheet'; // Adjust path
 import { useCartStore } from '@/features/cart/store/cart.store';
+import { getImageUrl } from '@repo/api/utils/s3-url';
 
 interface CartSheetContentProps {
   // cart prop removed - state comes from store
@@ -79,25 +80,21 @@ export function CartSheetContent({
                 <div key={cartItem.id} className="flex items-center gap-4">
                   {/* Item Image */}
                   <div className="bg-muted relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md">
-                    {/* Use a default placeholder */}
-                    <Image
-                      // Use optional chaining and provide a fallback source
-                      src={
-                        cartItem.menuItem?.imageUrl ?? '/placeholder-image.png'
-                      }
-                      alt={cartItem.menuItem?.name ?? 'Item image'}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Example sizes attribute
-                      className="object-cover"
-                      // More robust error handling
-                      onError={(e) => {
-                        console.error(
-                          `Failed to load image: ${cartItem.menuItem?.imageUrl}`
-                        );
-                        e.currentTarget.src = '/placeholder-image.png'; // Fallback to placeholder
-                        e.currentTarget.srcset = ''; // Clear srcset as well
-                      }}
-                    />
+                    {getImageUrl(cartItem.menuItem?.imagePath, 'small') ? (
+                      <Image
+                        src={getImageUrl(cartItem.menuItem?.imagePath, 'small')!}
+                        alt={cartItem.menuItem?.name ?? 'Item image'}
+                        fill
+                        className="object-cover"
+                        sizes="64px"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center">
+                        <span className="text-muted-foreground text-xs">
+                          No image
+                        </span>
+                      </div>
+                    )}
                   </div>
                   {/* Item Details */}
                   <div className="flex-grow">

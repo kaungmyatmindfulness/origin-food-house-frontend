@@ -44,26 +44,25 @@ function fixImports() {
   let fixedCount = 0;
 
   for (const file of files) {
-    let content = readFileSync(file, 'utf-8');
-    let modified = false;
+    const originalContent = readFileSync(file, 'utf-8');
+    let newContent = originalContent;
 
     // Special case: fix './client.js' to '@hey-api/client-fetch' (package import)
-    if (content.includes("from './client.js'")) {
-      content = content.replace(/from '\.\/client\.js'/g, "from '@hey-api/client-fetch'");
-      modified = true;
+    if (newContent.includes("from './client.js'")) {
+      newContent = newContent.replace(/from '\.\/client\.js'/g, "from '@hey-api/client-fetch'");
     }
 
     // Fix all relative imports (both ./ and ../)
-    const newContent = content.replace(importPattern, (match, importPath) => {
+    newContent = newContent.replace(importPattern, (match, importPath) => {
       // Skip if already has .js or .ts extension
       if (importPath.endsWith('.js') || importPath.endsWith('.ts')) {
         return match;
       }
-      modified = true;
       return `from '${importPath}.js';`;
     });
 
-    if (modified) {
+    // Only write if content actually changed
+    if (newContent !== originalContent) {
       writeFileSync(file, newContent, 'utf-8');
       fixedCount++;
     }

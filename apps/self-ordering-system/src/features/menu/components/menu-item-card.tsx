@@ -11,6 +11,7 @@ import {
   useCartStore,
 } from '@/features/cart/store/cart.store';
 import { toast } from '@repo/ui/lib/toast';
+import { getImageUrl } from '@repo/api/utils/s3-url';
 
 interface MenuItemCardProps {
   item: MenuItem;
@@ -131,18 +132,19 @@ export function MenuItemCard({
     <div className="flex gap-4 border-b border-gray-200 pb-4 last:border-b-0">
       {/* Image Container */}
       <div className="bg-muted relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md sm:h-28 sm:w-28">
-        <Image
-          src={item.imageUrl || '/placeholder-image.png'}
-          alt={item.name}
-          fill
-          sizes="(max-width: 640px) 96px, 112px"
-          className="object-cover"
-          onError={(e) => {
-            console.error(`Failed to load image: ${item.imageUrl}`);
-            e.currentTarget.src = '/placeholder-image.png';
-            e.currentTarget.srcset = '';
-          }}
-        />
+        {getImageUrl(item.imagePath, 'small') ? (
+          <Image
+            src={getImageUrl(item.imagePath, 'small')!}
+            alt={item.name}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 96px, 112px"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <span className="text-muted-foreground text-xs">No image</span>
+          </div>
+        )}
       </div>
 
       {/* Content Container */}

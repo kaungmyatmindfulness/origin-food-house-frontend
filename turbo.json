@@ -1,7 +1,11 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "globalEnv": ["NODE_ENV"],
+  "globalEnv": [
+    "NODE_ENV",
+    "NEXT_PUBLIC_AWS_S3_BUCKET",
+    "NEXT_PUBLIC_AWS_REGION"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

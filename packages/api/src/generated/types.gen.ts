@@ -23,7 +23,7 @@ export type CreateManualSessionDto = {
   guestCount?: number;
 };
 
-export type SessionResponseDto = {
+export type SessionCreatedResponseDto = {
   /**
    * Session ID
    */
@@ -35,7 +35,9 @@ export type SessionResponseDto = {
   /**
    * Table ID
    */
-  tableId: string;
+  tableId: {
+    [key: string]: unknown;
+  };
   /**
    * Session status
    */
@@ -45,7 +47,7 @@ export type SessionResponseDto = {
    */
   guestCount: number;
   /**
-   * Session token for authentication
+   * Session token for authentication - ONLY provided on session creation
    */
   sessionToken: string;
   /**
@@ -69,6 +71,45 @@ export type JoinSessionDto = {
    * Number of guests in the session
    */
   guestCount?: number;
+};
+
+export type SessionResponseDto = {
+  /**
+   * Session ID
+   */
+  id: string;
+  /**
+   * Store ID
+   */
+  storeId: string;
+  /**
+   * Table ID
+   */
+  tableId: {
+    [key: string]: unknown;
+  };
+  /**
+   * Session status
+   */
+  status: 'ACTIVE' | 'CLOSED';
+  /**
+   * Number of guests
+   */
+  guestCount: number;
+  /**
+   * Closed timestamp
+   */
+  closedAt: {
+    [key: string]: unknown;
+  };
+  /**
+   * Created timestamp
+   */
+  createdAt: string;
+  /**
+   * Updated timestamp
+   */
+  updatedAt: string;
 };
 
 export type UpdateSessionDto = {
@@ -148,7 +189,13 @@ export type UserProfileResponseDto = {
   /**
    * User's role in the specific store requested via query parameter (if provided and user is a member)
    */
-  selectedStoreRole?: 'OWNER' | 'ADMIN' | 'CHEF' | 'CASHIER' | 'SERVER';
+  selectedStoreRole?:
+    | 'PLATFORM_ADMIN'
+    | 'OWNER'
+    | 'ADMIN'
+    | 'CHEF'
+    | 'CASHIER'
+    | 'SERVER';
   /**
    * Timestamp when the user was created
    */
@@ -163,7 +210,7 @@ export type CreateUserDto = {
 export type AddUserToStoreDto = {
   userId: string;
   storeId: string;
-  role: 'OWNER' | 'ADMIN' | 'CHEF' | 'CASHIER' | 'SERVER';
+  role: 'PLATFORM_ADMIN' | 'OWNER' | 'ADMIN' | 'CHEF' | 'CASHIER' | 'SERVER';
 };
 
 export type InviteStaffDto = {
@@ -174,21 +221,209 @@ export type InviteStaffDto = {
   /**
    * Role to assign to the staff member
    */
-  role: 'OWNER' | 'ADMIN' | 'CHEF' | 'CASHIER' | 'SERVER';
+  role: 'PLATFORM_ADMIN' | 'OWNER' | 'ADMIN' | 'CHEF' | 'CASHIER' | 'SERVER';
 };
 
 export type ChangeRoleDto = {
   /**
    * New role to assign to the user
    */
-  role: 'OWNER' | 'ADMIN' | 'CHEF' | 'CASHIER' | 'SERVER';
+  role: 'PLATFORM_ADMIN' | 'OWNER' | 'ADMIN' | 'CHEF' | 'CASHIER' | 'SERVER';
 };
 
 export type SuspendUserDto = {
+  reason: string;
+};
+
+export type ValidateAdminTokenDto = {
   /**
-   * Reason for suspending the user
+   * Auth0 access token from admin tenant
+   */
+  auth0Token: string;
+};
+
+export type AdminUserResponseDto = {
+  id: string;
+  email: string;
+  name: string;
+  role:
+    | 'SUPER_ADMIN'
+    | 'PLATFORM_ADMIN'
+    | 'SUPPORT_AGENT'
+    | 'FINANCE_ADMIN'
+    | 'COMPLIANCE_OFFICER';
+  isActive: boolean;
+  lastLoginAt: {
+    [key: string]: unknown;
+  };
+};
+
+export type ValidateAdminResponseDto = {
+  adminUser: AdminUserResponseDto;
+  /**
+   * Internal JWT for authenticated API requests
+   */
+  jwt: string;
+  /**
+   * List of permissions based on admin role
+   */
+  permissions: Array<string>;
+};
+
+export type AdminProfileResponseDto = {
+  id: string;
+  email: string;
+  name: string;
+  role:
+    | 'SUPER_ADMIN'
+    | 'PLATFORM_ADMIN'
+    | 'SUPPORT_AGENT'
+    | 'FINANCE_ADMIN'
+    | 'COMPLIANCE_OFFICER';
+  isActive: boolean;
+  lastLoginAt: {
+    [key: string]: unknown;
+  };
+  createdAt: string;
+};
+
+export type AdminPermissionsResponseDto = {
+  role: string;
+  permissions: Array<string>;
+};
+
+export type SuspendStoreDto = {
+  reason: string;
+};
+
+export type BanStoreDto = {
+  reason: string;
+};
+
+export type ReactivateStoreDto = {
+  note?: string;
+};
+
+export type DowngradeTierDto = {
+  /**
+   * Target tier ID to downgrade to
+   */
+  targetTierId: 'tier_free' | 'tier_standard' | 'tier_premium';
+  reason: string;
+};
+
+export type BanUserDto = {
+  reason: string;
+};
+
+export type ReactivateUserDto = {
+  note?: string;
+};
+
+export type CreatePaymentRequestDto = {
+  /**
+   * Requested subscription tier
+   */
+  tier: 'FREE' | 'STANDARD' | 'PREMIUM';
+  /**
+   * Store ID for the subscription
+   */
+  storeId: string;
+};
+
+export type VerifyPaymentDto = {
+  /**
+   * Admin notes for payment verification
+   */
+  notes?: string;
+};
+
+export type RejectPaymentDto = {
+  /**
+   * Reason for rejecting the payment
+   */
+  rejectionReason: string;
+};
+
+export type InitiateOwnershipTransferDto = {
+  /**
+   * Store ID for ownership transfer
+   */
+  storeId: string;
+  /**
+   * Email of the new owner
+   */
+  newOwnerEmail: string;
+};
+
+export type VerifyOtpDto = {
+  /**
+   * 6-digit OTP code
+   */
+  otp: string;
+};
+
+export type CreateRefundRequestDto = {
+  /**
+   * Subscription ID for the refund request
+   */
+  subscriptionId: string;
+  /**
+   * Reason for requesting refund
    */
   reason: string;
+};
+
+export type ImageMetadataDto = {
+  /**
+   * Original image width in pixels
+   */
+  originalWidth?: number;
+  /**
+   * Original image height in pixels
+   */
+  originalHeight?: number;
+  /**
+   * Image format (e.g., 'jpeg', 'png', 'webp', 'pdf')
+   */
+  format?: string;
+  /**
+   * Original file size in bytes
+   */
+  originalSize: number;
+  /**
+   * Whether the image has transparency (alpha channel)
+   */
+  hasAlpha?: boolean;
+  /**
+   * Color space of the image (e.g., 'srgb', 'cmyk')
+   */
+  space?: string;
+  /**
+   * Generated versions with their metadata (dimensions and sizes, no URLs)
+   */
+  versions: {
+    [key: string]: unknown;
+  };
+};
+
+export type UploadImageResponseDto = {
+  /**
+   * Base S3 path without version suffix. Frontend constructs full URLs using: baseUrl + basePath + '-' + size + '.webp'
+   */
+  basePath: string;
+  /**
+   * Available image sizes generated for this upload
+   */
+  availableSizes: Array<string>;
+  /**
+   * Primary/default size for this preset (recommended size to display)
+   */
+  primarySize: 'original' | 'small' | 'medium' | 'large';
+  /**
+   * Metadata about the uploaded image including dimensions, file sizes, and format details for all generated versions.
+   */
+  metadata: ImageMetadataDto;
 };
 
 export type CartItemCustomizationResponseDto = {
@@ -268,7 +503,10 @@ export type MenuItemNestedResponseDto = {
     [key: string]: unknown;
   };
   basePrice?: string;
-  imageUrl?: {
+  /**
+   * Base S3 path
+   */
+  imagePath?: {
     [key: string]: unknown;
   };
   sortOrder: number;
@@ -358,13 +596,6 @@ export type UpdateCategoryDto = {
   name?: string;
 };
 
-export type UploadImageResponseDto = {
-  /**
-   * The full public URL of the generated medium-sized image.
-   */
-  imageUrl: string;
-};
-
 export type KitchenOrderResponseDto = {
   /**
    * Order ID
@@ -444,7 +675,10 @@ export type MenuItemResponseDto = {
    * Base price, formatted as string.
    */
   basePrice: string;
-  imageUrl?: {
+  /**
+   * Base S3 path for image. Frontend constructs URL: baseUrl + imagePath + '-' + size + '.webp'
+   */
+  imagePath?: {
     [key: string]: unknown;
   };
   /**
@@ -535,9 +769,9 @@ export type CreateMenuItemDto = {
    */
   basePrice: string;
   /**
-   * Key for image stored in S3 or similar
+   * Base S3 path for the menu item image (without version suffix). Frontend constructs URLs as: baseUrl + imagePath + '-' + size + '.webp'
    */
-  imageUrl?: string;
+  imagePath?: string;
   /**
    * Set to true to temporarily hide the item (e.g., out of stock). Defaults to false (visible).
    */
@@ -576,9 +810,9 @@ export type UpdateMenuItemDto = {
    */
   basePrice: number;
   /**
-   * Key for image stored in S3 or similar
+   * Base S3 path for the menu item image (without version suffix). Frontend constructs URLs as: baseUrl + imagePath + '-' + size + '.webp'
    */
-  imageUrl?: string;
+  imagePath?: string;
   /**
    * Set to true to temporarily hide the item (e.g., out of stock). Defaults to false (visible).
    */
@@ -1035,7 +1269,16 @@ export type StoreInformationResponseDto = {
   id: string;
   storeId: string;
   name: string;
-  logoUrl?: {
+  /**
+   * Base S3 path for logo
+   */
+  logoPath?: {
+    [key: string]: unknown;
+  };
+  /**
+   * Base S3 path for cover photo
+   */
+  coverPhotoPath?: {
     [key: string]: unknown;
   };
   address?: {
@@ -1099,6 +1342,22 @@ export type CreateStoreDto = {
    * Store's display name
    */
   name: string;
+  /**
+   * Store's physical address
+   */
+  address?: string;
+  /**
+   * Store's contact phone number
+   */
+  phone?: string;
+  /**
+   * Store's contact email address
+   */
+  email?: string;
+  /**
+   * Store's website URL
+   */
+  website?: string;
 };
 
 export type UpdateStoreInformationDto = {
@@ -1107,9 +1366,13 @@ export type UpdateStoreInformationDto = {
    */
   name: string;
   /**
-   * Store's logo URL
+   * Store's logo base path (S3). Frontend constructs URL: baseUrl + logoPath + '-' + size + '.webp'
    */
-  logoUrl?: string;
+  logoPath?: string;
+  /**
+   * Store's cover photo base path (S3). Frontend constructs URL: baseUrl + coverPhotoPath + '-' + size + '.webp'
+   */
+  coverPhotoPath?: string;
   /**
    * Store's physical address
    */
@@ -1151,7 +1414,7 @@ export type InviteOrAssignRoleDto = {
   /**
    * The new role for the user in this store
    */
-  role: 'OWNER' | 'ADMIN' | 'CHEF' | 'CASHIER' | 'SERVER';
+  role: 'PLATFORM_ADMIN' | 'OWNER' | 'ADMIN' | 'CHEF' | 'CASHIER' | 'SERVER';
 };
 
 export type UpdateTaxAndServiceChargeDto = {
@@ -1313,7 +1576,7 @@ export type ActiveTableSessionControllerCreateManualSessionResponses = {
   /**
    * Manual session created successfully
    */
-  201: SessionResponseDto;
+  201: SessionCreatedResponseDto;
 };
 
 export type ActiveTableSessionControllerCreateManualSessionResponse =
@@ -1340,9 +1603,9 @@ export type ActiveTableSessionControllerJoinByTableErrors = {
 
 export type ActiveTableSessionControllerJoinByTableResponses = {
   /**
-   * Session joined/created successfully
+   * Session joined/created successfully (includes session token)
    */
-  201: SessionResponseDto;
+  201: SessionCreatedResponseDto;
 };
 
 export type ActiveTableSessionControllerJoinByTableResponse =
@@ -1369,7 +1632,7 @@ export type ActiveTableSessionControllerFindOneErrors = {
 
 export type ActiveTableSessionControllerFindOneResponses = {
   /**
-   * Session found
+   * Session found (session token excluded for security)
    */
   200: SessionResponseDto;
 };
@@ -1391,6 +1654,10 @@ export type ActiveTableSessionControllerUpdateData = {
 
 export type ActiveTableSessionControllerUpdateErrors = {
   /**
+   * Insufficient permissions or cross-store access
+   */
+  403: unknown;
+  /**
    * Session not found
    */
   404: unknown;
@@ -1398,7 +1665,7 @@ export type ActiveTableSessionControllerUpdateErrors = {
 
 export type ActiveTableSessionControllerUpdateResponses = {
   /**
-   * Session updated
+   * Session updated (session token excluded for security)
    */
   200: SessionResponseDto;
 };
@@ -1427,7 +1694,7 @@ export type ActiveTableSessionControllerFindByTokenErrors = {
 
 export type ActiveTableSessionControllerFindByTokenResponses = {
   /**
-   * Session found
+   * Session found (session token excluded for security)
    */
   200: SessionResponseDto;
 };
@@ -1449,7 +1716,7 @@ export type ActiveTableSessionControllerFindActiveByStoreData = {
 
 export type ActiveTableSessionControllerFindActiveByStoreResponses = {
   /**
-   * Active sessions retrieved
+   * Active sessions retrieved (session tokens excluded)
    */
   200: Array<SessionResponseDto>;
 };
@@ -1475,6 +1742,10 @@ export type ActiveTableSessionControllerCloseErrors = {
    */
   400: unknown;
   /**
+   * Insufficient permissions or cross-store access
+   */
+  403: unknown;
+  /**
    * Session not found
    */
   404: unknown;
@@ -1482,7 +1753,7 @@ export type ActiveTableSessionControllerCloseErrors = {
 
 export type ActiveTableSessionControllerCloseResponses = {
   /**
-   * Session closed
+   * Session closed (session token excluded for security)
    */
   200: SessionResponseDto;
 };
@@ -1896,7 +2167,35 @@ export type AuditLogControllerGetStoreAuditLogsData = {
       | 'USER_SUSPENDED'
       | 'USER_REACTIVATED'
       | 'TIER_UPGRADED'
-      | 'TIER_DOWNGRADED';
+      | 'TIER_DOWNGRADED'
+      | 'PAYMENT_REQUEST_CREATED'
+      | 'PAYMENT_VERIFIED'
+      | 'SUBSCRIPTION_ACTIVATED'
+      | 'SUBSCRIPTION_CANCELLED'
+      | 'SUBSCRIPTION_EXPIRED'
+      | 'TRIAL_STARTED'
+      | 'TRIAL_EXPIRED'
+      | 'TRIAL_CONVERTED'
+      | 'REFUND_REQUESTED'
+      | 'REFUND_APPROVED'
+      | 'REFUND_REJECTED'
+      | 'REFUND_PROCESSED'
+      | 'OWNERSHIP_TRANSFER_INITIATED'
+      | 'OWNERSHIP_TRANSFER_COMPLETED'
+      | 'TIER_AUTO_DOWNGRADED'
+      | 'TRIAL_WARNING_SENT'
+      | 'ADMIN_STORE_SUSPENDED'
+      | 'ADMIN_STORE_BANNED'
+      | 'ADMIN_STORE_REACTIVATED'
+      | 'ADMIN_USER_SUSPENDED'
+      | 'ADMIN_USER_BANNED'
+      | 'ADMIN_USER_REACTIVATED'
+      | 'ADMIN_SUBSCRIPTION_OVERRIDDEN'
+      | 'ADMIN_PAYMENT_VERIFIED'
+      | 'ADMIN_PAYMENT_REJECTED'
+      | 'ADMIN_REFUND_APPROVED'
+      | 'ADMIN_IMPERSONATION_STARTED'
+      | 'ADMIN_IMPERSONATION_ENDED';
     userId?: string;
   };
   url: '/audit-logs/{storeId}';
@@ -1922,7 +2221,35 @@ export type AuditLogControllerExportAuditLogsData = {
       | 'USER_SUSPENDED'
       | 'USER_REACTIVATED'
       | 'TIER_UPGRADED'
-      | 'TIER_DOWNGRADED';
+      | 'TIER_DOWNGRADED'
+      | 'PAYMENT_REQUEST_CREATED'
+      | 'PAYMENT_VERIFIED'
+      | 'SUBSCRIPTION_ACTIVATED'
+      | 'SUBSCRIPTION_CANCELLED'
+      | 'SUBSCRIPTION_EXPIRED'
+      | 'TRIAL_STARTED'
+      | 'TRIAL_EXPIRED'
+      | 'TRIAL_CONVERTED'
+      | 'REFUND_REQUESTED'
+      | 'REFUND_APPROVED'
+      | 'REFUND_REJECTED'
+      | 'REFUND_PROCESSED'
+      | 'OWNERSHIP_TRANSFER_INITIATED'
+      | 'OWNERSHIP_TRANSFER_COMPLETED'
+      | 'TIER_AUTO_DOWNGRADED'
+      | 'TRIAL_WARNING_SENT'
+      | 'ADMIN_STORE_SUSPENDED'
+      | 'ADMIN_STORE_BANNED'
+      | 'ADMIN_STORE_REACTIVATED'
+      | 'ADMIN_USER_SUSPENDED'
+      | 'ADMIN_USER_BANNED'
+      | 'ADMIN_USER_REACTIVATED'
+      | 'ADMIN_SUBSCRIPTION_OVERRIDDEN'
+      | 'ADMIN_PAYMENT_VERIFIED'
+      | 'ADMIN_PAYMENT_REJECTED'
+      | 'ADMIN_REFUND_APPROVED'
+      | 'ADMIN_IMPERSONATION_STARTED'
+      | 'ADMIN_IMPERSONATION_ENDED';
     userId?: string;
     startDate?: string;
     endDate?: string;
@@ -1931,6 +2258,1151 @@ export type AuditLogControllerExportAuditLogsData = {
 };
 
 export type AuditLogControllerExportAuditLogsResponses = {
+  200: unknown;
+};
+
+export type AdminAuthControllerValidateTokenData = {
+  body: ValidateAdminTokenDto;
+  path?: never;
+  query?: never;
+  url: '/admin/auth/validate';
+};
+
+export type AdminAuthControllerValidateTokenErrors = {
+  /**
+   * Invalid request body
+   */
+  400: unknown;
+  /**
+   * Invalid or expired Auth0 token
+   */
+  401: unknown;
+  /**
+   * Admin account is inactive
+   */
+  403: unknown;
+};
+
+export type AdminAuthControllerValidateTokenResponses = {
+  /**
+   * Token validated successfully, admin user synced
+   */
+  200: ValidateAdminResponseDto;
+};
+
+export type AdminAuthControllerValidateTokenResponse =
+  AdminAuthControllerValidateTokenResponses[keyof AdminAuthControllerValidateTokenResponses];
+
+export type AdminAuthControllerGetProfileData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/admin/auth/profile';
+};
+
+export type AdminAuthControllerGetProfileErrors = {
+  /**
+   * Not authenticated
+   */
+  401: unknown;
+  /**
+   * Not authorized as admin
+   */
+  403: unknown;
+};
+
+export type AdminAuthControllerGetProfileResponses = {
+  /**
+   * Admin profile retrieved successfully
+   */
+  200: AdminProfileResponseDto;
+};
+
+export type AdminAuthControllerGetProfileResponse =
+  AdminAuthControllerGetProfileResponses[keyof AdminAuthControllerGetProfileResponses];
+
+export type AdminAuthControllerGetPermissionsData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/admin/auth/permissions';
+};
+
+export type AdminAuthControllerGetPermissionsErrors = {
+  /**
+   * Not authenticated
+   */
+  401: unknown;
+  /**
+   * Not authorized as admin
+   */
+  403: unknown;
+};
+
+export type AdminAuthControllerGetPermissionsResponses = {
+  /**
+   * Admin permissions retrieved successfully
+   */
+  200: AdminPermissionsResponseDto;
+};
+
+export type AdminAuthControllerGetPermissionsResponse =
+  AdminAuthControllerGetPermissionsResponses[keyof AdminAuthControllerGetPermissionsResponses];
+
+export type AdminStoreControllerListStoresData = {
+  body?: never;
+  path?: never;
+  query?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: 'ACTIVE' | 'SUSPENDED' | 'BANNED';
+    tierId?: string;
+  };
+  url: '/admin/stores';
+};
+
+export type AdminStoreControllerListStoresErrors = {
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+};
+
+export type AdminStoreControllerListStoresResponses = {
+  /**
+   * Stores retrieved successfully
+   */
+  200: unknown;
+};
+
+export type AdminStoreControllerGetStoreDetailData = {
+  body?: never;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/admin/stores/{id}';
+};
+
+export type AdminStoreControllerGetStoreDetailErrors = {
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Store not found
+   */
+  404: unknown;
+};
+
+export type AdminStoreControllerGetStoreDetailResponses = {
+  /**
+   * Store detail retrieved successfully
+   */
+  200: unknown;
+};
+
+export type AdminStoreControllerSuspendStoreData = {
+  body: SuspendStoreDto;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/admin/stores/{id}/suspend';
+};
+
+export type AdminStoreControllerSuspendStoreErrors = {
+  /**
+   * Store is already suspended
+   */
+  400: unknown;
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Store not found
+   */
+  404: unknown;
+};
+
+export type AdminStoreControllerSuspendStoreResponses = {
+  /**
+   * Store suspended successfully
+   */
+  200: unknown;
+};
+
+export type AdminStoreControllerBanStoreData = {
+  body: BanStoreDto;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/admin/stores/{id}/ban';
+};
+
+export type AdminStoreControllerBanStoreErrors = {
+  /**
+   * Store is already banned
+   */
+  400: unknown;
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Store not found
+   */
+  404: unknown;
+};
+
+export type AdminStoreControllerBanStoreResponses = {
+  /**
+   * Store banned successfully
+   */
+  200: unknown;
+};
+
+export type AdminStoreControllerReactivateStoreData = {
+  body: ReactivateStoreDto;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/admin/stores/{id}/reactivate';
+};
+
+export type AdminStoreControllerReactivateStoreErrors = {
+  /**
+   * Store is not suspended or banned
+   */
+  400: unknown;
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Store not found
+   */
+  404: unknown;
+};
+
+export type AdminStoreControllerReactivateStoreResponses = {
+  /**
+   * Store reactivated successfully
+   */
+  200: unknown;
+};
+
+export type AdminStoreControllerDowngradeTierData = {
+  body: DowngradeTierDto;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/admin/stores/{id}/downgrade';
+};
+
+export type AdminStoreControllerDowngradeTierErrors = {
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Store or target tier not found
+   */
+  404: unknown;
+};
+
+export type AdminStoreControllerDowngradeTierResponses = {
+  /**
+   * Store tier downgraded successfully
+   */
+  200: unknown;
+};
+
+export type AdminStoreControllerGetStoreAnalyticsData = {
+  body?: never;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/admin/stores/{id}/analytics';
+};
+
+export type AdminStoreControllerGetStoreAnalyticsErrors = {
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Store not found
+   */
+  404: unknown;
+};
+
+export type AdminStoreControllerGetStoreAnalyticsResponses = {
+  /**
+   * Store analytics retrieved successfully
+   */
+  200: unknown;
+};
+
+export type AdminUserControllerListUsersData = {
+  body?: never;
+  path?: never;
+  query?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    isSuspended?: boolean;
+    storeId?: string;
+  };
+  url: '/admin/users';
+};
+
+export type AdminUserControllerListUsersErrors = {
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+};
+
+export type AdminUserControllerListUsersResponses = {
+  /**
+   * Users retrieved successfully
+   */
+  200: unknown;
+};
+
+export type AdminUserControllerGetUserDetailData = {
+  body?: never;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/admin/users/{id}';
+};
+
+export type AdminUserControllerGetUserDetailErrors = {
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * User not found
+   */
+  404: unknown;
+};
+
+export type AdminUserControllerGetUserDetailResponses = {
+  /**
+   * User detail retrieved successfully
+   */
+  200: unknown;
+};
+
+export type AdminUserControllerSuspendUserData = {
+  body: SuspendUserDto;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/admin/users/{id}/suspend';
+};
+
+export type AdminUserControllerSuspendUserErrors = {
+  /**
+   * User is already suspended
+   */
+  400: unknown;
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * User not found
+   */
+  404: unknown;
+};
+
+export type AdminUserControllerSuspendUserResponses = {
+  /**
+   * User suspended successfully
+   */
+  200: unknown;
+};
+
+export type AdminUserControllerBanUserData = {
+  body: BanUserDto;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/admin/users/{id}/ban';
+};
+
+export type AdminUserControllerBanUserErrors = {
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * User not found
+   */
+  404: unknown;
+};
+
+export type AdminUserControllerBanUserResponses = {
+  /**
+   * User banned successfully
+   */
+  200: unknown;
+};
+
+export type AdminUserControllerReactivateUserData = {
+  body: ReactivateUserDto;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/admin/users/{id}/reactivate';
+};
+
+export type AdminUserControllerReactivateUserErrors = {
+  /**
+   * User is not suspended
+   */
+  400: unknown;
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * User not found
+   */
+  404: unknown;
+};
+
+export type AdminUserControllerReactivateUserResponses = {
+  /**
+   * User reactivated successfully
+   */
+  200: unknown;
+};
+
+export type AdminUserControllerForcePasswordResetData = {
+  body?: never;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/admin/users/{id}/password-reset';
+};
+
+export type AdminUserControllerForcePasswordResetErrors = {
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * User not found
+   */
+  404: unknown;
+};
+
+export type AdminUserControllerForcePasswordResetResponses = {
+  /**
+   * Password reset forced successfully
+   */
+  200: unknown;
+};
+
+export type AdminUserControllerGetUserActivityData = {
+  body?: never;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/admin/users/{id}/activity';
+};
+
+export type AdminUserControllerGetUserActivityErrors = {
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * User not found
+   */
+  404: unknown;
+};
+
+export type AdminUserControllerGetUserActivityResponses = {
+  /**
+   * User activity retrieved successfully
+   */
+  200: unknown;
+};
+
+export type AdminPaymentControllerGetPaymentQueueData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/admin/payments';
+};
+
+export type AdminPaymentControllerGetPaymentQueueErrors = {
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+};
+
+export type AdminPaymentControllerGetPaymentQueueResponses = {
+  /**
+   * Payment queue retrieved successfully
+   */
+  200: unknown;
+};
+
+export type AdminPaymentControllerGetPaymentDetailData = {
+  body?: never;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/admin/payments/{id}';
+};
+
+export type AdminPaymentControllerGetPaymentDetailErrors = {
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Payment request not found
+   */
+  404: unknown;
+};
+
+export type AdminPaymentControllerGetPaymentDetailResponses = {
+  /**
+   * Payment detail retrieved successfully
+   */
+  200: unknown;
+};
+
+export type AdminPaymentControllerVerifyPaymentData = {
+  body?: never;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/admin/payments/{id}/verify';
+};
+
+export type AdminPaymentControllerVerifyPaymentErrors = {
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Payment request not found
+   */
+  404: unknown;
+};
+
+export type AdminPaymentControllerVerifyPaymentResponses = {
+  /**
+   * Payment verified successfully
+   */
+  200: unknown;
+};
+
+export type AdminPaymentControllerRejectPaymentData = {
+  body?: never;
+  path: {
+    id: string;
+  };
+  query?: never;
+  url: '/admin/payments/{id}/reject';
+};
+
+export type AdminPaymentControllerRejectPaymentErrors = {
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Payment request not found
+   */
+  404: unknown;
+};
+
+export type AdminPaymentControllerRejectPaymentResponses = {
+  /**
+   * Payment rejected successfully
+   */
+  200: unknown;
+};
+
+export type PaymentRequestControllerCreatePaymentRequestData = {
+  body: CreatePaymentRequestDto;
+  path?: never;
+  query?: never;
+  url: '/payment-requests';
+};
+
+export type PaymentRequestControllerCreatePaymentRequestResponses = {
+  /**
+   * Payment request created successfully
+   */
+  201: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type PaymentRequestControllerCreatePaymentRequestResponse =
+  PaymentRequestControllerCreatePaymentRequestResponses[keyof PaymentRequestControllerCreatePaymentRequestResponses];
+
+export type PaymentRequestControllerUploadPaymentProofData = {
+  body?: never;
+  path: {
+    /**
+     * Payment request ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/payment-requests/{id}/upload-proof';
+};
+
+export type PaymentRequestControllerUploadPaymentProofResponses = {
+  /**
+   * Payment proof uploaded successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type PaymentRequestControllerUploadPaymentProofResponse =
+  PaymentRequestControllerUploadPaymentProofResponses[keyof PaymentRequestControllerUploadPaymentProofResponses];
+
+export type PaymentRequestControllerGetPaymentRequestData = {
+  body?: never;
+  path: {
+    /**
+     * Payment request ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/payment-requests/{id}';
+};
+
+export type PaymentRequestControllerGetPaymentRequestResponses = {
+  /**
+   * Payment request details retrieved successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type PaymentRequestControllerGetPaymentRequestResponse =
+  PaymentRequestControllerGetPaymentRequestResponses[keyof PaymentRequestControllerGetPaymentRequestResponses];
+
+export type PaymentRequestControllerGetStorePaymentRequestsData = {
+  body?: never;
+  path: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+  };
+  query?: never;
+  url: '/payment-requests/store/{storeId}';
+};
+
+export type PaymentRequestControllerGetStorePaymentRequestsResponses = {
+  /**
+   * Payment requests retrieved successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type PaymentRequestControllerGetStorePaymentRequestsResponse =
+  PaymentRequestControllerGetStorePaymentRequestsResponses[keyof PaymentRequestControllerGetStorePaymentRequestsResponses];
+
+export type AdminVerificationControllerGetPaymentQueueData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Filter by payment status
+     */
+    status?: 'PENDING_VERIFICATION' | 'VERIFIED' | 'ACTIVATED' | 'REJECTED';
+    /**
+     * Page number (default: 1)
+     */
+    page?: number;
+    /**
+     * Items per page (default: 20)
+     */
+    limit?: number;
+  };
+  url: '/admin/payment-requests';
+};
+
+export type AdminVerificationControllerGetPaymentQueueResponses = {
+  /**
+   * Payment requests queue retrieved successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type AdminVerificationControllerGetPaymentQueueResponse =
+  AdminVerificationControllerGetPaymentQueueResponses[keyof AdminVerificationControllerGetPaymentQueueResponses];
+
+export type AdminVerificationControllerGetPaymentRequestDetailData = {
+  body?: never;
+  path: {
+    /**
+     * Payment request ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/admin/payment-requests/{id}';
+};
+
+export type AdminVerificationControllerGetPaymentRequestDetailResponses = {
+  /**
+   * Payment request detail retrieved successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type AdminVerificationControllerGetPaymentRequestDetailResponse =
+  AdminVerificationControllerGetPaymentRequestDetailResponses[keyof AdminVerificationControllerGetPaymentRequestDetailResponses];
+
+export type AdminVerificationControllerGetPaymentProofData = {
+  body?: never;
+  path: {
+    /**
+     * Payment request ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/admin/payment-requests/{id}/payment-proof';
+};
+
+export type AdminVerificationControllerGetPaymentProofResponses = {
+  /**
+   * Payment proof URL retrieved successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type AdminVerificationControllerGetPaymentProofResponse =
+  AdminVerificationControllerGetPaymentProofResponses[keyof AdminVerificationControllerGetPaymentProofResponses];
+
+export type AdminVerificationControllerVerifyPaymentData = {
+  body: VerifyPaymentDto;
+  path: {
+    /**
+     * Payment request ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/admin/payment-requests/{id}/verify';
+};
+
+export type AdminVerificationControllerVerifyPaymentResponses = {
+  /**
+   * Payment verified successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type AdminVerificationControllerVerifyPaymentResponse =
+  AdminVerificationControllerVerifyPaymentResponses[keyof AdminVerificationControllerVerifyPaymentResponses];
+
+export type AdminVerificationControllerRejectPaymentData = {
+  body: RejectPaymentDto;
+  path: {
+    /**
+     * Payment request ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/admin/payment-requests/{id}/reject';
+};
+
+export type AdminVerificationControllerRejectPaymentResponses = {
+  /**
+   * Payment rejected successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type AdminVerificationControllerRejectPaymentResponse =
+  AdminVerificationControllerRejectPaymentResponses[keyof AdminVerificationControllerRejectPaymentResponses];
+
+export type AdminVerificationControllerGetAdminMetricsData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/admin/payment-requests/metrics/dashboard';
+};
+
+export type AdminVerificationControllerGetAdminMetricsResponses = {
+  /**
+   * Dashboard metrics retrieved successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type AdminVerificationControllerGetAdminMetricsResponse =
+  AdminVerificationControllerGetAdminMetricsResponses[keyof AdminVerificationControllerGetAdminMetricsResponses];
+
+export type TrialControllerCheckEligibilityData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/trials/eligibility';
+};
+
+export type TrialControllerCheckEligibilityResponses = {
+  /**
+   * Trial eligibility status retrieved successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type TrialControllerCheckEligibilityResponse =
+  TrialControllerCheckEligibilityResponses[keyof TrialControllerCheckEligibilityResponses];
+
+export type TrialControllerGetTrialInfoData = {
+  body?: never;
+  path: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+  };
+  query?: never;
+  url: '/trials/store/{storeId}';
+};
+
+export type TrialControllerGetTrialInfoResponses = {
+  /**
+   * Trial information retrieved successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type TrialControllerGetTrialInfoResponse =
+  TrialControllerGetTrialInfoResponses[keyof TrialControllerGetTrialInfoResponses];
+
+export type OwnershipTransferControllerInitiateTransferData = {
+  body: InitiateOwnershipTransferDto;
+  path?: never;
+  query?: never;
+  url: '/ownership-transfers';
+};
+
+export type OwnershipTransferControllerInitiateTransferResponses = {
+  /**
+   * Ownership transfer initiated successfully
+   */
+  201: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type OwnershipTransferControllerInitiateTransferResponse =
+  OwnershipTransferControllerInitiateTransferResponses[keyof OwnershipTransferControllerInitiateTransferResponses];
+
+export type OwnershipTransferControllerVerifyOtpData = {
+  body: VerifyOtpDto;
+  path: {
+    /**
+     * Transfer ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/ownership-transfers/{id}/verify-otp';
+};
+
+export type OwnershipTransferControllerVerifyOtpResponses = {
+  /**
+   * Ownership transfer completed successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type OwnershipTransferControllerVerifyOtpResponse =
+  OwnershipTransferControllerVerifyOtpResponses[keyof OwnershipTransferControllerVerifyOtpResponses];
+
+export type OwnershipTransferControllerCancelTransferData = {
+  body?: never;
+  path: {
+    /**
+     * Transfer ID
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/ownership-transfers/{id}';
+};
+
+export type OwnershipTransferControllerCancelTransferResponses = {
+  /**
+   * Ownership transfer cancelled successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type OwnershipTransferControllerCancelTransferResponse =
+  OwnershipTransferControllerCancelTransferResponses[keyof OwnershipTransferControllerCancelTransferResponses];
+
+export type RefundControllerRequestRefundData = {
+  body: CreateRefundRequestDto;
+  path?: never;
+  query?: never;
+  url: '/refund-requests';
+};
+
+export type RefundControllerRequestRefundResponses = {
+  /**
+   * Refund request created successfully
+   */
+  201: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type RefundControllerRequestRefundResponse =
+  RefundControllerRequestRefundResponses[keyof RefundControllerRequestRefundResponses];
+
+export type RefundControllerGetStoreRefundRequestsData = {
+  body?: never;
+  path: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+  };
+  query?: never;
+  url: '/refund-requests/store/{storeId}';
+};
+
+export type RefundControllerGetStoreRefundRequestsResponses = {
+  /**
+   * Refund requests retrieved successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type RefundControllerGetStoreRefundRequestsResponse =
+  RefundControllerGetStoreRefundRequestsResponses[keyof RefundControllerGetStoreRefundRequestsResponses];
+
+export type SubscriptionControllerGetStoreSubscriptionData = {
+  body?: never;
+  path: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+  };
+  query?: never;
+  url: '/subscriptions/store/{storeId}';
+};
+
+export type SubscriptionControllerGetStoreSubscriptionResponses = {
+  /**
+   * Subscription retrieved successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: {
+      [key: string]: unknown;
+    };
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type SubscriptionControllerGetStoreSubscriptionResponse =
+  SubscriptionControllerGetStoreSubscriptionResponses[keyof SubscriptionControllerGetStoreSubscriptionResponses];
+
+export type UploadControllerUploadImageData = {
+  /**
+   * Image file to upload (jpg, jpeg, png, webp) with optional size preset
+   */
+  body: {
+    /**
+     * Image file (max 10MB)
+     */
+    file: Blob | File;
+    /**
+     * Size preset for image resizing (defaults to 'menu-item')
+     */
+    sizePreset?: 'menu-item' | 'store-logo' | 'cover-photo' | 'payment-proof';
+  };
+  path?: never;
+  query?: never;
+  url: '/upload/image';
+};
+
+export type UploadControllerUploadImageErrors = {
+  /**
+   * Unauthorized.
+   */
+  401: unknown;
+};
+
+export type UploadControllerUploadImageResponses = {
+  /**
+   * Image uploaded and processed successfully
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: UploadImageResponseDto;
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type UploadControllerUploadImageResponse =
+  UploadControllerUploadImageResponses[keyof UploadControllerUploadImageResponses];
+
+export type HealthControllerHealthCheckData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: '/health';
+};
+
+export type HealthControllerHealthCheckResponses = {
   200: unknown;
 };
 
@@ -2325,51 +3797,6 @@ export type CategoryControllerSortCategoriesResponses = {
 export type CategoryControllerSortCategoriesResponse =
   CategoryControllerSortCategoriesResponses[keyof CategoryControllerSortCategoriesResponses];
 
-export type UploadControllerUploadImageData = {
-  /**
-   * Image file to upload (jpg, jpeg, png, webp)
-   */
-  body: {
-    file?: Blob | File;
-  };
-  path?: never;
-  query?: never;
-  url: '/upload/image';
-};
-
-export type UploadControllerUploadImageErrors = {
-  /**
-   * Unauthorized.
-   */
-  401: unknown;
-};
-
-export type UploadControllerUploadImageResponses = {
-  /**
-   * Image uploaded successfully
-   */
-  200: StandardApiResponse & {
-    status?: string;
-    data?: UploadImageResponseDto;
-    errors?: Array<unknown>;
-    message?: string;
-  };
-};
-
-export type UploadControllerUploadImageResponse =
-  UploadControllerUploadImageResponses[keyof UploadControllerUploadImageResponses];
-
-export type HealthControllerHealthCheckData = {
-  body?: never;
-  path?: never;
-  query?: never;
-  url: '/health';
-};
-
-export type HealthControllerHealthCheckResponses = {
-  200: unknown;
-};
-
 export type KitchenControllerGetOrdersData = {
   body?: never;
   path?: never;
@@ -2586,6 +4013,12 @@ export type MenuControllerUpdateMenuItemResponse =
 
 export type OrderControllerCheckoutData = {
   body: CheckoutCartDto;
+  headers?: {
+    /**
+     * Session token for customer authentication (optional if JWT provided)
+     */
+    'x-session-token'?: string;
+  };
   path?: never;
   query: {
     /**
@@ -2601,6 +4034,14 @@ export type OrderControllerCheckoutErrors = {
    * Cart is empty or invalid
    */
   400: unknown;
+  /**
+   * Authentication required: Provide session token or JWT
+   */
+  401: unknown;
+  /**
+   * Invalid session token or insufficient permissions
+   */
+  403: unknown;
   /**
    * Session or cart not found
    */
