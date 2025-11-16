@@ -1,133 +1,418 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code when working with this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
-Turborepo monorepo for Origin Food House restaurant management system with two Next.js 15 apps:
+Origin Food House is an enterprise-grade restaurant management system built as a **Turborepo monorepo** with Next.js 15, React 19, and TypeScript. The system supports multi-language capabilities (English, Chinese, Myanmar, Thai) and follows clean architecture patterns.
 
-- **`@app/restaurant-management-system`** (port 3002): Point of Sale for staff
-- **`@app/self-ordering-system`** (port 3001): Self-Ordering System for customers
+**Monorepo Structure:**
+- `apps/restaurant-management-system` - POS system for restaurant staff (Port 3002)
+- `apps/self-ordering-system` - Customer-facing self-ordering app (Port 3001)
+- `apps/admin-platform` - Admin platform (in development)
+- `packages/api` - Shared API utilities with auto-generated types from OpenAPI
+- `packages/ui` - Shared shadcn/ui component library (52+ components)
+- `packages/eslint-config` & `packages/typescript-config` - Shared tooling
 
-## Commands
+---
+
+## Essential Commands
+
+### Development
 
 ```bash
-npm install              # Install dependencies
-npm run dev              # Run all apps (POS: 3002, SOS: 3001)
-npm run build            # Build all apps
-npm run lint             # Lint (max 0 warnings)
-npm run check-types      # Type check (0 errors)
-npm run format           # Format code
-npm run generate:api     # Generate types from OpenAPI spec
+# Install dependencies
+npm install
 
-# Restaurant Management System-specific
-cd apps/restaurant-management-system && npm test              # Run Jest tests
-cd apps/restaurant-management-system && npm run test:watch    # Watch mode
-cd apps/restaurant-management-system && npm run test:coverage # Coverage report
+# Run all apps (POS on :3002, SOS on :3001)
+npm run dev
 
-# App-specific dev
-turbo run dev --filter=@app/restaurant-management-system
-turbo run dev --filter=@app/self-ordering-system
+# Run specific app
+npm run dev --filter=@app/restaurant-management-system
+npm run dev --filter=@app/self-ordering-system
+
+# Build all apps
+npm run build
+
+# Build specific app
+turbo run build --filter=@app/restaurant-management-system
 ```
 
-## Architecture
+### Quality Gates (MUST PASS before completion)
 
-### Structure
+**Always run these before marking tasks complete:**
 
-```
-apps/
-├── restaurant-management-system/  # Restaurant Management System
-└── self-ordering-system/          # Customer ordering
-packages/
-├── api/              # Shared API utilities + auto-generated types
-├── ui/               # Shared UI components (shadcn/ui)
-├── eslint-config/
-└── typescript-config/
+```bash
+npm run format       # Format code with Prettier
+npm run lint         # ESLint (max 0 warnings)
+npm run check-types  # TypeScript type checking (0 errors)
+npm run build        # Ensure all apps build successfully
 ```
 
-### App Structure (Feature-Sliced)
+**Testing (RMS only):**
+
+```bash
+npm test --workspace=@app/restaurant-management-system              # Run all tests
+npm run test:watch --workspace=@app/restaurant-management-system    # Watch mode
+npm run test:coverage --workspace=@app/restaurant-management-system # Coverage report
+```
+
+### OpenAPI Type Generation
+
+**CRITICAL**: When backend API changes, regenerate types:
+
+```bash
+npm run generate:api
+```
+
+This fetches the latest OpenAPI spec from the backend and auto-generates TypeScript types in `packages/api/src/generated/`.
+
+---
+
+## Architecture & Code Organization
+
+### Feature-Sliced Design
+
+Both apps follow a strict feature-based structure:
 
 ```
 src/
-├── app/              # Next.js App Router
-├── features/         # Domain logic
-│   └── [feature]/
-│       ├── components/   # Feature UI
-│       ├── hooks/        # Custom hooks
-│       ├── queries/      # Query key factories
-│       ├── services/     # API calls
-│       ├── store/        # Zustand state
-│       └── types/        # Types
-├── common/           # Shared utilities
-│   ├── components/   # Shared widgets
-│   ├── constants/    # Routes, messages
-│   ├── hooks/        # Reusable hooks
-│   └── services/
-├── utils/            # Utilities (apiFetch, debug)
-├── i18n/             # Localization
-└── middleware.ts
+├── app/                    # Next.js App Router (routes)
+├── features/               # Domain-driven feature modules
+│   ├── auth/
+│   │   ├── components/     # Feature-specific UI components
+│   │   ├── services/       # API service functions (*.service.ts)
+│   │   ├── store/          # Zustand state management (*.store.ts)
+│   │   ├── types/          # Feature-specific types (*.types.ts)
+│   │   ├── hooks/          # Custom React hooks (use*.ts)
+│   │   └── queries/        # React Query key factories (*.keys.ts)
+│   ├── menu/
+│   ├── orders/
+│   └── [other-features]/
+├── common/                 # Shared app-level utilities
+│   ├── components/         # Shared UI widgets
+│   ├── constants/          # Routes, error messages, etc.
+│   ├── hooks/              # Reusable hooks
+│   ├── services/           # Common API services
+│   └── types/              # Shared types
+├── utils/                  # App-level utilities (apiFetch config)
+└── i18n/                   # next-intl localization config
 ```
 
-## Tech Stack
+**POS Features:** auth, menu, orders, kitchen, tables, payments, discounts, reports, user, personnel, admin, store, subscription, tiers, audit-logs
 
-**Core**: Next.js 15 (Turbopack), React 19, TypeScript 5.8+
-**State**: Zustand (persist, immer, devtools), React Query (@tanstack/react-query)
-**Styling**: Tailwind CSS v4, Motion, shadcn/ui (52 components)
-**Forms**: react-hook-form, Zod, @hookform/resolvers
-**i18n**: next-intl (en, zh, my, th)
-**Testing (Restaurant Management System)**: Jest, @testing-library/react, jsdom
-**Utilities**: lodash-es, qs, sonner, usehooks-ts
-**Restaurant Management System-specific**: @auth0/auth0-spa-js, @dnd-kit (drag-drop), qrcode.react, react-to-print, react-dropzone, papaparse (CSV), recharts (charts)
-**Self-Ordering System-specific**: socket.io-client (real-time), react-scroll, decimal.js (currency)
+**SOS Features:** menu, cart, session, store
 
-## Key Patterns
+### File Naming Conventions
 
-### 1. Use Existing @repo/ui Components ⭐
+| Type       | Convention     | Example               |
+| ---------- | -------------- | --------------------- |
+| Components | PascalCase.tsx | `CategoryCard.tsx`    |
+| Services   | `*.service.ts` | `category.service.ts` |
+| Stores     | `*.store.ts`   | `auth.store.ts`       |
+| Types      | `*.types.ts`   | `menu-item.types.ts`  |
+| Query Keys | `*.keys.ts`    | `menu.keys.ts`        |
+| Hooks      | `use*.ts`      | `useProtected.ts`     |
+| Utils      | kebab-case.ts  | `format-currency.ts`  |
 
-**ALWAYS use components from `@repo/ui` before creating new ones.**
+### Import Organization
 
-The project has 52 production-ready components:
+Standard file organization for all components and modules:
 
 ```typescript
-// ✅ Use existing components
-import { Button, Dialog, Form, Input, Select } from '@repo/ui/components/*';
-import { toast } from '@repo/ui/lib/toast';
+'use client';
 
-// ❌ Don't create custom button/input/dialog components
-// They already exist in @repo/ui with proper variants!
+// 1. React & Next.js imports
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+// 2. Third-party libraries
+import { useQuery } from '@tanstack/react-query';
+
+// 3. Shared packages
+import { Button } from '@repo/ui/components/button';
+
+// 4. Feature imports
+import { useAuthStore } from '@/features/auth/store/auth.store';
+
+// 5. Common utilities
+import { ROUTES } from '@/common/constants/routes';
+
+// 6. Types (last)
+import type { CategoryResponseDto } from '@repo/api/generated/types';
 ```
 
-**Available components**: Button, Dialog, Form, Input, Textarea, Select, Checkbox, Switch, RadioGroup, Alert, Card, Accordion, Tabs, Table, Avatar, Badge, Spinner, Skeleton, Toast, Chart, Carousel, Combobox, Command, Drawer, Empty, HoverCard, InputOTP, KBD, Menubar, NavigationMenu, Pagination, Popover, Progress, Resizable, ScrollArea, Sheet, Sidebar, Slider, ToggleGroup, and more.
+---
 
-**Complete list**: accordion, alert-dialog, alert, aspect-ratio, avatar, badge, breadcrumb, button, calendar, card, carousel, chart, checkbox, collapsible, combobox, command, confirmation-dialog, context-menu, dialog, drawer, dropdown-menu, empty, form, hover-card, input-otp, input, item, kbd, label, menubar, navigation-menu, pagination, popover, progress, radio-group, resizable, scroll-area, select, separator, sheet, sidebar, skeleton, slider, sonner, spinner, switch, table, tabs, textarea, toggle-group, toggle, tooltip.
+## Code Quality & Clean Code Principles
 
-**Before creating a component**:
+### Core Principles
 
-1. Check `packages/ui/src/components/` directory
-2. Import from `@repo/ui/components/[name]`
-3. Use size variants (sm, default, lg) when available
-4. Only create custom components for feature-specific, complex UI
+1. **Self-Documenting Code** - Use descriptive names and clear structure over comments
+2. **Single Responsibility** - Each function/component has one clear purpose
+3. **DRY (Don't Repeat Yourself)** - Extract reusable logic into hooks, services, or utils
+4. **Small, Focused Files** - Keep files under 300 lines; split if larger
+5. **Type Safety First** - Explicit types, no `any`, use auto-generated types
 
-### 2. Design System & className Guidelines ⭐
+### Type Safety Rules
 
-**READ FIRST**: See `DESIGN_SYSTEM.md` for complete guidelines.
+**Explicit Types Over Inference:**
 
-**Core Rule**: **Use component props over custom className overrides**
+```typescript
+// ❌ BAD - Implicit types
+function calculateTotal(items) {
+  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+}
+
+// ✅ GOOD - Explicit types with auto-generated DTOs
+import type { CartItemResponseDto } from '@repo/api/generated/types';
+
+function calculateTotal(items: CartItemResponseDto[]): number {
+  return items.reduce(
+    (sum, item) => sum + Number(item.finalPrice) * item.quantity,
+    0
+  );
+}
+```
+
+**Use Auto-Generated Types:**
+
+```typescript
+// ❌ BAD - Manual type definition
+interface Category {
+  id: string;
+  name: string;
+  storeId: string;
+}
+
+// ✅ GOOD - Auto-generated type
+import type { CategoryResponseDto } from '@repo/api/generated/types';
+```
+
+**Avoid `any`, Use `unknown`:**
+
+```typescript
+// ❌ BAD
+function handleError(error: any) {
+  console.error(error.message);
+}
+
+// ✅ GOOD
+function handleError(error: unknown) {
+  if (error instanceof Error) {
+    console.error(error.message);
+  } else {
+    console.error('An unknown error occurred');
+  }
+}
+```
+
+**Type Imports:**
+
+```typescript
+// ✅ GOOD - Use `import type` for type-only imports
+import type {
+  CategoryResponseDto,
+  CreateCategoryDto,
+} from '@repo/api/generated/types';
+```
+
+### Naming Conventions
+
+**Variables:**
+
+```typescript
+// ✅ GOOD - Descriptive names
+const selectedStoreId = useAuthStore((state) => state.selectedStoreId);
+const isMenuItemOutOfStock = item.isOutOfStock;
+const formattedPrice = formatCurrency(item.price);
+
+// ❌ BAD - Abbreviations and unclear names
+const sid = useAuthStore((state) => state.storeId);
+const oos = item.oos;
+const fp = fmt(item.price);
+```
+
+**Booleans:**
+
+Use `is`, `has`, `should`, `can` prefixes:
+
+```typescript
+// ✅ GOOD
+const isLoading = true;
+const hasPermission = checkPermission(user);
+const shouldShowDialog = !isLoading && hasData;
+const canEdit = userRole === 'ADMIN';
+```
+
+**Functions:**
+
+Use verb prefixes to indicate actions:
+
+```typescript
+// ✅ GOOD
+function getCategories(storeId: string) {}
+function createMenuItem(data: CreateMenuItemDto) {}
+function updateOrderStatus(orderId: string, status: OrderStatus) {}
+function deleteCategory(categoryId: string) {}
+function handleSubmit() {}
+```
+
+### Component Composition
+
+Break down complex components into smaller, composable pieces:
+
+```typescript
+// ❌ BAD - Monolithic component
+function MenuPage() {
+  return <div>{/* 500 lines of JSX */}</div>;
+}
+
+// ✅ GOOD - Composed components
+function MenuPage() {
+  return (
+    <div>
+      <MenuHeader />
+      <MenuFilters />
+      <MenuGrid />
+      <MenuFooter />
+    </div>
+  );
+}
+```
+
+### Props Interface
+
+```typescript
+// ✅ GOOD
+interface CategoryCardProps {
+  category: CategoryResponseDto;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+  isLoading?: boolean;
+}
+
+export function CategoryCard({
+  category,
+  onEdit,
+  onDelete,
+  isLoading = false,
+}: CategoryCardProps) {
+  // ...
+}
+```
+
+### Code Comments Philosophy
+
+**Code should be self-documenting. Comments explain WHY, not WHAT.**
+
+```typescript
+// ❌ BAD - Obvious comments
+// Get categories
+const categories = await getCategories(storeId);
+
+// ✅ GOOD - Explain WHY when necessary
+/**
+ * HubSpot Forms API requires a specific delay between submissions
+ * to prevent rate limiting (500ms minimum based on their docs)
+ * @see https://developers.hubspot.com/docs/api/marketing/forms
+ */
+await delay(500);
+```
+
+**Use JSDoc for:**
+- External API integrations
+- Complex algorithms
+- Non-obvious business logic
+- Public library functions
+
+---
+
+## Design System Guidelines
+
+### Core Design Principles
+
+1. **Use Component Props Over Custom Classes** - Prefer `variant` and `size` props
+2. **Semantic Colors Only** - Use design system tokens, never raw Tailwind colors
+3. **No Arbitrary Values** - Avoid `w-[234px]` or `text-[13px]`
+4. **Consistent Spacing** - Follow spacing scale (4, 6, 8, 12, 16, 24)
+5. **Check `@repo/ui` First** - We have 52+ pre-built components
+
+### Color System
+
+**ALWAYS use semantic tokens from `globals.css`:**
+
+| Token                    | Usage                                   |
+| ------------------------ | --------------------------------------- |
+| `background`             | Page backgrounds                        |
+| `foreground`             | Primary text                            |
+| `muted`                  | Muted backgrounds (secondary UI)        |
+| `muted-foreground`       | Muted text (descriptions, placeholders) |
+| `primary`                | Brand color (CTA buttons, links)        |
+| `destructive`            | Destructive actions (delete, cancel)    |
+| `border`                 | Borders                                 |
+| `input`                  | Input borders                           |
+| `ring`                   | Focus rings                             |
+
+```typescript
+// ✅ CORRECT - Semantic tokens
+<div className="bg-background text-foreground">
+<p className="text-muted-foreground">
+<Card className="border-border">
+
+// ❌ WRONG - Raw colors
+<div className="bg-white text-gray-900">
+<p className="text-gray-500">
+<Card className="border-gray-200">
+```
+
+### Component Usage Patterns
+
+**Buttons:**
 
 ```typescript
 // ✅ CORRECT - Use variant props
-<Button variant="destructive">Delete</Button>
-<Badge variant="outline">Status</Badge>
+<Button variant="default">Primary Action</Button>
+<Button variant="secondary">Secondary Action</Button>
+<Button variant="destructive" size="sm">Delete</Button>
+<Button variant="outline">Outline</Button>
+<Button variant="ghost">Ghost</Button>
+
+// ❌ WRONG - Don't override with custom classes
+<Button className="bg-red-600 hover:bg-red-700 h-12 px-6">Delete</Button>
+```
+
+**Badges:**
+
+```typescript
+// ✅ CORRECT
+<Badge variant="default">Active</Badge>
+<Badge variant="secondary">Pending</Badge>
+<Badge variant="destructive">Suspended</Badge>
+<Badge variant="outline">Draft</Badge>
+
+// ❌ WRONG
+<Badge className="bg-green-500 text-white">Active</Badge>
+```
+
+**Cards:**
+
+```typescript
+// ✅ CORRECT - Use Card components with semantic structure
 <Card>
   <CardHeader>
     <CardTitle>Title</CardTitle>
+    <CardDescription>Description text</CardDescription>
   </CardHeader>
-  <CardContent>Content</CardContent>
+  <CardContent>
+    Content goes here
+  </CardContent>
+  <CardFooter>
+    <Button>Action</Button>
+  </CardFooter>
 </Card>
 
-// ❌ WRONG - Don't override component styles
-<Button className="bg-red-600 hover:bg-red-700">Delete</Button>
-<Badge className="border border-gray-300">Status</Badge>
+// ❌ WRONG - Don't use arbitrary padding
 <Card>
   <div className="p-6">
     <h2 className="text-xl font-bold mb-4">Title</h2>
@@ -135,76 +420,181 @@ import { toast } from '@repo/ui/lib/toast';
 </Card>
 ```
 
-**Semantic Colors Only**:
+**Inputs:**
 
 ```typescript
-// ✅ CORRECT - Use semantic tokens
-<div className="bg-background text-foreground">
-<p className="text-muted-foreground">
-<Button variant="destructive">
+// ✅ CORRECT - Basic input
+<Input
+  placeholder="Enter text"
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+/>
 
-// ❌ WRONG - Never use raw Tailwind colors
-<div className="bg-white text-gray-900">
-<p className="text-gray-500">
-<Button className="bg-red-600">
+// ✅ CORRECT - With icon
+<div className="relative">
+  <Search className="text-muted-foreground absolute left-3 top-3 size-4" />
+  <Input placeholder="Search..." className="pl-9" />
+</div>
+
+// ❌ WRONG - Don't add arbitrary borders or colors
+<Input className="border-blue-500 bg-gray-50" />
 ```
 
-**When className IS Acceptable**:
+### Spacing & Layout
 
-- Layout utilities (`flex`, `grid`, `absolute`, `sticky`)
-- Responsive utilities (`hidden md:block`, `grid-cols-1 md:grid-cols-2`)
-- Spacing from standard scale (`space-y-4`, `gap-6`, `p-8`)
-- State variations (`hover:bg-accent`, `focus:ring-2`)
-
-**Before adding custom className, ask**:
-
-1. Does this component have a variant/size prop?
-2. Am I using semantic color tokens?
-3. Is this spacing standard (4, 6, 8, 12, 16, 24)?
-4. Could I use layout utilities instead?
-
-**See `DESIGN_SYSTEM.md`** for:
-
-- Complete component patterns
-- Spacing & typography scales
-- Common anti-patterns
-- Code review checklist
-
-### 3. Auto-Generated API Types ⭐
-
-**Always use auto-generated types from OpenAPI spec:**
+**Container Patterns:**
 
 ```typescript
-// ✅ Use generated types
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
-import type {
-  CategoryResponseDto,
-  CreateCategoryDto,
-} from '@repo/api/generated/types';
+// ✅ CORRECT - Page container
+<div className="container mx-auto py-8">
+  <div className="space-y-6">
+    {/* Page sections with consistent vertical spacing */}
+  </div>
+</div>
 
+// ✅ CORRECT - Content padding
+<div className="p-8">  {/* Large padding for major sections */}
+<div className="p-6">  {/* Medium padding for cards */}
+<div className="p-4">  {/* Small padding for compact areas */}
+
+// ❌ WRONG - Arbitrary padding values
+<div className="pt-[23px] pb-[17px] pl-[31px]">
+```
+
+**Vertical Spacing:**
+
+```typescript
+// ✅ CORRECT - Consistent spacing
+<div className="space-y-6">  {/* Between major sections */}
+<div className="space-y-4">  {/* Between related elements */}
+<div className="space-y-2">  {/* Between tightly grouped items */}
+
+// ❌ WRONG - Inconsistent spacing
+<div className="mb-3">
+<div className="mt-5">
+<div className="mb-7">
+```
+
+**Grid Layouts:**
+
+```typescript
+// ✅ CORRECT - Standard grid patterns
+<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+<div className="grid gap-6 md:grid-cols-3">
+
+// ❌ WRONG - Arbitrary grid values
+<div className="grid grid-cols-[200px,1fr,300px] gap-[17px]">
+```
+
+### Typography
+
+**Heading Hierarchy:**
+
+```typescript
+// ✅ CORRECT - Semantic heading sizes
+<h1 className="text-3xl font-bold">Page Title</h1>
+<h2 className="text-2xl font-semibold">Section Title</h2>
+<h3 className="text-xl font-semibold">Subsection Title</h3>
+<h4 className="text-lg font-medium">Card Title</h4>
+
+// ❌ WRONG - Arbitrary font sizes
+<h1 className="text-[32px] font-black leading-[1.2]">
+```
+
+**Text Styles:**
+
+```typescript
+// ✅ CORRECT - Semantic text styles
+<p className="text-sm text-muted-foreground">Description text</p>
+<span className="text-xs text-muted-foreground">Helper text</span>
+<p className="font-medium">Emphasized text</p>
+
+// ❌ WRONG - Raw color classes
+<p className="text-gray-500 text-[13px]">
+```
+
+### When Custom Classes ARE Acceptable
+
+**Layout & Positioning:**
+
+```typescript
+// ✅ CORRECT - Layout utilities
+<div className="flex items-center justify-between">
+<div className="grid grid-cols-3 gap-4">
+<div className="absolute top-0 right-0">
+<div className="sticky top-0">
+```
+
+**Responsive Design:**
+
+```typescript
+// ✅ CORRECT - Responsive utilities
+<div className="hidden md:block">
+<div className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+<h1 className="text-2xl md:text-3xl lg:text-4xl">
+```
+
+**State Variations:**
+
+```typescript
+// ✅ CORRECT - State-based styling
+<div className="hover:bg-accent">
+<Input className="focus:ring-2" />
+<Button className="disabled:opacity-50">
+```
+
+---
+
+## Critical Patterns
+
+### 1. API Services with Auto-Generated Types
+
+**ALWAYS use auto-generated types from `@repo/api/generated/types`:**
+
+```typescript
+import { apiFetch, unwrapData } from '@/utils/apiFetch';
+import type { CategoryResponseDto, CreateCategoryDto } from '@repo/api/generated/types';
+
+/**
+ * Fetches all categories for a store
+ */
+export async function getCategories(storeId: string): Promise<CategoryResponseDto[]> {
+  const res = await apiFetch<CategoryResponseDto[]>({
+    path: '/categories',
+    query: { storeId },
+  });
+
+  return unwrapData(res, 'Failed to retrieve categories');
+}
+
+/**
+ * Creates a new category
+ */
 export async function createCategory(
   storeId: string,
   data: CreateCategoryDto
 ): Promise<CategoryResponseDto> {
-  const res = await apiFetch<CategoryResponseDto>('/categories', {
+  const res = await apiFetch<CategoryResponseDto>({
+    path: '/categories',
     method: 'POST',
     query: { storeId },
     body: JSON.stringify(data),
   });
+
   return unwrapData(res, 'Failed to create category');
 }
 ```
 
-**Features:**
+**Key Points:**
+- Use `apiFetch()` from `@/utils/apiFetch` (configured with auth headers)
+- Always use `unwrapData()` for consistent error handling
+- Import types from `@repo/api/generated/types` (NEVER manually define API types)
+- Add JSDoc comments for service functions
+- Return explicit types, never rely on inference
 
-- 50+ auto-generated DTOs from backend
-- Single source of truth
-- Compile-time type safety
-- Run `npm run generate:api` when backend changes
+### 2. React Query Key Factories
 
-### 4. Query Key Factories
-
-**Reference**: [TkDodo's Effective React Query Keys](https://tkdodo.eu/blog/effective-react-query-keys)
+Create hierarchical query key factories for type-safe caching:
 
 ```typescript
 // features/menu/queries/menu.keys.ts
@@ -217,1087 +607,589 @@ export const menuKeys = {
   category: (storeId: string, categoryId: string) =>
     [...menuKeys.categories(storeId), categoryId] as const,
 
-  items: (storeId: string) => [...menuKeys.all, 'items', { storeId }] as const,
+  items: (storeId: string) =>
+    [...menuKeys.all, 'items', { storeId }] as const,
 
   item: (storeId: string, itemId: string) =>
     [...menuKeys.items(storeId), itemId] as const,
 };
 
 // Usage in components
-const { data } = useQuery({
+const { data: categories } = useQuery({
   queryKey: menuKeys.categories(storeId),
   queryFn: () => getCategories(storeId),
 });
 
-// Cache invalidation (hierarchical)
-queryClient.invalidateQueries({ queryKey: menuKeys.all }); // All menu
-queryClient.invalidateQueries({ queryKey: menuKeys.categories(storeId) }); // Specific
+// Hierarchical invalidation
+queryClient.invalidateQueries({ queryKey: menuKeys.all });                     // All menu data
+queryClient.invalidateQueries({ queryKey: menuKeys.categories(storeId) });     // Specific store
 ```
 
-**Benefits**: Type-safe, hierarchical invalidation, prevents typos
+### 3. Zustand State Management
 
-### 5. Zustand Stores
-
-**Pattern**: devtools → persist → immer
+**Use Zustand ONLY for global client state. Use React Query for server state.**
 
 ```typescript
-// Define initial state separately for clarity
-const initialState: AuthState = {
-  selectedStoreId: null,
-  isAuthenticated: false,
-};
+// features/auth/store/auth.store.ts
+interface AuthState {
+  selectedStoreId: string | null;
+  isAuthenticated: boolean;
+}
+
+interface AuthActions {
+  setSelectedStore: (id: string | null) => void;
+  clearAuth: () => void;
+}
 
 export const useAuthStore = create<AuthState & AuthActions>()(
   devtools(
     persist(
       immer((set) => ({
-        ...initialState,
+        // State
+        selectedStoreId: null,
+        isAuthenticated: false,
 
-        setSelectedStore: (id) =>
-          set((draft) => {
-            draft.selectedStoreId = id;
-          }),
+        // Actions
+        setSelectedStore: (id) => set((draft) => {
+          draft.selectedStoreId = id;
+        }),
 
-        clearAuth: () =>
-          set((draft) => {
-            draft.selectedStoreId = null;
-            draft.isAuthenticated = false;
-          }),
+        clearAuth: () => set((draft) => {
+          draft.selectedStoreId = null;
+          draft.isAuthenticated = false;
+        }),
       })),
-      {
-        name: 'auth-storage',
-        partialize: (state) => ({ selectedStoreId: state.selectedStoreId }),
-      }
+      { name: 'auth-storage' }
     ),
     { name: 'auth-store' }
   )
 );
 
-// ✅ MUST export selectors
-export const selectSelectedStoreId = (state: AuthState) =>
-  state.selectedStoreId;
-export const selectIsAuthenticated = (state: AuthState) =>
-  state.isAuthenticated;
+// ALWAYS export selectors
+export const selectSelectedStoreId = (state: AuthState) => state.selectedStoreId;
+export const selectIsAuthenticated = (state: AuthState) => state.isAuthenticated;
+
+// Usage in components
+const storeId = useAuthStore(selectSelectedStoreId);
 ```
 
-**Rules**:
+### 4. Error Handling Pattern
 
-- Define `initialState` separately
-- Use `partialize` to control what gets persisted
-- Middleware order: devtools → persist → immer
-- Always export selectors for all state fields
-
-### 6. Constants (Never Hardcode)
+**User-Friendly Error Messages:**
 
 ```typescript
-// common/constants/routes.ts
-export const ROUTES = {
-  LOGIN: '/login',
-  MENU: '/hub/menu',
-} as const;
+// ✅ GOOD
+try {
+  await createMenuItem(data);
+  toast.success('Menu item created successfully');
+} catch (error) {
+  toast.error('Failed to create menu item', {
+    description:
+      error instanceof Error
+        ? error.message
+        : 'Please check your input and try again',
+  });
+}
 
-export const ERROR_MESSAGES = {
-  AUTH: { PERMISSION_DENIED: 'Permission Denied.' },
-} as const;
-```
-
-### 7. Internationalization
-
-```typescript
-'use client';
-import { useTranslations } from 'next-intl';
-
-export function MyComponent() {
-  const t = useTranslations('common');
-  return <h1>{t('home')}</h1>;
+// ❌ BAD
+try {
+  await createMenuItem(data);
+} catch (error) {
+  toast.error('Error');
 }
 ```
 
-**Rules:**
-
-- Extract ALL user-facing text
-- Add to ALL 4 language files (en, zh, my, th)
-- Use descriptive keys
-
-### 8. Toast Notifications (Sonner) ⭐
-
-**CRITICAL**: Use the correct Sonner API, not the old react-hot-toast pattern.
+### 5. Optimistic Updates
 
 ```typescript
-import { toast } from '@repo/ui/lib/toast';
+// ✅ GOOD - Optimistic update pattern
+const mutation = useMutation({
+  mutationFn: updateMenuItem,
+  onMutate: async (variables) => {
+    // Cancel outgoing refetches
+    await queryClient.cancelQueries({ queryKey: menuKeys.items(storeId) });
 
-// ✅ CORRECT - Sonner API
-toast.success('Order created', {
-  description: 'Order #123 has been created successfully',
-});
+    // Snapshot previous value
+    const previousItems = queryClient.getQueryData(menuKeys.items(storeId));
 
-toast.error('Failed to save', {
-  description: error.message,
-});
+    // Optimistically update
+    queryClient.setQueryData(menuKeys.items(storeId), (old) =>
+      old?.map((item) =>
+        item.id === variables.id ? { ...item, ...variables } : item
+      )
+    );
 
-toast.info('Session active');
-toast.warning('Low stock');
-
-// ❌ WRONG - Old react-hot-toast API (DO NOT USE)
-toast({
-  title: 'Error',
-  description: 'Something went wrong',
-  variant: 'destructive', // ❌ This doesn't exist in Sonner
-});
-```
-
-**Available Methods**:
-
-- `toast(message)` - Basic toast
-- `toast.success(message, options?)` - Success (green)
-- `toast.error(message, options?)` - Error (red)
-- `toast.warning(message, options?)` - Warning (yellow)
-- `toast.info(message, options?)` - Info (blue)
-- `toast.promise(promise, options)` - Promise-based toast
-
-**Options Object**:
-
-```typescript
-{
-  description?: string;  // Additional detail
-  action?: {             // Action button
-    label: string;
-    onClick: () => void;
-  };
-  duration?: number;     // Auto-dismiss time (ms)
-}
-```
-
-### 9. Logging & Debugging
-
-**IMPORTANT**: Never use `console.log()` in production code. Use the debug utility (SOS) or structured logging.
-
-```typescript
-// Self-Ordering System (SOS)
-import { debug } from '@/utils/debug';
-
-debug.log('Cart updated', cart); // Only in dev
-debug.warn('Low stock', item); // Only in dev
-debug.error('API failed', error); // Always logged
-
-// Restaurant Management System (RMS)
-// For debugging, use descriptive console methods:
-console.error('Failed to load menu:', error); // Errors only
-// Avoid console.log - remove before commit
-```
-
-**Rules**:
-
-- ❌ Never commit `console.log()` statements
-- ✅ Use `debug.error()` for errors (SOS)
-- ✅ Use `console.error()` for errors (RMS)
-- ✅ Remove debug logs before production
-
-### 10. Component Event Handlers
-
-**Pattern**: Match callback signatures to component APIs
-
-```typescript
-// ✅ CORRECT - Match Radix UI Switch API
-const handleToggle = (checked: boolean) => {
-  updateStatus(checked);
-};
-
-<Switch onCheckedChange={handleToggle} />
-
-// ❌ WRONG - Type mismatch
-const handleToggle = (e: React.MouseEvent) => {
-  e.stopPropagation();  // ❌ 'e' is actually a boolean!
-};
-
-<Switch onCheckedChange={() => handleToggle({} as React.MouseEvent)} />
-```
-
-**Common Component Signatures** (Radix UI / shadcn):
-
-- `Switch.onCheckedChange`: `(checked: boolean) => void`
-- `Checkbox.onCheckedChange`: `(checked: boolean) => void`
-- `RadioGroup.onValueChange`: `(value: string) => void`
-- `Select.onValueChange`: `(value: string) => void`
-- `Dialog.onOpenChange`: `(open: boolean) => void`
-
-### 11. Skeleton Loading States
-
-```typescript
-if (isLoading) return <MenuSkeleton />;
-```
-
-Always use skeleton placeholders for non-trivial loading states.
-
-### 12. React Query Configuration
-
-**Default settings in providers.tsx**:
-
-```typescript
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1 * 60 * 1000, // 1 minute
-      gcTime: 30 * 60 * 1000, // 30 minutes
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: true,
-      refetchOnMount: true,
-      retry: 1,
-    },
-    mutations: {
-      retry: 0,
-    },
+    return { previousItems };
+  },
+  onError: (err, variables, context) => {
+    // Rollback on error
+    queryClient.setQueryData(menuKeys.items(storeId), context?.previousItems);
+    toast.error('Failed to update item');
+  },
+  onSuccess: () => {
+    toast.success('Item updated successfully');
   },
 });
 ```
 
-**Server-side handling**: Separate query client instances for server/browser to prevent hydration issues.
+### 6. Internationalization (i18n)
 
-### 13. Optimistic Updates Pattern (Self-Ordering System Cart)
-
-For real-time feel with WebSocket sync:
+All user-facing strings MUST be translated in all 4 languages: `en`, `zh`, `my`, `th`.
 
 ```typescript
-// In store
-optimisticAddItem: async (cartItem) => {
-  const originalCart = get().cart;
-  const tempId = `temp-${Date.now()}`;
+import { useTranslations } from 'next-intl';
 
-  // 1. Update UI immediately
-  set((state) => {
-    state.cart.items.push({ ...cartItem, id: tempId });
-  });
-
-  try {
-    // 2. Call API
-    await addItemToCart(payload);
-  } catch (error) {
-    // 3. Rollback on error
-    set((state) => {
-      state.cart = originalCart;
-    });
-    throw error;
-  }
-  // 4. Final state from WebSocket 'cart:updated' event
-};
-```
-
-**Pattern**: Optimistic update → API call → Rollback on error → WebSocket confirmation
-
-### 14. WebSocket Integration (Self-Ordering System)
-
-**Setup**: SocketProvider in utils/socket-provider.tsx
-
-```typescript
-const socket = io(WS_URL, {
-  withCredentials: true, // For httpOnly cookies
-  transports: ['websocket'], // Explicit transport
-});
-
-// Usage
-const { socket, isConnected } = useSocket();
-
-socket?.on('cart:updated', (cart) => {
-  useCartStore.getState().setCart(cart);
-});
-```
-
-**Events**: `connect`, `disconnect`, `connect_error`, `error`, `cart:updated`
-
-### 15. Testing Infrastructure (Restaurant Management System Only)
-
-**Setup**: Jest + @testing-library/react + jsdom
-
-```typescript
-// jest.config.ts
-{
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-  moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1' },
-  collectCoverageFrom: ['src/**/*.{ts,tsx}'],
-}
-```
-
-**Testing Pattern**:
-
-- Mock Zustand stores with jest.mock
-- Mock Next.js components (Image, Link)
-- Use @testing-library/react for component testing
-- Focus on rendering, interactions, accessibility
-
-**Run tests**: `npm test` (in apps/restaurant-management-system directory)
-
-## Critical Rules
-
-### API Services
-
-- Live in `features/[feature]/services/`
-- Use `apiFetch` + `unwrapData`
-- Use auto-generated types from `@repo/api/generated/types`
-- Add JSDoc comments
-- Return typed data (never `unknown`)
-
-### Zustand Stores
-
-- Minimal global state only
-- Use immer for updates
-- **Must export selectors**
-- Never contain API logic
-- Persist only necessary data
-
-### Component Organization
-
-- **Client** (`'use client'`): hooks, events, interactivity
-- **Server** (default): static content, layouts
-
-### Design System (NEW)
-
-- **Use component props over custom className** - Always prefer variant/size props
-- **Semantic colors only** - Use `bg-background`, `text-muted-foreground` (never raw colors)
-- **Standard spacing scale** - Use 4, 6, 8, 12, 16, 24 (never arbitrary values)
-- **Component composition** - Use Card, CardHeader, CardContent structure
-- **See `DESIGN_SYSTEM.md`** for complete guidelines
-
-### Type Safety
-
-- Use `.ts`/`.tsx` extensions
-- Explicit types for API responses
-- Type imports: `import type { ... }`
-- Avoid `any`, use `unknown` if needed
-
-### Code Comments
-
-**Philosophy**: Code should be self-documenting. Comments are for **why**, not **what**.
-
-**Rules**:
-
-- ❌ **Never use inline comments** (`//`) to explain obvious code
-- ❌ **Never use JSX comments** (`{/* Comment */}`) to label sections
-- ✅ **Use JSDoc** only when explaining complex logic or external integrations
-- ✅ **Use descriptive names** instead of comments
-
-**Examples**:
-
-```typescript
-// ❌ BAD - Obvious comments
-// Form validation schema
-const schema = z.object({...});
-
-// Name fields
-<div className="grid grid-cols-2">
-
-// ❌ BAD - Unnecessary JSX comments
-{/* Email Field */}
-<FormField name="email" />
-
-{/* Actions */}
-<div className="flex gap-4">
-
-// ✅ GOOD - JSDoc for complex/external integrations only
-/**
- * Submits form data to HubSpot Forms API
- * @see https://developers.hubspot.com/docs/api/marketing/forms
- */
-const onSubmit = async (data: FormValues) => {
-  // Implementation
-};
-
-// ✅ GOOD - Self-documenting code
-const contactFormSchema = z.object({
-  email: z.string().email(),
-  message: z.string().min(10),
-});
-```
-
-**When JSDoc IS acceptable**:
-
-- External API integrations (HubSpot, Stripe, Auth0)
-- Complex algorithms or business logic
-- Public library functions
-- Non-obvious TypeScript generics
-
-**When JSDoc is NOT needed**:
-
-- Obvious variable names
-- Standard React patterns
-- Simple CRUD operations
-- Standard form handling
-
-### Authentication & Authorization
-
-**Restaurant Management System App**:
-
-- Cookie-based auth with httpOnly cookies
-- Auth0 SSO integration (@auth0/auth0-spa-js)
-- `useProtected()` hook for route protection with role-based access control
-- 401 auto-clears auth state and redirects to login
-- 403 shows permission denied and redirects
-
-**useProtected Hook Features**:
-
-- Role-based authorization (`allowedRoles` option)
-- Custom redirect paths
-- Error handling (401, 403, missing session)
-- Loading states for smooth UX
-
-**Self-Ordering System App**:
-
-- Session-based auth with cookies
-- No Auth0 (simpler flow for customers)
-- WebSocket auth via `withCredentials: true`
-
-## Naming Conventions
-
-### Files
-
-| Type       | Convention     | Example               |
-| ---------- | -------------- | --------------------- |
-| Services   | `*.service.ts` | `category.service.ts` |
-| Stores     | `*.store.ts`   | `auth.store.ts`       |
-| Types      | `*.types.ts`   | `menu-item.types.ts`  |
-| Query Keys | `*.keys.ts`    | `menu.keys.ts`        |
-| Hooks      | `use*.ts`      | `useProtected.ts`     |
-| Components | PascalCase.tsx | `CategoryCard.tsx`    |
-
-### Folders
-
-- Feature UI: `components/` (not `ui/`)
-- State: `store/` (singular, not `stores/`)
-- Services: `services/`
-- Types: `types/`
-
-### Import Order
-
-```typescript
-'use client';
-
-// 1. React & Next.js
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-
-// 2. Third-party
-import { useQuery } from '@tanstack/react-query';
-
-// 3. Shared packages
-import { Button } from '@repo/ui/components/button';
-
-// 4. Features
-import { useAuthStore } from '@/features/auth/store/auth.store';
-
-// 5. Common
-import { ROUTES } from '@/common/constants/routes';
-
-// 6. Types (last)
-import type { CategoryResponseDto } from '@repo/api/generated/types';
-```
-
-## Restaurant Management System vs Self-Ordering System
-
-| Feature      | Restaurant Management System              | Self-Ordering System                |
-| ------------ | ----------------------------------------- | ----------------------------------- |
-| Port         | 3002                                      | 3001                                |
-| Users        | Staff                                     | Customers                           |
-| Auth         | Auth0 SSO + cookies                       | Session-based cookies               |
-| Real-time    | None                                      | Socket.IO (cart sync)               |
-| Testing      | Jest + Testing Library                    | None (manual testing)               |
-| Key Features | Menu mgmt, QR codes, store settings       | Menu browse, cart, ordering         |
-| Routes       | `(no-dashboard)`, `hub/`, `(owner-admin)` | `restaurants/[slug]`, `tables/[id]` |
-| Env Vars     | 6 (API, Customer URL, Auth0 x5)           | 1 (API URL)                         |
-
-## Environment Variables
-
-**Restaurant Management System App** (.env.example):
-
-```bash
-NEXT_PUBLIC_API_URL=http://localhost:3000
-NEXT_PUBLIC_CUSTOMER_APP_URL=http://localhost:3001
-
-# Auth0 SSO
-NEXT_PUBLIC_AUTH0_DOMAIN=your-tenant.auth0.com
-NEXT_PUBLIC_AUTH0_CLIENT_ID=your-client-id
-NEXT_PUBLIC_AUTH0_AUDIENCE=https://api.origin-food-house.com
-NEXT_PUBLIC_AUTH0_REDIRECT_URI=http://localhost:3002/auth/callback
-```
-
-**Self-Ordering System App** (.env.example):
-
-```bash
-NEXT_PUBLIC_API_URL=http://localhost:3000
-# Note: NEXT_PUBLIC_WS_URL defaults to http://localhost:3001 (in code)
-```
-
-**Important**: Only `NEXT_PUBLIC_*` variables are exposed to the client.
-
-## Custom Hooks Reference
-
-**Restaurant Management System App**:
-
-- `useProtected(options?)` - Auth/role-based route protection (`features/auth/hooks/`)
-- `useDialogState(initial?)` - Dialog state with open/close/toggle (`common/hooks/`)
-- `useDialog(initial?)` - Simpler dialog state with setter (`common/hooks/`)
-
-**Self-Ordering System App**:
-
-- `useSocket()` - WebSocket connection access (from SocketProvider)
-- `useCartSocketListener()` - Real-time cart sync (`features/cart/hooks/`)
-- `useStickyHeader()` - Sticky menu header (`features/menu/hooks/`)
-
-**Shared (@repo/ui)**:
-
-- `toast` - Toast notifications (Sonner)
-- `useMobile()` - Mobile breakpoint detection
-
-## Utility Functions
-
-**Formatting** (`utils/formatting.ts`):
-
-```typescript
-formatCurrency(value, currency?, locale?) // Intl.NumberFormat with fallback
-// Default: THB, th-TH locale
-```
-
-**Debug** (Self-Ordering System only, `utils/debug.ts`):
-
-```typescript
-debug.log(); // Dev only
-debug.warn(); // Dev only
-debug.error(); // Always logged
-```
-
-## 🚦 MANDATORY Task Completion Guardrails
-
-**CRITICAL**: Every frontend task MUST pass ALL applicable quality gates before being marked complete. No exceptions.
-
-### Pre-Task Analysis
-
-Before starting any frontend task, determine:
-
-- [ ] **App Scope**: RMS only, SOS only, or Both?
-- [ ] **Shared Package**: Does this affect `@repo/ui` or `@repo/api`?
-- [ ] **Backend Dependency**: Does this require backend API changes?
-- [ ] **Translation Required**: Does this add user-facing text?
-- [ ] **Testing Required**: RMS modifications require tests
-
-### Quality Gate Execution Order
-
-#### Frontend Monorepo Level (Run at root)
-
-```bash
-cd origin-food-house-frontend
-
-# Step 1: Code Formatting (MUST pass)
-npm run format
-
-# Step 2: Linting (MUST pass - 0 warnings)
-npm run lint
-
-# Step 3: Type Checking (MUST pass - 0 errors)
-npm run check-types
-
-# Step 4: Build (MUST succeed for all apps)
-npm run build
-
-# Step 5: API Types (if backend API changed)
-npm run generate:api  # Regenerate from OpenAPI spec
-```
-
-#### App-Specific Quality Gates
-
-**Restaurant Management System (RMS):**
-
-```bash
-cd apps/restaurant-management-system
-
-# 1. Lint (0 warnings)
-npm run lint
-
-# 2. Type Check (0 errors)
-npm run check-types
-
-# 3. Tests (ALL must pass)
-npm test
-
-# 4. Build (must succeed)
-npm run build
-```
-
-**Self-Ordering System (SOS):**
-
-```bash
-cd apps/self-ordering-system
-
-# 1. Lint (0 warnings)
-npm run lint
-
-# 2. Type Check (0 errors)
-npm run check-types
-
-# 3. Build (must succeed)
-npm run build
-
-# ⚠️ Tests: Currently no test infrastructure
-# TODO: Add Jest + React Testing Library setup
-```
-
-### Task NOT Complete Until
-
-**Code Quality:**
-
-- ✅ All lint warnings resolved (0 warnings)
-- ✅ Type checking passes (0 errors)
-- ✅ Code is formatted (Prettier)
-- ✅ All affected apps build successfully
-- ✅ No console errors or warnings
-
-**Testing:**
-
-- ✅ RMS tests pass (if RMS modified)
-- ✅ New tests added for new components/features
-- ✅ Business logic tested (not just rendering)
-- ✅ Edge cases covered
-
-**Architecture & Patterns:**
-
-- ✅ Checked `@repo/ui` before creating components
-- ✅ Used auto-generated types from `@repo/api/generated/types`
-- ✅ Created query key factories (React Query)
-- ✅ Exported selectors for Zustand stores
-- ✅ Used `unwrapData()` in services
-- ✅ Followed feature-sliced design
-- ✅ No hardcoded strings (use constants)
-
-**Internationalization:**
-
-- ✅ Translations added for ALL 4 languages (en, zh, my, th)
-- ✅ Translation keys follow naming conventions
-- ✅ No hardcoded user-facing text
-
-**Integration:**
-
-- ✅ API types regenerated (if backend changed)
-- ✅ No type mismatches with backend
-- ✅ Services use correct API endpoints
-
-### When Quality Gates Fail
-
-**If ANY check fails:**
-
-1. ❌ **DO NOT** mark task as complete
-2. 🔧 **FIX** the failing check immediately
-3. 🔄 **RE-RUN** ALL quality gates from Step 1
-4. ✅ **VERIFY** all checks pass before proceeding
-
-**Common Failure Resolutions:**
-
-| Failure             | Resolution                                 |
-| ------------------- | ------------------------------------------ |
-| Format fails        | Run `npm run format` at monorepo root      |
-| Lint warnings       | Fix warnings manually, check ESLint output |
-| Type errors         | Fix TypeScript errors, verify imports      |
-| Build fails         | Check syntax errors, missing dependencies  |
-| Missing types       | Run `npm run generate:api`                 |
-| Translation missing | Add to all 4 language files                |
-
-### Automated Verification Script
-
-**Copy-paste this to verify ALL frontend quality gates:**
-
-```bash
-#!/bin/bash
-set -e  # Exit on first error
-
-echo "🔍 Running Frontend Quality Gates..."
-
-# Monorepo level
-echo "📦 Monorepo Quality Gates..."
-cd origin-food-house-frontend
-npm run format || { echo "❌ Format failed"; exit 1; }
-npm run lint || { echo "❌ Lint failed"; exit 1; }
-npm run check-types || { echo "❌ Type check failed"; exit 1; }
-npm run build || { echo "❌ Build failed"; exit 1; }
-echo "✅ Monorepo passed all checks"
-
-# RMS Tests
-echo "🧪 RMS Tests..."
-cd apps/restaurant-management-system
-npm test || { echo "❌ RMS tests failed"; exit 1; }
-echo "✅ RMS tests passed"
-
-echo ""
-echo "✅✅✅ ALL FRONTEND QUALITY GATES PASSED ✅✅✅"
-echo "Task is ready for completion!"
-```
-
-### Task Completion Certification
-
-**Before marking ANY frontend task complete, certify:**
-
-```
-✅ All quality gate steps passed
-✅ Code formatted, linted, type-safe
-✅ All affected apps build successfully
-✅ RMS tests pass (if RMS modified)
-✅ Translations added for all 4 languages (if UI changes)
-✅ API types regenerated (if backend changed)
-✅ Used @repo/ui components (checked first)
-✅ Design system guidelines followed (see DESIGN_SYSTEM.md)
-✅ Component props used over custom className
-✅ Semantic colors used (no raw Tailwind colors)
-✅ Standard spacing scale followed (4, 6, 8, 12, 16, 24)
-✅ Used auto-generated API types
-✅ Created query key factories (if React Query used)
-✅ Exported selectors (if Zustand store created)
-✅ No hardcoded strings (constants + i18n)
-✅ Feature-sliced design followed
-✅ Services use unwrapData()
-✅ Skeleton loading states implemented
-
-FRONTEND TASK COMPLETION VERIFIED ✅
-```
-
-**RULE**: If you cannot certify ALL applicable items above, the task is NOT complete.
-
-## New Feature Checklist
-
-When adding a new feature:
-
-- [ ] **Check `@repo/ui` components first** - don't recreate basics (50+ components available)
-- [ ] **Follow design system guidelines** - use component props over custom className (see `DESIGN_SYSTEM.md`)
-- [ ] **Use semantic colors only** - `bg-background`, `text-muted-foreground`, never raw Tailwind colors
-- [ ] Create `features/[feature]/` folder following feature-sliced design
-- [ ] Use auto-generated types from `@repo/api/generated/types` (never manual types)
-- [ ] Add `services/*.service.ts` with JSDoc comments and typed return values
-- [ ] Create `queries/*.keys.ts` for hierarchical React Query cache keys
-- [ ] Add `store/*.store.ts` with selectors (minimal state only)
-- [ ] Add `components/` for feature-specific UI only (not generic components)
-- [ ] Use `unwrapData()` in services for consistent error handling
-- [ ] Add constants for routes/messages (no magic strings)
-- [ ] Add translations to ALL 4 languages (en, zh, my, th)
-- [ ] Use skeleton loading states for non-trivial loading
-- [ ] Follow naming conventions (see section above)
-- [ ] Add tests (RMS: mandatory for common/ components)
-- [ ] **Run ALL quality gates** before marking complete
-
-## Build System & Configuration
-
-### Turborepo Setup
-
-- **UI**: Terminal UI (`"ui": "tui"`)
-- **Global Env**: `NODE_ENV` declared in turbo.json
-- **Task Dependencies**: `^build`, `^lint`, `^check-types` (runs dependencies first)
-- **Dev Mode**: `cache: false, persistent: true`
-
-### TypeScript Configuration
-
-- **Module Resolution**: `NodeNext` (requires `.js` extensions)
-- **Path Aliases**: `@/*` → `./src/*`
-- **Extends**: `@repo/typescript-config/nextjs.json`
-- **Post-generation**: `fix-imports.js` auto-fixes OpenAPI imports
-
-### Next.js Configuration
-
-- **Turbopack**: Enabled for dev mode
-- **Plugins**: next-intl for i18n
-- **Middleware**: Locale detection (never prefix URLs)
-
-## Advanced Patterns
-
-### Form Composition with react-hook-form
-
-```typescript
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Form, FormField, FormItem, FormLabel, FormControl } from '@repo/ui/components/form';
-
-const schema = z.object({
-  name: z.string().min(1, 'Name required'),
-  price: z.number().positive(),
-});
-
-type FormValues = z.infer<typeof schema>;
-
-export function MyForm() {
-  const form = useForm<FormValues>({
-    resolver: zodResolver(schema),
-    defaultValues: { name: '', price: 0 },
-  });
+function MyComponent() {
+  const t = useTranslations('common');
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-      </form>
-    </Form>
+    <div>
+      <h1>{t('welcome')}</h1>
+      <Button>{t('save')}</Button>
+    </div>
   );
 }
 ```
 
-### Drag & Drop with @dnd-kit (Restaurant Management System)
+**Translation files:** `messages/[locale]/*.json`
 
-Used in menu reordering. Pattern:
+When adding new features, add translation keys to all language files. Check existing patterns in `messages/en/` first.
 
-- `DndContext` from `@dnd-kit/core`
-- `SortableContext` from `@dnd-kit/sortable`
-- `useSortable` hook for items
-- `arrayMove` utility for reordering
+### 7. Performance Optimization
 
-### Server/Browser Query Client Pattern
+**Memoization:**
 
 ```typescript
-// utils/providers.tsx
-let browserQueryClient: QueryClient | undefined;
+// ✅ GOOD - Memoize expensive calculations
+const totalPrice = useMemo(
+  () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+  [items]
+);
 
-function getQueryClient() {
-  if (isServer) {
-    return makeQueryClient(); // New client per request
-  } else {
-    if (!browserQueryClient) browserQueryClient = makeQueryClient();
-    return browserQueryClient; // Reuse in browser
-  }
+// ✅ GOOD - Memoize callbacks passed to child components
+const handleDelete = useCallback(
+  (id: string) => {
+    deleteItem(id);
+  },
+  [deleteItem]
+);
+
+// ❌ BAD - Unnecessary memoization
+const userName = useMemo(() => user.name, [user]);
+```
+
+**Query Stale Time:**
+
+```typescript
+// ✅ GOOD - Longer stale time for rarely changing data
+const { data: stores } = useQuery({
+  queryKey: ['stores'],
+  queryFn: getStores,
+  staleTime: 5 * 60 * 1000, // 5 minutes
+});
+
+// ✅ GOOD - Shorter stale time for frequently changing data
+const { data: orders } = useQuery({
+  queryKey: ['orders'],
+  queryFn: getOrders,
+  staleTime: 30 * 1000, // 30 seconds
+});
+```
+
+**Debounce User Input:**
+
+```typescript
+// ✅ GOOD
+import { useDebouncedValue } from '@/hooks/use-debounced-value';
+
+function SearchInput() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearch = useDebouncedValue(searchTerm, 300);
+
+  const { data } = useQuery({
+    queryKey: ['search', debouncedSearch],
+    queryFn: () => searchItems(debouncedSearch),
+    enabled: debouncedSearch.length > 2,
+  });
 }
 ```
 
-Prevents query client recreation during React suspense.
+### 8. Security Best Practices
 
-## Project Statistics
-
-- **Apps**: 2 (Restaurant Management System, Self-Ordering System)
-- **Shared Packages**: 4 (api, ui, eslint-config, typescript-config)
-- **UI Components**: 52 in @repo/ui
-- **Features (RMS)**: 15 (auth, audit-logs, discounts, kitchen, menu, orders, payments, personnel, reports, store, tables, tiers, user)
-- **Services**: 17+ across both apps
-- **Stores**: 4+ Zustand stores
-- **Languages**: 4 (en, zh, my, th)
-- **Auto-generated DTOs**: 50+
-- **Test Suites**: RMS 10 suites (4 failing, 6 passing) | SOS 0 tests ⚠️
-- **Test Count**: RMS 107 tests (100 passing, 7 failing) | SOS 0 tests ⚠️
-
-## ⚠️ Known Issues & Technical Debt
-
-### Critical Issues
-
-#### 1. API Type Mismatch (RMS Build Failing)
-
-**Problem**: Auto-generated types are stale, causing TypeScript errors.
-
-**Affected Files**:
-
-- `apps/restaurant-management-system/src/app/[locale]/hub/(owner-admin)/orders/create/page.tsx`
-
-**Errors**:
+**Sanitize User Input:**
 
 ```typescript
-// CartResponseDto missing fields
-Property 'vatAmount' does not exist on type 'CartResponseDto'
-Property 'serviceChargeAmount' does not exist on type 'CartResponseDto'
-Property 'grandTotal' does not exist on type 'CartResponseDto'
+// ✅ GOOD - Zod validation
+import { z } from 'zod';
 
-// CartItemResponseDto field mismatches
-Property 'menuItem' does not exist. Did you mean 'menuItemId'?
-Property 'finalPrice' does not exist on type 'CartItemResponseDto'
+const categorySchema = z.object({
+  name: z.string().min(1).max(100),
+  description: z.string().max(500).optional(),
+  sortOrder: z.number().int().min(0),
+});
+
+function createCategory(data: unknown) {
+  const validated = categorySchema.parse(data);
+  // Use validated data
+}
 ```
 
-**Solution**:
-
-```bash
-cd origin-food-house-frontend
-npm run generate:api  # Regenerate types from backend OpenAPI spec
-```
-
-**Prevention**: Always run `npm run generate:api` after backend API changes.
-
-#### 2. Self-Ordering System Has ZERO Tests ⚠️
-
-**Problem**: Customer-facing app with critical real-time features has no automated tests.
-
-**Risk**: High - Cart functionality, WebSocket sync, session management untested.
-
-**Priority**: HIGH
-
-**TODO**:
-
-- Set up Jest + React Testing Library
-- Add cart functionality tests
-- Add WebSocket sync tests
-- Add session management tests
-- Target: Minimum 60% coverage for critical paths
-
-### Medium Priority Issues
-
-#### 3. Console Logs in Production Code
-
-**Count**: 81 console.log statements across codebase
-
-**Examples**:
+**Prevent XSS:**
 
 ```typescript
-// apps/restaurant-management-system/src/features/menu/components/item-card.tsx:61
-console.error(`Failed to delete item ${item.id}:`, error);
+// ❌ BAD
+<div dangerouslySetInnerHTML={{ __html: userInput }} />
 
-// apps/restaurant-management-system/src/features/menu/components/item-card.tsx:86
-console.error(`Failed to toggle out-of-stock for ${item.id}:`, error);
+// ✅ GOOD - Avoid dangerouslySetInnerHTML entirely
+<div>{userInput}</div>
 ```
 
-**Solution**: Replace with debug utility or structured logging.
+**Environment Variables:**
 
 ```typescript
-// ✅ Better approach
-import { debug } from '@/utils/debug'; // SOS only
-debug.error('Failed to delete item', { itemId: item.id, error });
+// ❌ BAD - Secret exposed to client
+const API_SECRET = 'secret-key-123';
+
+// ✅ GOOD - Only NEXT_PUBLIC_* vars are exposed to client
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+// ✅ GOOD - Server-side only (no NEXT_PUBLIC prefix)
+const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY;
 ```
-
-#### 4. Inconsistent Error Handling
-
-**Problem**: Mix of `unwrapData()` and manual error checking in services.
-
-**Examples**:
-
-```typescript
-// ✅ GOOD - Uses unwrapData()
-const res = await apiFetch<CategoryResponseDto>('/categories', {...});
-return unwrapData(res, 'Failed to create category');
-
-// ❌ INCONSISTENT - Manual check
-const res = await apiFetch<MenuItemDto[]>('/menu-items', {...});
-if (!res.success) throw new Error(res.message);
-return res.data;
-```
-
-**Solution**: Standardize on `unwrapData()` pattern across all services.
-
-#### 5. Missing Zustand Middleware (SOS)
-
-**Problem**: SOS Cart and Session stores lack `persist` middleware.
-
-**Risk**: Cart data lost on page refresh, poor UX.
-
-**Affected Stores**:
-
-- `apps/self-ordering-system/src/features/cart/store/cart.store.ts`
-- `apps/self-ordering-system/src/features/session/store/session.store.ts`
-
-**Solution**:
-
-```typescript
-export const useCartStore = create<CartState & CartActions>()(
-  devtools(
-    persist(
-      // ← Add this
-      immer((set) => ({
-        // ... state
-      })),
-      {
-        name: 'cart-storage',
-        partialize: (state) => ({ cart: state.cart }),
-      }
-    ),
-    { name: 'cart-store' }
-  )
-);
-```
-
-### Low Priority Issues
-
-#### 6. RMS Test Suite Issues
-
-**Status**: 6/10 test suites passing, 4 failing
-
-**Failing Test Suites**:
-
-1. `audit-logs/__tests__/audit-log.service.test.ts` - New feature tests need fixes
-2. `dashboard-header.test.tsx` - TextEncoder polyfill issue (known)
-3. `tiers/__tests__/tier-usage-widget.test.tsx` - New feature tests need fixes
-4. `store/components/settings/__tests__/tax-and-service-tab.test.tsx` - Validation tests failing
-
-**Tests**: 107 total (100 passing, 7 failing)
-
-**TODO**:
-
-- Fix TextEncoder polyfill for dashboard-header test
-- Fix new feature tests (audit-logs, tiers, tax-and-service-tab)
-- Target: 10/10 test suites passing
-
-#### 7. Type Safety Improvements Needed
-
-**Issue**: Some files have implicit `any` types:
-
-- `apps/restaurant-management-system/src/app/[locale]/hub/(owner-admin)/orders/create/page.tsx:339` - Parameter 'item' implicitly has an 'any' type
-
-**Solution**: Add explicit types:
-
-```typescript
-// ❌ BEFORE
-const calculateTotal = (item) => item.price * item.quantity;
-
-// ✅ AFTER
-const calculateTotal = (item: CartItemResponseDto) =>
-  Number(item.finalPrice) * item.quantity;
-```
-
-## Recent Additions (October 2025)
-
-### 🆕 New Features
-
-**Restaurant Management System (RMS):**
-
-1. **Audit Logs** (`features/audit-logs/`)
-   - Service for fetching audit logs with filters
-   - Query key factories for cache management
-   - Type definitions for audit log entities
-   - Test suite included
-
-2. **Personnel Management** (`features/personnel/`)
-   - Staff invitation dialog with role assignment
-   - Role change functionality
-   - User suspension/activation
-   - Personnel service with full CRUD operations
-   - Query key factories
-
-3. **Tier System** (`features/tiers/`)
-   - Tier gate component for feature access control
-   - Tier upgrade dialog with plan comparison
-   - Usage widget showing current tier limits
-   - Tier service for plan management
-   - Test suite for tier usage widget
-
-4. **Enhanced Store Settings** (`features/store/components/settings/`)
-   - Tax and service charge configuration tab (with tests)
-   - Business hours management tab
-   - Loyalty program configuration tab
-   - Branding customization tab
-
-### 🔧 Recent Improvements (January 2025)
-
-1. **Toast API Corrected** - Migrated 12 toast calls from old react-hot-toast API to Sonner API
-2. **Import Patterns Fixed** - Corrected @repo/api and @repo/ui imports across codebase
-3. **Component Event Handlers** - Fixed Switch component event handler type mismatches
-4. **Linting Clean** - All 26 ESLint warnings resolved (0 warnings across all packages)
-5. **Centralized Toast Export** - Created `@repo/ui/lib/toast` for consistent imports
-6. **UI Component Library Expanded** - Now includes 52 production-ready components
-7. **New Dependencies Added** - papaparse (CSV), recharts (charts), react-dropzone (file uploads)
-
-## Documentation
-
-- `README.md` - Quick start, overview
-- `DESIGN_SYSTEM.md` - **Design system guidelines, component usage patterns, color tokens** ⭐
-- `OPENAPI_SETUP.md` - Type generation setup
-- `I18N_GUIDE.md` - Internationalization guide
-- `packages/api/README.md` - API package docs
-- `apps/restaurant-management-system/README.md` - Restaurant Management System documentation
-- `apps/self-ordering-system/README.md` - Self-Ordering System documentation
 
 ---
 
-**Origin Food House - Type-Safe, Scalable Architecture**
+## Common Anti-Patterns to Avoid
+
+### 1. Prop Drilling
+
+```typescript
+// ❌ BAD - Prop drilling
+<Parent>
+  <Child1 user={user}>
+    <Child2 user={user}>
+      <GrandChild user={user} />
+    </Child2>
+  </Child1>
+</Parent>
+
+// ✅ GOOD - Context or Zustand
+const user = useAuthStore((state) => state.user);
+```
+
+### 2. Magic Numbers
+
+```typescript
+// ❌ BAD
+if (items.length > 50) {
+  toast.warning('Too many items');
+}
+
+// ✅ GOOD
+const MAX_ITEMS_PER_ORDER = 50;
+
+if (items.length > MAX_ITEMS_PER_ORDER) {
+  toast.warning(`Maximum ${MAX_ITEMS_PER_ORDER} items allowed`);
+}
+```
+
+### 3. Deeply Nested Conditionals
+
+```typescript
+// ❌ BAD
+if (user) {
+  if (user.isAuthenticated) {
+    if (user.role === 'ADMIN') {
+      if (user.permissions.includes('DELETE')) {
+        return <DeleteButton />;
+      }
+    }
+  }
+}
+
+// ✅ GOOD - Early returns
+if (!user?.isAuthenticated) return null;
+if (user.role !== 'ADMIN') return null;
+if (!user.permissions.includes('DELETE')) return null;
+
+return <DeleteButton />;
+```
+
+### 4. Large Catch Blocks
+
+```typescript
+// ❌ BAD
+try {
+  await createItem();
+  await updateInventory();
+  await sendNotification();
+} catch (error) {
+  // Which operation failed?
+  toast.error('Operation failed');
+}
+
+// ✅ GOOD - Specific error handling
+try {
+  await createItem();
+} catch (error) {
+  toast.error('Failed to create item');
+  return;
+}
+
+try {
+  await updateInventory();
+} catch (error) {
+  toast.error('Failed to update inventory');
+}
+```
+
+---
+
+## Common Workflows
+
+### Adding a New Feature
+
+1. Create feature directory in `src/features/[feature-name]/`
+2. Structure: `components/`, `services/`, `store/`, `queries/`, `types/`, `hooks/`
+3. Write API service functions using auto-generated types
+4. Create query key factory for React Query
+5. Create Zustand store if global state needed (export selectors)
+6. Build UI with `@repo/ui` components (check existing components first)
+7. Add translations to all 4 language files
+8. Run quality gates: `format`, `lint`, `check-types`, `build`
+
+### Updating API Integration
+
+1. Backend team updates OpenAPI spec
+2. Run `npm run generate:api` to regenerate types
+3. TypeScript compiler will show errors if contracts changed
+4. Update affected service functions and components
+5. Run tests and quality gates
+
+### Adding UI Components
+
+1. **Check `packages/ui/src/components/` first** - Component might already exist
+2. If component exists, use it with variant props
+3. If new component needed:
+   - Add to `@repo/ui` if reusable across apps
+   - Add to `features/[feature]/components/` if feature-specific
+4. Follow design system guidelines (semantic colors, component composition)
+5. Add to component index if in `@repo/ui`
+
+### Testing Workflow (RMS only)
+
+**Test Business Logic, Not Implementation:**
+
+```typescript
+// ✅ GOOD - Tests behavior
+it('should display error message when email is invalid', async () => {
+  render(<LoginForm />);
+
+  const emailInput = screen.getByLabelText(/email/i);
+  const submitButton = screen.getByRole('button', { name: /submit/i });
+
+  await userEvent.type(emailInput, 'invalid-email');
+  await userEvent.click(submitButton);
+
+  expect(screen.getByText(/invalid email/i)).toBeInTheDocument();
+});
+
+// ❌ BAD - Tests implementation
+it('should call validateEmail function', () => {
+  const validateEmail = jest.fn();
+  render(<LoginForm validateEmail={validateEmail} />);
+});
+```
+
+**Use Testing Library Best Practices:**
+
+```typescript
+// ✅ GOOD - Query by accessibility
+screen.getByRole('button', { name: /submit/i });
+screen.getByLabelText(/email/i);
+screen.getByText(/welcome/i);
+
+// ❌ BAD - Test IDs
+screen.getByTestId('submit-button');
+```
+
+**Mock External Dependencies:**
+
+```typescript
+// ✅ GOOD
+jest.mock('@/features/menu/services/category.service', () => ({
+  getCategories: jest.fn().mockResolvedValue([
+    { id: '1', name: 'Appetizers', storeId: 'store-1' },
+  ]),
+}));
+
+it('should display categories', async () => {
+  render(<CategoryList />);
+
+  await waitFor(() => {
+    expect(screen.getByText('Appetizers')).toBeInTheDocument();
+  });
+});
+```
+
+---
+
+## Environment Setup
+
+Create `.env` files in each app directory:
+
+**RMS:** `apps/restaurant-management-system/.env`
+**SOS:** `apps/self-ordering-system/.env`
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_AWS_S3_BUCKET=your-bucket
+NEXT_PUBLIC_AWS_REGION=ap-southeast-1
+```
+
+---
+
+## Tech Stack Details
+
+### Core Framework
+- **Next.js 15** (App Router with Turbopack)
+- **React 19**
+- **TypeScript 5.8+**
+
+### State Management
+- **Zustand** (with immer, persist, devtools) - Global client state only
+- **React Query** (@tanstack/react-query) - Server state & caching
+
+### Styling
+- **Tailwind CSS v4** (@tailwindcss/postcss)
+- **Motion** (Framer Motion alternative)
+- **shadcn/ui** via `@repo/ui`
+
+### API & Data
+- `apiFetch` utility with auto error handling
+- **Auto-generated types** from OpenAPI (@hey-api/openapi-ts)
+- **Socket.IO Client** (real-time features in both apps)
+
+### Forms & Validation
+- **react-hook-form**
+- **Zod** validation
+
+### POS-Specific Dependencies
+- **@dnd-kit** - Drag-and-drop menu reordering
+- **qrcode.react** - Table QR code generation
+- **react-to-print** - Receipt printing
+- **recharts** - Reports and analytics
+
+### SOS-Specific Dependencies
+- **socket.io-client** - Real-time cart synchronization
+- **react-scroll** - Smooth menu category navigation
+- **decimal.js** - Precise currency calculations
+
+---
+
+## Important Files & Locations
+
+- **API client config:** `apps/*/src/utils/apiFetch.ts`
+- **Auto-generated types:** `packages/api/src/generated/types.gen.ts`
+- **Shared components:** `packages/ui/src/components/`
+- **Translation files:** `messages/[locale]/*.json`
+- **Global styles:** `packages/ui/src/styles/globals.css`
+- **Semantic color tokens:** `packages/ui/src/styles/globals.css`
+- **i18n config:** `apps/*/src/i18n/`
+- **Socket providers:** `apps/*/src/utils/socket-provider.tsx`
+
+---
+
+## Socket.IO Implementation
+
+Both apps use Socket.IO for real-time features:
+
+**POS:** Kitchen order updates, order status changes
+**SOS:** Real-time cart synchronization across devices
+
+Socket providers are configured in:
+- `apps/restaurant-management-system/src/utils/socket-provider.tsx`
+- `apps/self-ordering-system/src/utils/socket-provider.tsx`
+
+Sockets are initialized with namespace patterns and use modular event handlers.
+
+---
+
+## Pre-Completion Checklist
+
+Before marking any task as complete, verify:
+
+### Quality Gates
+- [ ] Code formatted (`npm run format`)
+- [ ] No lint warnings (`npm run lint`)
+- [ ] No type errors (`npm run check-types`)
+- [ ] All apps build successfully (`npm run build`)
+- [ ] Tests pass (RMS: `npm test --workspace=@app/restaurant-management-system`)
+
+### Code Quality
+- [ ] Used `@repo/ui` components (checked first)
+- [ ] Auto-generated API types used (not manual types)
+- [ ] Query key factories created/updated
+- [ ] Zustand selectors exported
+- [ ] Self-documenting code (minimal comments)
+- [ ] No `any` types
+- [ ] Explicit return types on all service functions
+- [ ] `import type` used for type-only imports
+
+### Design System
+- [ ] Semantic colors only (no raw Tailwind colors)
+- [ ] Component variant props used (not custom classes)
+- [ ] No arbitrary values (`w-[234px]`, `text-[13px]`)
+- [ ] Consistent spacing scale (4, 6, 8, 12, 16, 24)
+
+### Features
+- [ ] Translations added (all 4 languages: en, zh, my, th)
+- [ ] No hardcoded strings
+- [ ] Error handling consistent (`unwrapData()`)
+- [ ] User-friendly error messages
+
+---
+
+## Workspace-Specific Commands
+
+```bash
+# Run command in specific workspace
+npm run dev --workspace=@app/restaurant-management-system
+npm run build --workspace=@repo/api
+npm test --workspace=@app/restaurant-management-system
+
+# Or use Turbo filters
+turbo run dev --filter=@app/self-ordering-system
+turbo run check-types --filter=@repo/ui
+```
+
+---
+
+## Key Architectural Decisions
+
+### Why Turborepo?
+Fast builds with intelligent caching, shared packages eliminate code duplication, monorepo keeps related code together.
+
+### Why Auto-Generated Types?
+Single source of truth (backend API spec), compile-time safety, eliminates manual type maintenance, catches API mismatches early.
+
+### Why Zustand over Redux?
+Minimal boilerplate, better TypeScript support, simpler API, works seamlessly with React Query for server state.
+
+### Why Feature-Sliced Design?
+Better code organization, easier to navigate, enforces separation of concerns, scales with team size.
+
+### Why next-intl?
+Native Next.js 15 App Router support, type-safe translations, clean URLs without locale prefixes, cookie-based persistence.
+
+---
+
+## Additional Documentation
+
+- **`README.md`** - Project overview and architecture details
+- **`packages/api/README.md`** - API package usage and OpenAPI integration
+- **`I18N_GUIDE.md`** - Internationalization usage guide
+
+---
+
+**Remember:** Quality over speed. Always run all quality gates before completion. Code should be maintainable, type-safe, and follow established patterns.
