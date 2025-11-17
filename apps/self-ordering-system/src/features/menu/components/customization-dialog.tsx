@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'next/navigation';
 
-import { MenuItem } from '@/features/menu/types/menu.types';
+import { MenuItem, SupportedLocale } from '@/features/menu/types/menu.types';
+import { getTranslatedName } from '@/features/menu/utils/translation.util';
 import { formatCurrency } from '@/utils/formatting';
 import { Button } from '@repo/ui/components/button';
 import { Checkbox } from '@repo/ui/components/checkbox';
@@ -30,6 +32,9 @@ export function CustomizationDialog({
   isOpen,
   onClose,
 }: CustomizationDialogProps) {
+  const params = useParams();
+  const locale = params.locale as SupportedLocale;
+
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string[]>
   >({});
@@ -101,15 +106,21 @@ export function CustomizationDialog({
     if (!item.customizationGroups) return true;
     for (const group of item.customizationGroups) {
       const selections = selectedOptions[group.id] || [];
+      const groupDisplayName = getTranslatedName(
+        group.name,
+        group.translations,
+        locale
+      );
+
       if (selections.length < group.minSelectable) {
         setValidationError(
-          `Please select at least ${group.minSelectable} option(s) for ${group.name}.`
+          `Please select at least ${group.minSelectable} option(s) for ${groupDisplayName}.`
         );
         return false;
       }
       if (selections.length > group.maxSelectable) {
         setValidationError(
-          `Please select no more than ${group.maxSelectable} option(s) for ${group.name}.`
+          `Please select no more than ${group.maxSelectable} option(s) for ${groupDisplayName}.`
         );
         return false;
       }
@@ -124,11 +135,18 @@ export function CustomizationDialog({
     onClose();
   };
 
+  // Get localized item name for dialog title
+  const displayItemName = getTranslatedName(
+    item.name,
+    item.translations,
+    locale
+  );
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Customize {item.name}</DialogTitle>
+          <DialogTitle>Customize {displayItemName}</DialogTitle>
           <DialogDescription>
             Select your preferred options. Base price:{' '}
             {formatCurrency(item.basePrice, currency)}
@@ -136,115 +154,144 @@ export function CustomizationDialog({
         </DialogHeader>
         <ScrollArea className="-mx-6 max-h-[60vh] px-6">
           <div className="space-y-6 py-4">
-            {item.customizationGroups?.map((group, index, arr) => (
-              <div key={group.id} className="space-y-3">
-                <div>
-                  <Label className="text-base font-medium">{group.name}</Label>
-                  <p className="text-muted-foreground text-sm">
-                    {group.minSelectable === group.maxSelectable &&
-                    group.minSelectable > 0
-                      ? `Select ${group.minSelectable}`
-                      : group.minSelectable > 0 &&
-                          group.maxSelectable > group.minSelectable
-                        ? `Select ${group.minSelectable} to ${group.maxSelectable}`
-                        : group.maxSelectable > 1
-                          ? `Select up to ${group.maxSelectable}`
-                          : 'Optional'}
-                    {group.minSelectable > 0 && (
-                      <span className="text-destructive ml-1">*</span>
-                    )}
-                  </p>
-                </div>
+            {item.customizationGroups?.map((group, index, arr) => {
+              const displayGroupName = getTranslatedName(
+                group.name,
+                group.translations,
+                locale
+              );
 
-                {group.maxSelectable === 1 ? (
-                  <RadioGroup
-                    value={selectedOptions[group.id]?.[0] || ''}
-                    onValueChange={(optionId) =>
-                      handleRadioChange(group.id, optionId)
-                    }
-                    className="gap-2"
-                  >
-                    {group.customizationOptions.map((option) => (
-                      <div
-                        key={option.id}
-                        className="border-input has-[[data-state=checked]]:border-primary flex items-center justify-between space-x-2 rounded-md border p-3"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem
-                            value={option.id}
-                            id={`${group.id}-${option.id}`}
-                          />
-                          <Label
-                            htmlFor={`${group.id}-${option.id}`}
-                            className="cursor-pointer font-normal"
-                          >
-                            {option.name}
-                          </Label>
-                        </div>
-                        {option.additionalPrice &&
-                          parseFloat(option.additionalPrice) > 0 && (
-                            <span className="text-muted-foreground text-sm">
-                              +
-                              {formatCurrency(option.additionalPrice, currency)}
-                            </span>
-                          )}
-                      </div>
-                    ))}
-                  </RadioGroup>
-                ) : (
-                  <div className="space-y-2">
-                    {group.customizationOptions.map((option) => {
-                      const isSelected =
-                        selectedOptions[group.id]?.includes(option.id) ?? false;
-                      const isDisabled =
-                        !isSelected &&
-                        (selectedOptions[group.id]?.length ?? 0) >=
-                          group.maxSelectable;
-                      return (
-                        <div
-                          key={option.id}
-                          className={`flex items-center justify-between space-x-2 rounded-md border p-3 ${isSelected ? 'border-primary' : 'border-input'} ${isDisabled ? 'opacity-50' : ''}`}
-                        >
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`${group.id}-${option.id}`}
-                              checked={isSelected}
-                              onCheckedChange={(checked) =>
-                                handleCheckboxChange(
-                                  group.id,
-                                  option.id,
-                                  checked,
-                                  group.maxSelectable
-                                )
-                              }
-                              disabled={isDisabled}
-                            />
-                            <Label
-                              htmlFor={`${group.id}-${option.id}`}
-                              className={`font-normal ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                            >
-                              {option.name}
-                            </Label>
-                          </div>
-                          {option.additionalPrice &&
-                            parseFloat(option.additionalPrice) > 0 && (
-                              <span className="text-muted-foreground text-sm">
-                                +
-                                {formatCurrency(
-                                  option.additionalPrice,
-                                  currency
-                                )}
-                              </span>
-                            )}
-                        </div>
-                      );
-                    })}
+              return (
+                <div key={group.id} className="space-y-3">
+                  <div>
+                    <Label className="text-base font-medium">
+                      {displayGroupName}
+                    </Label>
+                    <p className="text-muted-foreground text-sm">
+                      {group.minSelectable === group.maxSelectable &&
+                      group.minSelectable > 0
+                        ? `Select ${group.minSelectable}`
+                        : group.minSelectable > 0 &&
+                            group.maxSelectable > group.minSelectable
+                          ? `Select ${group.minSelectable} to ${group.maxSelectable}`
+                          : group.maxSelectable > 1
+                            ? `Select up to ${group.maxSelectable}`
+                            : 'Optional'}
+                      {group.minSelectable > 0 && (
+                        <span className="text-destructive ml-1">*</span>
+                      )}
+                    </p>
                   </div>
-                )}
-                {/* Add separator only if it's not the last group */}
-                {index < arr.length - 1 && <Separator className="my-4" />}
-              </div>
-            ))}
+
+                  {group.maxSelectable === 1 ? (
+                    <RadioGroup
+                      value={selectedOptions[group.id]?.[0] || ''}
+                      onValueChange={(optionId) =>
+                        handleRadioChange(group.id, optionId)
+                      }
+                      className="gap-2"
+                    >
+                      {group.customizationOptions.map((option) => {
+                        const displayOptionName = getTranslatedName(
+                          option.name,
+                          option.translations,
+                          locale
+                        );
+
+                        return (
+                          <div
+                            key={option.id}
+                            className="border-input has-[[data-state=checked]]:border-primary flex items-center justify-between space-x-2 rounded-md border p-3"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem
+                                value={option.id}
+                                id={`${group.id}-${option.id}`}
+                              />
+                              <Label
+                                htmlFor={`${group.id}-${option.id}`}
+                                className="cursor-pointer font-normal"
+                              >
+                                {displayOptionName}
+                              </Label>
+                            </div>
+                            {option.additionalPrice &&
+                              parseFloat(option.additionalPrice) > 0 && (
+                                <span className="text-muted-foreground text-sm">
+                                  +
+                                  {formatCurrency(
+                                    option.additionalPrice,
+                                    currency
+                                  )}
+                                </span>
+                              )}
+                          </div>
+                        );
+                      })}
+                    </RadioGroup>
+                  ) : (
+                    <div className="space-y-2">
+                      {group.customizationOptions.map((option) => {
+                        const isSelected =
+                          selectedOptions[group.id]?.includes(option.id) ??
+                          false;
+                        const isDisabled =
+                          !isSelected &&
+                          (selectedOptions[group.id]?.length ?? 0) >=
+                            group.maxSelectable;
+
+                        const displayOptionName = getTranslatedName(
+                          option.name,
+                          option.translations,
+                          locale
+                        );
+
+                        return (
+                          <div
+                            key={option.id}
+                            className={`flex items-center justify-between space-x-2 rounded-md border p-3 ${isSelected ? 'border-primary' : 'border-input'} ${isDisabled ? 'opacity-50' : ''}`}
+                          >
+                            <div className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`${group.id}-${option.id}`}
+                                checked={isSelected}
+                                onCheckedChange={(checked) =>
+                                  handleCheckboxChange(
+                                    group.id,
+                                    option.id,
+                                    checked,
+                                    group.maxSelectable
+                                  )
+                                }
+                                disabled={isDisabled}
+                              />
+                              <Label
+                                htmlFor={`${group.id}-${option.id}`}
+                                className={`font-normal ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                              >
+                                {displayOptionName}
+                              </Label>
+                            </div>
+                            {option.additionalPrice &&
+                              parseFloat(option.additionalPrice) > 0 && (
+                                <span className="text-muted-foreground text-sm">
+                                  +
+                                  {formatCurrency(
+                                    option.additionalPrice,
+                                    currency
+                                  )}
+                                </span>
+                              )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                  {/* Add separator only if it's not the last group */}
+                  {index < arr.length - 1 && <Separator className="my-4" />}
+                </div>
+              );
+            })}
           </div>
         </ScrollArea>
 

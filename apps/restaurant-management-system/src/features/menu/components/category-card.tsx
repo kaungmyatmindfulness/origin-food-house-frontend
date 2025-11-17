@@ -1,12 +1,22 @@
 'use client';
 
 import { isEmpty } from 'lodash-es';
-import { Check, Edit, Loader2, MoreVertical, Trash2, X } from 'lucide-react';
+import {
+  Check,
+  Edit,
+  Loader2,
+  MoreVertical,
+  Trash2,
+  X,
+  Globe,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from '@repo/ui/lib/toast';
 import { z } from 'zod';
+
+import { CategoryTranslationDialog } from './category-translation-dialog';
 
 import {
   selectSelectedStoreId,
@@ -19,6 +29,11 @@ import {
 import { menuKeys } from '@/features/menu/queries/menu.keys';
 import { ItemCard } from '@/features/menu/components/item-card';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  getTranslationCompletionCount,
+  hasIncompleteTranslations,
+} from '@/features/menu/utils/translation.utils';
+import { Badge } from '@repo/ui/components/badge';
 import { Button } from '@repo/ui/components/button';
 import { ConfirmationDialog } from '@repo/ui/components/confirmation-dialog';
 import {
@@ -73,6 +88,8 @@ export function CategoryCard({
   const [isEditingName, setIsEditingName] = React.useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
   const [isConfirmDeleteDialogOpen, setIsConfirmDeleteDialogOpen] =
+    React.useState(false);
+  const [isTranslationDialogOpen, setIsTranslationDialogOpen] =
     React.useState(false);
 
   const queryClient = useQueryClient();
@@ -160,40 +177,89 @@ export function CategoryCard({
     }
   };
 
+  const handleTranslateClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsPopoverOpen(false);
+    setIsTranslationDialogOpen(true);
+  };
+
   const handleConfirmDelete = () => {
     deleteCategoryMutation.mutate();
   };
+
+  const translationCount = getTranslationCompletionCount(category.translations);
+  const showTranslationBadge = hasIncompleteTranslations(category.translations);
 
   function renderTitleContent() {
     if (!isEditingName) {
       return (
         <>
-          <h2 className="truncate text-lg font-semibold" title={category.name}>
-            {category.name}
-          </h2>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-muted-foreground hover:text-foreground h-11 w-11 shrink-0 sm:h-10 sm:w-10"
-                  onClick={handleStartEditing}
-                  aria-label={`Edit name for category ${category.name}`}
-                  disabled={
-                    !selectedStoreId ||
-                    renameCategoryMutation.isPending ||
-                    deleteCategoryMutation.isPending
-                  }
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Edit category name</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <div className="flex items-center gap-2">
+            <h2
+              className="truncate text-lg font-semibold"
+              title={category.name}
+            >
+              {category.name}
+            </h2>
+            {showTranslationBadge && (
+              <Badge
+                variant="secondary"
+                className="shrink-0"
+                aria-label={`${translationCount} out of 4 languages translated`}
+              >
+                🌐 {translationCount}/4
+              </Badge>
+            )}
+          </div>
+          <div className="flex gap-1">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-muted-foreground hover:text-foreground h-11 w-11 shrink-0 sm:h-10 sm:w-10"
+                    onClick={handleStartEditing}
+                    aria-label={`Edit name for category ${category.name}`}
+                    disabled={
+                      !selectedStoreId ||
+                      renameCategoryMutation.isPending ||
+                      deleteCategoryMutation.isPending
+                    }
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Edit category name</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-muted-foreground hover:text-foreground h-11 w-11 shrink-0 sm:h-10 sm:w-10"
+                    onClick={handleTranslateClick}
+                    aria-label={`Translate category ${category.name}`}
+                    disabled={
+                      !selectedStoreId ||
+                      renameCategoryMutation.isPending ||
+                      deleteCategoryMutation.isPending
+                    }
+                  >
+                    <Globe className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Manage translations</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </>
       );
     }
@@ -303,18 +369,20 @@ export function CategoryCard({
                   </PopoverTrigger>
                 </TooltipTrigger>
                 <PopoverContent className="w-auto p-1">
-                  <Button
-                    variant="ghost"
-                    className="text-destructive hover:bg-destructive/10 flex w-full items-center justify-start px-2 py-1.5 text-sm"
-                    onClick={handleDeleteRequest}
-                    disabled={
-                      deleteCategoryMutation.isPending ||
-                      renameCategoryMutation.isPending
-                    }
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete Category
-                  </Button>
+                  <div className="flex flex-col">
+                    <Button
+                      variant="ghost"
+                      className="text-destructive hover:bg-destructive/10 flex w-full items-center justify-start px-2 py-1.5 text-sm"
+                      onClick={handleDeleteRequest}
+                      disabled={
+                        deleteCategoryMutation.isPending ||
+                        renameCategoryMutation.isPending
+                      }
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete Category
+                    </Button>
+                  </div>
                 </PopoverContent>
               </Popover>
               <TooltipContent>
@@ -353,6 +421,15 @@ export function CategoryCard({
         onConfirm={handleConfirmDelete}
         isConfirming={deleteCategoryMutation.isPending}
       />
+
+      {selectedStoreId && (
+        <CategoryTranslationDialog
+          open={isTranslationDialogOpen}
+          onOpenChange={setIsTranslationDialogOpen}
+          category={category}
+          storeId={selectedStoreId}
+        />
+      )}
     </>
   );
 }

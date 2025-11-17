@@ -1,3 +1,14 @@
+/**
+ * Translation types (imported from menu-item.types for consistency)
+ */
+export type {
+  SupportedLocale,
+  BaseTranslation,
+  TranslationMap,
+} from './menu-item.types';
+
+import type { TranslationMap, BaseTranslation } from './menu-item.types';
+
 export interface Category {
   id: string;
   name: string;
@@ -5,6 +16,7 @@ export interface Category {
   sortOrder: number;
   createdAt?: string;
   updatedAt?: string;
+  translations?: TranslationMap<BaseTranslation>;
   menuItems?: Array<{
     id: string;
     name: string;

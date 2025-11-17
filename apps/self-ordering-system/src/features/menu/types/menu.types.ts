@@ -1,9 +1,37 @@
+/**
+ * Supported locales in the application
+ */
+export type SupportedLocale = 'en' | 'zh' | 'my' | 'th';
+
+/**
+ * Base translation structure (name only)
+ */
+export interface BaseTranslation {
+  locale: SupportedLocale;
+  name: string;
+}
+
+/**
+ * Translation with description (for menu items)
+ */
+export interface TranslationWithDescription extends BaseTranslation {
+  description?: string | null;
+}
+
+/**
+ * Translation map type
+ */
+export type TranslationMap<T = BaseTranslation> = Partial<
+  Record<SupportedLocale, T>
+>;
+
 export interface Category {
   id: string;
   name: string;
   storeId: string;
   sortOrder: number;
   menuItems: MenuItem[];
+  translations?: TranslationMap<BaseTranslation>;
 }
 
 export interface MenuItem {
@@ -16,6 +44,7 @@ export interface MenuItem {
   storeId: string;
   sortOrder: number;
   customizationGroups: CustomizationGroup[];
+  translations?: TranslationMap<TranslationWithDescription>;
 }
 
 export type MenuItemBasic = Pick<
@@ -30,6 +59,7 @@ export interface CustomizationGroup {
   maxSelectable: number;
   menuItemId: string;
   customizationOptions: CustomizationOption[];
+  translations?: TranslationMap<BaseTranslation>;
 }
 
 export interface CustomizationOption {
@@ -37,4 +67,5 @@ export interface CustomizationOption {
   name: string;
   additionalPrice?: string | null;
   customizationGroupId: string;
+  translations?: TranslationMap<BaseTranslation>;
 }

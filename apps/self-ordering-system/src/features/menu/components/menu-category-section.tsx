@@ -1,6 +1,12 @@
 import { Element as ScrollElement } from 'react-scroll';
+import { useParams } from 'next/navigation';
 
-import { Category, MenuItem } from '@/features/menu/types/menu.types';
+import {
+  Category,
+  MenuItem,
+  SupportedLocale,
+} from '@/features/menu/types/menu.types';
+import { getTranslatedName } from '@/features/menu/utils/translation.util';
 
 import { MenuItemCard } from './menu-item-card';
 
@@ -15,11 +21,21 @@ export function MenuCategorySection({
   currency,
   onCustomize,
 }: MenuCategorySectionProps) {
+  const params = useParams();
+  const locale = params.locale as SupportedLocale;
+
+  // Get localized category name
+  const displayName = getTranslatedName(
+    category.name,
+    category.translations,
+    locale
+  );
+
   return (
     <ScrollElement name={category.id} className="scroll-mt-40">
       <div>
         <h2 className="mb-4 text-2xl font-bold" id={`category-${category.id}`}>
-          {category.name}
+          {displayName}
         </h2>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

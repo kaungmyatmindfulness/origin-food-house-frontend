@@ -1,10 +1,12 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Edit, Loader2, MoreVertical, Pencil, Trash2 } from 'lucide-react';
+import { Loader2, MoreVertical, Pencil, Trash2, Globe } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 import { toast } from '@repo/ui/lib/toast';
+
+import { TranslationDialog } from './translation-dialog';
 
 import {
   selectSelectedStoreId,
@@ -18,6 +20,10 @@ import { menuKeys } from '@/features/menu/queries/menu.keys';
 import { MenuItem } from '@/features/menu/types/menu-item.types';
 import type { Category } from '@/features/menu/types/category.types';
 import { formatCurrency } from '@/utils/formatting';
+import {
+  getTranslationCompletionCount,
+  hasIncompleteTranslations,
+} from '@/features/menu/utils/translation.utils';
 import { Badge } from '@repo/ui/components/badge';
 import { Button } from '@repo/ui/components/button';
 import { ConfirmationDialog } from '@repo/ui/components/confirmation-dialog';
@@ -46,6 +52,8 @@ interface ItemCardProps {
 
 export function ItemCard({ item, onSelect }: ItemCardProps) {
   const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
+  const [isTranslationDialogOpen, setIsTranslationDialogOpen] =
+    React.useState(false);
 
   const setEditMenuItemId = useMenuStore((state) => state.setEditMenuItemId);
 
@@ -156,6 +164,12 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
     setIsConfirmDeleteDialogOpen(true);
   };
 
+  const handleTranslateClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsPopoverOpen(false);
+    setIsTranslationDialogOpen(true);
+  };
+
   const handleConfirmDelete = () => {
     deleteItemMutation.mutate();
   };
@@ -171,6 +185,9 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
   const actionsDisabled = deleteItemMutation.isPending || !selectedStoreId;
 
   const isOutOfStock = item.isOutOfStock;
+
+  const translationCount = getTranslationCompletionCount(item.translations);
+  const showTranslationBadge = hasIncompleteTranslations(item.translations);
 
   return (
     <>
@@ -206,6 +223,17 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
             </Badge>
           )}
 
+          {/* Translation Status Badge */}
+          {showTranslationBadge && (
+            <Badge
+              variant="secondary"
+              className="absolute bottom-2 left-2"
+              aria-label={`${translationCount} out of 4 languages translated`}
+            >
+              🌐 {translationCount}/4
+            </Badge>
+          )}
+
           {/* Quick Edit Button */}
           <TooltipProvider>
             <Tooltip>
@@ -213,7 +241,7 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="absolute top-1 right-10 h-8 w-8 rounded-full opacity-0 shadow-md transition-opacity group-hover:opacity-100"
+                  className="absolute top-1 right-20 h-8 w-8 rounded-full opacity-0 shadow-md transition-opacity group-hover:opacity-100"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleEditClick(e);
@@ -226,6 +254,30 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
               </TooltipTrigger>
               <TooltipContent>
                 <p>Quick edit</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          {/* Translate Button */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="absolute top-1 right-10 h-8 w-8 rounded-full opacity-0 shadow-md transition-opacity group-hover:opacity-100"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleTranslateClick(e);
+                  }}
+                  aria-label={`Translate ${item.name}`}
+                  disabled={actionsDisabled}
+                >
+                  <Globe className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Manage translations</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -253,16 +305,6 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex flex-col text-sm">
-                <Button
-                  variant="ghost"
-                  className="flex w-full items-center justify-start px-2 py-1.5 text-sm font-normal"
-                  onClick={handleEditClick}
-                  disabled={actionsDisabled}
-                >
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit
-                </Button>
-
                 <Button
                   variant="ghost"
                   className="text-destructive hover:bg-destructive/10 flex w-full items-center justify-start px-2 py-1.5 text-sm font-normal"
@@ -332,6 +374,15 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
         onConfirm={handleConfirmDelete}
         isConfirming={deleteItemMutation.isPending}
       />
+
+      {selectedStoreId && (
+        <TranslationDialog
+          open={isTranslationDialogOpen}
+          onOpenChange={setIsTranslationDialogOpen}
+          item={item}
+          storeId={selectedStoreId}
+        />
+      )}
     </>
   );
 }

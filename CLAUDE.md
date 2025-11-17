@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Origin Food House is an enterprise-grade restaurant management system built as a **Turborepo monorepo** with Next.js 15, React 19, and TypeScript. The system supports multi-language capabilities (English, Chinese, Myanmar, Thai) and follows clean architecture patterns.
 
 **Monorepo Structure:**
+
 - `apps/restaurant-management-system` - POS system for restaurant staff (Port 3002)
 - `apps/self-ordering-system` - Customer-facing self-ordering app (Port 3001)
 - `apps/admin-platform` - Admin platform (in development)
@@ -321,6 +322,7 @@ await delay(500);
 ```
 
 **Use JSDoc for:**
+
 - External API integrations
 - Complex algorithms
 - Non-obvious business logic
@@ -342,17 +344,17 @@ await delay(500);
 
 **ALWAYS use semantic tokens from `globals.css`:**
 
-| Token                    | Usage                                   |
-| ------------------------ | --------------------------------------- |
-| `background`             | Page backgrounds                        |
-| `foreground`             | Primary text                            |
-| `muted`                  | Muted backgrounds (secondary UI)        |
-| `muted-foreground`       | Muted text (descriptions, placeholders) |
-| `primary`                | Brand color (CTA buttons, links)        |
-| `destructive`            | Destructive actions (delete, cancel)    |
-| `border`                 | Borders                                 |
-| `input`                  | Input borders                           |
-| `ring`                   | Focus rings                             |
+| Token              | Usage                                   |
+| ------------------ | --------------------------------------- |
+| `background`       | Page backgrounds                        |
+| `foreground`       | Primary text                            |
+| `muted`            | Muted backgrounds (secondary UI)        |
+| `muted-foreground` | Muted text (descriptions, placeholders) |
+| `primary`          | Brand color (CTA buttons, links)        |
+| `destructive`      | Destructive actions (delete, cancel)    |
+| `border`           | Borders                                 |
+| `input`            | Input borders                           |
+| `ring`             | Focus rings                             |
 
 ```typescript
 // ✅ CORRECT - Semantic tokens
@@ -553,12 +555,17 @@ await delay(500);
 
 ```typescript
 import { apiFetch, unwrapData } from '@/utils/apiFetch';
-import type { CategoryResponseDto, CreateCategoryDto } from '@repo/api/generated/types';
+import type {
+  CategoryResponseDto,
+  CreateCategoryDto,
+} from '@repo/api/generated/types';
 
 /**
  * Fetches all categories for a store
  */
-export async function getCategories(storeId: string): Promise<CategoryResponseDto[]> {
+export async function getCategories(
+  storeId: string
+): Promise<CategoryResponseDto[]> {
   const res = await apiFetch<CategoryResponseDto[]>({
     path: '/categories',
     query: { storeId },
@@ -586,6 +593,7 @@ export async function createCategory(
 ```
 
 **Key Points:**
+
 - Use `apiFetch()` from `@/utils/apiFetch` (configured with auth headers)
 - Always use `unwrapData()` for consistent error handling
 - Import types from `@repo/api/generated/types` (NEVER manually define API types)
@@ -607,8 +615,7 @@ export const menuKeys = {
   category: (storeId: string, categoryId: string) =>
     [...menuKeys.categories(storeId), categoryId] as const,
 
-  items: (storeId: string) =>
-    [...menuKeys.all, 'items', { storeId }] as const,
+  items: (storeId: string) => [...menuKeys.all, 'items', { storeId }] as const,
 
   item: (storeId: string, itemId: string) =>
     [...menuKeys.items(storeId), itemId] as const,
@@ -621,8 +628,8 @@ const { data: categories } = useQuery({
 });
 
 // Hierarchical invalidation
-queryClient.invalidateQueries({ queryKey: menuKeys.all });                     // All menu data
-queryClient.invalidateQueries({ queryKey: menuKeys.categories(storeId) });     // Specific store
+queryClient.invalidateQueries({ queryKey: menuKeys.all }); // All menu data
+queryClient.invalidateQueries({ queryKey: menuKeys.categories(storeId) }); // Specific store
 ```
 
 ### 3. Zustand State Management
@@ -650,14 +657,16 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         isAuthenticated: false,
 
         // Actions
-        setSelectedStore: (id) => set((draft) => {
-          draft.selectedStoreId = id;
-        }),
+        setSelectedStore: (id) =>
+          set((draft) => {
+            draft.selectedStoreId = id;
+          }),
 
-        clearAuth: () => set((draft) => {
-          draft.selectedStoreId = null;
-          draft.isAuthenticated = false;
-        }),
+        clearAuth: () =>
+          set((draft) => {
+            draft.selectedStoreId = null;
+            draft.isAuthenticated = false;
+          }),
       })),
       { name: 'auth-storage' }
     ),
@@ -666,8 +675,10 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 );
 
 // ALWAYS export selectors
-export const selectSelectedStoreId = (state: AuthState) => state.selectedStoreId;
-export const selectIsAuthenticated = (state: AuthState) => state.isAuthenticated;
+export const selectSelectedStoreId = (state: AuthState) =>
+  state.selectedStoreId;
+export const selectIsAuthenticated = (state: AuthState) =>
+  state.isAuthenticated;
 
 // Usage in components
 const storeId = useAuthStore(selectSelectedStoreId);
@@ -1052,35 +1063,42 @@ NEXT_PUBLIC_AWS_REGION=ap-southeast-1
 ## Tech Stack Details
 
 ### Core Framework
+
 - **Next.js 15** (App Router with Turbopack)
 - **React 19**
 - **TypeScript 5.8+**
 
 ### State Management
+
 - **Zustand** (with immer, persist, devtools) - Global client state only
 - **React Query** (@tanstack/react-query) - Server state & caching
 
 ### Styling
+
 - **Tailwind CSS v4** (@tailwindcss/postcss)
 - **Motion** (Framer Motion alternative)
 - **shadcn/ui** via `@repo/ui`
 
 ### API & Data
+
 - `apiFetch` utility with auto error handling
 - **Auto-generated types** from OpenAPI (@hey-api/openapi-ts)
 - **Socket.IO Client** (real-time features in both apps)
 
 ### Forms & Validation
+
 - **react-hook-form**
 - **Zod** validation
 
 ### POS-Specific Dependencies
+
 - **@dnd-kit** - Drag-and-drop menu reordering
 - **qrcode.react** - Table QR code generation
 - **react-to-print** - Receipt printing
 - **recharts** - Reports and analytics
 
 ### SOS-Specific Dependencies
+
 - **socket.io-client** - Real-time cart synchronization
 - **react-scroll** - Smooth menu category navigation
 - **decimal.js** - Precise currency calculations
@@ -1108,6 +1126,7 @@ Both apps use Socket.IO for real-time features:
 **SOS:** Real-time cart synchronization across devices
 
 Socket providers are configured in:
+
 - `apps/restaurant-management-system/src/utils/socket-provider.tsx`
 - `apps/self-ordering-system/src/utils/socket-provider.tsx`
 
@@ -1120,6 +1139,7 @@ Sockets are initialized with namespace patterns and use modular event handlers.
 Before marking any task as complete, verify:
 
 ### Quality Gates
+
 - [ ] Code formatted (`npm run format`)
 - [ ] No lint warnings (`npm run lint`)
 - [ ] No type errors (`npm run check-types`)
@@ -1127,6 +1147,7 @@ Before marking any task as complete, verify:
 - [ ] Tests pass (RMS: `npm test --workspace=@app/restaurant-management-system`)
 
 ### Code Quality
+
 - [ ] Used `@repo/ui` components (checked first)
 - [ ] Auto-generated API types used (not manual types)
 - [ ] Query key factories created/updated
@@ -1137,12 +1158,14 @@ Before marking any task as complete, verify:
 - [ ] `import type` used for type-only imports
 
 ### Design System
+
 - [ ] Semantic colors only (no raw Tailwind colors)
 - [ ] Component variant props used (not custom classes)
 - [ ] No arbitrary values (`w-[234px]`, `text-[13px]`)
 - [ ] Consistent spacing scale (4, 6, 8, 12, 16, 24)
 
 ### Features
+
 - [ ] Translations added (all 4 languages: en, zh, my, th)
 - [ ] No hardcoded strings
 - [ ] Error handling consistent (`unwrapData()`)
@@ -1168,18 +1191,23 @@ turbo run check-types --filter=@repo/ui
 ## Key Architectural Decisions
 
 ### Why Turborepo?
+
 Fast builds with intelligent caching, shared packages eliminate code duplication, monorepo keeps related code together.
 
 ### Why Auto-Generated Types?
+
 Single source of truth (backend API spec), compile-time safety, eliminates manual type maintenance, catches API mismatches early.
 
 ### Why Zustand over Redux?
+
 Minimal boilerplate, better TypeScript support, simpler API, works seamlessly with React Query for server state.
 
 ### Why Feature-Sliced Design?
+
 Better code organization, easier to navigate, enforces separation of concerns, scales with team size.
 
 ### Why next-intl?
+
 Native Next.js 15 App Router support, type-safe translations, clean URLs without locale prefixes, cookie-based persistence.
 
 ---

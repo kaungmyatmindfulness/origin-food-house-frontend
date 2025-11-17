@@ -1,9 +1,14 @@
 import { Minus, Plus } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
+import { useParams } from 'next/navigation';
 
 import { CartItem } from '@/features/cart/types/cart.types';
-import { MenuItem } from '@/features/menu/types/menu.types';
+import { MenuItem, SupportedLocale } from '@/features/menu/types/menu.types';
+import {
+  getTranslatedName,
+  getTranslatedDescription,
+} from '@/features/menu/utils/translation.util';
 import { formatCurrency } from '@/utils/formatting';
 import { Button } from '@repo/ui/components/button';
 import {
@@ -30,17 +35,9 @@ export function MenuItemCard({
   currency,
   onCustomize,
 }: MenuItemCardProps) {
-  // const {
-  //   cart,
-  //   optimisticAddItem,
-  //   optimisticUpdateItem,
-  //   optimisticRemoveItem,
-  // } = useCartStore((state) => ({
-  //   cart: state.cart,
-  //   optimisticAddItem: state.optimisticAddItem,
-  //   optimisticUpdateItem: state.optimisticUpdateItem,
-  //   optimisticRemoveItem: state.optimisticRemoveItem,
-  // }));
+  const params = useParams();
+  const locale = params.locale as SupportedLocale;
+
   const cart = useCartStore((state) => state.cart);
   const optimisticAddItem = useCartStore((state) => state.optimisticAddItem);
   const optimisticUpdateItem = useCartStore(
@@ -48,6 +45,14 @@ export function MenuItemCard({
   );
   const optimisticRemoveItem = useCartStore(
     (state) => state.optimisticRemoveItem
+  );
+
+  // Get localized content
+  const displayName = getTranslatedName(item.name, item.translations, locale);
+  const displayDescription = getTranslatedDescription(
+    item.description,
+    item.translations,
+    locale
   );
 
   const cartItem = React.useMemo(() => {
@@ -151,12 +156,12 @@ export function MenuItemCard({
       <div className="flex flex-grow flex-col justify-between gap-1">
         {/* Top section: Name and Description */}
         <div>
-          <h3 className="text-lg font-semibold">{item.name}</h3>
-          {item.description && (
+          <h3 className="text-lg font-semibold">{displayName}</h3>
+          {displayDescription && (
             <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
               {' '}
               {/* Limit description lines */}
-              {item.description}
+              {displayDescription}
             </p>
           )}
         </div>

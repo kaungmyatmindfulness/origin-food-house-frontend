@@ -1,4 +1,31 @@
 /**
+ * Supported locales in the application
+ */
+export type SupportedLocale = 'en' | 'zh' | 'my' | 'th';
+
+/**
+ * Base translation structure (name only)
+ */
+export interface BaseTranslation {
+  locale: SupportedLocale;
+  name: string;
+}
+
+/**
+ * Translation with description (for menu items)
+ */
+export interface TranslationWithDescription extends BaseTranslation {
+  description?: string | null;
+}
+
+/**
+ * Translation map type
+ */
+export type TranslationMap<T = BaseTranslation> = Partial<
+  Record<SupportedLocale, T>
+>;
+
+/**
  * DTO used within MenuItem DTOs to link or create a category.
  * If ID is provided, links/updates existing. If only name, creates new.
  */
@@ -35,6 +62,7 @@ export interface UpsertCustomizationGroupDto {
 export interface CategoryDto {
   id: string;
   name: string;
+  translations?: TranslationMap<BaseTranslation>;
 }
 
 /**
@@ -44,6 +72,7 @@ export interface CustomizationOptionDto {
   id: string;
   name: string;
   additionalPrice: string;
+  translations?: TranslationMap<BaseTranslation>;
 }
 
 /**
@@ -56,6 +85,7 @@ export interface CustomizationGroupDto {
   minSelectable: number;
   maxSelectable: number;
   customizationOptions: CustomizationOptionDto[];
+  translations?: TranslationMap<BaseTranslation>;
 }
 
 /**
@@ -85,6 +115,7 @@ export interface MenuItemDto {
   category: CategoryDto;
   customizationGroups: CustomizationGroupDto[];
   isHidden: boolean;
+  translations?: TranslationMap<TranslationWithDescription>;
 }
 
 export interface MenuItem {
@@ -98,4 +129,5 @@ export interface MenuItem {
   createdAt: string;
   updatedAt: string;
   isOutOfStock?: boolean;
+  translations?: TranslationMap<TranslationWithDescription>;
 }
