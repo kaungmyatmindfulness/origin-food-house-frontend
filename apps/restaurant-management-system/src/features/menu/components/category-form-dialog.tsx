@@ -68,12 +68,6 @@ export function CategoryFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <Button className="flex items-center">
-          <Plus className="mr-1 h-4 w-4" />
-          Create Category
-        </Button>
-      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create Category</DialogTitle>
