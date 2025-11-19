@@ -20,6 +20,7 @@ import {
   DollarSign,
   History,
   QrCode,
+  Store,
 } from 'lucide-react';
 import { cn } from '@repo/ui/lib/utils';
 import { LanguageSwitcher } from '@/common/components/LanguageSwitcher';
@@ -62,6 +63,11 @@ const useNavSections = () => {
           labelKey: 'store',
           icon: <Settings className="mr-2 h-3 w-3 text-gray-500" />,
           subItems: [
+            {
+              labelKey: 'choose',
+              href: '/store/choose',
+              icon: <Store className="mr-2 h-3 w-3 text-gray-500" />,
+            },
             {
               labelKey: 'information',
               href: '/hub/store/information',

@@ -2,11 +2,9 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import {
   Bell,
   ChevronDown,
-  Check,
   User as UserIcon,
   LogOut,
 } from 'lucide-react';
@@ -32,7 +30,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@repo/ui/components/dropdown-menu';
@@ -40,8 +37,7 @@ import { Badge } from '@repo/ui/components/badge';
 import { getInitials } from '@/utils/string-utils';
 
 export function DashboardHeader() {
-  const router = useRouter();
-  const { clearAuth, setSelectedStore } = useAuthStore();
+  const { clearAuth } = useAuthStore();
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -80,69 +76,21 @@ export function DashboardHeader() {
     }
   }
 
-  function handleStoreChange(storeId: string) {
-    setSelectedStore(storeId);
-    window.location.reload();
-  }
-
-  const userStores = currentUser?.userStores ?? [];
-  const hasMultipleStores = userStores.length > 1;
-
   return (
     <>
       <header className="bg-background fixed top-0 right-0 left-0 z-10 flex h-15 items-center justify-between border-b px-4 shadow-sm md:px-6">
-        {/* Left: Logo + Store Selector */}
+        {/* Left: Logo + Store Info */}
         <div className="flex items-center gap-4">
           <Link href="/hub-sales">
             <Image src="/logo.svg" alt="Logo" width={64} height={32} />
           </Link>
 
-          {/* Store Selector */}
           {currentStore && (
-            <>
-              {hasMultipleStores ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="hidden h-9 gap-2 md:flex"
-                      aria-label="Select store"
-                      aria-haspopup="menu"
-                    >
-                      <span className="max-w-[200px] truncate text-sm font-medium">
-                        {currentStore.information.name}
-                      </span>
-                      <ChevronDown className="text-muted-foreground h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-[240px]">
-                    <DropdownMenuLabel className="text-muted-foreground text-xs">
-                      Switch Store
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {userStores.map((userStore) => (
-                      <DropdownMenuItem
-                        key={userStore.store.id}
-                        onSelect={() => handleStoreChange(userStore.store.id)}
-                      >
-                        <div className="flex w-full items-center gap-2">
-                          {userStore.store.id === selectedStoreId && (
-                            <Check className="text-primary h-4 w-4" />
-                          )}
-                          <span className="flex-1 truncate">
-                            {userStore.store.information.name}
-                          </span>
-                        </div>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <span className="text-foreground hidden text-sm font-medium md:inline-block">
-                  {currentStore.information.name}
-                </span>
-              )}
-            </>
+            <div className="hidden items-center gap-3 md:flex">
+              <span className="text-foreground text-sm font-medium">
+                {currentStore.information.name}
+              </span>
+            </div>
           )}
         </div>
 
@@ -210,9 +158,11 @@ export function DashboardHeader() {
                 )}
 
                 {/* Account Actions */}
-                <DropdownMenuItem onSelect={() => router.push('/hub/account')}>
-                  <UserIcon className="mr-2 h-4 w-4" />
-                  Account Settings
+                <DropdownMenuItem asChild>
+                  <Link href="/hub/account">
+                    <UserIcon className="mr-2 h-4 w-4" />
+                    Account Settings
+                  </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem onSelect={handleLogout}>
