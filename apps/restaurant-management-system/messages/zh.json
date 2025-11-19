@@ -258,7 +258,8 @@
       "goToLogin": "前往登录",
       "noStoresFound": "未找到您账户的店铺。",
       "selectToProceed": "选择一个店铺以继续。",
-      "createNewStore": "创建新店铺"
+      "createNewStore": "创建新店铺",
+      "cancel": "取消"
     },
     "create": {
       "title": "创建您的第一家店铺",

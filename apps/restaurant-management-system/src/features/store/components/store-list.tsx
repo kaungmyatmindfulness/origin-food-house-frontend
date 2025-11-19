@@ -8,9 +8,16 @@ import { UserStore } from '@/features/user/types/user.types';
 interface StoreListProps {
   userStores: UserStore[];
   onSelect: (storeId: string) => void;
+  isLoading?: boolean;
+  selectedStoreId?: string | null;
 }
 
-export function StoreList({ userStores, onSelect }: StoreListProps) {
+export function StoreList({
+  userStores,
+  onSelect,
+  isLoading = false,
+  selectedStoreId = null,
+}: StoreListProps) {
   return (
     <motion.ul
       role="list"
@@ -26,6 +33,8 @@ export function StoreList({ userStores, onSelect }: StoreListProps) {
           key={userStore.id}
           userStore={userStore}
           onSelect={onSelect}
+          isLoading={isLoading}
+          isSelected={selectedStoreId === userStore.store.id}
         />
       ))}
     </motion.ul>

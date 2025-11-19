@@ -1,11 +1,11 @@
 'use client';
 
-import { AlertCircle, Plus } from 'lucide-react';
+import { AlertCircle, Plus, Store } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from '@repo/ui/lib/toast';
 
 import { loginWithStoreAuth0 } from '@/features/auth/services/auth0.service';
@@ -29,6 +29,7 @@ export default function ChooseStorePage() {
   const t = useTranslations('store.choose');
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [clickedStoreId, setClickedStoreId] = useState<string | null>(null);
 
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
   const setSelectedStore = useAuthStore((state) => state.setSelectedStore);
@@ -104,6 +105,7 @@ export default function ChooseStorePage() {
       return;
     }
 
+    setClickedStoreId(storeIdString);
     chooseStoreMutation.mutate(storeIdString);
   };
 
@@ -114,10 +116,8 @@ export default function ChooseStorePage() {
 
   if (isUserLoading) {
     return (
-      <main className="flex min-h-screen items-center justify-center p-4">
-        <div className="w-full max-w-2xl">
-          <StoreListSkeleton />
-        </div>
+      <main className="from-muted/30 to-muted/50 min-h-screen bg-gradient-to-b p-4">
+        <StoreListSkeleton />
       </main>
     );
   }
@@ -125,9 +125,13 @@ export default function ChooseStorePage() {
   if (isUserError) {
     return (
       <main className="flex min-h-screen items-center justify-center p-4">
-        <div className="text-center text-red-600 dark:text-red-400">
-          <AlertCircle className="mx-auto mb-2 h-10 w-10" />
-          {t('couldNotLoadSession')}
+        <div
+          className="text-destructive text-center"
+          role="alert"
+          aria-live="assertive"
+        >
+          <AlertCircle className="mx-auto mb-2 h-10 w-10" aria-hidden="true" />
+          <p className="text-lg font-medium">{t('couldNotLoadSession')}</p>
           <div className="mt-4">
             <Button variant="outline" asChild>
               <Link href="/">{t('goToLogin')}</Link>
@@ -139,19 +143,20 @@ export default function ChooseStorePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 dark:from-gray-900 dark:to-gray-800">
+    <main className="from-muted/30 to-muted/50 min-h-screen bg-gradient-to-b p-4">
       <section
-        className="mx-auto mt-10 max-w-2xl rounded-xl bg-white p-6 shadow-md dark:bg-gray-800/50"
+        className="bg-card mx-auto mt-10 max-w-2xl rounded-xl border p-6 shadow-md"
+        role="region"
         aria-labelledby="choose-store-heading"
       >
         <header className="mb-6 text-center">
           <h1
             id="choose-store-heading"
-            className="text-2xl font-semibold text-gray-800 dark:text-gray-100"
+            className="text-foreground text-2xl font-semibold"
           >
             {pageTitle}
           </h1>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-muted-foreground mt-1 text-sm">
             {pageDescription}
           </p>
         </header>
@@ -160,11 +165,11 @@ export default function ChooseStorePage() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.15 }}
-            className="mb-6"
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="my-6"
           >
             <Button
-              variant="outline"
+              variant="default"
               size="lg"
               className="w-full transition-all duration-200 hover:shadow-md"
               asChild
@@ -184,9 +189,10 @@ export default function ChooseStorePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="py-10 text-center text-gray-500 dark:text-gray-400"
+              className="py-10 text-center"
             >
-              {t('noStoresFound')}
+              <Store className="text-muted-foreground/40 mx-auto mb-4 h-16 w-16" />
+              <p className="text-muted-foreground">{t('noStoresFound')}</p>
             </motion.div>
           ) : (
             <motion.div
@@ -198,13 +204,27 @@ export default function ChooseStorePage() {
               <StoreList
                 userStores={user.userStores}
                 onSelect={handleStoreSelect}
+                isLoading={chooseStoreMutation.isPending}
+                selectedStoreId={clickedStoreId}
               />
             </motion.div>
           )}
         </AnimatePresence>
 
-        <footer className="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
-          <p>{t('selectToProceed')}</p>
+        <footer className="mt-6 space-y-4">
+          {selectedStoreId && (
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full"
+              onClick={() => router.back()}
+            >
+              {t('cancel')}
+            </Button>
+          )}
+          <p className="text-muted-foreground text-center text-xs">
+            {t('selectToProceed')}
+          </p>
         </footer>
       </section>
     </main>

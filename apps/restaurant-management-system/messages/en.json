@@ -258,7 +258,8 @@
       "goToLogin": "Go to Login",
       "noStoresFound": "No stores found for your account.",
       "selectToProceed": "Select a store to proceed.",
-      "createNewStore": "Create New Store"
+      "createNewStore": "Create New Store",
+      "cancel": "Cancel"
     },
     "create": {
       "title": "Create Your First Store",

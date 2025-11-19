@@ -2,12 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import {
-  Bell,
-  ChevronDown,
-  User as UserIcon,
-  LogOut,
-} from 'lucide-react';
+import { Bell, ChevronDown, User as UserIcon, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
