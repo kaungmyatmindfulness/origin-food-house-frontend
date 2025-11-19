@@ -1,7 +1,8 @@
 'use client';
 
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Plus } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
@@ -53,15 +54,6 @@ export default function ChooseStorePage() {
         router.replace('/store/create');
         return;
       }
-
-      if (selectedStoreId && user?.selectedStoreRole) {
-        if (user.selectedStoreRole !== 'CHEF') {
-          router.replace('/hub/menu');
-        } else {
-          router.replace('/hub/kitchen');
-        }
-        return;
-      }
     }
   }, [
     user,
@@ -76,7 +68,7 @@ export default function ChooseStorePage() {
 
   const chooseStoreMutation = useMutation({
     mutationFn: (storeId: string) => loginWithStoreAuth0({ storeId }),
-    onSuccess: async (data, storeId) => {
+    onSuccess: async (_data, storeId) => {
       toast.success(t('storeSelectedSuccess'));
 
       setSelectedStore(storeId);
@@ -98,7 +90,7 @@ export default function ChooseStorePage() {
       const role = updatedUser?.selectedStoreRole;
 
       if (role === 'CHEF') {
-        router.replace(`/hub/kitchen`);
+        router.replace('/hub/kitchen');
       } else {
         router.replace('/hub/menu');
       }
@@ -137,8 +129,8 @@ export default function ChooseStorePage() {
           <AlertCircle className="mx-auto mb-2 h-10 w-10" />
           {t('couldNotLoadSession')}
           <div className="mt-4">
-            <Button onClick={() => router.push('/')} variant="outline">
-              {t('goToLogin')}
+            <Button variant="outline" asChild>
+              <Link href="/">{t('goToLogin')}</Link>
             </Button>
           </div>
         </div>
@@ -163,6 +155,27 @@ export default function ChooseStorePage() {
             {pageDescription}
           </p>
         </header>
+
+        {user?.userStores && user.userStores.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.15 }}
+            className="mb-6"
+          >
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full transition-all duration-200 hover:shadow-md"
+              asChild
+            >
+              <Link href="/store/create">
+                <Plus className="mr-2 h-5 w-5" aria-hidden="true" />
+                {t('createNewStore')}
+              </Link>
+            </Button>
+          </motion.div>
+        )}
 
         <AnimatePresence mode="wait">
           {!user?.userStores || user.userStores.length === 0 ? (

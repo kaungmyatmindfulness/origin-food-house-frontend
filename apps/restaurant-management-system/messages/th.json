@@ -256,7 +256,8 @@
       "couldNotLoadSession": "ไม่สามารถโหลดเซสชันผู้ใช้ได้",
       "goToLogin": "ไปยังหน้าเข้าสู่ระบบ",
       "noStoresFound": "ไม่พบร้านสำหรับบัญชีของคุณ",
-      "selectToProceed": "เลือกร้านเพื่อดำเนินการต่อ"
+      "selectToProceed": "เลือกร้านเพื่อดำเนินการต่อ",
+      "createNewStore": "สร้างร้านใหม่"
     },
     "create": {
       "title": "สร้างร้านแรกของคุณ",

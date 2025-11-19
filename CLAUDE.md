@@ -282,6 +282,216 @@ function MenuPage() {
 }
 ```
 
+### Navigation: Link vs Button
+
+**CRITICAL RULE: Use `<Link>` for navigation, `<Button>` for actions.**
+
+Navigation elements should use semantic HTML (`<a>` tags) for accessibility, SEO, and proper browser behavior (right-click to open in new tab, keyboard navigation, etc.).
+
+#### Link Button Pattern (Recommended)
+
+**Use Button with `asChild` prop + Link for navigation that looks like a button:**
+
+```typescript
+import Link from 'next/link';
+import { Button } from '@repo/ui/components/button';
+
+// ✅ CORRECT - Link button for navigation
+<Button variant="outline" size="lg" asChild>
+  <Link href="/store/create">
+    <Plus className="mr-2 h-5 w-5" />
+    Create New Store
+  </Link>
+</Button>
+
+// ❌ WRONG - Button with onClick for navigation
+<Button
+  variant="outline"
+  onClick={() => router.push('/store/create')}
+>
+  Create New Store
+</Button>
+```
+
+#### When to Use Link
+
+```typescript
+// ✅ Navigation to a page (no locale prefix)
+<Button asChild>
+  <Link href="/menu">View Menu</Link>
+</Button>
+
+// ✅ Navigation to store page (no locale prefix)
+<Button asChild>
+  <Link href="/store/create">Create Store</Link>
+</Button>
+
+// ✅ External link (opens in new tab)
+<Button asChild>
+  <Link href="https://example.com" target="_blank" rel="noopener noreferrer">
+    Learn More
+  </Link>
+</Button>
+
+// ✅ Plain link (not styled as button)
+<Link href="/menu" className="text-primary hover:underline">
+  View Menu
+</Link>
+```
+
+#### When to Use Button with onClick
+
+```typescript
+// ✅ Form submission
+<Button onClick={handleSubmit} type="submit">
+  Save Changes
+</Button>
+
+// ✅ Opening a dialog/modal
+<Button onClick={() => setIsOpen(true)}>
+  Open Dialog
+</Button>
+
+// ✅ Triggering a mutation
+<Button onClick={() => deleteItem(id)}>
+  Delete
+</Button>
+
+// ✅ Complex logic before navigation
+<Button onClick={async () => {
+  await saveData();
+  await refreshSession();
+  router.push('/dashboard');
+}}>
+  Save and Continue
+</Button>
+```
+
+#### Accessibility Considerations
+
+**Why Link is better for navigation:**
+
+1. **Keyboard Navigation**: Links are focusable with Tab key
+2. **Screen Readers**: Announces as "link" vs "button" (semantic meaning)
+3. **Browser Features**: Right-click → "Open in new tab" works
+4. **SEO**: Search engines can crawl links, not button clicks
+5. **Progressive Enhancement**: Works without JavaScript
+
+```typescript
+// ✅ CORRECT - Accessible navigation
+<Button asChild>
+  <Link href="/menu">View Menu</Link>
+</Button>
+
+// Screen reader announces: "View Menu, link"
+// User can right-click to open in new tab
+// Works even if JavaScript fails
+
+// ❌ WRONG - Poor accessibility
+<Button onClick={() => router.push('/menu')}>
+  View Menu
+</Button>
+
+// Screen reader announces: "View Menu, button"
+// No right-click menu option
+// Broken if JavaScript fails
+```
+
+#### Common Patterns
+
+```typescript
+// ✅ Card with link
+<Card>
+  <CardHeader>
+    <CardTitle>Store Details</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <p>Information about the store...</p>
+  </CardContent>
+  <CardFooter>
+    <Button asChild>
+      <Link href={`/store/${id}`}>View Store</Link>
+    </Button>
+  </CardFooter>
+</Card>
+
+// ✅ Navigation with confirmation
+const handleNavigateWithConfirmation = () => {
+  if (confirm('Unsaved changes. Continue?')) {
+    router.push('/other-page');
+  }
+};
+
+<Button onClick={handleNavigateWithConfirmation}>
+  Leave Page
+</Button>
+
+// ✅ Conditional navigation (use Link when possible)
+{canEdit ? (
+  <Button asChild>
+    <Link href="/edit">Edit</Link>
+  </Button>
+) : (
+  <Button disabled>Edit (No Permission)</Button>
+)}
+```
+
+#### Router Methods vs Link
+
+**Prefer `<Link>` over `router.push()` for most navigation:**
+
+```typescript
+import { useRouter } from 'next/navigation';
+
+const router = useRouter();
+
+// ✅ GOOD - Link for simple navigation
+<Button asChild>
+  <Link href="/menu">Menu</Link>
+</Button>
+
+// ✅ GOOD - router.push() for programmatic navigation
+useEffect(() => {
+  if (isAuthenticated) {
+    router.push('/dashboard');
+  }
+}, [isAuthenticated]);
+
+// ✅ GOOD - router.replace() for redirects (no history entry)
+useEffect(() => {
+  if (user?.userStores?.length === 0) {
+    router.replace('/store/create');
+  }
+}, [user]);
+
+// ✅ GOOD - router.back() for navigation history
+<Button onClick={() => router.back()}>
+  Go Back
+</Button>
+```
+
+#### Summary: Decision Tree
+
+```
+Is this user-initiated navigation?
+├─ YES
+│  ├─ Simple navigation (no logic)?
+│  │  └─ ✅ Use <Link> (with Button asChild if styled)
+│  │
+│  └─ Complex logic before navigation?
+│     └─ ✅ Use Button onClick with router.push()
+│
+└─ NO (programmatic navigation)
+   ├─ Redirect (no history)?
+   │  └─ ✅ Use router.replace()
+   │
+   ├─ Navigation after action?
+   │  └─ ✅ Use router.push()
+   │
+   └─ Go back in history?
+      └─ ✅ Use router.back()
+```
+
 ### React Props Interface Conventions
 
 **ALWAYS define props interfaces explicitly. NEVER use inline type annotations.**
@@ -323,31 +533,51 @@ export function CategoryCard({
 **Next.js 15+ App Router pages receive `params` and `searchParams` as Promises:**
 
 ```typescript
-// ✅ CORRECT - Next.js 15 page props
+// ✅ CORRECT - Page with dynamic params (e.g., [slug])
 interface MenuPageProps {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<{ slug: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default function MenuPage({ params, searchParams }: MenuPageProps) {
   // For client components, unwrap with use() hook
-  const { locale, slug } = use(params);
+  const { slug } = use(params);
   const query = use(searchParams);
 
   // ...
 }
 
 // ✅ CORRECT - Server component can await directly
-export default async function MenuPage({ params }: MenuPageProps) {
-  const { locale } = await params;
+export default async function ReportPage({ params }: PageProps) {
+  const { reportId } = await params;
   // ...
+}
+
+// ✅ CORRECT - RMS pages usually don't need params
+// (locale is in file structure but handled by middleware)
+export default function ChooseStorePage() {
+  const t = useTranslations('store.choose');
+  const router = useRouter();
+
+  // No params needed - middleware handles locale routing
+  // Navigate without locale prefix
+  router.replace('/store/create');  // ✅ Correct
+
+  return <div>{t('title')}</div>;
 }
 
 // ❌ WRONG - Old Next.js 14 pattern (synchronous params)
 interface MenuPageProps {
-  params: { locale: string }; // Missing Promise wrapper
+  params: { slug: string };  // Missing Promise wrapper
 }
 ```
+
+**RMS-Specific Note:**
+
+- Locale is in file structure (`app/[locale]/`) but NOT in URLs
+- Most pages don't need `params.locale` - use `useLocale()` hook instead
+- Middleware handles locale routing via cookie
+- Only extract params if you have other dynamic segments (e.g., `[id]`, `[slug]`)
 
 #### Props Naming Conventions
 
@@ -1048,24 +1278,243 @@ const mutation = useMutation({
 
 All user-facing strings MUST be translated in all 4 languages: `en`, `zh`, `my`, `th`.
 
+#### Locale Routing Strategy
+
+**CRITICAL: RMS uses COOKIE-BASED locale routing, NOT URL-based.**
+
+**Configuration** (`src/middleware.ts`):
+
 ```typescript
-import { useTranslations } from 'next-intl';
+export default createMiddleware({
+  locales: ['en', 'zh', 'my', 'th'],
+  defaultLocale: 'en',
+  localePrefix: 'never', // ← No locale in URLs!
+  localeDetection: true,
+});
+```
+
+**What This Means:**
+
+- URLs: `/hub/menu`, `/store/create` (NO `/en/hub/menu`)
+- Locale stored in `NEXT_LOCALE` cookie (1-year expiry)
+- Middleware detects locale from cookie → applies transparently
+- Users see clean URLs without language prefix
+
+#### Navigation Patterns
+
+**✅ CORRECT - No Locale in Routes:**
+
+```typescript
+// Links (middleware handles locale automatically)
+<Link href="/hub/menu">Menu</Link>
+<Link href="/store/create">Create Store</Link>
+<Link href="/">Home</Link>
+
+// Router navigation (no locale prefix needed)
+router.push('/hub/menu');
+router.replace('/store/create');
+router.back();
+
+// Button with Link
+<Button asChild>
+  <Link href="/store/create">Create Store</Link>
+</Button>
+```
+
+**❌ WRONG - Don't Include Locale:**
+
+```typescript
+// ❌ Don't do this in RMS!
+<Link href={`/${locale}/hub/menu`}>Menu</Link>
+router.push(`/${locale}/store/create`);
+
+// This breaks the cookie-based routing strategy
+```
+
+**Why No Locale in Routes:**
+
+- Middleware automatically rewrites routes based on cookie
+- Cleaner URLs for users
+- Locale persists across navigation via cookie
+- No need to pass locale through components
+
+#### Using Translations
+
+```typescript
+import { useTranslations, useLocale } from 'next-intl';
 
 function MyComponent() {
+  // Get translation function (scoped to namespace)
   const t = useTranslations('common');
+
+  // Get current locale if needed (usually not required)
+  const locale = useLocale();  // Returns: 'en' | 'zh' | 'my' | 'th'
 
   return (
     <div>
       <h1>{t('welcome')}</h1>
       <Button>{t('save')}</Button>
+      <p>Current language: {locale}</p>
     </div>
   );
 }
 ```
 
-**Translation files:** `messages/[locale]/*.json`
+**When to Use `useLocale()`:**
 
-When adding new features, add translation keys to all language files. Check existing patterns in `messages/en/` first.
+- Displaying current language in UI (LanguageSwitcher)
+- Formatting dates/numbers based on locale
+- Conditional logic based on language
+- **NOT for navigation** (middleware handles it)
+
+#### Translation Files Structure
+
+**Location:** `messages/[locale].json` (single file per language, not nested directories)
+
+```json
+{
+  "common": { "save": "Save", "cancel": "Cancel" },
+  "menu": { "title": "Menu Management" },
+  "store": {
+    "choose": {
+      "title": "Choose Your Store",
+      "createNewStore": "Create New Store"
+    }
+  }
+}
+```
+
+**Translation Namespace Pattern:**
+
+```typescript
+// Scoped to namespace
+const t = useTranslations('store.choose');
+t('title'); // Looks for: store.choose.title
+t('createNewStore'); // Looks for: store.choose.createNewStore
+
+// Root namespace
+const t = useTranslations('common');
+t('save'); // Looks for: common.save
+```
+
+#### Adding New Translations
+
+**Always update all 4 language files:**
+
+1. `messages/en.json` - English
+2. `messages/zh.json` - Simplified Chinese (中文)
+3. `messages/my.json` - Myanmar (မြန်မာ)
+4. `messages/th.json` - Thai (ไทย)
+
+**Example:**
+
+```json
+// en.json
+{
+  "store": {
+    "choose": {
+      "createNewStore": "Create New Store"
+    }
+  }
+}
+
+// zh.json
+{
+  "store": {
+    "choose": {
+      "createNewStore": "创建新店铺"
+    }
+  }
+}
+
+// my.json
+{
+  "store": {
+    "choose": {
+      "createNewStore": "စတိုးအသစ်ဖန်တီးရန်"
+    }
+  }
+}
+
+// th.json
+{
+  "store": {
+    "choose": {
+      "createNewStore": "สร้างร้านใหม่"
+    }
+  }
+}
+```
+
+#### Locale Switching
+
+**How Users Change Language:**
+
+```typescript
+// LanguageSwitcher component sets cookie + refreshes
+const handleLocaleChange = (newLocale: Locale) => {
+  startTransition(() => {
+    // Set cookie (1-year expiry)
+    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
+
+    // Refresh to apply new locale
+    router.refresh();
+  });
+};
+```
+
+**Flow:**
+
+1. User clicks language option (e.g., "中文")
+2. Cookie set: `NEXT_LOCALE=zh`
+3. Page refreshes (`router.refresh()`)
+4. Middleware reads cookie → applies locale
+5. Translations reload from `messages/zh.json`
+6. UI updates in Chinese
+
+#### Page Props (When You DO Need Locale)
+
+**Rare Case - Only for Special Logic:**
+
+If you need access to the current locale in a page component (e.g., for API calls with locale-specific data):
+
+```typescript
+// You can access params.locale (but don't use it for navigation!)
+interface PageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export default function MyPage({ params }: PageProps) {
+  const { locale } = use(params);
+
+  // ✅ OK - Use for API calls with locale param
+  const { data } = useQuery({
+    queryKey: ['data', locale],
+    queryFn: () => fetchLocalizedData(locale),
+  });
+
+  // ❌ WRONG - Don't use for navigation
+  router.push(`/${locale}/other-page`);  // Breaks convention!
+
+  // ✅ CORRECT - Navigate without locale
+  router.push('/other-page');  // Middleware handles locale
+
+  return <div>{data}</div>;
+}
+```
+
+**Important:** Most components won't need `params.locale` at all. Use `useLocale()` hook if needed.
+
+#### Summary Checklist
+
+- [ ] All user-facing strings added to 4 translation files
+- [ ] Translation keys use dot notation (e.g., `store.choose.title`)
+- [ ] Components use `useTranslations('namespace')` hook
+- [ ] **Navigation uses routes WITHOUT locale prefix** (e.g., `/hub/menu`)
+- [ ] Links use plain hrefs (e.g., `<Link href="/store/create">`)
+- [ ] Router methods use plain paths (e.g., `router.push('/hub/menu')`)
+- [ ] `useLocale()` hook used ONLY when locale value needed for logic
+- [ ] LanguageSwitcher sets cookie + calls `router.refresh()`
 
 ### 7. Performance Optimization
 

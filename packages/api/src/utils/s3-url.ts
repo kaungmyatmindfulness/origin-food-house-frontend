@@ -78,9 +78,6 @@ export function getImageUrl(
     return null;
   }
 
-  const result = `https://${AWS_S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com/${basePath}-${size}.webp`;
-  console.log('🚀 ~ getImageUrl ~ result:', result);
-
   return `https://${AWS_S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com/${basePath}-${size}.webp`;
 }
 
