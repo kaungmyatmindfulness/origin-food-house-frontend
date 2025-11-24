@@ -5,8 +5,8 @@ import {
   formDataBodySerializer,
   type Options as Options2,
   type TDataShape,
-} from '@hey-api/client-fetch';
-import { client } from './client.gen.js';
+} from './client';
+import { client } from './client.gen';
 import type {
   ActiveTableSessionControllerCloseData,
   ActiveTableSessionControllerCloseErrors,
@@ -22,6 +22,9 @@ import type {
   ActiveTableSessionControllerFindOneData,
   ActiveTableSessionControllerFindOneErrors,
   ActiveTableSessionControllerFindOneResponses,
+  ActiveTableSessionControllerGetSessionOrdersData,
+  ActiveTableSessionControllerGetSessionOrdersErrors,
+  ActiveTableSessionControllerGetSessionOrdersResponses,
   ActiveTableSessionControllerJoinByTableData,
   ActiveTableSessionControllerJoinByTableErrors,
   ActiveTableSessionControllerJoinByTableResponses,
@@ -135,6 +138,8 @@ import type {
   CartControllerUpdateItemResponses,
   CategoryControllerCreateData,
   CategoryControllerCreateResponses,
+  CategoryControllerDeleteCategoryTranslationData,
+  CategoryControllerDeleteCategoryTranslationResponses,
   CategoryControllerFindAllData,
   CategoryControllerFindAllResponses,
   CategoryControllerFindOneData,
@@ -143,8 +148,14 @@ import type {
   CategoryControllerRemoveResponses,
   CategoryControllerSortCategoriesData,
   CategoryControllerSortCategoriesResponses,
+  CategoryControllerUpdateCategoryTranslationsData,
+  CategoryControllerUpdateCategoryTranslationsResponses,
   CategoryControllerUpdateData,
   CategoryControllerUpdateResponses,
+  CustomizationControllerUpdateGroupTranslationsData,
+  CustomizationControllerUpdateGroupTranslationsResponses,
+  CustomizationControllerUpdateOptionTranslationsData,
+  CustomizationControllerUpdateOptionTranslationsResponses,
   HealthControllerHealthCheckData,
   HealthControllerHealthCheckResponses,
   KitchenControllerGetOrderDetailsData,
@@ -157,24 +168,26 @@ import type {
   MenuControllerCreateMenuItemResponses,
   MenuControllerDeleteMenuItemData,
   MenuControllerDeleteMenuItemResponses,
+  MenuControllerDeleteMenuItemTranslationData,
+  MenuControllerDeleteMenuItemTranslationResponses,
   MenuControllerGetMenuItemByIdData,
   MenuControllerGetMenuItemByIdResponses,
   MenuControllerGetStoreMenuItemsData,
   MenuControllerGetStoreMenuItemsResponses,
+  MenuControllerPatchMenuItemData,
+  MenuControllerPatchMenuItemResponses,
   MenuControllerUpdateMenuItemData,
   MenuControllerUpdateMenuItemResponses,
+  MenuControllerUpdateMenuItemTranslationsData,
+  MenuControllerUpdateMenuItemTranslationsResponses,
   OrderControllerApplyDiscountData,
   OrderControllerApplyDiscountErrors,
   OrderControllerApplyDiscountResponses,
   OrderControllerCheckoutData,
   OrderControllerCheckoutErrors,
   OrderControllerCheckoutResponses,
-  OrderControllerFindBySessionData,
-  OrderControllerFindBySessionResponses,
   OrderControllerFindByStoreData,
   OrderControllerFindByStoreResponses,
-  OrderControllerFindForKdsData,
-  OrderControllerFindForKdsResponses,
   OrderControllerFindOneData,
   OrderControllerFindOneErrors,
   OrderControllerFindOneResponses,
@@ -308,7 +321,7 @@ import type {
   UserControllerSuspendUserData,
   UserControllerSuspendUserErrors,
   UserControllerSuspendUserResponses,
-} from './types.gen.js';
+} from './types.gen';
 
 export type Options<
   TData extends TDataShape = TDataShape,
@@ -498,6 +511,28 @@ export const activeTableSessionControllerClose = <
       },
     ],
     url: '/active-table-sessions/{sessionId}/close',
+    ...options,
+  });
+};
+
+/**
+ * Get all orders for a session (SOS - Self-Order System)
+ * Retrieves all orders associated with an active table session. Public endpoint for customers.
+ */
+export const activeTableSessionControllerGetSessionOrders = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    ActiveTableSessionControllerGetSessionOrdersData,
+    ThrowOnError
+  >
+) => {
+  return (options.client ?? client).get<
+    ActiveTableSessionControllerGetSessionOrdersResponses,
+    ActiveTableSessionControllerGetSessionOrdersErrors,
+    ThrowOnError
+  >({
+    url: '/active-table-sessions/{sessionId}/orders',
     ...options,
   });
 };
@@ -782,6 +817,9 @@ export const userControllerReactivateUser = <
   });
 };
 
+/**
+ * Get tier information for a store (Authenticated)
+ */
 export const tierControllerGetStoreTier = <
   ThrowOnError extends boolean = false,
 >(
@@ -798,11 +836,14 @@ export const tierControllerGetStoreTier = <
         type: 'http',
       },
     ],
-    url: '/tier/{storeId}',
+    url: '/stores/{storeId}/tiers',
     ...options,
   });
 };
 
+/**
+ * Get usage statistics for a store (Authenticated)
+ */
 export const tierControllerGetStoreUsage = <
   ThrowOnError extends boolean = false,
 >(
@@ -819,11 +860,14 @@ export const tierControllerGetStoreUsage = <
         type: 'http',
       },
     ],
-    url: '/tier/{storeId}/usage',
+    url: '/stores/{storeId}/tiers/usage',
     ...options,
   });
 };
 
+/**
+ * Get audit logs for a store (OWNER only)
+ */
 export const auditLogControllerGetStoreAuditLogs = <
   ThrowOnError extends boolean = false,
 >(
@@ -840,11 +884,14 @@ export const auditLogControllerGetStoreAuditLogs = <
         type: 'http',
       },
     ],
-    url: '/audit-logs/{storeId}',
+    url: '/stores/{storeId}/audit-logs',
     ...options,
   });
 };
 
+/**
+ * Export audit logs to CSV (OWNER only)
+ */
 export const auditLogControllerExportAuditLogs = <
   ThrowOnError extends boolean = false,
 >(
@@ -861,8 +908,229 @@ export const auditLogControllerExportAuditLogs = <
         type: 'http',
       },
     ],
-    url: '/audit-logs/{storeId}/export',
+    url: '/stores/{storeId}/audit-logs/export',
     ...options,
+  });
+};
+
+/**
+ * Checkout cart and create order
+ * Converts cart to order and clears the cart. SECURITY FIX: Requires session token (customers) or JWT (staff)
+ */
+export const orderControllerCheckout = <ThrowOnError extends boolean = false>(
+  options: Options<OrderControllerCheckoutData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    OrderControllerCheckoutResponses,
+    OrderControllerCheckoutErrors,
+    ThrowOnError
+  >({
+    url: '/orders/checkout',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Get order by ID
+ */
+export const orderControllerFindOne = <ThrowOnError extends boolean = false>(
+  options: Options<OrderControllerFindOneData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    OrderControllerFindOneResponses,
+    OrderControllerFindOneErrors,
+    ThrowOnError
+  >({
+    url: '/orders/{orderId}',
+    ...options,
+  });
+};
+
+/**
+ * Get all orders for a store with pagination (POS)
+ * Returns paginated list of orders for a specific store
+ */
+export const orderControllerFindByStore = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<OrderControllerFindByStoreData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    OrderControllerFindByStoreResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/orders',
+    ...options,
+  });
+};
+
+/**
+ * Update order status (POS)
+ * Update order status through kitchen workflow
+ */
+export const orderControllerUpdateStatus = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<OrderControllerUpdateStatusData, ThrowOnError>
+) => {
+  return (options.client ?? client).patch<
+    OrderControllerUpdateStatusResponses,
+    OrderControllerUpdateStatusErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/orders/{orderId}/status',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Apply discount to order (POS)
+ * Apply percentage or fixed amount discount to an order. Implements 3-tier authorization: Small (<10%) = CASHIER, Medium (10-50%) = ADMIN, Large (>50%) = OWNER
+ */
+export const orderControllerApplyDiscount = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<OrderControllerApplyDiscountData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    OrderControllerApplyDiscountResponses,
+    OrderControllerApplyDiscountErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/orders/{orderId}/apply-discount',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Remove discount from order (POS)
+ * Remove previously applied discount. Requires ADMIN or OWNER role.
+ */
+export const orderControllerRemoveDiscount = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<OrderControllerRemoveDiscountData, ThrowOnError>
+) => {
+  return (options.client ?? client).delete<
+    OrderControllerRemoveDiscountResponses,
+    OrderControllerRemoveDiscountErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/orders/{orderId}/discount',
+    ...options,
+  });
+};
+
+/**
+ * Get orders for kitchen display (CHEF, SERVER, ADMIN, OWNER)
+ */
+export const kitchenControllerGetOrders = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<KitchenControllerGetOrdersData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    KitchenControllerGetOrdersResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{storeId}/kitchen/orders',
+    ...options,
+  });
+};
+
+/**
+ * Get order details for kitchen display (CHEF, SERVER, ADMIN, OWNER)
+ */
+export const kitchenControllerGetOrderDetails = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<KitchenControllerGetOrderDetailsData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    KitchenControllerGetOrderDetailsResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{storeId}/kitchen/orders/{orderId}',
+    ...options,
+  });
+};
+
+/**
+ * Update order kitchen status (CHEF, SERVER, ADMIN, OWNER)
+ */
+export const kitchenControllerUpdateOrderStatus = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<KitchenControllerUpdateOrderStatusData, ThrowOnError>
+) => {
+  return (options.client ?? client).patch<
+    KitchenControllerUpdateOrderStatusResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{storeId}/kitchen/orders/{orderId}/status',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 };
 
@@ -2026,17 +2294,17 @@ export const cartControllerUpdateItem = <ThrowOnError extends boolean = false>(
 
 /**
  * Get all active categories (with items) for a specific store (Public)
- * Retrieves categories for a store using EITHER storeId OR storeSlug query parameter. Query parameters are defined in the GetCategoriesQueryDto schema.
+ * Retrieves categories for a store. The storeId parameter can be either a UUID or a store slug for public access.
  */
 export const categoryControllerFindAll = <ThrowOnError extends boolean = false>(
-  options?: Options<CategoryControllerFindAllData, ThrowOnError>
+  options: Options<CategoryControllerFindAllData, ThrowOnError>
 ) => {
-  return (options?.client ?? client).get<
+  return (options.client ?? client).get<
     CategoryControllerFindAllResponses,
     unknown,
     ThrowOnError
   >({
-    url: '/categories',
+    url: '/stores/{storeId}/categories',
     ...options,
   });
 };
@@ -2058,7 +2326,7 @@ export const categoryControllerCreate = <ThrowOnError extends boolean = false>(
         type: 'http',
       },
     ],
-    url: '/categories',
+    url: '/stores/{storeId}/categories',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2084,7 +2352,7 @@ export const categoryControllerRemove = <ThrowOnError extends boolean = false>(
         type: 'http',
       },
     ],
-    url: '/categories/{id}',
+    url: '/stores/{storeId}/categories/{id}',
     ...options,
   });
 };
@@ -2100,7 +2368,7 @@ export const categoryControllerFindOne = <ThrowOnError extends boolean = false>(
     unknown,
     ThrowOnError
   >({
-    url: '/categories/{id}',
+    url: '/stores/{storeId}/categories/{id}',
     ...options,
   });
 };
@@ -2122,7 +2390,7 @@ export const categoryControllerUpdate = <ThrowOnError extends boolean = false>(
         type: 'http',
       },
     ],
-    url: '/categories/{id}',
+    url: '/stores/{storeId}/categories/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2150,7 +2418,7 @@ export const categoryControllerSortCategories = <
         type: 'http',
       },
     ],
-    url: '/categories/sort',
+    url: '/stores/{storeId}/categories/sort',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2160,60 +2428,62 @@ export const categoryControllerSortCategories = <
 };
 
 /**
- * Get orders for kitchen display
+ * Update category translations (OWNER or ADMIN)
+ * Add or update translations for a category. Supports multiple locales: en, zh, my, th
  */
-export const kitchenControllerGetOrders = <
+export const categoryControllerUpdateCategoryTranslations = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<KitchenControllerGetOrdersData, ThrowOnError>
-) => {
-  return (options.client ?? client).get<
-    KitchenControllerGetOrdersResponses,
-    unknown,
+  options: Options<
+    CategoryControllerUpdateCategoryTranslationsData,
     ThrowOnError
-  >({
-    url: '/kitchen/orders',
-    ...options,
-  });
-};
-
-/**
- * Get order details for kitchen display
- */
-export const kitchenControllerGetOrderDetails = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<KitchenControllerGetOrderDetailsData, ThrowOnError>
-) => {
-  return (options.client ?? client).get<
-    KitchenControllerGetOrderDetailsResponses,
-    unknown,
-    ThrowOnError
-  >({
-    url: '/kitchen/orders/{orderId}',
-    ...options,
-  });
-};
-
-/**
- * Update order kitchen status
- */
-export const kitchenControllerUpdateOrderStatus = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<KitchenControllerUpdateOrderStatusData, ThrowOnError>
+  >
 ) => {
   return (options.client ?? client).patch<
-    KitchenControllerUpdateOrderStatusResponses,
+    CategoryControllerUpdateCategoryTranslationsResponses,
     unknown,
     ThrowOnError
   >({
-    url: '/kitchen/orders/{orderId}/status',
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{storeId}/categories/{id}/translations',
     ...options,
     headers: {
       'Content-Type': 'application/json',
       ...options.headers,
     },
+  });
+};
+
+/**
+ * Delete a specific translation for a category (OWNER or ADMIN)
+ * Remove a translation in a specific locale (en, zh, my, th) from a category
+ */
+export const categoryControllerDeleteCategoryTranslation = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    CategoryControllerDeleteCategoryTranslationData,
+    ThrowOnError
+  >
+) => {
+  return (options.client ?? client).delete<
+    CategoryControllerDeleteCategoryTranslationResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{storeId}/categories/{id}/translations/{locale}',
+    ...options,
   });
 };
 
@@ -2230,7 +2500,7 @@ export const menuControllerGetStoreMenuItems = <
     unknown,
     ThrowOnError
   >({
-    url: '/menu-items',
+    url: '/stores/{storeId}/menu-items',
     ...options,
   });
 };
@@ -2254,7 +2524,7 @@ export const menuControllerCreateMenuItem = <
         type: 'http',
       },
     ],
-    url: '/menu-items',
+    url: '/stores/{storeId}/menu-items',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2282,7 +2552,7 @@ export const menuControllerDeleteMenuItem = <
         type: 'http',
       },
     ],
-    url: '/menu-items/{id}',
+    url: '/stores/{storeId}/menu-items/{id}',
     ...options,
   });
 };
@@ -2300,8 +2570,36 @@ export const menuControllerGetMenuItemById = <
     unknown,
     ThrowOnError
   >({
-    url: '/menu-items/{id}',
+    url: '/stores/{storeId}/menu-items/{id}',
     ...options,
+  });
+};
+
+/**
+ * Partially update a menu item (OWNER, ADMIN, or CHEF)
+ */
+export const menuControllerPatchMenuItem = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<MenuControllerPatchMenuItemData, ThrowOnError>
+) => {
+  return (options.client ?? client).patch<
+    MenuControllerPatchMenuItemResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{storeId}/menu-items/{id}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 };
 
@@ -2324,7 +2622,7 @@ export const menuControllerUpdateMenuItem = <
         type: 'http',
       },
     ],
-    url: '/menu-items/{id}',
+    url: '/stores/{storeId}/menu-items/{id}',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2334,69 +2632,16 @@ export const menuControllerUpdateMenuItem = <
 };
 
 /**
- * Checkout cart and create order
- * Converts cart to order and clears the cart. SECURITY FIX: Requires session token (customers) or JWT (staff)
+ * Update menu item translations (OWNER or ADMIN)
+ * Add or update translations for a menu item. Supports multiple locales: en, zh, my, th
  */
-export const orderControllerCheckout = <ThrowOnError extends boolean = false>(
-  options: Options<OrderControllerCheckoutData, ThrowOnError>
-) => {
-  return (options.client ?? client).post<
-    OrderControllerCheckoutResponses,
-    OrderControllerCheckoutErrors,
-    ThrowOnError
-  >({
-    url: '/orders/checkout',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-};
-
-/**
- * Get order by ID
- */
-export const orderControllerFindOne = <ThrowOnError extends boolean = false>(
-  options: Options<OrderControllerFindOneData, ThrowOnError>
-) => {
-  return (options.client ?? client).get<
-    OrderControllerFindOneResponses,
-    OrderControllerFindOneErrors,
-    ThrowOnError
-  >({
-    url: '/orders/{orderId}',
-    ...options,
-  });
-};
-
-/**
- * Get all orders for a session (SOS)
- */
-export const orderControllerFindBySession = <
+export const menuControllerUpdateMenuItemTranslations = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<OrderControllerFindBySessionData, ThrowOnError>
+  options: Options<MenuControllerUpdateMenuItemTranslationsData, ThrowOnError>
 ) => {
-  return (options.client ?? client).get<
-    OrderControllerFindBySessionResponses,
-    unknown,
-    ThrowOnError
-  >({
-    url: '/orders/session/{sessionId}',
-    ...options,
-  });
-};
-
-/**
- * Get orders for Kitchen Display System (KDS)
- * Returns active kitchen orders with optional status filtering. Optimized for real-time kitchen operations.
- */
-export const orderControllerFindForKds = <ThrowOnError extends boolean = false>(
-  options: Options<OrderControllerFindForKdsData, ThrowOnError>
-) => {
-  return (options.client ?? client).get<
-    OrderControllerFindForKdsResponses,
+  return (options.client ?? client).put<
+    MenuControllerUpdateMenuItemTranslationsResponses,
     unknown,
     ThrowOnError
   >({
@@ -2406,57 +2651,7 @@ export const orderControllerFindForKds = <ThrowOnError extends boolean = false>(
         type: 'http',
       },
     ],
-    url: '/orders/kds',
-    ...options,
-  });
-};
-
-/**
- * Get all orders for a store with pagination (POS)
- * Returns paginated list of orders for a specific store
- */
-export const orderControllerFindByStore = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<OrderControllerFindByStoreData, ThrowOnError>
-) => {
-  return (options.client ?? client).get<
-    OrderControllerFindByStoreResponses,
-    unknown,
-    ThrowOnError
-  >({
-    security: [
-      {
-        scheme: 'bearer',
-        type: 'http',
-      },
-    ],
-    url: '/orders',
-    ...options,
-  });
-};
-
-/**
- * Update order status (POS)
- * Update order status through kitchen workflow
- */
-export const orderControllerUpdateStatus = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<OrderControllerUpdateStatusData, ThrowOnError>
-) => {
-  return (options.client ?? client).patch<
-    OrderControllerUpdateStatusResponses,
-    OrderControllerUpdateStatusErrors,
-    ThrowOnError
-  >({
-    security: [
-      {
-        scheme: 'bearer',
-        type: 'http',
-      },
-    ],
-    url: '/orders/{orderId}/status',
+    url: '/stores/{storeId}/menu-items/{id}/translations',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2466,46 +2661,17 @@ export const orderControllerUpdateStatus = <
 };
 
 /**
- * Apply discount to order (POS)
- * Apply percentage or fixed amount discount to an order. Implements 3-tier authorization: Small (<10%) = CASHIER, Medium (10-50%) = ADMIN, Large (>50%) = OWNER
+ * Delete a specific translation for a menu item (OWNER or ADMIN)
+ * Remove a translation in a specific locale (en, zh, my, th) from a menu item
  */
-export const orderControllerApplyDiscount = <
+export const menuControllerDeleteMenuItemTranslation = <
   ThrowOnError extends boolean = false,
 >(
-  options: Options<OrderControllerApplyDiscountData, ThrowOnError>
-) => {
-  return (options.client ?? client).post<
-    OrderControllerApplyDiscountResponses,
-    OrderControllerApplyDiscountErrors,
-    ThrowOnError
-  >({
-    security: [
-      {
-        scheme: 'bearer',
-        type: 'http',
-      },
-    ],
-    url: '/orders/{orderId}/apply-discount',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-};
-
-/**
- * Remove discount from order (POS)
- * Remove previously applied discount. Requires ADMIN or OWNER role.
- */
-export const orderControllerRemoveDiscount = <
-  ThrowOnError extends boolean = false,
->(
-  options: Options<OrderControllerRemoveDiscountData, ThrowOnError>
+  options: Options<MenuControllerDeleteMenuItemTranslationData, ThrowOnError>
 ) => {
   return (options.client ?? client).delete<
-    OrderControllerRemoveDiscountResponses,
-    OrderControllerRemoveDiscountErrors,
+    MenuControllerDeleteMenuItemTranslationResponses,
+    unknown,
     ThrowOnError
   >({
     security: [
@@ -2514,8 +2680,72 @@ export const orderControllerRemoveDiscount = <
         type: 'http',
       },
     ],
-    url: '/orders/{orderId}/discount',
+    url: '/stores/{storeId}/menu-items/{id}/translations/{locale}',
     ...options,
+  });
+};
+
+/**
+ * Update customization group translations (OWNER or ADMIN)
+ * Add or update translations for a customization group (e.g., 'Size', 'Spice Level')
+ */
+export const customizationControllerUpdateGroupTranslations = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    CustomizationControllerUpdateGroupTranslationsData,
+    ThrowOnError
+  >
+) => {
+  return (options.client ?? client).put<
+    CustomizationControllerUpdateGroupTranslationsResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{storeId}/customizations/groups/{id}/translations',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Update customization option translations (OWNER or ADMIN)
+ * Add or update translations for a customization option (e.g., 'Large', 'Spicy')
+ */
+export const customizationControllerUpdateOptionTranslations = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<
+    CustomizationControllerUpdateOptionTranslationsData,
+    ThrowOnError
+  >
+) => {
+  return (options.client ?? client).put<
+    CustomizationControllerUpdateOptionTranslationsResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{storeId}/customizations/options/{id}/translations',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   });
 };
 
@@ -2708,7 +2938,7 @@ export const paymentControllerRecordSplitPayment = <
 };
 
 /**
- * Get sales summary report
+ * Get sales summary report (OWNER, ADMIN)
  */
 export const reportControllerGetSalesSummary = <
   ThrowOnError extends boolean = false,
@@ -2720,13 +2950,19 @@ export const reportControllerGetSalesSummary = <
     unknown,
     ThrowOnError
   >({
-    url: '/reports/sales-summary',
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{storeId}/reports/sales-summary',
     ...options,
   });
 };
 
 /**
- * Get payment method breakdown report
+ * Get payment method breakdown report (OWNER, ADMIN)
  */
 export const reportControllerGetPaymentBreakdown = <
   ThrowOnError extends boolean = false,
@@ -2738,13 +2974,19 @@ export const reportControllerGetPaymentBreakdown = <
     unknown,
     ThrowOnError
   >({
-    url: '/reports/payment-breakdown',
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{storeId}/reports/payment-breakdown',
     ...options,
   });
 };
 
 /**
- * Get popular menu items report
+ * Get popular menu items report (OWNER, ADMIN)
  */
 export const reportControllerGetPopularItems = <
   ThrowOnError extends boolean = false,
@@ -2756,13 +2998,19 @@ export const reportControllerGetPopularItems = <
     unknown,
     ThrowOnError
   >({
-    url: '/reports/popular-items',
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{storeId}/reports/popular-items',
     ...options,
   });
 };
 
 /**
- * Get order status distribution report
+ * Get order status distribution report (OWNER, ADMIN)
  */
 export const reportControllerGetOrderStatusReport = <
   ThrowOnError extends boolean = false,
@@ -2774,7 +3022,13 @@ export const reportControllerGetOrderStatusReport = <
     unknown,
     ThrowOnError
   >({
-    url: '/reports/order-status',
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/stores/{storeId}/reports/order-status',
     ...options,
   });
 };
@@ -2882,8 +3136,8 @@ export const storeControllerUpdateStoreSettings = <
 };
 
 /**
- * Invite a new user or assign/update role for an existing user by email (Role permissions apply)
- * Owner can assign any role. Admin can assign STAFF/CHEF roles. If user email doesnt exist, an invite might be implicitly handled by the service (or throw error).
+ * Add store member or update existing member role (OWNER, ADMIN)
+ * Invite a new user or update role for an existing user by email. Owner can assign any role. Admin can assign SERVER/CHEF/CASHIER roles.
  */
 export const storeControllerInviteOrAssignRoleByEmail = <
   ThrowOnError extends boolean = false,
@@ -2901,7 +3155,7 @@ export const storeControllerInviteOrAssignRoleByEmail = <
         type: 'http',
       },
     ],
-    url: '/stores/{id}/invite-assign-role',
+    url: '/stores/{id}/members',
     ...options,
     headers: {
       'Content-Type': 'application/json',

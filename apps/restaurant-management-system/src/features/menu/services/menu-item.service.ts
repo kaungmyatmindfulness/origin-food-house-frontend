@@ -1,4 +1,11 @@
-import { apiFetch } from '@/utils/apiFetch';
+import {
+  menuControllerGetStoreMenuItems,
+  menuControllerCreateMenuItem,
+  menuControllerGetMenuItemById,
+  menuControllerUpdateMenuItem,
+  menuControllerDeleteMenuItem,
+  menuControllerPatchMenuItem,
+} from '@repo/api/generated';
 
 import type {
   CreateMenuItemDto,
@@ -6,57 +13,64 @@ import type {
   UpdateMenuItemDto,
 } from '../types/menu-item.types';
 
-const MENU_ENDPOINT = '/menu-items';
-
 export async function getStoreMenuItems(
   storeId: string
 ): Promise<MenuItemDto[]> {
-  const res = await apiFetch<MenuItemDto[]>(
-    `${MENU_ENDPOINT}?storeId=${storeId}`
-  );
+  const response = await menuControllerGetStoreMenuItems({
+    path: {
+      storeId,
+    },
+  });
 
-  if (!res.data) {
+  if (!response.data?.data) {
     throw new Error('Failed to retrieve menu items: No data returned by API.');
   }
-  return res.data;
+
+  return response.data.data as MenuItemDto[];
 }
 
 export async function createMenuItem(
   storeId: string,
   data: CreateMenuItemDto
-): Promise<MenuItemDto> {
-  const res = await apiFetch<MenuItemDto>(
-    {
-      path: MENU_ENDPOINT,
-      query: {
-        storeId,
-      },
+): Promise<string> {
+  const response = await menuControllerCreateMenuItem({
+    path: {
+      storeId,
     },
-    {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }
-  );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    body: data as any, // Type mismatch between frontend and backend - backend expects some fields differently
+  });
 
-  if (!res.data) {
+  if (!response.data?.data) {
     console.error(
       'API Error: createMenuItem succeeded but returned null data.'
     );
     throw new Error('Failed to create menu item: No data returned by API.');
   }
-  return res.data;
+
+  // API returns the created item's ID
+  return response.data.data;
 }
 
-export async function getMenuItemById(id: string): Promise<MenuItemDto> {
-  const res = await apiFetch<MenuItemDto>(`${MENU_ENDPOINT}/${id}`);
+export async function getMenuItemById(
+  storeId: string,
+  id: string
+): Promise<MenuItemDto> {
+  const response = await menuControllerGetMenuItemById({
+    path: {
+      storeId,
+      id,
+    },
+  });
 
-  if (!res.data) {
+  if (!response.data?.data) {
     console.error(
       `API Error: getMenuItemById(${id}) succeeded but returned null data.`
     );
     throw new Error(`Menu item ${id} not found or no data returned by API.`);
   }
-  return res.data;
+
+  return response.data.data as MenuItemDto;
 }
 
 export async function updateMenuItem(
@@ -64,15 +78,16 @@ export async function updateMenuItem(
   storeId: string,
   data: UpdateMenuItemDto
 ): Promise<MenuItemDto> {
-  const res = await apiFetch<MenuItemDto>(
-    { path: `${MENU_ENDPOINT}/${id}`, query: { storeId } },
-    {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    }
-  );
+  const response = await menuControllerUpdateMenuItem({
+    path: {
+      storeId,
+      id,
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    body: data as any, // Type mismatch: local type has basePrice as string, API expects number
+  });
 
-  if (!res.data) {
+  if (!response.data?.data) {
     console.error(
       `API Error: updateMenuItem(${id}) succeeded but returned null data.`
     );
@@ -80,20 +95,22 @@ export async function updateMenuItem(
       `Failed to update menu item ${id}: No data returned by API.`
     );
   }
-  return res.data;
+
+  return response.data.data as MenuItemDto;
 }
 
 export async function deleteMenuItem(
   storeId: string,
   id: string
 ): Promise<unknown> {
-  const res = await apiFetch<unknown>(
-    { path: `${MENU_ENDPOINT}/${id}`, query: { storeId } },
-    {
-      method: 'DELETE',
-    }
-  );
-  return res.data;
+  const response = await menuControllerDeleteMenuItem({
+    path: {
+      storeId,
+      id,
+    },
+  });
+
+  return response.data?.data;
 }
 
 /**
@@ -104,18 +121,19 @@ export async function toggleMenuItemOutOfStock(
   storeId: string,
   isOutOfStock: boolean
 ): Promise<MenuItemDto> {
-  const res = await apiFetch<MenuItemDto>(
-    { path: `${MENU_ENDPOINT}/${id}`, query: { storeId } },
-    {
-      method: 'PATCH',
-      body: JSON.stringify({ isOutOfStock }),
-    }
-  );
+  const response = await menuControllerPatchMenuItem({
+    path: {
+      storeId,
+      id,
+    },
+    body: { isOutOfStock },
+  });
 
-  if (!res.data) {
+  if (!response.data?.data) {
     throw new Error(
       `Failed to toggle out-of-stock status for item ${id}: No data returned.`
     );
   }
-  return res.data;
+
+  return response.data.data as MenuItemDto;
 }

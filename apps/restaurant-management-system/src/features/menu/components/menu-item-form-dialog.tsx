@@ -195,12 +195,13 @@ export function MenuItemFormDialog({
   } = useQuery({
     queryKey: ['menuItem', editItemId],
     queryFn: async () => {
-      if (!editItemId) return null;
+      if (!editItemId || !selectedStoreId) return null;
 
-      return getMenuItemById(editItemId);
+      return getMenuItemById(selectedStoreId, editItemId);
     },
 
-    enabled: mode === 'edit' && typeof editItemId === 'string',
+    enabled:
+      mode === 'edit' && typeof editItemId === 'string' && !!selectedStoreId,
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000,
   });

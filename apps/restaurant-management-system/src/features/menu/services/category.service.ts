@@ -1,12 +1,16 @@
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
 import {
+  categoryControllerFindAll,
+  categoryControllerCreate,
+  categoryControllerUpdate,
+  categoryControllerRemove,
+  categoryControllerSortCategories,
+} from '@repo/api/generated';
+import type {
   Category,
   CreateCategoryDto,
   SortCategoriesPayloadDto,
   UpdateCategoryDto,
 } from '../types/category.types';
-
-const CATEGORY_ENDPOINT = '/categories';
 
 /**
  * Retrieves categories for a specific store.
@@ -16,17 +20,17 @@ const CATEGORY_ENDPOINT = '/categories';
  * @throws {NetworkError | ApiError} - Throws on fetch/API errors. Throws Error if data is null on success.
  */
 export async function getCategories(storeId: string): Promise<Category[]> {
-  const res = await apiFetch<Category[]>({
-    path: CATEGORY_ENDPOINT,
-    query: {
+  const response = await categoryControllerFindAll({
+    path: {
       storeId,
     },
   });
 
-  return unwrapData(
-    res,
-    'Failed to retrieve categories: No data returned by API.'
-  );
+  if (!response.data?.data) {
+    throw new Error('Failed to retrieve categories: No data returned by API.');
+  }
+
+  return response.data.data as Category[];
 }
 
 /**
@@ -41,18 +45,18 @@ export async function createCategory(
   storeId: string,
   data: CreateCategoryDto
 ): Promise<Category> {
-  const res = await apiFetch<Category>(
-    {
-      path: CATEGORY_ENDPOINT,
-      query: { storeId },
+  const response = await categoryControllerCreate({
+    path: {
+      storeId,
     },
-    {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }
-  );
+    body: data,
+  });
 
-  return unwrapData(res, 'Failed to create category: No data returned by API.');
+  if (!response.data?.data) {
+    throw new Error('Failed to create category: No data returned by API.');
+  }
+
+  return response.data.data as Category;
 }
 
 /**
@@ -69,18 +73,19 @@ export async function updateCategory(
   categoryId: string,
   data: UpdateCategoryDto
 ): Promise<Category> {
-  const res = await apiFetch<Category>(
-    {
-      path: `${CATEGORY_ENDPOINT}/${categoryId}`,
-      query: { storeId },
+  const response = await categoryControllerUpdate({
+    path: {
+      storeId,
+      id: categoryId,
     },
-    {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-    }
-  );
+    body: data,
+  });
 
-  return unwrapData(res, 'Failed to update category: No data returned by API.');
+  if (!response.data?.data) {
+    throw new Error('Failed to update category: No data returned by API.');
+  }
+
+  return response.data.data as Category;
 }
 
 /**
@@ -88,30 +93,31 @@ export async function updateCategory(
  *
  * @param storeId - The ID of the store.
  * @param categoryId - The ID of the category to delete.
- * @returns A promise resolving to the deleted Category object.
+ * @returns A promise resolving to the deleted category's ID.
  * @throws {NetworkError | ApiError} - Throws on fetch/API errors.
  */
 export async function deleteCategory(
   storeId: string,
   categoryId: string
-): Promise<Category> {
-  const res = await apiFetch<Category>(
-    {
-      path: `${CATEGORY_ENDPOINT}/${categoryId}`,
-      query: { storeId },
+): Promise<{ id: string }> {
+  const response = await categoryControllerRemove({
+    path: {
+      storeId,
+      id: categoryId,
     },
-    {
-      method: 'DELETE',
-    }
-  );
+  });
 
-  return unwrapData(res, 'Failed to delete category: No data returned by API.');
+  if (!response.data?.data) {
+    throw new Error('Failed to delete category: No data returned by API.');
+  }
+
+  return response.data.data;
 }
 
 /**
  * Updates the sort order of categories and their contained menu items for a store.
  * Requires OWNER/ADMIN permissions.
- * Maps to: PATCH /categories/sort?storeId={storeId}
+ * Maps to: PATCH /stores/{storeId}/categories/sort
  *
  * @param storeId - The ID of the store whose categories are being sorted.
  * @param payload - The sorting payload containing the ordered list of categories and items.
@@ -122,14 +128,10 @@ export async function sortCategories(
   storeId: string,
   payload: SortCategoriesPayloadDto
 ): Promise<void> {
-  await apiFetch<unknown>(
-    {
-      path: `${CATEGORY_ENDPOINT}/sort`,
-      query: { storeId },
+  await categoryControllerSortCategories({
+    path: {
+      storeId,
     },
-    {
-      method: 'PATCH',
-      body: JSON.stringify(payload),
-    }
-  );
+    body: payload,
+  });
 }

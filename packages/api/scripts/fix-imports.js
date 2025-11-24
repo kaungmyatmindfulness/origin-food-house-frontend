@@ -12,9 +12,6 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const generatedDir = join(__dirname, '..', 'src', 'generated');
 
-// Pattern to match relative imports without extensions
-const importPattern = /from\s+['"](\.[^'"]*?)['"];/g;
-
 /**
  * Recursively find all .ts files in a directory
  */
@@ -52,14 +49,9 @@ function fixImports() {
       newContent = newContent.replace(/from '\.\/client\.js'/g, "from '@hey-api/client-fetch'");
     }
 
-    // Fix all relative imports (both ./ and ../)
-    newContent = newContent.replace(importPattern, (match, importPath) => {
-      // Skip if already has .js or .ts extension
-      if (importPath.endsWith('.js') || importPath.endsWith('.ts')) {
-        return match;
-      }
-      return `from '${importPath}.js';`;
-    });
+    // Remove .js extensions from relative imports for Next.js/Turbopack compatibility
+    // Next.js bundler needs to resolve from .ts source files, not compiled .js
+    newContent = newContent.replace(/from '(\.[^'"]*?)\.js';/g, "from '$1';");
 
     // Only write if content actually changed
     if (newContent !== originalContent) {

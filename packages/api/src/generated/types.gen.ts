@@ -123,6 +123,80 @@ export type UpdateSessionDto = {
   status?: 'ACTIVE' | 'CLOSED';
 };
 
+export type OrderItemCustomizationResponseDto = {
+  id: string;
+  customizationOptionId: string;
+  finalPrice: string;
+};
+
+export type OrderItemResponseDto = {
+  id: string;
+  menuItemId: {
+    [key: string]: unknown;
+  };
+  price: string;
+  quantity: number;
+  finalPrice: string;
+  notes: {
+    [key: string]: unknown;
+  };
+  customizations: Array<OrderItemCustomizationResponseDto>;
+};
+
+export type OrderResponseDto = {
+  id: string;
+  orderNumber: string;
+  storeId: string;
+  sessionId: {
+    [key: string]: unknown;
+  };
+  tableName: string;
+  status:
+    | 'PENDING'
+    | 'PREPARING'
+    | 'READY'
+    | 'SERVED'
+    | 'COMPLETED'
+    | 'CANCELLED';
+  orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
+  paidAt: {
+    [key: string]: unknown;
+  };
+  subTotal: string;
+  vatRateSnapshot: string;
+  serviceChargeRateSnapshot: string;
+  vatAmount: string;
+  serviceChargeAmount: string;
+  grandTotal: string;
+  discountType: 'PERCENTAGE' | 'FIXED_AMOUNT';
+  discountValue: string;
+  discountAmount: string;
+  discountReason: {
+    [key: string]: unknown;
+  };
+  discountAppliedBy: {
+    [key: string]: unknown;
+  };
+  discountAppliedAt: {
+    [key: string]: unknown;
+  };
+  /**
+   * Total amount paid across all payments (supports bill splitting)
+   */
+  totalPaid: string;
+  /**
+   * Remaining balance to be paid
+   */
+  remainingBalance: string;
+  /**
+   * Whether the order is fully paid
+   */
+  isPaidInFull: boolean;
+  orderItems: Array<OrderItemResponseDto>;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type ChooseStoreDto = {
   /**
    * The ID (UUID) of the store the user wants to act under
@@ -233,6 +307,134 @@ export type ChangeRoleDto = {
 
 export type SuspendUserDto = {
   reason: string;
+};
+
+export type CheckoutCartDto = {
+  /**
+   * Order type
+   */
+  orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
+  /**
+   * Table name (from session)
+   */
+  tableName?: string;
+};
+
+export type PaginationMeta = {
+  /**
+   * Total number of items
+   */
+  total: number;
+  /**
+   * Current page number
+   */
+  page: number;
+  /**
+   * Number of items per page
+   */
+  limit: number;
+  /**
+   * Total number of pages
+   */
+  totalPages: number;
+  /**
+   * Whether there is a next page
+   */
+  hasNext: boolean;
+  /**
+   * Whether there is a previous page
+   */
+  hasPrev: boolean;
+};
+
+export type PaginatedResponseDto = {
+  /**
+   * Array of items
+   */
+  items: Array<string>;
+  /**
+   * Pagination metadata
+   */
+  meta: PaginationMeta;
+};
+
+export type UpdateOrderStatusDto = {
+  /**
+   * New order status
+   */
+  status:
+    | 'PENDING'
+    | 'PREPARING'
+    | 'READY'
+    | 'SERVED'
+    | 'COMPLETED'
+    | 'CANCELLED';
+};
+
+export type ApplyDiscountDto = {
+  [key: string]: unknown;
+};
+
+export type KitchenOrderResponseDto = {
+  /**
+   * Order ID
+   */
+  id: string;
+  /**
+   * Store ID
+   */
+  storeId: string;
+  /**
+   * Order number
+   */
+  orderNumber: string;
+  /**
+   * Table name
+   */
+  tableName: string;
+  /**
+   * Order type
+   */
+  orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
+  /**
+   * Order status
+   */
+  status:
+    | 'PENDING'
+    | 'PREPARING'
+    | 'READY'
+    | 'SERVED'
+    | 'COMPLETED'
+    | 'CANCELLED';
+  /**
+   * Grand total
+   */
+  grandTotal: string;
+  /**
+   * Order created timestamp
+   */
+  createdAt: string;
+  /**
+   * Order updated timestamp
+   */
+  updatedAt: string;
+  /**
+   * Order items
+   */
+  orderItems: Array<unknown>;
+};
+
+export type UpdateKitchenStatusDto = {
+  /**
+   * New kitchen status
+   */
+  status:
+    | 'PENDING'
+    | 'PREPARING'
+    | 'READY'
+    | 'SERVED'
+    | 'COMPLETED'
+    | 'CANCELLED';
 };
 
 export type ValidateAdminTokenDto = {
@@ -514,11 +716,20 @@ export type MenuItemNestedResponseDto = {
 
 export type CategoryResponseDto = {
   id: string;
+  /**
+   * Category name (default/fallback). Use translations map for localized names.
+   */
   name: string;
   storeId: string;
   sortOrder: number;
   createdAt: string;
   updatedAt: string;
+  /**
+   * Translations map by locale (e.g., { 'en': {...}, 'th': {...} }).
+   */
+  translations?: {
+    [key: string]: unknown;
+  };
 };
 
 export type CategoryBasicResponseDto = {
@@ -539,12 +750,24 @@ export type CategoryDeletedResponseDto = {
 
 export type CustomizationOptionResponseDto = {
   id: string;
+  /**
+   * Option name (default/fallback). Use translations map for localized names.
+   */
   name: string;
   additionalPrice?: string;
+  /**
+   * Translations map by locale (e.g., { 'en': {...}, 'th': {...} }).
+   */
+  translations?: {
+    [key: string]: unknown;
+  };
 };
 
 export type CustomizationGroupResponseDto = {
   id: string;
+  /**
+   * Group name (default/fallback). Use translations map for localized names.
+   */
   name: string;
   required: boolean;
   minSelectable: number;
@@ -553,6 +776,12 @@ export type CustomizationGroupResponseDto = {
   customizationOptions: Array<CustomizationOptionResponseDto>;
   createdAt: string;
   updatedAt: string;
+  /**
+   * Translations map by locale (e.g., { 'en': {...}, 'th': {...} }).
+   */
+  translations?: {
+    [key: string]: unknown;
+  };
 };
 
 export type CreateCategoryDto = {
@@ -596,66 +825,22 @@ export type UpdateCategoryDto = {
   name?: string;
 };
 
-export type KitchenOrderResponseDto = {
+export type BaseTranslationDto = {
   /**
-   * Order ID
+   * Locale code
    */
-  id: string;
+  locale: 'en' | 'zh' | 'my' | 'th';
   /**
-   * Store ID
+   * Translated name
    */
-  storeId: string;
-  /**
-   * Order number
-   */
-  orderNumber: string;
-  /**
-   * Table name
-   */
-  tableName: string;
-  /**
-   * Order type
-   */
-  orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
-  /**
-   * Order status
-   */
-  status:
-    | 'PENDING'
-    | 'PREPARING'
-    | 'READY'
-    | 'SERVED'
-    | 'COMPLETED'
-    | 'CANCELLED';
-  /**
-   * Grand total
-   */
-  grandTotal: string;
-  /**
-   * Order created timestamp
-   */
-  createdAt: string;
-  /**
-   * Order updated timestamp
-   */
-  updatedAt: string;
-  /**
-   * Order items
-   */
-  orderItems: Array<unknown>;
+  name: string;
 };
 
-export type UpdateKitchenStatusDto = {
+export type UpdateCategoryTranslationsDto = {
   /**
-   * New kitchen status
+   * Array of translations to add/update
    */
-  status:
-    | 'PENDING'
-    | 'PREPARING'
-    | 'READY'
-    | 'SERVED'
-    | 'COMPLETED'
-    | 'CANCELLED';
+  translations: Array<BaseTranslationDto>;
 };
 
 export type MenuItemDeletedResponseDto = {
@@ -667,7 +852,13 @@ export type MenuItemDeletedResponseDto = {
 
 export type MenuItemResponseDto = {
   id: string;
+  /**
+   * Item name (default/fallback). Use translations map for localized names.
+   */
   name: string;
+  /**
+   * Item description (default/fallback). Use translations map for localized descriptions.
+   */
   description?: {
     [key: string]: unknown;
   };
@@ -718,6 +909,12 @@ export type MenuItemResponseDto = {
   updatedAt: string;
   category: CategoryResponseDto;
   customizationGroups: Array<CustomizationGroupResponseDto>;
+  /**
+   * Translations map by locale (e.g., { 'en': {...}, 'th': {...} }). Use for multi-language support.
+   */
+  translations?: {
+    [key: string]: unknown;
+  };
 };
 
 export type UpsertCategoryDto = {
@@ -843,144 +1040,53 @@ export type UpdateMenuItemDto = {
   customizationGroups?: Array<UpsertCustomizationGroupDto>;
 };
 
-export type CheckoutCartDto = {
+export type PatchMenuItemDto = {
   /**
-   * Order type
+   * Set out-of-stock status
    */
-  orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
+  isOutOfStock?: boolean;
   /**
-   * Table name (from session)
+   * Set hidden status
    */
-  tableName?: string;
+  isHidden?: boolean;
 };
 
-export type OrderItemCustomizationResponseDto = {
-  id: string;
-  customizationOptionId: string;
-  finalPrice: string;
+export type TranslationWithDescriptionDto = {
+  /**
+   * Locale code
+   */
+  locale: 'en' | 'zh' | 'my' | 'th';
+  /**
+   * Translated name
+   */
+  name: string;
+  /**
+   * Translated description
+   */
+  description?: {
+    [key: string]: unknown;
+  };
 };
 
-export type OrderItemResponseDto = {
-  id: string;
-  menuItemId: {
-    [key: string]: unknown;
-  };
-  price: string;
-  quantity: number;
-  finalPrice: string;
-  notes: {
-    [key: string]: unknown;
-  };
-  customizations: Array<OrderItemCustomizationResponseDto>;
+export type UpdateMenuItemTranslationsDto = {
+  /**
+   * Array of translations to add/update
+   */
+  translations: Array<TranslationWithDescriptionDto>;
 };
 
-export type OrderResponseDto = {
-  id: string;
-  orderNumber: string;
-  storeId: string;
-  sessionId: {
-    [key: string]: unknown;
-  };
-  tableName: string;
-  status:
-    | 'PENDING'
-    | 'PREPARING'
-    | 'READY'
-    | 'SERVED'
-    | 'COMPLETED'
-    | 'CANCELLED';
-  orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
-  paidAt: {
-    [key: string]: unknown;
-  };
-  subTotal: string;
-  vatRateSnapshot: string;
-  serviceChargeRateSnapshot: string;
-  vatAmount: string;
-  serviceChargeAmount: string;
-  grandTotal: string;
-  discountType: 'PERCENTAGE' | 'FIXED_AMOUNT';
-  discountValue: string;
-  discountAmount: string;
-  discountReason: {
-    [key: string]: unknown;
-  };
-  discountAppliedBy: {
-    [key: string]: unknown;
-  };
-  discountAppliedAt: {
-    [key: string]: unknown;
-  };
+export type UpdateCustomizationGroupTranslationsDto = {
   /**
-   * Total amount paid across all payments (supports bill splitting)
+   * Array of translations to add/update
    */
-  totalPaid: string;
-  /**
-   * Remaining balance to be paid
-   */
-  remainingBalance: string;
-  /**
-   * Whether the order is fully paid
-   */
-  isPaidInFull: boolean;
-  orderItems: Array<OrderItemResponseDto>;
-  createdAt: string;
-  updatedAt: string;
+  translations: Array<BaseTranslationDto>;
 };
 
-export type PaginationMeta = {
+export type UpdateCustomizationOptionTranslationsDto = {
   /**
-   * Total number of items
+   * Array of translations to add/update
    */
-  total: number;
-  /**
-   * Current page number
-   */
-  page: number;
-  /**
-   * Number of items per page
-   */
-  limit: number;
-  /**
-   * Total number of pages
-   */
-  totalPages: number;
-  /**
-   * Whether there is a next page
-   */
-  hasNext: boolean;
-  /**
-   * Whether there is a previous page
-   */
-  hasPrev: boolean;
-};
-
-export type PaginatedResponseDto = {
-  /**
-   * Array of items
-   */
-  items: Array<string>;
-  /**
-   * Pagination metadata
-   */
-  meta: PaginationMeta;
-};
-
-export type UpdateOrderStatusDto = {
-  /**
-   * New order status
-   */
-  status:
-    | 'PENDING'
-    | 'PREPARING'
-    | 'READY'
-    | 'SERVED'
-    | 'COMPLETED'
-    | 'CANCELLED';
-};
-
-export type ApplyDiscountDto = {
-  [key: string]: unknown;
+  translations: Array<BaseTranslationDto>;
 };
 
 export type RecordPaymentDto = {
@@ -1761,6 +1867,35 @@ export type ActiveTableSessionControllerCloseResponses = {
 export type ActiveTableSessionControllerCloseResponse =
   ActiveTableSessionControllerCloseResponses[keyof ActiveTableSessionControllerCloseResponses];
 
+export type ActiveTableSessionControllerGetSessionOrdersData = {
+  body?: never;
+  path: {
+    /**
+     * Active table session ID
+     */
+    sessionId: string;
+  };
+  query?: never;
+  url: '/active-table-sessions/{sessionId}/orders';
+};
+
+export type ActiveTableSessionControllerGetSessionOrdersErrors = {
+  /**
+   * Session not found
+   */
+  404: unknown;
+};
+
+export type ActiveTableSessionControllerGetSessionOrdersResponses = {
+  /**
+   * Orders retrieved successfully
+   */
+  200: Array<OrderResponseDto>;
+};
+
+export type ActiveTableSessionControllerGetSessionOrdersResponse =
+  ActiveTableSessionControllerGetSessionOrdersResponses[keyof ActiveTableSessionControllerGetSessionOrdersResponses];
+
 export type AuthControllerLoginWithStoreData = {
   body: ChooseStoreDto;
   path?: never;
@@ -2126,10 +2261,13 @@ export type UserControllerReactivateUserResponse =
 export type TierControllerGetStoreTierData = {
   body?: never;
   path: {
+    /**
+     * ID (UUID) of the store
+     */
     storeId: string;
   };
   query?: never;
-  url: '/tier/{storeId}';
+  url: '/stores/{storeId}/tiers';
 };
 
 export type TierControllerGetStoreTierResponses = {
@@ -2139,10 +2277,13 @@ export type TierControllerGetStoreTierResponses = {
 export type TierControllerGetStoreUsageData = {
   body?: never;
   path: {
+    /**
+     * ID (UUID) of the store
+     */
     storeId: string;
   };
   query?: never;
-  url: '/tier/{storeId}/usage';
+  url: '/stores/{storeId}/tiers/usage';
 };
 
 export type TierControllerGetStoreUsageResponses = {
@@ -2152,6 +2293,9 @@ export type TierControllerGetStoreUsageResponses = {
 export type AuditLogControllerGetStoreAuditLogsData = {
   body?: never;
   path: {
+    /**
+     * ID (UUID) of the store
+     */
     storeId: string;
   };
   query?: {
@@ -2198,7 +2342,7 @@ export type AuditLogControllerGetStoreAuditLogsData = {
       | 'ADMIN_IMPERSONATION_ENDED';
     userId?: string;
   };
-  url: '/audit-logs/{storeId}';
+  url: '/stores/{storeId}/audit-logs';
 };
 
 export type AuditLogControllerGetStoreAuditLogsResponses = {
@@ -2208,6 +2352,9 @@ export type AuditLogControllerGetStoreAuditLogsResponses = {
 export type AuditLogControllerExportAuditLogsData = {
   body?: never;
   path: {
+    /**
+     * ID (UUID) of the store
+     */
     storeId: string;
   };
   query?: {
@@ -2254,12 +2401,332 @@ export type AuditLogControllerExportAuditLogsData = {
     startDate?: string;
     endDate?: string;
   };
-  url: '/audit-logs/{storeId}/export';
+  url: '/stores/{storeId}/audit-logs/export';
 };
 
 export type AuditLogControllerExportAuditLogsResponses = {
   200: unknown;
 };
+
+export type OrderControllerCheckoutData = {
+  body: CheckoutCartDto;
+  headers?: {
+    /**
+     * Session token for customer authentication (optional if JWT provided)
+     */
+    'x-session-token'?: string;
+  };
+  path?: never;
+  query: {
+    /**
+     * Active table session ID
+     */
+    sessionId: string;
+  };
+  url: '/orders/checkout';
+};
+
+export type OrderControllerCheckoutErrors = {
+  /**
+   * Cart is empty or invalid
+   */
+  400: unknown;
+  /**
+   * Authentication required: Provide session token or JWT
+   */
+  401: unknown;
+  /**
+   * Invalid session token or insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Session or cart not found
+   */
+  404: unknown;
+};
+
+export type OrderControllerCheckoutResponses = {
+  /**
+   * Order created successfully
+   */
+  201: OrderResponseDto;
+};
+
+export type OrderControllerCheckoutResponse =
+  OrderControllerCheckoutResponses[keyof OrderControllerCheckoutResponses];
+
+export type OrderControllerFindOneData = {
+  body?: never;
+  path: {
+    /**
+     * Order ID
+     */
+    orderId: string;
+  };
+  query?: never;
+  url: '/orders/{orderId}';
+};
+
+export type OrderControllerFindOneErrors = {
+  /**
+   * Order not found
+   */
+  404: unknown;
+};
+
+export type OrderControllerFindOneResponses = {
+  /**
+   * Order retrieved successfully
+   */
+  200: OrderResponseDto;
+};
+
+export type OrderControllerFindOneResponse =
+  OrderControllerFindOneResponses[keyof OrderControllerFindOneResponses];
+
+export type OrderControllerFindByStoreData = {
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+    /**
+     * Page number (1-indexed)
+     */
+    page?: number;
+    /**
+     * Items per page (max 100)
+     */
+    limit?: number;
+  };
+  url: '/orders';
+};
+
+export type OrderControllerFindByStoreResponses = {
+  /**
+   * Orders retrieved successfully
+   */
+  200: PaginatedResponseDto;
+};
+
+export type OrderControllerFindByStoreResponse =
+  OrderControllerFindByStoreResponses[keyof OrderControllerFindByStoreResponses];
+
+export type OrderControllerUpdateStatusData = {
+  body: UpdateOrderStatusDto;
+  path: {
+    /**
+     * Order ID
+     */
+    orderId: string;
+  };
+  query?: never;
+  url: '/orders/{orderId}/status';
+};
+
+export type OrderControllerUpdateStatusErrors = {
+  /**
+   * Invalid status transition
+   */
+  400: unknown;
+  /**
+   * Order not found
+   */
+  404: unknown;
+};
+
+export type OrderControllerUpdateStatusResponses = {
+  /**
+   * Order status updated successfully
+   */
+  200: OrderResponseDto;
+};
+
+export type OrderControllerUpdateStatusResponse =
+  OrderControllerUpdateStatusResponses[keyof OrderControllerUpdateStatusResponses];
+
+export type OrderControllerApplyDiscountData = {
+  body: ApplyDiscountDto;
+  path: {
+    /**
+     * Order ID
+     */
+    orderId: string;
+  };
+  query: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+  };
+  url: '/orders/{orderId}/apply-discount';
+};
+
+export type OrderControllerApplyDiscountErrors = {
+  /**
+   * Invalid discount or order already paid
+   */
+  400: unknown;
+  /**
+   * Insufficient permissions for discount amount
+   */
+  403: unknown;
+  /**
+   * Order not found
+   */
+  404: unknown;
+};
+
+export type OrderControllerApplyDiscountResponses = {
+  /**
+   * Discount applied successfully
+   */
+  200: OrderResponseDto;
+};
+
+export type OrderControllerApplyDiscountResponse =
+  OrderControllerApplyDiscountResponses[keyof OrderControllerApplyDiscountResponses];
+
+export type OrderControllerRemoveDiscountData = {
+  body?: never;
+  path: {
+    /**
+     * Order ID
+     */
+    orderId: string;
+  };
+  query: {
+    /**
+     * Store ID
+     */
+    storeId: string;
+  };
+  url: '/orders/{orderId}/discount';
+};
+
+export type OrderControllerRemoveDiscountErrors = {
+  /**
+   * Order already paid
+   */
+  400: unknown;
+  /**
+   * Insufficient permissions
+   */
+  403: unknown;
+  /**
+   * Order not found
+   */
+  404: unknown;
+};
+
+export type OrderControllerRemoveDiscountResponses = {
+  /**
+   * Discount removed successfully
+   */
+  200: OrderResponseDto;
+};
+
+export type OrderControllerRemoveDiscountResponse =
+  OrderControllerRemoveDiscountResponses[keyof OrderControllerRemoveDiscountResponses];
+
+export type KitchenControllerGetOrdersData = {
+  body?: never;
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
+    storeId: string;
+  };
+  query?: {
+    /**
+     * Filter by order status
+     */
+    status?:
+      | 'PENDING'
+      | 'PREPARING'
+      | 'READY'
+      | 'SERVED'
+      | 'COMPLETED'
+      | 'CANCELLED';
+    /**
+     * Filter by menu item routing area
+     */
+    routingArea?:
+      | 'GRILL'
+      | 'FRY'
+      | 'SALAD'
+      | 'DRINKS'
+      | 'DESSERT'
+      | 'APPETIZER'
+      | 'SOUP'
+      | 'OTHER';
+  };
+  url: '/stores/{storeId}/kitchen/orders';
+};
+
+export type KitchenControllerGetOrdersResponses = {
+  /**
+   * Orders retrieved successfully
+   */
+  200: Array<KitchenOrderResponseDto>;
+};
+
+export type KitchenControllerGetOrdersResponse =
+  KitchenControllerGetOrdersResponses[keyof KitchenControllerGetOrdersResponses];
+
+export type KitchenControllerGetOrderDetailsData = {
+  body?: never;
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
+    storeId: string;
+    /**
+     * ID (UUID) of the order
+     */
+    orderId: string;
+  };
+  query?: never;
+  url: '/stores/{storeId}/kitchen/orders/{orderId}';
+};
+
+export type KitchenControllerGetOrderDetailsResponses = {
+  /**
+   * Order details retrieved successfully
+   */
+  200: KitchenOrderResponseDto;
+};
+
+export type KitchenControllerGetOrderDetailsResponse =
+  KitchenControllerGetOrderDetailsResponses[keyof KitchenControllerGetOrderDetailsResponses];
+
+export type KitchenControllerUpdateOrderStatusData = {
+  body: UpdateKitchenStatusDto;
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
+    storeId: string;
+    /**
+     * ID (UUID) of the order
+     */
+    orderId: string;
+  };
+  query?: never;
+  url: '/stores/{storeId}/kitchen/orders/{orderId}/status';
+};
+
+export type KitchenControllerUpdateOrderStatusResponses = {
+  /**
+   * Order status updated successfully
+   */
+  200: KitchenOrderResponseDto;
+};
+
+export type KitchenControllerUpdateOrderStatusResponse =
+  KitchenControllerUpdateOrderStatusResponses[keyof KitchenControllerUpdateOrderStatusResponses];
 
 export type AdminAuthControllerValidateTokenData = {
   body: ValidateAdminTokenDto;
@@ -3641,18 +4108,14 @@ export type CartControllerUpdateItemResponse =
 
 export type CategoryControllerFindAllData = {
   body?: never;
-  path?: never;
-  query?: {
+  path: {
     /**
-     * ID (UUID) of the store (use this OR storeSlug).
+     * Store UUID or slug
      */
-    storeId?: string;
-    /**
-     * URL Slug of the store (use this OR storeId).
-     */
-    storeSlug?: string;
+    storeId: string;
   };
-  url: '/categories';
+  query?: never;
+  url: '/stores/{storeId}/categories';
 };
 
 export type CategoryControllerFindAllResponses = {
@@ -3672,11 +4135,14 @@ export type CategoryControllerFindAllResponse =
 
 export type CategoryControllerCreateData = {
   body: CreateCategoryDto;
-  path?: never;
-  query: {
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
     storeId: string;
   };
-  url: '/categories';
+  query?: never;
+  url: '/stores/{storeId}/categories';
 };
 
 export type CategoryControllerCreateResponses = {
@@ -3698,14 +4164,16 @@ export type CategoryControllerRemoveData = {
   body?: never;
   path: {
     /**
+     * ID (UUID) of the store
+     */
+    storeId: string;
+    /**
      * ID (UUID) of the category to delete
      */
     id: string;
   };
-  query: {
-    storeId: string;
-  };
-  url: '/categories/{id}';
+  query?: never;
+  url: '/stores/{storeId}/categories/{id}';
 };
 
 export type CategoryControllerRemoveResponses = {
@@ -3727,17 +4195,16 @@ export type CategoryControllerFindOneData = {
   body?: never;
   path: {
     /**
+     * Store UUID or slug
+     */
+    storeId: string;
+    /**
      * ID (UUID) of the category to fetch
      */
     id: string;
   };
-  query: {
-    /**
-     * ID (UUID) of the store this category belongs to
-     */
-    storeId: string;
-  };
-  url: '/categories/{id}';
+  query?: never;
+  url: '/stores/{storeId}/categories/{id}';
 };
 
 export type CategoryControllerFindOneResponses = {
@@ -3748,14 +4215,16 @@ export type CategoryControllerUpdateData = {
   body: UpdateCategoryDto;
   path: {
     /**
+     * ID (UUID) of the store
+     */
+    storeId: string;
+    /**
      * ID (UUID) of the category to update
      */
     id: string;
   };
-  query: {
-    storeId: string;
-  };
-  url: '/categories/{id}';
+  query?: never;
+  url: '/stores/{storeId}/categories/{id}';
 };
 
 export type CategoryControllerUpdateResponses = {
@@ -3775,11 +4244,14 @@ export type CategoryControllerUpdateResponse =
 
 export type CategoryControllerSortCategoriesData = {
   body: SortCategoriesPayloadDto;
-  path?: never;
-  query: {
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
     storeId: string;
   };
-  url: '/categories/sort';
+  query?: never;
+  url: '/stores/{storeId}/categories/sort';
 };
 
 export type CategoryControllerSortCategoriesResponses = {
@@ -3797,103 +4269,82 @@ export type CategoryControllerSortCategoriesResponses = {
 export type CategoryControllerSortCategoriesResponse =
   CategoryControllerSortCategoriesResponses[keyof CategoryControllerSortCategoriesResponses];
 
-export type KitchenControllerGetOrdersData = {
-  body?: never;
-  path?: never;
-  query: {
+export type CategoryControllerUpdateCategoryTranslationsData = {
+  body: UpdateCategoryTranslationsDto;
+  path: {
     /**
-     * Store ID
+     * ID (UUID) of the store
      */
     storeId: string;
     /**
-     * Filter by order status
+     * ID (UUID) of the category
      */
-    status?:
-      | 'PENDING'
-      | 'PREPARING'
-      | 'READY'
-      | 'SERVED'
-      | 'COMPLETED'
-      | 'CANCELLED';
-    /**
-     * Filter by menu item routing area
-     */
-    routingArea?:
-      | 'GRILL'
-      | 'FRY'
-      | 'SALAD'
-      | 'DRINKS'
-      | 'DESSERT'
-      | 'APPETIZER'
-      | 'SOUP'
-      | 'OTHER';
-  };
-  url: '/kitchen/orders';
-};
-
-export type KitchenControllerGetOrdersResponses = {
-  /**
-   * Orders retrieved successfully
-   */
-  200: Array<KitchenOrderResponseDto>;
-};
-
-export type KitchenControllerGetOrdersResponse =
-  KitchenControllerGetOrdersResponses[keyof KitchenControllerGetOrdersResponses];
-
-export type KitchenControllerGetOrderDetailsData = {
-  body?: never;
-  path: {
-    orderId: string;
+    id: string;
   };
   query?: never;
-  url: '/kitchen/orders/{orderId}';
+  url: '/stores/{storeId}/categories/{id}/translations';
 };
 
-export type KitchenControllerGetOrderDetailsResponses = {
+export type CategoryControllerUpdateCategoryTranslationsResponses = {
   /**
-   * Order details retrieved successfully
+   * Category translations updated successfully.
    */
-  200: KitchenOrderResponseDto;
+  200: StandardApiResponse & {
+    status?: string;
+    data?: string;
+    errors?: Array<unknown>;
+    message?: string;
+  };
 };
 
-export type KitchenControllerGetOrderDetailsResponse =
-  KitchenControllerGetOrderDetailsResponses[keyof KitchenControllerGetOrderDetailsResponses];
+export type CategoryControllerUpdateCategoryTranslationsResponse =
+  CategoryControllerUpdateCategoryTranslationsResponses[keyof CategoryControllerUpdateCategoryTranslationsResponses];
 
-export type KitchenControllerUpdateOrderStatusData = {
-  body: UpdateKitchenStatusDto;
+export type CategoryControllerDeleteCategoryTranslationData = {
+  body?: never;
   path: {
-    orderId: string;
-  };
-  query: {
     /**
-     * Store ID
+     * ID (UUID) of the store
      */
     storeId: string;
+    /**
+     * ID (UUID) of the category
+     */
+    id: string;
+    /**
+     * Locale to delete (en, zh, my, th)
+     */
+    locale: 'en' | 'zh' | 'my' | 'th';
   };
-  url: '/kitchen/orders/{orderId}/status';
+  query?: never;
+  url: '/stores/{storeId}/categories/{id}/translations/{locale}';
 };
 
-export type KitchenControllerUpdateOrderStatusResponses = {
+export type CategoryControllerDeleteCategoryTranslationResponses = {
   /**
-   * Order status updated successfully
+   * Category translation deleted successfully.
    */
-  200: KitchenOrderResponseDto;
+  200: StandardApiResponse & {
+    status?: string;
+    data?: string;
+    errors?: Array<unknown>;
+    message?: string;
+  };
 };
 
-export type KitchenControllerUpdateOrderStatusResponse =
-  KitchenControllerUpdateOrderStatusResponses[keyof KitchenControllerUpdateOrderStatusResponses];
+export type CategoryControllerDeleteCategoryTranslationResponse =
+  CategoryControllerDeleteCategoryTranslationResponses[keyof CategoryControllerDeleteCategoryTranslationResponses];
 
 export type MenuControllerGetStoreMenuItemsData = {
   body?: never;
-  path?: never;
-  query: {
+  path: {
     /**
-     * ID (UUID) of the store whose menu items to fetch
+     * ID (UUID) of the store
      */
     storeId: string;
   };
-  url: '/menu-items';
+  query?: never;
+  url: '/stores/{storeId}/menu-items';
 };
 
 export type MenuControllerGetStoreMenuItemsResponses = {
@@ -3913,11 +4364,14 @@ export type MenuControllerGetStoreMenuItemsResponse =
 
 export type MenuControllerCreateMenuItemData = {
   body: CreateMenuItemDto;
-  path?: never;
-  query: {
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
     storeId: string;
   };
-  url: '/menu-items';
+  query?: never;
+  url: '/stores/{storeId}/menu-items';
 };
 
 export type MenuControllerCreateMenuItemResponses = {
@@ -3938,12 +4392,17 @@ export type MenuControllerCreateMenuItemResponse =
 export type MenuControllerDeleteMenuItemData = {
   body?: never;
   path: {
+    /**
+     * ID (UUID) of the store
+     */
+    storeId: string;
+    /**
+     * ID (UUID) of the menu item
+     */
     id: string;
   };
-  query: {
-    storeId: string;
-  };
-  url: '/menu-items/{id}';
+  query?: never;
+  url: '/stores/{storeId}/menu-items/{id}';
 };
 
 export type MenuControllerDeleteMenuItemResponses = {
@@ -3964,10 +4423,17 @@ export type MenuControllerDeleteMenuItemResponse =
 export type MenuControllerGetMenuItemByIdData = {
   body?: never;
   path: {
+    /**
+     * ID (UUID) of the store
+     */
+    storeId: string;
+    /**
+     * ID (UUID) of the menu item
+     */
     id: string;
   };
   query?: never;
-  url: '/menu-items/{id}';
+  url: '/stores/{storeId}/menu-items/{id}';
 };
 
 export type MenuControllerGetMenuItemByIdResponses = {
@@ -3985,15 +4451,51 @@ export type MenuControllerGetMenuItemByIdResponses = {
 export type MenuControllerGetMenuItemByIdResponse =
   MenuControllerGetMenuItemByIdResponses[keyof MenuControllerGetMenuItemByIdResponses];
 
+export type MenuControllerPatchMenuItemData = {
+  body: PatchMenuItemDto;
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
+    storeId: string;
+    /**
+     * ID (UUID) of the menu item
+     */
+    id: string;
+  };
+  query?: never;
+  url: '/stores/{storeId}/menu-items/{id}';
+};
+
+export type MenuControllerPatchMenuItemResponses = {
+  /**
+   * Menu item updated successfully.
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: MenuItemResponseDto;
+    errors?: Array<unknown>;
+    message?: string;
+  };
+};
+
+export type MenuControllerPatchMenuItemResponse =
+  MenuControllerPatchMenuItemResponses[keyof MenuControllerPatchMenuItemResponses];
+
 export type MenuControllerUpdateMenuItemData = {
   body: UpdateMenuItemDto;
   path: {
+    /**
+     * ID (UUID) of the store
+     */
+    storeId: string;
+    /**
+     * ID (UUID) of the menu item
+     */
     id: string;
   };
-  query: {
-    storeId: string;
-  };
-  url: '/menu-items/{id}';
+  query?: never;
+  url: '/stores/{storeId}/menu-items/{id}';
 };
 
 export type MenuControllerUpdateMenuItemResponses = {
@@ -4011,290 +4513,133 @@ export type MenuControllerUpdateMenuItemResponses = {
 export type MenuControllerUpdateMenuItemResponse =
   MenuControllerUpdateMenuItemResponses[keyof MenuControllerUpdateMenuItemResponses];
 
-export type OrderControllerCheckoutData = {
-  body: CheckoutCartDto;
-  headers?: {
-    /**
-     * Session token for customer authentication (optional if JWT provided)
-     */
-    'x-session-token'?: string;
-  };
-  path?: never;
-  query: {
-    /**
-     * Active table session ID
-     */
-    sessionId: string;
-  };
-  url: '/orders/checkout';
-};
-
-export type OrderControllerCheckoutErrors = {
-  /**
-   * Cart is empty or invalid
-   */
-  400: unknown;
-  /**
-   * Authentication required: Provide session token or JWT
-   */
-  401: unknown;
-  /**
-   * Invalid session token or insufficient permissions
-   */
-  403: unknown;
-  /**
-   * Session or cart not found
-   */
-  404: unknown;
-};
-
-export type OrderControllerCheckoutResponses = {
-  /**
-   * Order created successfully
-   */
-  201: OrderResponseDto;
-};
-
-export type OrderControllerCheckoutResponse =
-  OrderControllerCheckoutResponses[keyof OrderControllerCheckoutResponses];
-
-export type OrderControllerFindOneData = {
-  body?: never;
+export type MenuControllerUpdateMenuItemTranslationsData = {
+  body: UpdateMenuItemTranslationsDto;
   path: {
     /**
-     * Order ID
+     * ID (UUID) of the store
      */
-    orderId: string;
+    storeId: string;
+    /**
+     * ID (UUID) of the menu item
+     */
+    id: string;
   };
   query?: never;
-  url: '/orders/{orderId}';
+  url: '/stores/{storeId}/menu-items/{id}/translations';
 };
 
-export type OrderControllerFindOneErrors = {
+export type MenuControllerUpdateMenuItemTranslationsResponses = {
   /**
-   * Order not found
+   * Menu item translations updated successfully.
    */
-  404: unknown;
+  200: StandardApiResponse & {
+    status?: string;
+    data?: string;
+    errors?: Array<unknown>;
+    message?: string;
+  };
 };
 
-export type OrderControllerFindOneResponses = {
-  /**
-   * Order retrieved successfully
-   */
-  200: OrderResponseDto;
-};
+export type MenuControllerUpdateMenuItemTranslationsResponse =
+  MenuControllerUpdateMenuItemTranslationsResponses[keyof MenuControllerUpdateMenuItemTranslationsResponses];
 
-export type OrderControllerFindOneResponse =
-  OrderControllerFindOneResponses[keyof OrderControllerFindOneResponses];
-
-export type OrderControllerFindBySessionData = {
+export type MenuControllerDeleteMenuItemTranslationData = {
   body?: never;
   path: {
     /**
-     * Active table session ID
+     * ID (UUID) of the store
      */
-    sessionId: string;
+    storeId: string;
+    /**
+     * ID (UUID) of the menu item
+     */
+    id: string;
+    /**
+     * Locale to delete (en, zh, my, th)
+     */
+    locale: 'en' | 'zh' | 'my' | 'th';
   };
   query?: never;
-  url: '/orders/session/{sessionId}';
+  url: '/stores/{storeId}/menu-items/{id}/translations/{locale}';
 };
 
-export type OrderControllerFindBySessionResponses = {
+export type MenuControllerDeleteMenuItemTranslationResponses = {
   /**
-   * Orders retrieved successfully
+   * Menu item translation deleted successfully.
    */
-  200: Array<OrderResponseDto>;
-};
-
-export type OrderControllerFindBySessionResponse =
-  OrderControllerFindBySessionResponses[keyof OrderControllerFindBySessionResponses];
-
-export type OrderControllerFindForKdsData = {
-  body?: never;
-  path?: never;
-  query: {
-    /**
-     * Page number (1-indexed)
-     */
-    page?: number;
-    /**
-     * Items per page (max 100)
-     */
-    limit?: number;
-    /**
-     * Filter by order status (defaults to active orders)
-     */
-    status?:
-      | 'PENDING'
-      | 'PREPARING'
-      | 'READY'
-      | 'SERVED'
-      | 'COMPLETED'
-      | 'CANCELLED';
-    /**
-     * Store ID
-     */
-    storeId: string;
+  200: StandardApiResponse & {
+    status?: string;
+    data?: string;
+    errors?: Array<unknown>;
+    message?: string;
   };
-  url: '/orders/kds';
 };
 
-export type OrderControllerFindForKdsResponses = {
-  /**
-   * KDS orders retrieved successfully
-   */
-  200: PaginatedResponseDto;
-};
+export type MenuControllerDeleteMenuItemTranslationResponse =
+  MenuControllerDeleteMenuItemTranslationResponses[keyof MenuControllerDeleteMenuItemTranslationResponses];
 
-export type OrderControllerFindForKdsResponse =
-  OrderControllerFindForKdsResponses[keyof OrderControllerFindForKdsResponses];
-
-export type OrderControllerFindByStoreData = {
-  body?: never;
-  path?: never;
-  query: {
-    /**
-     * Store ID
-     */
-    storeId: string;
-    /**
-     * Page number (1-indexed)
-     */
-    page?: number;
-    /**
-     * Items per page (max 100)
-     */
-    limit?: number;
-  };
-  url: '/orders';
-};
-
-export type OrderControllerFindByStoreResponses = {
-  /**
-   * Orders retrieved successfully
-   */
-  200: PaginatedResponseDto;
-};
-
-export type OrderControllerFindByStoreResponse =
-  OrderControllerFindByStoreResponses[keyof OrderControllerFindByStoreResponses];
-
-export type OrderControllerUpdateStatusData = {
-  body: UpdateOrderStatusDto;
+export type CustomizationControllerUpdateGroupTranslationsData = {
+  body: UpdateCustomizationGroupTranslationsDto;
   path: {
     /**
-     * Order ID
+     * ID (UUID) of the store
      */
-    orderId: string;
+    storeId: string;
+    /**
+     * ID (UUID) of the customization group
+     */
+    id: string;
   };
   query?: never;
-  url: '/orders/{orderId}/status';
+  url: '/stores/{storeId}/customizations/groups/{id}/translations';
 };
 
-export type OrderControllerUpdateStatusErrors = {
+export type CustomizationControllerUpdateGroupTranslationsResponses = {
   /**
-   * Invalid status transition
+   * Customization group translations updated successfully.
    */
-  400: unknown;
-  /**
-   * Order not found
-   */
-  404: unknown;
+  200: StandardApiResponse & {
+    status?: string;
+    data?: string;
+    errors?: Array<unknown>;
+    message?: string;
+  };
 };
 
-export type OrderControllerUpdateStatusResponses = {
-  /**
-   * Order status updated successfully
-   */
-  200: OrderResponseDto;
-};
+export type CustomizationControllerUpdateGroupTranslationsResponse =
+  CustomizationControllerUpdateGroupTranslationsResponses[keyof CustomizationControllerUpdateGroupTranslationsResponses];
 
-export type OrderControllerUpdateStatusResponse =
-  OrderControllerUpdateStatusResponses[keyof OrderControllerUpdateStatusResponses];
-
-export type OrderControllerApplyDiscountData = {
-  body: ApplyDiscountDto;
+export type CustomizationControllerUpdateOptionTranslationsData = {
+  body: UpdateCustomizationOptionTranslationsDto;
   path: {
     /**
-     * Order ID
-     */
-    orderId: string;
-  };
-  query: {
-    /**
-     * Store ID
+     * ID (UUID) of the store
      */
     storeId: string;
-  };
-  url: '/orders/{orderId}/apply-discount';
-};
-
-export type OrderControllerApplyDiscountErrors = {
-  /**
-   * Invalid discount or order already paid
-   */
-  400: unknown;
-  /**
-   * Insufficient permissions for discount amount
-   */
-  403: unknown;
-  /**
-   * Order not found
-   */
-  404: unknown;
-};
-
-export type OrderControllerApplyDiscountResponses = {
-  /**
-   * Discount applied successfully
-   */
-  200: OrderResponseDto;
-};
-
-export type OrderControllerApplyDiscountResponse =
-  OrderControllerApplyDiscountResponses[keyof OrderControllerApplyDiscountResponses];
-
-export type OrderControllerRemoveDiscountData = {
-  body?: never;
-  path: {
     /**
-     * Order ID
+     * ID (UUID) of the customization option
      */
-    orderId: string;
+    id: string;
   };
-  query: {
-    /**
-     * Store ID
-     */
-    storeId: string;
+  query?: never;
+  url: '/stores/{storeId}/customizations/options/{id}/translations';
+};
+
+export type CustomizationControllerUpdateOptionTranslationsResponses = {
+  /**
+   * Customization option translations updated successfully.
+   */
+  200: StandardApiResponse & {
+    status?: string;
+    data?: string;
+    errors?: Array<unknown>;
+    message?: string;
   };
-  url: '/orders/{orderId}/discount';
 };
 
-export type OrderControllerRemoveDiscountErrors = {
-  /**
-   * Order already paid
-   */
-  400: unknown;
-  /**
-   * Insufficient permissions
-   */
-  403: unknown;
-  /**
-   * Order not found
-   */
-  404: unknown;
-};
-
-export type OrderControllerRemoveDiscountResponses = {
-  /**
-   * Discount removed successfully
-   */
-  200: OrderResponseDto;
-};
-
-export type OrderControllerRemoveDiscountResponse =
-  OrderControllerRemoveDiscountResponses[keyof OrderControllerRemoveDiscountResponses];
+export type CustomizationControllerUpdateOptionTranslationsResponse =
+  CustomizationControllerUpdateOptionTranslationsResponses[keyof CustomizationControllerUpdateOptionTranslationsResponses];
 
 export type PaymentControllerFindPaymentsByOrderData = {
   body?: never;
@@ -4535,12 +4880,13 @@ export type PaymentControllerRecordSplitPaymentResponse =
 
 export type ReportControllerGetSalesSummaryData = {
   body?: never;
-  path?: never;
-  query: {
+  path: {
     /**
-     * Store ID
+     * ID (UUID) of the store
      */
     storeId: string;
+  };
+  query: {
     /**
      * Start date (ISO 8601)
      */
@@ -4550,7 +4896,7 @@ export type ReportControllerGetSalesSummaryData = {
      */
     endDate: string;
   };
-  url: '/reports/sales-summary';
+  url: '/stores/{storeId}/reports/sales-summary';
 };
 
 export type ReportControllerGetSalesSummaryResponses = {
@@ -4565,12 +4911,13 @@ export type ReportControllerGetSalesSummaryResponse =
 
 export type ReportControllerGetPaymentBreakdownData = {
   body?: never;
-  path?: never;
-  query: {
+  path: {
     /**
-     * Store ID
+     * ID (UUID) of the store
      */
     storeId: string;
+  };
+  query: {
     /**
      * Start date (ISO 8601)
      */
@@ -4580,7 +4927,7 @@ export type ReportControllerGetPaymentBreakdownData = {
      */
     endDate: string;
   };
-  url: '/reports/payment-breakdown';
+  url: '/stores/{storeId}/reports/payment-breakdown';
 };
 
 export type ReportControllerGetPaymentBreakdownResponses = {
@@ -4595,12 +4942,13 @@ export type ReportControllerGetPaymentBreakdownResponse =
 
 export type ReportControllerGetPopularItemsData = {
   body?: never;
-  path?: never;
-  query: {
+  path: {
     /**
-     * Store ID
+     * ID (UUID) of the store
      */
     storeId: string;
+  };
+  query: {
     /**
      * Number of items to return (default 10)
      */
@@ -4614,7 +4962,7 @@ export type ReportControllerGetPopularItemsData = {
      */
     endDate: string;
   };
-  url: '/reports/popular-items';
+  url: '/stores/{storeId}/reports/popular-items';
 };
 
 export type ReportControllerGetPopularItemsResponses = {
@@ -4629,12 +4977,13 @@ export type ReportControllerGetPopularItemsResponse =
 
 export type ReportControllerGetOrderStatusReportData = {
   body?: never;
-  path?: never;
-  query: {
+  path: {
     /**
-     * Store ID
+     * ID (UUID) of the store
      */
     storeId: string;
+  };
+  query: {
     /**
      * Start date (ISO 8601)
      */
@@ -4644,7 +4993,7 @@ export type ReportControllerGetOrderStatusReportData = {
      */
     endDate: string;
   };
-  url: '/reports/order-status';
+  url: '/stores/{storeId}/reports/order-status';
 };
 
 export type ReportControllerGetOrderStatusReportResponses = {
@@ -4782,11 +5131,14 @@ export type StoreControllerUpdateStoreSettingsResponse =
 
 export type StoreControllerInviteOrAssignRoleByEmailData = {
   body: InviteOrAssignRoleDto;
-  path?: never;
-  query: {
-    storeId: string;
+  path: {
+    /**
+     * ID (UUID) of the store
+     */
+    id: string;
   };
-  url: '/stores/{id}/invite-assign-role';
+  query?: never;
+  url: '/stores/{id}/members';
 };
 
 export type StoreControllerInviteOrAssignRoleByEmailErrors = {
@@ -4802,9 +5154,9 @@ export type StoreControllerInviteOrAssignRoleByEmailErrors = {
 
 export type StoreControllerInviteOrAssignRoleByEmailResponses = {
   /**
-   * Role assigned successfully.
+   * Member added or role updated successfully.
    */
-  200: StandardApiResponse & {
+  201: StandardApiResponse & {
     status?: string;
     data?: string;
     errors?: Array<unknown>;

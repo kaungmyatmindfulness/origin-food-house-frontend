@@ -77,7 +77,14 @@ export function DashboardHeader() {
         {/* Left: Logo + Store Info */}
         <div className="flex items-center gap-4">
           <Link href="/hub-sales">
-            <Image src="/logo.svg" alt="Logo" width={64} height={32} />
+            <Image
+              src="/logo.svg"
+              alt="Logo"
+              width={64}
+              height={32}
+              priority
+              style={{ height: 'auto' }}
+            />
           </Link>
 
           {currentStore && (

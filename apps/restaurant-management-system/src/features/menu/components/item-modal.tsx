@@ -18,6 +18,10 @@ import { ScrollArea } from '@repo/ui/components/scroll-area';
 import { getMenuItemById } from '@/features/menu/services/menu-item.service';
 import { formatCurrency } from '@/utils/formatting';
 import { getImageUrl } from '@repo/api/utils/s3-url';
+import {
+  selectSelectedStoreId,
+  useAuthStore,
+} from '@/features/auth/store/auth.store';
 
 interface ItemModalProps {
   id: string | null;
@@ -28,6 +32,8 @@ interface ItemModalProps {
 }
 
 export function ItemModal({ id, open, onClose }: ItemModalProps) {
+  const selectedStoreId = useAuthStore(selectSelectedStoreId);
+
   const {
     data: item,
     isLoading,
@@ -37,10 +43,11 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
   } = useQuery({
     queryKey: ['menuItem', id],
     queryFn: async () => {
-      return getMenuItemById(id!);
+      if (!selectedStoreId) return null;
+      return getMenuItemById(selectedStoreId, id!);
     },
 
-    enabled: open && typeof id === 'string',
+    enabled: open && typeof id === 'string' && !!selectedStoreId,
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000,
     gcTime: 15 * 60 * 1000,
