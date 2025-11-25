@@ -1,0 +1,61 @@
+{
+  "kitchen": {
+    "title": "Kitchen Display",
+    "subtitle": "Real-time order management for kitchen staff",
+    "selectStore": "Please select a store to view kitchen orders",
+    "loadFailed": "Failed to load kitchen orders",
+    "retry": "Retry",
+    "refresh": "Refresh orders",
+    "enableSound": "Enable sound",
+    "disableSound": "Disable sound",
+    "stats": {
+      "pending": "Pending",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "totalActive": "Total Active",
+      "pendingDesc": "Awaiting preparation",
+      "preparingDesc": "Being prepared",
+      "readyDesc": "Ready to serve",
+      "totalActiveDesc": "All active orders"
+    },
+    "columns": {
+      "pending": "Pending",
+      "preparing": "Preparing",
+      "ready": "Ready"
+    },
+    "empty": {
+      "pending": "No pending orders",
+      "preparing": "No orders in preparation",
+      "ready": "No orders ready",
+      "served": "No served orders",
+      "completed": "No completed orders",
+      "cancelled": "No cancelled orders"
+    },
+    "status": {
+      "pending": "Pending",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "served": "Served",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "actions": {
+      "startPreparing": "Start Preparing",
+      "markReady": "Mark Ready",
+      "markServed": "Mark Served"
+    },
+    "order": {
+      "number": "Order #",
+      "table": "Table",
+      "total": "Total",
+      "note": "Note",
+      "items": "items"
+    },
+    "notifications": {
+      "orderUpdated": "Order Updated",
+      "statusChanged": "Order status changed to",
+      "updateFailed": "Update Failed",
+      "failedToUpdate": "Failed to update order status"
+    }
+  }
+}

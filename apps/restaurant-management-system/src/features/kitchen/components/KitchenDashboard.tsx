@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@repo/ui/components/button';
 import { Skeleton } from '@repo/ui/components/skeleton';
 import { Bell, BellOff, RefreshCw } from 'lucide-react';
@@ -30,6 +31,7 @@ import { OrderGrid } from './OrderGrid';
  * - Kitchen statistics
  */
 export default function KitchenDashboard() {
+  const t = useTranslations('kitchen');
   const storeId = useAuthStore((state) => state.selectedStoreId);
   const autoRefresh = useKitchenStore(selectAutoRefresh);
   const refreshInterval = useKitchenStore(selectRefreshInterval);
@@ -64,9 +66,7 @@ export default function KitchenDashboard() {
   if (!storeId) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <p className="text-muted-foreground">
-          Please select a store to view kitchen orders
-        </p>
+        <p className="text-muted-foreground">{t('selectStore')}</p>
       </div>
     );
   }
@@ -75,10 +75,10 @@ export default function KitchenDashboard() {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <p className="text-destructive">Failed to load kitchen orders</p>
+          <p className="text-destructive">{t('loadFailed')}</p>
           <Button onClick={() => refetch()} className="mt-4">
             <RefreshCw className="mr-2 h-4 w-4" />
-            Retry
+            {t('retry')}
           </Button>
         </div>
       </div>
@@ -90,10 +90,8 @@ export default function KitchenDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Kitchen Display</h1>
-          <p className="text-muted-foreground">
-            Real-time order management for kitchen staff
-          </p>
+          <h1 className="text-3xl font-bold">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('subtitle')}</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -101,7 +99,7 @@ export default function KitchenDashboard() {
             variant="outline"
             size="icon"
             onClick={toggleSound}
-            title={soundEnabled ? 'Disable sound' : 'Enable sound'}
+            title={soundEnabled ? t('disableSound') : t('enableSound')}
           >
             {soundEnabled ? (
               <Bell className="h-4 w-4" />
@@ -114,7 +112,7 @@ export default function KitchenDashboard() {
             variant="outline"
             size="icon"
             onClick={() => refetch()}
-            title="Refresh orders"
+            title={t('refresh')}
           >
             <RefreshCw className="h-4 w-4" />
           </Button>

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { motion } from 'motion/react';
 import * as Popover from '@repo/ui/components/popover';
 
@@ -10,6 +11,8 @@ interface AccountPopoverProps {
 }
 
 export function AccountPopover({ onLogout }: AccountPopoverProps) {
+  const t = useTranslations('common');
+
   return (
     <Popover.PopoverContent
       className="z-50 w-40 border bg-white p-2 shadow"
@@ -25,13 +28,13 @@ export function AccountPopover({ onLogout }: AccountPopoverProps) {
           href="/profile"
           className="block px-2 py-1 text-sm text-gray-700 hover:bg-gray-100"
         >
-          Profile
+          {t('profile')}
         </Link>
         <button
           onClick={onLogout}
           className="block w-full px-2 py-1 text-left text-sm text-red-600 hover:bg-gray-100"
         >
-          Logout
+          {t('logout')}
         </button>
       </motion.div>
     </Popover.PopoverContent>

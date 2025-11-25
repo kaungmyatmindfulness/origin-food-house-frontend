@@ -1,0 +1,56 @@
+{
+  "reports": {
+    "title": "Reports & Analytics",
+    "subtitle": "View sales, popular items, and payment breakdown",
+    "noStoreSelected": "Please select a store to view reports",
+    "errorLoading": "Error loading data",
+    "totalRevenue": "Total Revenue",
+    "totalOrders": "Total Orders",
+    "averageOrderValue": "Average Order Value",
+    "totalVat": "Total VAT",
+    "item": "Item",
+    "quantitySold": "Quantity Sold",
+    "revenue": "Revenue",
+    "orderCount": "Orders",
+    "amount": "Amount",
+    "transactions": "Transactions",
+    "percentage": "Percentage",
+    "paymentMethod": "Payment Method",
+    "exportCsv": "Export CSV",
+    "popularItemsTitle": "Top Selling Items",
+    "popularItemsDescription": "Most ordered menu items in the selected period",
+    "paymentMethodsTitle": "Payment Methods",
+    "paymentMethodsDescription": "Breakdown by payment type",
+    "presets": {
+      "today": "Today",
+      "week": "This Week",
+      "month": "This Month",
+      "custom": "Custom Range"
+    },
+    "tabs": {
+      "sales": "Sales Summary",
+      "popular": "Popular Items",
+      "payments": "Payment Breakdown",
+      "status": "Order Status"
+    },
+    "paymentMethods": {
+      "cash": "Cash",
+      "card": "Card",
+      "mobile_payment": "Mobile Payment",
+      "bank_transfer": "Bank Transfer",
+      "other": "Other"
+    },
+    "orderStatusTitle": "Order Status Distribution",
+    "orderStatusDescription": "Distribution of orders by current status",
+    "status": "Status",
+    "count": "Count",
+    "orderStatuses": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "served": "Served",
+      "cancelled": "Cancelled"
+    }
+  }
+}

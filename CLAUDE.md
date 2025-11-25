@@ -1278,6 +1278,63 @@ const mutation = useMutation({
 
 All user-facing strings MUST be translated in all 4 languages: `en`, `zh`, `my`, `th`.
 
+#### ⚠️ MANDATORY: No Hardcoded Display Text
+
+**CRITICAL GUARDRAIL: Every piece of text displayed to users MUST use the translation system.**
+
+This includes:
+
+- Button labels, form labels, placeholders
+- Error messages, success messages, toasts
+- Page titles, section headers, descriptions
+- Empty states, loading states
+- Tooltips, hints, helper text
+- Dialog titles, confirmation messages
+- Table headers, column names
+- Badge labels, status text
+
+**✅ CORRECT - Always use translations:**
+
+```typescript
+import { useTranslations } from 'next-intl';
+
+function MyComponent() {
+  const t = useTranslations('common');
+
+  return (
+    <div>
+      <h1>{t('pageTitle')}</h1>
+      <Button>{t('save')}</Button>
+      <p className="text-muted-foreground">{t('description')}</p>
+      {items.length === 0 && <p>{t('noItemsFound')}</p>}
+    </div>
+  );
+}
+```
+
+**❌ WRONG - Never hardcode display text:**
+
+```typescript
+// ❌ BAD - Hardcoded strings
+function MyComponent() {
+  return (
+    <div>
+      <h1>Menu Management</h1>           {/* ❌ Hardcoded */}
+      <Button>Save Changes</Button>       {/* ❌ Hardcoded */}
+      <p>Enter your details below</p>     {/* ❌ Hardcoded */}
+      {error && <p>Something went wrong</p>}  {/* ❌ Hardcoded */}
+    </div>
+  );
+}
+```
+
+**Exceptions (technical strings that should NOT be translated):**
+
+- Code identifiers, variable names
+- API endpoints, URLs
+- Console logs (developer-only)
+- Data values from the database (e.g., user-created content)
+
 #### Locale Routing Strategy
 
 **CRITICAL: RMS uses COOKIE-BASED locale routing, NOT URL-based.**
@@ -1369,12 +1426,35 @@ function MyComponent() {
 
 #### Translation Files Structure
 
-**Location:** `messages/[locale].json` (single file per language, not nested directories)
+**Location:** `messages/[locale]/[feature].json` (split by feature domain for maintainability)
+
+```
+messages/
+├── en/                    # English
+│   ├── common.json        # common, home, errors
+│   ├── auth.json          # auth
+│   ├── menu.json          # menu
+│   ├── navigation.json    # pages, sidebar
+│   ├── tables.json        # tables
+│   ├── store.json         # store
+│   ├── kitchen.json       # kitchen
+│   ├── orders.json        # orders
+│   ├── payments.json      # payments
+│   ├── reports.json       # reports
+│   ├── personnel.json     # personnel
+│   ├── auditLogs.json     # auditLogs
+│   ├── landing.json       # landing
+│   ├── tierUsage.json     # tierUsage
+│   └── admin.json         # admin
+├── zh/                    # Chinese (中文)
+├── my/                    # Myanmar (မြန်မာ)
+└── th/                    # Thai (ไทย)
+```
+
+**File Contents Example** (`messages/en/store.json`):
 
 ```json
 {
-  "common": { "save": "Save", "cancel": "Cancel" },
-  "menu": { "title": "Menu Management" },
   "store": {
     "choose": {
       "title": "Choose Your Store",
@@ -1383,6 +1463,10 @@ function MyComponent() {
   }
 }
 ```
+
+**How Files Are Loaded** (`src/i18n/request.ts`):
+
+All 15 feature files are loaded in parallel using `Promise.all()` and merged into a single messages object at runtime. This maintains fast load times while keeping files small and manageable.
 
 **Translation Namespace Pattern:**
 
@@ -1399,17 +1483,22 @@ t('save'); // Looks for: common.save
 
 #### Adding New Translations
 
-**Always update all 4 language files:**
+**Always update all 4 locale directories:**
 
-1. `messages/en.json` - English
-2. `messages/zh.json` - Simplified Chinese (中文)
-3. `messages/my.json` - Myanmar (မြန်မာ)
-4. `messages/th.json` - Thai (ไทย)
+1. `messages/en/` - English
+2. `messages/zh/` - Simplified Chinese (中文)
+3. `messages/my/` - Myanmar (မြန်မာ)
+4. `messages/th/` - Thai (ไทย)
 
-**Example:**
+**Step-by-Step:**
+
+1. **Identify the feature domain** - Find the appropriate file (e.g., `store.json` for store-related strings)
+2. **Add to all 4 locales** - Update `en/`, `zh/`, `my/`, `th/` versions of that file
+
+**Example** - Adding a new store translation:
 
 ```json
-// en.json
+// messages/en/store.json
 {
   "store": {
     "choose": {
@@ -1418,7 +1507,7 @@ t('save'); // Looks for: common.save
   }
 }
 
-// zh.json
+// messages/zh/store.json
 {
   "store": {
     "choose": {
@@ -1427,7 +1516,7 @@ t('save'); // Looks for: common.save
   }
 }
 
-// my.json
+// messages/my/store.json
 {
   "store": {
     "choose": {
@@ -1436,7 +1525,7 @@ t('save'); // Looks for: common.save
   }
 }
 
-// th.json
+// messages/th/store.json
 {
   "store": {
     "choose": {
@@ -1445,6 +1534,13 @@ t('save'); // Looks for: common.save
   }
 }
 ```
+
+**Adding a New Feature Domain:**
+
+If adding translations for a new feature that doesn't fit existing files:
+
+1. Create new `[feature].json` in all 4 locale directories
+2. Update `src/i18n/request.ts` to import and merge the new file
 
 #### Locale Switching
 
@@ -1469,7 +1565,7 @@ const handleLocaleChange = (newLocale: Locale) => {
 2. Cookie set: `NEXT_LOCALE=zh`
 3. Page refreshes (`router.refresh()`)
 4. Middleware reads cookie → applies locale
-5. Translations reload from `messages/zh.json`
+5. Translations reload from `messages/zh/*.json` (all 15 feature files merged)
 6. UI updates in Chinese
 
 #### Page Props (When You DO Need Locale)
@@ -1507,14 +1603,16 @@ export default function MyPage({ params }: PageProps) {
 
 #### Summary Checklist
 
-- [ ] All user-facing strings added to 4 translation files
+- [ ] All user-facing strings added to appropriate feature file in all 4 locales
 - [ ] Translation keys use dot notation (e.g., `store.choose.title`)
+- [ ] New translations added to correct feature file (e.g., `store.json`, `menu.json`)
 - [ ] Components use `useTranslations('namespace')` hook
 - [ ] **Navigation uses routes WITHOUT locale prefix** (e.g., `/hub/menu`)
 - [ ] Links use plain hrefs (e.g., `<Link href="/store/create">`)
 - [ ] Router methods use plain paths (e.g., `router.push('/hub/menu')`)
 - [ ] `useLocale()` hook used ONLY when locale value needed for logic
 - [ ] LanguageSwitcher sets cookie + calls `router.refresh()`
+- [ ] If adding new feature domain: `request.ts` updated to import new file
 
 ### 7. Performance Optimization
 

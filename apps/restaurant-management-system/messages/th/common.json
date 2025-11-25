@@ -1,0 +1,43 @@
+{
+  "common": {
+    "home": "หน้าแรก",
+    "menu": "เมนู",
+    "tables": "โต๊ะ",
+    "store": "ร้าน",
+    "profile": "โปรไฟล์",
+    "settings": "ตั้งค่า",
+    "logout": "ออกจากระบบ",
+    "save": "บันทึก",
+    "cancel": "ยกเลิก",
+    "delete": "ลบ",
+    "edit": "แก้ไข",
+    "create": "สร้าง",
+    "search": "ค้นหา",
+    "loading": "กำลังโหลด...",
+    "error": "ข้อผิดพลาด",
+    "success": "สำเร็จ",
+    "confirm": "ยืนยัน",
+    "close": "ปิด",
+    "getStarted": "เริ่มต้นใช้งาน"
+  },
+  "home": {
+    "welcomeTitle": "ยินดีต้อนรับสู่ MyApp",
+    "welcomeDescription": "ตัวเริ่มต้นที่ทันสมัยที่สร้างด้วย Next.js, Tailwind CSS และ shadcn/ui เพื่อการพัฒนาที่รวดเร็ว",
+    "keyFeatures": "คุณสมบัติหลัก",
+    "feature1": "Next.js App Router + TypeScript",
+    "feature2": "เลย์เอาต์ Tailwind ที่ตอบสนอง",
+    "feature3": "คอมโพเนนต์ UI ที่เข้าถึงได้ (shadcn/ui)",
+    "feature4": "พร้อมสำหรับโหมดมืด",
+    "copyright": "© {year} MyApp. สงวนลิขสิทธิ์."
+  },
+  "errors": {
+    "unauthorized": "ไม่ได้รับอนุญาต",
+    "permissionDenied": "ปฏิเสธการเข้าถึง",
+    "invalidSession": "ข้อมูลเซสชันไม่ถูกต้อง กรุณาเข้าสู่ระบบใหม่",
+    "noPermission": "คุณไม่มีสิทธิ์เข้าถึงหน้านี้",
+    "storeRequired": "กรุณาเลือกร้านก่อน",
+    "roleMissing": "ไม่สามารถตรวจสอบสิทธิ์: ไม่พบบทบาทผู้ใช้",
+    "networkError": "เกิดข้อผิดพลาดเครือข่าย กรุณาลองใหม่อีกครั้ง",
+    "unknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก"
+  }
+}

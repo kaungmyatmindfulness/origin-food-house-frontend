@@ -136,7 +136,7 @@ export function InviteStaffDialog({
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="email@example.com"
+                      placeholder={t('inviteDialog.emailPlaceholder')}
                       {...field}
                     />
                   </FormControl>

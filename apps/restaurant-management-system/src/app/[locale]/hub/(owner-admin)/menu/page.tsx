@@ -262,7 +262,7 @@ export default function MenuPage() {
                           key={cat.id}
                           variant="outline"
                           size="sm"
-                          className="flex-shrink-0 transition-colors hover:bg-primary hover:text-primary-foreground"
+                          className="hover:bg-primary hover:text-primary-foreground flex-shrink-0 transition-colors"
                           onClick={() => scrollToCategory(cat.id)}
                         >
                           {cat.name}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Badge } from '@repo/ui/components/badge';
 
 import { selectOrdersByStatus, useKitchenStore } from '../store/kitchen.store';
@@ -17,26 +18,27 @@ interface OrderGridProps {
  * Displays orders in Kanban-style columns by status
  */
 export function OrderGrid({ storeId }: OrderGridProps) {
+  const t = useTranslations('kitchen.columns');
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   const columns: Array<{
     status: OrderStatus;
-    title: string;
+    titleKey: 'pending' | 'preparing' | 'ready';
     bgColor: string;
   }> = [
     {
       status: 'PENDING' as OrderStatus,
-      title: 'Pending',
+      titleKey: 'pending',
       bgColor: 'bg-orange-50',
     },
     {
       status: 'PREPARING' as OrderStatus,
-      title: 'Preparing',
+      titleKey: 'preparing',
       bgColor: 'bg-blue-50',
     },
     {
       status: 'READY' as OrderStatus,
-      title: 'Ready',
+      titleKey: 'ready',
       bgColor: 'bg-green-50',
     },
   ];
@@ -51,7 +53,7 @@ export function OrderGrid({ storeId }: OrderGridProps) {
         <OrderColumn
           key={column.status}
           status={column.status}
-          title={column.title}
+          title={t(column.titleKey)}
           bgColor={column.bgColor}
           storeId={storeId}
           selectedOrderId={selectedOrderId}
@@ -125,18 +127,23 @@ function OrderColumn({
  * Shown when a column has no orders
  */
 function EmptyState({ status }: { status: OrderStatus }) {
-  const messages: Record<OrderStatus, string> = {
-    PENDING: 'No pending orders',
-    PREPARING: 'No orders in preparation',
-    READY: 'No orders ready',
-    SERVED: 'No served orders',
-    COMPLETED: 'No completed orders',
-    CANCELLED: 'No cancelled orders',
+  const t = useTranslations('kitchen.empty');
+
+  const messageKeys: Record<
+    OrderStatus,
+    'pending' | 'preparing' | 'ready' | 'served' | 'completed' | 'cancelled'
+  > = {
+    PENDING: 'pending',
+    PREPARING: 'preparing',
+    READY: 'ready',
+    SERVED: 'served',
+    COMPLETED: 'completed',
+    CANCELLED: 'cancelled',
   };
 
   return (
     <div className="text-muted-foreground rounded-lg border-2 border-dashed border-gray-300 p-6 text-center text-sm">
-      {messages[status]}
+      {t(messageKeys[status])}
     </div>
   );
 }

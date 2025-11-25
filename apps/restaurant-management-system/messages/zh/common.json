@@ -1,0 +1,43 @@
+{
+  "common": {
+    "home": "首页",
+    "menu": "菜单",
+    "tables": "桌位",
+    "store": "店铺",
+    "profile": "个人资料",
+    "settings": "设置",
+    "logout": "退出登录",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "创建",
+    "search": "搜索",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "confirm": "确认",
+    "close": "关闭",
+    "getStarted": "开始使用"
+  },
+  "home": {
+    "welcomeTitle": "欢迎使用 MyApp",
+    "welcomeDescription": "使用 Next.js、Tailwind CSS 和 shadcn/ui 构建的现代化启动器，用于快速开发。",
+    "keyFeatures": "主要特性",
+    "feature1": "Next.js App Router + TypeScript",
+    "feature2": "响应式 Tailwind 布局",
+    "feature3": "无障碍 UI 组件 (shadcn/ui)",
+    "feature4": "深色模式支持",
+    "copyright": "© {year} MyApp. 保留所有权利。"
+  },
+  "errors": {
+    "unauthorized": "未授权",
+    "permissionDenied": "权限被拒绝",
+    "invalidSession": "会话数据无效。请重新登录。",
+    "noPermission": "您没有访问此页面的权限。",
+    "storeRequired": "请先选择一个店铺。",
+    "roleMissing": "无法验证权限：未找到用户角色。",
+    "networkError": "网络错误。请重试。",
+    "unknownError": "发生未知错误。"
+  }
+}

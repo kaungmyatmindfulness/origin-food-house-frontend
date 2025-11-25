@@ -1,0 +1,43 @@
+{
+  "common": {
+    "home": "Home",
+    "menu": "Menu",
+    "tables": "Tables",
+    "store": "Store",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "close": "Close",
+    "getStarted": "Get Started"
+  },
+  "home": {
+    "welcomeTitle": "Welcome to MyApp",
+    "welcomeDescription": "A modern starter built with Next.js, Tailwind CSS, and shadcn/ui for rapid development.",
+    "keyFeatures": "Key Features",
+    "feature1": "Next.js App Router + TypeScript",
+    "feature2": "Responsive Tailwind layouts",
+    "feature3": "Accessible UI components (shadcn/ui)",
+    "feature4": "Dark mode ready",
+    "copyright": "© {year} MyApp. All rights reserved."
+  },
+  "errors": {
+    "unauthorized": "Unauthorized",
+    "permissionDenied": "Permission Denied",
+    "invalidSession": "Invalid session data. Please log in again.",
+    "noPermission": "You do not have permission to access this page.",
+    "storeRequired": "Please select a store first.",
+    "roleMissing": "Cannot verify permissions: User role not found.",
+    "networkError": "Network error. Please try again.",
+    "unknownError": "An unknown error occurred."
+  }
+}

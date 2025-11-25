@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Badge } from '@repo/ui/components/badge';
 import { Card, CardContent, CardHeader } from '@repo/ui/components/card';
 import { Clock } from 'lucide-react';
@@ -20,6 +21,7 @@ interface OrderCardProps {
  * Displays a single order with items, time elapsed, and status badge
  */
 export function OrderCard({ order, onSelect, isSelected }: OrderCardProps) {
+  const t = useTranslations('kitchen.order');
   const timeElapsed = formatDistanceToNow(new Date(order.createdAt));
 
   return (
@@ -54,7 +56,7 @@ export function OrderCard({ order, onSelect, isSelected }: OrderCardProps) {
                 </span>
                 {item.notes && (
                   <p className="text-muted-foreground text-xs italic">
-                    Note: {item.notes}
+                    {t('note')}: {item.notes}
                   </p>
                 )}
                 {item.customizations.length > 0 && (
@@ -74,7 +76,7 @@ export function OrderCard({ order, onSelect, isSelected }: OrderCardProps) {
 
         <div className="mt-3 border-t pt-3">
           <div className="flex justify-between text-sm font-medium">
-            <span>Total</span>
+            <span>{t('total')}</span>
             <span>฿{parseFloat(order.grandTotal).toFixed(2)}</span>
           </div>
         </div>
@@ -88,22 +90,30 @@ export function OrderCard({ order, onSelect, isSelected }: OrderCardProps) {
  * Displays a colored badge for order status
  */
 function OrderStatusBadge({ status }: { status: OrderStatus }) {
+  const t = useTranslations('kitchen.status');
+
   const variants: Record<
     OrderStatus,
     {
       variant: 'default' | 'secondary' | 'destructive' | 'outline';
-      label: string;
+      labelKey:
+        | 'pending'
+        | 'preparing'
+        | 'ready'
+        | 'served'
+        | 'completed'
+        | 'cancelled';
     }
   > = {
-    PENDING: { variant: 'default', label: 'Pending' },
-    PREPARING: { variant: 'secondary', label: 'Preparing' },
-    READY: { variant: 'outline', label: 'Ready' },
-    SERVED: { variant: 'outline', label: 'Served' },
-    COMPLETED: { variant: 'outline', label: 'Completed' },
-    CANCELLED: { variant: 'destructive', label: 'Cancelled' },
+    PENDING: { variant: 'default', labelKey: 'pending' },
+    PREPARING: { variant: 'secondary', labelKey: 'preparing' },
+    READY: { variant: 'outline', labelKey: 'ready' },
+    SERVED: { variant: 'outline', labelKey: 'served' },
+    COMPLETED: { variant: 'outline', labelKey: 'completed' },
+    CANCELLED: { variant: 'destructive', labelKey: 'cancelled' },
   };
 
   const config = variants[status] || variants.PENDING;
 
-  return <Badge variant={config.variant}>{config.label}</Badge>;
+  return <Badge variant={config.variant}>{t(config.labelKey)}</Badge>;
 }

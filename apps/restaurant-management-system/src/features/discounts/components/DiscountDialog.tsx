@@ -63,7 +63,7 @@ export function DiscountDialog({
   orderId,
   order,
 }: DiscountDialogProps) {
-  const t = useTranslations('discounts');
+  const t = useTranslations('payments.discounts');
   const queryClient = useQueryClient();
 
   const [discountType, setDiscountType] = useState<DiscountType>('PERCENTAGE');
@@ -142,7 +142,7 @@ export function DiscountDialog({
       onOpenChange(false);
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to apply discount');
+      toast.error(error.message || t('failedToApply'));
     },
   });
 
@@ -152,7 +152,7 @@ export function DiscountDialog({
       discountType === 'PERCENTAGE' &&
       (!data.percentageValue || data.percentageValue <= 0)
     ) {
-      toast.error('Please enter a valid percentage value');
+      toast.error(t('invalidPercentage'));
       return;
     }
 
@@ -160,7 +160,7 @@ export function DiscountDialog({
       discountType === 'FIXED_AMOUNT' &&
       (!data.amountValue || data.amountValue <= 0)
     ) {
-      toast.error('Please enter a valid discount amount');
+      toast.error(t('invalidAmount'));
       return;
     }
 
@@ -186,7 +186,10 @@ export function DiscountDialog({
         <DialogHeader>
           <DialogTitle>{t('applyDiscount')}</DialogTitle>
           <DialogDescription>
-            Order #{orderId.slice(0, 8)} - Subtotal: {order.subTotal}
+            {t('orderSubtotal', {
+              orderId: orderId.slice(0, 8),
+              subtotal: order.subTotal,
+            })}
           </DialogDescription>
         </DialogHeader>
 
@@ -250,7 +253,7 @@ export function DiscountDialog({
                         step="0.01"
                         min="0"
                         max="100"
-                        placeholder="e.g., 10, 25, 50"
+                        placeholder={t('percentagePlaceholder')}
                         {...field}
                         onChange={(e) =>
                           field.onChange(parseFloat(e.target.value) || 0)
@@ -277,7 +280,7 @@ export function DiscountDialog({
                         step="0.01"
                         min="0"
                         max={subtotal}
-                        placeholder="e.g., 100, 500"
+                        placeholder={t('amountPlaceholder')}
                         {...field}
                         onChange={(e) =>
                           field.onChange(parseFloat(e.target.value) || 0)
@@ -319,7 +322,7 @@ export function DiscountDialog({
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Original Subtotal</span>
+                  <span>{t('originalSubtotal')}</span>
                   <span className="font-medium">${subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-red-600">
@@ -327,7 +330,7 @@ export function DiscountDialog({
                     {t('discount')} (
                     {discountType === 'PERCENTAGE'
                       ? `${percentageValue || 0}%`
-                      : 'Fixed'}
+                      : t('fixed')}
                     )
                   </span>
                   <span className="font-medium">
@@ -365,8 +368,8 @@ export function DiscountDialog({
                 }
               >
                 {applyDiscountMutation.isPending
-                  ? 'Applying...'
-                  : 'Apply Discount'}
+                  ? t('applying')
+                  : t('applyDiscount')}
               </Button>
             </div>
           </form>

@@ -1,0 +1,73 @@
+{
+  "tierUsage": {
+    "title": "计划使用情况",
+    "description": "监控当前计划的使用情况和限制",
+    "errorLoading": "加载计划使用情况失败",
+    "used": "已使用",
+    "upgrade": "升级计划",
+    "resources": {
+      "tables": "桌子",
+      "menuItems": "菜单项",
+      "staff": "员工",
+      "monthlyOrders": "每月订单"
+    },
+    "tiers": {
+      "FREE": "免费",
+      "STANDARD": "标准",
+      "PREMIUM": "高级"
+    },
+    "upgradeDialog": {
+      "title": "升级您的计划",
+      "description": "选择适合您业务需求的计划",
+      "featureLockedDescription": "{feature}在您当前的计划中不可用",
+      "recommended": "推荐",
+      "currentPlan": "当前计划",
+      "notAvailable": "不可用",
+      "upgrade": "立即升级",
+      "note": "支付处理将在Slice E中实现。现在联系支持以升级。",
+      "limits": "使用限制",
+      "tables": "桌子",
+      "menuItems": "菜单项",
+      "staff": "员工",
+      "ordersPerMonth": "订单/月",
+      "unlimited": "无限制",
+      "features": {
+        "title": "功能",
+        "free": {
+          "basic": "基本菜单管理",
+          "qrOrdering": "二维码点餐",
+          "basicReports": "基本报告",
+          "emailSupport": "电子邮件支持"
+        },
+        "standard": {
+          "everything": "免费版所有功能，还有：",
+          "kds": "厨房显示系统 (KDS)",
+          "advancedReports": "高级报告和分析",
+          "staffManagement": "高级员工管理",
+          "prioritySupport": "优先电子邮件支持"
+        },
+        "premium": {
+          "everything": "标准版所有功能，还有：",
+          "unlimited": "无限资源",
+          "multiLocation": "多店支持",
+          "apiAccess": "API访问",
+          "customization": "自定义品牌",
+          "dedicatedSupport": "专属客户经理"
+        }
+      }
+    },
+    "tierGate": {
+      "description": "此功能仅在{tiers}计划中可用",
+      "or": "或",
+      "viewPlans": "查看计划并升级",
+      "tiers": {
+        "STANDARD": "标准",
+        "PREMIUM": "高级"
+      }
+    },
+    "kds": {
+      "featureName": "厨房显示系统 (KDS)",
+      "featureDescription": "标准和高级计划提供的实时厨房订单管理系统"
+    }
+  }
+}

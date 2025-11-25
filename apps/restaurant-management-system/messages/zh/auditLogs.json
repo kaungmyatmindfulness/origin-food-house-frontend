@@ -1,0 +1,60 @@
+{
+  "auditLogs": {
+    "title": "审计日志",
+    "subtitle": "查看和导出系统活动日志",
+    "noStoreSelected": "请选择商店查看审计日志",
+    "export": "导出为CSV",
+    "exporting": "导出中...",
+    "exportSuccess": "审计日志导出成功",
+    "exportError": "导出审计日志失败",
+    "tableTitle": "活动日志",
+    "showingResults": "显示 {from} - {to} 共 {total} 条",
+    "loadingResults": "加载审计日志中...",
+    "errorLoading": "加载审计日志失败",
+    "errorLoadingDescription": "请重试或联系支持",
+    "noLogs": "未找到审计日志",
+    "noLogsDescription": "尝试调整筛选条件或日期范围",
+    "filters": {
+      "title": "筛选",
+      "description": "按操作、日期或关键词筛选审计日志",
+      "action": "操作类型",
+      "actionPlaceholder": "选择操作",
+      "allActions": "所有操作",
+      "startDate": "开始日期",
+      "endDate": "结束日期",
+      "keyword": "搜索",
+      "keywordPlaceholder": "在详情中搜索..."
+    },
+    "columns": {
+      "timestamp": "时间戳",
+      "user": "用户",
+      "action": "操作",
+      "details": "详情",
+      "ipAddress": "IP地址"
+    },
+    "actions": {
+      "STORE_SETTING_CHANGED": "设置已更改",
+      "MENU_PRICE_CHANGED": "价格已更改",
+      "USER_ROLE_CHANGED": "角色已更改",
+      "USER_SUSPENDED": "用户已暂停",
+      "PAYMENT_REFUNDED": "已退款",
+      "CATEGORY_CREATED": "类别已创建",
+      "CATEGORY_UPDATED": "类别已更新",
+      "CATEGORY_DELETED": "类别已删除",
+      "MENU_ITEM_CREATED": "菜单项已创建",
+      "MENU_ITEM_UPDATED": "菜单项已更新",
+      "MENU_ITEM_DELETED": "菜单项已删除",
+      "TABLE_CREATED": "桌子已创建",
+      "TABLE_UPDATED": "桌子已更新",
+      "TABLE_DELETED": "桌子已删除",
+      "ORDER_CREATED": "订单已创建",
+      "ORDER_STATUS_CHANGED": "订单状态已更改",
+      "PAYMENT_RECORDED": "付款已记录"
+    },
+    "pagination": {
+      "page": "第 {current} 页，共 {total} 页",
+      "previous": "上一页",
+      "next": "下一页"
+    }
+  }
+}

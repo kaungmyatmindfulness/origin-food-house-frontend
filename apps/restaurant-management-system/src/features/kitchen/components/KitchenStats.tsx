@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Card,
   CardContent,
@@ -16,38 +17,39 @@ import { selectKitchenStats, useKitchenStore } from '../store/kitchen.store';
  * Displays real-time statistics for kitchen operations
  */
 export function KitchenStats() {
+  const t = useTranslations('kitchen.stats');
   const stats = useKitchenStore(selectKitchenStats);
 
   const statCards = [
     {
-      title: 'Pending',
+      title: t('pending'),
       value: stats.pending,
       icon: Clock,
-      description: 'Awaiting preparation',
+      description: t('pendingDesc'),
       color: 'text-orange-500',
       bgColor: 'bg-orange-100',
     },
     {
-      title: 'Preparing',
+      title: t('preparing'),
       value: stats.preparing,
       icon: ChefHat,
-      description: 'Being prepared',
+      description: t('preparingDesc'),
       color: 'text-blue-500',
       bgColor: 'bg-blue-100',
     },
     {
-      title: 'Ready',
+      title: t('ready'),
       value: stats.ready,
       icon: Check,
-      description: 'Ready to serve',
+      description: t('readyDesc'),
       color: 'text-green-500',
       bgColor: 'bg-green-100',
     },
     {
-      title: 'Total Active',
+      title: t('totalActive'),
       value: stats.totalActive,
       icon: TrendingUp,
-      description: 'All active orders',
+      description: t('totalActiveDesc'),
       color: 'text-purple-500',
       bgColor: 'bg-purple-100',
     },

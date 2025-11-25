@@ -2,6 +2,7 @@
 
 import { Search, X } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@repo/ui/components/button';
 import { Input } from '@repo/ui/components/input';
@@ -16,9 +17,11 @@ interface MenuSearchBarProps {
 export function MenuSearchBar({
   value,
   onChange,
-  placeholder = 'Search menu items...',
+  placeholder,
   onKeyboardShortcut,
 }: MenuSearchBarProps) {
+  const t = useTranslations('menu');
+  const defaultPlaceholder = placeholder ?? t('searchPlaceholder');
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -45,7 +48,7 @@ export function MenuSearchBar({
       <Input
         ref={inputRef}
         type="text"
-        placeholder={placeholder}
+        placeholder={defaultPlaceholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="pr-10 pl-10"

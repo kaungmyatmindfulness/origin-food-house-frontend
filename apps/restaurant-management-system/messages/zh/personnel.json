@@ -1,0 +1,85 @@
+{
+  "personnel": {
+    "title": "人员管理",
+    "description": "管理员工、角色和权限",
+    "inviteStaff": "邀请员工",
+    "staffList": "员工列表",
+    "pendingInvitations": "待处理邀请",
+    "noStoreSelected": "请选择店铺以查看人员",
+    "noStaffFound": "未找到员工",
+    "searchPlaceholder": "按姓名或邮箱搜索...",
+    "filterByRole": "按角色筛选",
+    "filterByStatus": "按状态筛选",
+    "allRoles": "所有角色",
+    "allStatuses": "所有状态",
+    "roles": {
+      "OWNER": "老板",
+      "ADMIN": "管理员",
+      "CHEF": "厨师",
+      "CASHIER": "收银员",
+      "SERVER": "服务员"
+    },
+    "status": {
+      "active": "活跃",
+      "suspended": "已暂停",
+      "pending": "待处理"
+    },
+    "table": {
+      "name": "姓名",
+      "email": "邮箱",
+      "role": "角色",
+      "status": "状态",
+      "actions": "操作"
+    },
+    "actions": {
+      "title": "操作",
+      "changeRole": "更改角色",
+      "suspend": "暂停",
+      "reactivate": "重新激活"
+    },
+    "inviteDialog": {
+      "title": "邀请员工",
+      "description": "发送邀请加入您的团队",
+      "email": "邮箱地址",
+      "emailPlaceholder": "email@example.com",
+      "role": "角色",
+      "selectRole": "选择角色",
+      "submit": "发送邀请",
+      "success": "邀请发送成功",
+      "error": "发送邀请失败"
+    },
+    "changeRoleDialog": {
+      "title": "更改角色",
+      "description": "更改 {name} 的角色",
+      "currentRole": "当前角色",
+      "newRole": "新角色",
+      "submit": "更改角色",
+      "success": "角色更改成功",
+      "error": "更改角色失败",
+      "ownerWarning": "将角色更改为老板将转移主要所有权。此操作需要确认。"
+    },
+    "suspendDialog": {
+      "title": "暂停用户",
+      "description": "暂停 {name} 的访问权限",
+      "warning": "这将立即撤销该用户对店铺的所有访问权限。",
+      "reason": "暂停原因",
+      "reasonPlaceholder": "输入暂停的详细原因...",
+      "submit": "确认暂停",
+      "success": "用户暂停成功",
+      "error": "暂停用户失败"
+    },
+    "reactivate": {
+      "success": "用户重新激活成功",
+      "error": "重新激活用户失败"
+    },
+    "tierLimit": {
+      "message": "已达员工限制",
+      "description": "您当前的套餐只允许有限数量的员工。升级以添加更多。",
+      "upgrade": "升级套餐"
+    },
+    "common": {
+      "cancel": "取消",
+      "submitting": "提交中..."
+    }
+  }
+}

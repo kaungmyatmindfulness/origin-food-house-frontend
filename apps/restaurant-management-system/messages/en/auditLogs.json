@@ -1,0 +1,60 @@
+{
+  "auditLogs": {
+    "title": "Audit Logs",
+    "subtitle": "View and export system activity logs",
+    "noStoreSelected": "Please select a store to view audit logs",
+    "export": "Export to CSV",
+    "exporting": "Exporting...",
+    "exportSuccess": "Audit logs exported successfully",
+    "exportError": "Failed to export audit logs",
+    "tableTitle": "Activity Log",
+    "showingResults": "Showing {from} - {to} of {total} entries",
+    "loadingResults": "Loading audit logs...",
+    "errorLoading": "Failed to load audit logs",
+    "errorLoadingDescription": "Please try again or contact support if the problem persists",
+    "noLogs": "No audit logs found",
+    "noLogsDescription": "Try adjusting your filters or date range",
+    "filters": {
+      "title": "Filters",
+      "description": "Filter audit logs by action, date, or keyword",
+      "action": "Action Type",
+      "actionPlaceholder": "Select action",
+      "allActions": "All Actions",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "keyword": "Search",
+      "keywordPlaceholder": "Search in details..."
+    },
+    "columns": {
+      "timestamp": "Timestamp",
+      "user": "User",
+      "action": "Action",
+      "details": "Details",
+      "ipAddress": "IP Address"
+    },
+    "actions": {
+      "STORE_SETTING_CHANGED": "Setting Changed",
+      "MENU_PRICE_CHANGED": "Price Changed",
+      "USER_ROLE_CHANGED": "Role Changed",
+      "USER_SUSPENDED": "User Suspended",
+      "PAYMENT_REFUNDED": "Refund Issued",
+      "CATEGORY_CREATED": "Category Created",
+      "CATEGORY_UPDATED": "Category Updated",
+      "CATEGORY_DELETED": "Category Deleted",
+      "MENU_ITEM_CREATED": "Menu Item Created",
+      "MENU_ITEM_UPDATED": "Menu Item Updated",
+      "MENU_ITEM_DELETED": "Menu Item Deleted",
+      "TABLE_CREATED": "Table Created",
+      "TABLE_UPDATED": "Table Updated",
+      "TABLE_DELETED": "Table Deleted",
+      "ORDER_CREATED": "Order Created",
+      "ORDER_STATUS_CHANGED": "Order Status Changed",
+      "PAYMENT_RECORDED": "Payment Recorded"
+    },
+    "pagination": {
+      "page": "Page {current} of {total}",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  }
+}

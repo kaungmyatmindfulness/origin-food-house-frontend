@@ -1,0 +1,73 @@
+{
+  "tierUsage": {
+    "title": "Plan Usage",
+    "description": "Monitor your current plan usage and limits",
+    "errorLoading": "Failed to load plan usage",
+    "used": "used",
+    "upgrade": "Upgrade Plan",
+    "resources": {
+      "tables": "Tables",
+      "menuItems": "Menu Items",
+      "staff": "Staff Members",
+      "monthlyOrders": "Monthly Orders"
+    },
+    "tiers": {
+      "FREE": "Free",
+      "STANDARD": "Standard",
+      "PREMIUM": "Premium"
+    },
+    "upgradeDialog": {
+      "title": "Upgrade Your Plan",
+      "description": "Choose the plan that fits your business needs",
+      "featureLockedDescription": "{feature} is not available on your current plan",
+      "recommended": "Recommended",
+      "currentPlan": "Current Plan",
+      "notAvailable": "Not Available",
+      "upgrade": "Upgrade Now",
+      "note": "Payment processing will be implemented in Slice E. Contact support to upgrade now.",
+      "limits": "Usage Limits",
+      "tables": "tables",
+      "menuItems": "menu items",
+      "staff": "staff members",
+      "ordersPerMonth": "orders/month",
+      "unlimited": "Unlimited",
+      "features": {
+        "title": "Features",
+        "free": {
+          "basic": "Basic menu management",
+          "qrOrdering": "QR code ordering",
+          "basicReports": "Basic reports",
+          "emailSupport": "Email support"
+        },
+        "standard": {
+          "everything": "Everything in Free, plus:",
+          "kds": "Kitchen Display System (KDS)",
+          "advancedReports": "Advanced reports & analytics",
+          "staffManagement": "Advanced staff management",
+          "prioritySupport": "Priority email support"
+        },
+        "premium": {
+          "everything": "Everything in Standard, plus:",
+          "unlimited": "Unlimited resources",
+          "multiLocation": "Multi-location support",
+          "apiAccess": "API access",
+          "customization": "Custom branding",
+          "dedicatedSupport": "Dedicated account manager"
+        }
+      }
+    },
+    "tierGate": {
+      "description": "This feature is available on {tiers} plans only",
+      "or": "or",
+      "viewPlans": "View plans and upgrade",
+      "tiers": {
+        "STANDARD": "Standard",
+        "PREMIUM": "Premium"
+      }
+    },
+    "kds": {
+      "featureName": "Kitchen Display System (KDS)",
+      "featureDescription": "Real-time kitchen order management system available on Standard and Premium plans"
+    }
+  }
+}

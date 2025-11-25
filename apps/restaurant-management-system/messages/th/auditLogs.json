@@ -1,0 +1,60 @@
+{
+  "auditLogs": {
+    "title": "บันทึกการตรวจสอบ",
+    "subtitle": "ดูและส่งออกบันทึกกิจกรรมระบบ",
+    "noStoreSelected": "กรุณาเลือกร้านเพื่อดูบันทึกการตรวจสอบ",
+    "export": "ส่งออกเป็น CSV",
+    "exporting": "กำลังส่งออก...",
+    "exportSuccess": "ส่งออกบันทึกการตรวจสอบสำเร็จ",
+    "exportError": "ส่งออกบันทึกการตรวจสอบไม่สำเร็จ",
+    "tableTitle": "บันทึกกิจกรรม",
+    "showingResults": "แสดง {from} - {to} จาก {total} รายการ",
+    "loadingResults": "กำลังโหลดบันทึกการตรวจสอบ...",
+    "errorLoading": "โหลดบันทึกการตรวจสอบไม่สำเร็จ",
+    "errorLoadingDescription": "กรุณาลองอีกครั้งหรือติดต่อฝ่ายสนับสนุนหากปัญหายังคงอยู่",
+    "noLogs": "ไม่พบบันทึกการตรวจสอบ",
+    "noLogsDescription": "ลองปรับตัวกรองหรือช่วงวันที่ของคุณ",
+    "filters": {
+      "title": "ตัวกรอง",
+      "description": "กรองบันทึกการตรวจสอบตามการดำเนินการ วันที่ หรือคำสำคัญ",
+      "action": "ประเภทการดำเนินการ",
+      "actionPlaceholder": "เลือกการดำเนินการ",
+      "allActions": "การดำเนินการทั้งหมด",
+      "startDate": "วันที่เริ่มต้น",
+      "endDate": "วันที่สิ้นสุด",
+      "keyword": "ค้นหา",
+      "keywordPlaceholder": "ค้นหาในรายละเอียด..."
+    },
+    "columns": {
+      "timestamp": "เวลา",
+      "user": "ผู้ใช้",
+      "action": "การดำเนินการ",
+      "details": "รายละเอียด",
+      "ipAddress": "ที่อยู่ IP"
+    },
+    "actions": {
+      "STORE_SETTING_CHANGED": "เปลี่ยนการตั้งค่า",
+      "MENU_PRICE_CHANGED": "เปลี่ยนราคา",
+      "USER_ROLE_CHANGED": "เปลี่ยนบทบาท",
+      "USER_SUSPENDED": "ระงับผู้ใช้",
+      "PAYMENT_REFUNDED": "คืนเงินแล้ว",
+      "CATEGORY_CREATED": "สร้างหมวดหมู่แล้ว",
+      "CATEGORY_UPDATED": "อัปเดตหมวดหมู่แล้ว",
+      "CATEGORY_DELETED": "ลบหมวดหมู่แล้ว",
+      "MENU_ITEM_CREATED": "สร้างรายการเมนูแล้ว",
+      "MENU_ITEM_UPDATED": "อัปเดตรายการเมนูแล้ว",
+      "MENU_ITEM_DELETED": "ลบรายการเมนูแล้ว",
+      "TABLE_CREATED": "สร้างโต๊ะแล้ว",
+      "TABLE_UPDATED": "อัปเดตโต๊ะแล้ว",
+      "TABLE_DELETED": "ลบโต๊ะแล้ว",
+      "ORDER_CREATED": "สร้างคำสั่งซื้อแล้ว",
+      "ORDER_STATUS_CHANGED": "เปลี่ยนสถานะคำสั่งซื้อแล้ว",
+      "PAYMENT_RECORDED": "บันทึกการชำระเงินแล้ว"
+    },
+    "pagination": {
+      "page": "หน้า {current} จาก {total}",
+      "previous": "ก่อนหน้า",
+      "next": "ถัดไป"
+    }
+  }
+}

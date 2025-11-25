@@ -1,0 +1,24 @@
+{
+  "pages": {
+    "salesPage": "Sales Page",
+    "profilePage": "Profile Page"
+  },
+  "sidebar": {
+    "collapse": "Collapse",
+    "sale": "Sale",
+    "kitchenDisplay": "Kitchen Display",
+    "menu": "Menu",
+    "store": "Store",
+    "choose": "Choose",
+    "information": "Information",
+    "settings": "Settings",
+    "tables": "Tables",
+    "manage": "Manage",
+    "qrCodes": "QR Codes",
+    "storePersonnel": "Store Personnel",
+    "reports": "Reports",
+    "sales": "Sales",
+    "salesHistory": "Sales History",
+    "menuItems": "Menu Items"
+  }
+}

@@ -13,6 +13,7 @@ import {
 import { motion } from 'framer-motion';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 import { toast } from '@repo/ui/lib/toast';
 import { z } from 'zod';
 
@@ -85,6 +86,8 @@ export function CategoryCard({
   onSelectItem,
   isLastCategory = false,
 }: CategoryCardProps) {
+  const t = useTranslations('menu');
+  const tCommon = useTranslations('common');
   const [isEditingName, setIsEditingName] = React.useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
   const [isConfirmDeleteDialogOpen, setIsConfirmDeleteDialogOpen] =
@@ -110,7 +113,9 @@ export function CategoryCard({
       await updateCategory(selectedStoreId, category.id, data);
     },
     onSuccess: () => {
-      toast.success(`Category renamed to "${renameForm.getValues('name')}".`);
+      toast.success(
+        t('categoryRenamed', { name: renameForm.getValues('name') })
+      );
       queryClient.invalidateQueries({
         queryKey: menuKeys.all,
       });
@@ -118,8 +123,8 @@ export function CategoryCard({
       setIsEditingName(false);
     },
     onError: (error) => {
-      toast.error('Failed to rename category', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+      toast.error(t('failedToRename'), {
+        description: error instanceof Error ? error.message : tCommon('error'),
       });
       renameForm.reset({ name: category.name });
       setIsEditingName(false);
@@ -136,15 +141,15 @@ export function CategoryCard({
       await deleteCategory(selectedStoreId, category.id);
     },
     onSuccess: () => {
-      toast.success(`Category "${category.name}" deleted.`);
+      toast.success(t('categoryDeleted', { name: category.name }));
       queryClient.invalidateQueries({
         queryKey: menuKeys.all,
       });
       setIsConfirmDeleteDialogOpen(false);
     },
     onError: (error) => {
-      toast.error('Failed to delete category', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+      toast.error(t('failedToDelete'), {
+        description: error instanceof Error ? error.message : tCommon('error'),
       });
       setIsConfirmDeleteDialogOpen(false);
     },
@@ -169,9 +174,7 @@ export function CategoryCard({
     setIsPopoverOpen(false);
 
     if (!isEmpty(category.menuItems)) {
-      toast.error(
-        'Cannot delete category: Please remove all menu items first.'
-      );
+      toast.error(t('cannotDeleteWithItems'));
     } else {
       setIsConfirmDeleteDialogOpen(true);
     }
@@ -231,7 +234,7 @@ export function CategoryCard({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Edit category name</p>
+                  <p>{t('editCategoryName')}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -255,7 +258,7 @@ export function CategoryCard({
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Manage translations</p>
+                  <p>{t('manageTranslations')}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -281,7 +284,7 @@ export function CategoryCard({
                     {...field}
                     autoFocus
                     className="h-8 text-base"
-                    placeholder="Category name"
+                    placeholder={t('categoryNamePlaceholder')}
                     disabled={renameCategoryMutation.isPending}
                     onKeyDown={(e) => {
                       if (e.key === 'Escape') handleCancelEdit();
@@ -380,13 +383,13 @@ export function CategoryCard({
                       }
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
-                      Delete Category
+                      {t('deleteCategory')}
                     </Button>
                   </div>
                 </PopoverContent>
               </Popover>
               <TooltipContent>
-                <p>Category actions</p>
+                <p>{t('categoryActions')}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -395,7 +398,7 @@ export function CategoryCard({
         {/* Items Grid or Empty Message */}
         {isEmpty(category.menuItems) ? (
           <div className="mt-3 px-2 py-4 text-center text-sm text-gray-500 italic dark:text-gray-400">
-            No menu items in this category yet.
+            {t('noCategoryItems')}
           </div>
         ) : (
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
@@ -409,14 +412,14 @@ export function CategoryCard({
       <ConfirmationDialog
         open={isConfirmDeleteDialogOpen}
         onOpenChange={setIsConfirmDeleteDialogOpen}
-        title={`Delete Category: ${category.name}`}
+        title={t('deleteCategoryTitle', { name: category.name })}
         description={
           <>
-            Are you sure you want to permanently delete the category
-            <strong>{category.name}</strong>? This action cannot be undone.
+            {t('deleteCategoryConfirm')} <strong>{category.name}</strong>?{' '}
+            {t('actionCannotBeUndone')}
           </>
         }
-        confirmText="Delete"
+        confirmText={tCommon('delete')}
         confirmVariant="destructive"
         onConfirm={handleConfirmDelete}
         isConfirming={deleteCategoryMutation.isPending}

@@ -1,0 +1,43 @@
+{
+  "common": {
+    "home": "ပင်မစာမျက်နှာ",
+    "menu": "မီနူး",
+    "tables": "စားပွဲများ",
+    "store": "စတိုး",
+    "profile": "ကိုယ်ရေးအချက်အလက်",
+    "settings": "ဆက်တင်များ",
+    "logout": "ထွက်မည်",
+    "save": "သိမ်းမည်",
+    "cancel": "မလုပ်တော့ပါ",
+    "delete": "ဖျက်မည်",
+    "edit": "တည်းဖြတ်မည်",
+    "create": "ဖန်တီးမည်",
+    "search": "ရှာမည်",
+    "loading": "ခေတ္တစောင့်ပါ...",
+    "error": "အမှား",
+    "success": "အောင်မြင်ပါသည်",
+    "confirm": "အတည်ပြုမည်",
+    "close": "ပိတ်မည်",
+    "getStarted": "စတင်မည်"
+  },
+  "home": {
+    "welcomeTitle": "MyApp မှ ကြိုဆိုပါသည်",
+    "welcomeDescription": "Next.js၊ Tailwind CSS နှင့် shadcn/ui ဖြင့် တည်ဆောက်ထားသော ခေတ်မီ starter အတွက် လျင်မြန်သော ဖွံ့ဖြိုးတိုးတက်မှု။",
+    "keyFeatures": "အဓိက အင်္ဂါရပ်များ",
+    "feature1": "Next.js App Router + TypeScript",
+    "feature2": "တုံ့ပြန်မှုရှိသော Tailwind အပြင်အဆင်များ",
+    "feature3": "ရယူနိုင်သော UI အစိတ်အပိုင်းများ (shadcn/ui)",
+    "feature4": "Dark mode အသင့်ရှိနေသည်",
+    "copyright": "© {year} MyApp. မူပိုင်ခွင့်များ လက်ဝယ်ရှိသည်။"
+  },
+  "errors": {
+    "unauthorized": "ခွင့်ပြုချက်မရှိပါ",
+    "permissionDenied": "ခွင့်ပြုချက် ပယ်ချခံရသည်",
+    "invalidSession": "အသုံးပြုသူအချက်အလက် မမှန်ကန်ပါ။ ပြန်လည်ဝင်ရောက်ပါ။",
+    "noPermission": "ဤစာမျက်နှာကို ကြည့်ရှုခွင့် မရှိပါ။",
+    "storeRequired": "ဦးစွာ စတိုးတစ်ခုရွေးပါ။",
+    "roleMissing": "ခွင့်ပြုချက် မစစ်ဆေးနိုင်ပါ။",
+    "networkError": "အင်တာနက် အမှား။ ထပ်လုပ်ကြည့်ပါ။",
+    "unknownError": "အမျိုးအမည်မသိ အမှားဖြစ်သည်။"
+  }
+}

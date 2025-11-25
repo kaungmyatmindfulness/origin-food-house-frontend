@@ -1,0 +1,56 @@
+{
+  "reports": {
+    "title": "รายงานและการวิเคราะห์",
+    "subtitle": "ดูยอดขาย สินค้ายอดนิยม และรายละเอียดการชำระเงิน",
+    "noStoreSelected": "กรุณาเลือกร้านเพื่อดูรายงาน",
+    "errorLoading": "เกิดข้อผิดพลาดในการโหลดข้อมูล",
+    "totalRevenue": "รายได้รวม",
+    "totalOrders": "จำนวนคำสั่งซื้อทั้งหมด",
+    "averageOrderValue": "มูลค่าคำสั่งซื้อเฉลี่ย",
+    "totalVat": "ภาษีมูลค่าเพิ่มรวม",
+    "item": "รายการ",
+    "quantitySold": "จำนวนที่ขาย",
+    "revenue": "รายได้",
+    "orderCount": "คำสั่งซื้อ",
+    "amount": "จำนวนเงิน",
+    "transactions": "ธุรกรรม",
+    "percentage": "เปอร์เซ็นต์",
+    "paymentMethod": "วิธีการชำระเงิน",
+    "exportCsv": "ส่งออก CSV",
+    "popularItemsTitle": "สินค้ายอดนิยม",
+    "popularItemsDescription": "รายการเมนูที่มีคนสั่งมากที่สุดในช่วงเวลาที่เลือก",
+    "paymentMethodsTitle": "วิธีการชำระเงิน",
+    "paymentMethodsDescription": "แยกตามประเภทการชำระเงิน",
+    "presets": {
+      "today": "วันนี้",
+      "week": "สัปดาห์นี้",
+      "month": "เดือนนี้",
+      "custom": "กำหนดเอง"
+    },
+    "tabs": {
+      "sales": "สรุปยอดขาย",
+      "popular": "สินค้ายอดนิยม",
+      "payments": "รายละเอียดการชำระเงิน",
+      "status": "สถานะคำสั่งซื้อ"
+    },
+    "paymentMethods": {
+      "cash": "เงินสด",
+      "card": "บัตร",
+      "mobile_payment": "ชำระเงินผ่านมือถือ",
+      "bank_transfer": "โอนผ่านธนาคาร",
+      "other": "อื่นๆ"
+    },
+    "orderStatusTitle": "การกระจายสถานะคำสั่งซื้อ",
+    "orderStatusDescription": "การกระจายคำสั่งซื้อตามสถานะปัจจุบัน",
+    "status": "สถานะ",
+    "count": "จำนวน",
+    "orderStatuses": {
+      "pending": "รอดำเนินการ",
+      "confirmed": "ยืนยันแล้ว",
+      "preparing": "กำลังเตรียม",
+      "ready": "พร้อมแล้ว",
+      "served": "เสิร์ฟแล้ว",
+      "cancelled": "ยกเลิกแล้ว"
+    }
+  }
+}

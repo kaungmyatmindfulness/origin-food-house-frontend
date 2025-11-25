@@ -1,0 +1,85 @@
+{
+  "personnel": {
+    "title": "Personnel Management",
+    "description": "Manage staff members, roles, and permissions",
+    "inviteStaff": "Invite Staff",
+    "staffList": "Staff Members",
+    "pendingInvitations": "Pending Invitations",
+    "noStoreSelected": "Please select a store to view personnel",
+    "noStaffFound": "No staff members found",
+    "searchPlaceholder": "Search by name or email...",
+    "filterByRole": "Filter by Role",
+    "filterByStatus": "Filter by Status",
+    "allRoles": "All Roles",
+    "allStatuses": "All Statuses",
+    "roles": {
+      "OWNER": "Owner",
+      "ADMIN": "Admin",
+      "CHEF": "Chef",
+      "CASHIER": "Cashier",
+      "SERVER": "Server"
+    },
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "pending": "Pending"
+    },
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "title": "Actions",
+      "changeRole": "Change Role",
+      "suspend": "Suspend",
+      "reactivate": "Reactivate"
+    },
+    "inviteDialog": {
+      "title": "Invite Staff Member",
+      "description": "Send an invitation to join your team",
+      "email": "Email Address",
+      "emailPlaceholder": "email@example.com",
+      "role": "Role",
+      "selectRole": "Select a role",
+      "submit": "Send Invitation",
+      "success": "Invitation sent successfully",
+      "error": "Failed to send invitation"
+    },
+    "changeRoleDialog": {
+      "title": "Change Role",
+      "description": "Change role for {name}",
+      "currentRole": "Current Role",
+      "newRole": "New Role",
+      "submit": "Change Role",
+      "success": "Role changed successfully",
+      "error": "Failed to change role",
+      "ownerWarning": "Changing role to Owner will transfer primary ownership. This action requires confirmation."
+    },
+    "suspendDialog": {
+      "title": "Suspend User",
+      "description": "Suspend access for {name}",
+      "warning": "This will immediately revoke all access to the store for this user.",
+      "reason": "Reason for Suspension",
+      "reasonPlaceholder": "Enter detailed reason for suspension...",
+      "submit": "Confirm Suspension",
+      "success": "User suspended successfully",
+      "error": "Failed to suspend user"
+    },
+    "reactivate": {
+      "success": "User reactivated successfully",
+      "error": "Failed to reactivate user"
+    },
+    "tierLimit": {
+      "message": "Staff Limit Reached",
+      "description": "Your current tier allows a limited number of staff members. Upgrade to add more.",
+      "upgrade": "Upgrade Plan"
+    },
+    "common": {
+      "cancel": "Cancel",
+      "submitting": "Submitting..."
+    }
+  }
+}
