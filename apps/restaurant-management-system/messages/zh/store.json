@@ -80,12 +80,16 @@
     "settingsPage": {
       "title": "店铺设置",
       "subtitle": "管理您的店铺配置和偏好设置。",
-      "errorLoading": "加载店铺设置时出错。",
+      "loading": "正在加载店铺设置...",
+      "errorTitle": "无法加载设置",
+      "errorLoading": "我们无法加载您的店铺设置。请重试。",
+      "tryAgain": "重试",
       "tabs": {
         "taxAndService": "税费与服务费",
         "businessHours": "营业时间",
         "branding": "品牌形象",
-        "loyalty": "会员积分计划"
+        "loyalty": "会员积分计划",
+        "subscription": "订阅"
       },
       "taxAndService": {
         "title": "税费与服务费",

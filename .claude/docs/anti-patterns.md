@@ -215,7 +215,7 @@ export function CategoryCard({ category, onEdit }: CategoryCardProps) {
 ```typescript
 // ❌ BAD - Storing server data in Zustand
 const useMenuStore = create((set) => ({
-  categories: [],  // This should be in React Query!
+  categories: [], // This should be in React Query!
   setCategories: (cats) => set({ categories: cats }),
 }));
 

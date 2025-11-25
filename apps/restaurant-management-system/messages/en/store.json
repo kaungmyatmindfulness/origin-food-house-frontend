@@ -80,12 +80,16 @@
     "settingsPage": {
       "title": "Store Settings",
       "subtitle": "Manage your store configuration and preferences.",
-      "errorLoading": "Error loading store settings.",
+      "loading": "Loading store settings...",
+      "errorTitle": "Unable to Load Settings",
+      "errorLoading": "We couldn't load your store settings. Please try again.",
+      "tryAgain": "Try Again",
       "tabs": {
         "taxAndService": "Tax & Service",
         "businessHours": "Business Hours",
         "branding": "Branding",
-        "loyalty": "Loyalty Program"
+        "loyalty": "Loyalty Program",
+        "subscription": "Subscription"
       },
       "taxAndService": {
         "title": "Tax & Service Charge",

@@ -57,27 +57,27 @@ npm run generate:api
 
 ## Tech Stack Quick Reference
 
-| Category           | Technology                                    |
-| ------------------ | --------------------------------------------- |
-| Framework          | Next.js 15 (App Router), React 19, TypeScript |
-| State Management   | Zustand (client), React Query (server)        |
-| Styling            | Tailwind CSS v4, shadcn/ui via `@repo/ui`     |
-| API                | `apiFetch` + auto-generated OpenAPI types     |
-| Forms              | react-hook-form + Zod                         |
-| Real-time          | Socket.IO                                     |
-| i18n               | next-intl (cookie-based, 4 languages)         |
+| Category         | Technology                                    |
+| ---------------- | --------------------------------------------- |
+| Framework        | Next.js 15 (App Router), React 19, TypeScript |
+| State Management | Zustand (client), React Query (server)        |
+| Styling          | Tailwind CSS v4, shadcn/ui via `@repo/ui`     |
+| API              | `apiFetch` + auto-generated OpenAPI types     |
+| Forms            | react-hook-form + Zod                         |
+| Real-time        | Socket.IO                                     |
+| i18n             | next-intl (cookie-based, 4 languages)         |
 
 ---
 
 ## Key Architectural Decisions
 
-| Decision                | Rationale                                            |
-| ----------------------- | ---------------------------------------------------- |
-| Turborepo               | Fast builds, shared packages, intelligent caching    |
-| Auto-generated types    | Single source of truth, compile-time safety          |
-| Zustand over Redux      | Minimal boilerplate, better TypeScript support       |
-| Feature-Sliced Design   | Better organization, enforces separation of concerns |
-| Cookie-based i18n       | Clean URLs, persists across navigation               |
+| Decision              | Rationale                                            |
+| --------------------- | ---------------------------------------------------- |
+| Turborepo             | Fast builds, shared packages, intelligent caching    |
+| Auto-generated types  | Single source of truth, compile-time safety          |
+| Zustand over Redux    | Minimal boilerplate, better TypeScript support       |
+| Feature-Sliced Design | Better organization, enforces separation of concerns |
+| Cookie-based i18n     | Clean URLs, persists across navigation               |
 
 ---
 
@@ -148,37 +148,41 @@ User-initiated navigation?
 
 ## Important Files & Locations
 
-| File                                          | Purpose                      |
-| --------------------------------------------- | ---------------------------- |
-| `apps/*/src/utils/apiFetch.ts`                | API client config            |
-| `packages/api/src/generated/types.gen.ts`     | Auto-generated types         |
-| `packages/ui/src/components/`                 | Shared UI components (52+)   |
-| `packages/ui/src/styles/globals.css`          | Global styles & color tokens |
-| `apps/*/messages/[locale]/*.json`             | Translation files            |
-| `apps/*/src/i18n/`                            | i18n configuration           |
+| File                                      | Purpose                      |
+| ----------------------------------------- | ---------------------------- |
+| `apps/*/src/utils/apiFetch.ts`            | API client config            |
+| `packages/api/src/generated/types.gen.ts` | Auto-generated types         |
+| `packages/ui/src/components/`             | Shared UI components (52+)   |
+| `packages/ui/src/styles/globals.css`      | Global styles & color tokens |
+| `apps/*/messages/[locale]/*.json`         | Translation files            |
+| `apps/*/src/i18n/`                        | i18n configuration           |
 
 ---
 
 ## Pre-Completion Checklist
 
 ### Quality Gates
+
 - [ ] `npm run format`
 - [ ] `npm run lint` (0 warnings)
 - [ ] `npm run check-types` (0 errors)
 - [ ] `npm run build`
 
 ### Code Quality
+
 - [ ] Used `@repo/ui` components
 - [ ] Auto-generated API types (no manual types)
 - [ ] No `any` types
 - [ ] `import type` for type-only imports
 
 ### Design System
+
 - [ ] Semantic colors only (no raw Tailwind)
 - [ ] Component variant props (not custom classes)
 - [ ] No arbitrary values (`w-[234px]`)
 
 ### i18n
+
 - [ ] Translations in all 4 languages (en, zh, my, th)
 - [ ] No hardcoded display strings
 - [ ] Routes WITHOUT locale prefix
