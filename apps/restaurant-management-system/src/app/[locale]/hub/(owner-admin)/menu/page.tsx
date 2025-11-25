@@ -254,7 +254,7 @@ export default function MenuPage() {
               !categoryFilter &&
               stockFilter === 'all' &&
               filteredCategories.length > 1 && (
-                <div className="bg-background sticky top-0 z-10 -mx-6 border-b px-6 py-3">
+                <div className="bg-background/95 sticky top-0 z-10 -mx-6 border-b px-6 py-3 shadow-sm backdrop-blur-sm">
                   <ScrollArea>
                     <div className="flex gap-2">
                       {filteredCategories.map((cat) => (
@@ -262,7 +262,7 @@ export default function MenuPage() {
                           key={cat.id}
                           variant="outline"
                           size="sm"
-                          className="flex-shrink-0"
+                          className="flex-shrink-0 transition-colors hover:bg-primary hover:text-primary-foreground"
                           onClick={() => scrollToCategory(cat.id)}
                         >
                           {cat.name}

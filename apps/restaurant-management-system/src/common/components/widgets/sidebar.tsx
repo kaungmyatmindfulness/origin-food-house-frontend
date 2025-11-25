@@ -162,7 +162,7 @@ export function DashboardSidebar({
 
   return (
     <motion.aside
-      className="fixed top-[64px] bottom-0 left-0 z-20 flex flex-col border-r bg-white"
+      className="fixed top-[60px] bottom-0 left-0 z-40 flex flex-col border-r bg-white"
       variants={sidebarVariants}
       animate={collapsed ? 'collapsed' : 'expanded'}
       initial={collapsed ? 'collapsed' : 'expanded'}
