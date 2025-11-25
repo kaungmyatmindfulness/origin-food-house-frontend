@@ -161,27 +161,6 @@ export default function ChooseStorePage() {
           </p>
         </header>
 
-        {user?.userStores && user.userStores.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.2 }}
-            className="my-6"
-          >
-            <Button
-              variant="default"
-              size="lg"
-              className="w-full transition-all duration-200 hover:shadow-md"
-              asChild
-            >
-              <Link href="/store/create">
-                <Plus className="mr-2 h-5 w-5" aria-hidden="true" />
-                {t('createNewStore')}
-              </Link>
-            </Button>
-          </motion.div>
-        )}
-
         <AnimatePresence mode="wait">
           {!user?.userStores || user.userStores.length === 0 ? (
             <motion.div
@@ -211,7 +190,7 @@ export default function ChooseStorePage() {
           )}
         </AnimatePresence>
 
-        <footer className="mt-6 space-y-4">
+        <footer className="mt-6 space-y-6">
           {selectedStoreId && (
             <Button
               variant="outline"
@@ -222,9 +201,34 @@ export default function ChooseStorePage() {
               {t('cancel')}
             </Button>
           )}
-          <p className="text-muted-foreground text-center text-xs">
-            {t('selectToProceed')}
-          </p>
+          {user?.userStores && user.userStores.length > 0 && (
+            <>
+              <div className="relative flex items-center py-4">
+                <div className="border-border flex-grow border-t" />
+                <span className="text-muted-foreground mx-4 flex-shrink text-sm font-medium">
+                  OR
+                </span>
+                <div className="border-border flex-grow border-t" />
+              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
+              >
+                <Button
+                  variant="default"
+                  size="lg"
+                  className="w-full transition-all duration-200 hover:shadow-md"
+                  asChild
+                >
+                  <Link href="/store/create">
+                    <Plus className="mr-2 h-5 w-5" aria-hidden="true" />
+                    {t('createNewStore')}
+                  </Link>
+                </Button>
+              </motion.div>
+            </>
+          )}
         </footer>
       </section>
     </main>
