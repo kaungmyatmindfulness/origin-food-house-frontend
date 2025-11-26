@@ -4,6 +4,7 @@ import type {
   UpdateOrderStatusDto,
   CartResponseDto,
   AddToCartDto,
+  UpdateCartItemDto,
 } from '@repo/api/generated/types';
 
 /**
@@ -51,6 +52,29 @@ export async function removeFromCart(
     }
   );
   return unwrapData(res, 'Failed to remove item from cart');
+}
+
+/**
+ * Update cart item (quantity or notes)
+ * @param sessionId - Session ID
+ * @param cartItemId - Cart item ID
+ * @param data - Update data
+ * @returns Updated cart
+ */
+export async function updateCartItem(
+  sessionId: string,
+  cartItemId: string,
+  data: UpdateCartItemDto
+): Promise<CartResponseDto> {
+  const res = await apiFetch<CartResponseDto>(
+    `/cart/${sessionId}/items/${cartItemId}`,
+    {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    }
+  );
+  return unwrapData(res, 'Failed to update cart item');
 }
 
 /**

@@ -51,6 +51,12 @@
       "note": "หมายเหตุ",
       "items": "รายการ"
     },
+    "sessionType": {
+      "table": "โต๊ะ",
+      "counter": "เคาน์เตอร์",
+      "phone": "ออเดอร์โทรศัพท์",
+      "takeout": "ซื้อกลับบ้าน"
+    },
     "notifications": {
       "orderUpdated": "อัปเดตออเดอร์แล้ว",
       "statusChanged": "เปลี่ยนสถานะออเดอร์เป็น",

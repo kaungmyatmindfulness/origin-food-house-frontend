@@ -23,6 +23,7 @@ async function loadMessages(locale: string): Promise<Record<string, unknown>> {
     landing,
     tierUsage,
     admin,
+    sales,
   ] = await Promise.all([
     import(`../../messages/${locale}/common.json`),
     import(`../../messages/${locale}/auth.json`),
@@ -39,6 +40,7 @@ async function loadMessages(locale: string): Promise<Record<string, unknown>> {
     import(`../../messages/${locale}/landing.json`),
     import(`../../messages/${locale}/tierUsage.json`),
     import(`../../messages/${locale}/admin.json`),
+    import(`../../messages/${locale}/sales.json`),
   ]);
 
   // Merge all translation files into a single object
@@ -58,6 +60,7 @@ async function loadMessages(locale: string): Promise<Record<string, unknown>> {
     ...landing.default,
     ...tierUsage.default,
     ...admin.default,
+    ...sales.default,
   };
 }
 

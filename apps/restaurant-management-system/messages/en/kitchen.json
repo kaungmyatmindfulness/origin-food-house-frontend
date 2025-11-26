@@ -51,6 +51,12 @@
       "note": "Note",
       "items": "items"
     },
+    "sessionType": {
+      "table": "Table",
+      "counter": "Counter",
+      "phone": "Phone Order",
+      "takeout": "Takeout"
+    },
     "notifications": {
       "orderUpdated": "Order Updated",
       "statusChanged": "Order status changed to",

@@ -14,29 +14,29 @@ This document contains user stories for the Origin Food House Sales Page enhance
 
 ### Personas
 
-| Persona | Description | Permission Level |
-|---------|-------------|------------------|
-| **Cashier** | Frontline staff handling day-to-day operations including orders, tables, and payments | Standard |
-| **Owner/Admin** | Restaurant owner or administrator with full system access | Privileged (includes all Cashier permissions) |
+| Persona         | Description                                                                           | Permission Level                              |
+| --------------- | ------------------------------------------------------------------------------------- | --------------------------------------------- |
+| **Cashier**     | Frontline staff handling day-to-day operations including orders, tables, and payments | Standard                                      |
+| **Owner/Admin** | Restaurant owner or administrator with full system access                             | Privileged (includes all Cashier permissions) |
 
 > **Note:** Stories written for "Cashier" automatically apply to Owner/Admin as well, since Owner/Admin has all Cashier permissions plus additional privileged operations.
 
 ### Priority Legend (MoSCoW)
 
-| Priority | Meaning |
-|----------|---------|
-| **MUST** | Essential for MVP - system cannot function without it |
-| **SHOULD** | Important but not critical - significant value add |
-| **COULD** | Desirable - nice to have if time permits |
+| Priority   | Meaning                                               |
+| ---------- | ----------------------------------------------------- |
+| **MUST**   | Essential for MVP - system cannot function without it |
+| **SHOULD** | Important but not critical - significant value add    |
+| **COULD**  | Desirable - nice to have if time permits              |
 
 ### Effort Legend
 
-| Effort | Duration | Complexity |
-|--------|----------|------------|
-| **S** | 1-2 days | Simple, well-defined task |
-| **M** | 3-5 days | Moderate complexity, some unknowns |
-| **L** | 1-2 weeks | Complex, multiple components involved |
-| **XL** | 2+ weeks | Very complex, significant architecture work |
+| Effort | Duration  | Complexity                                  |
+| ------ | --------- | ------------------------------------------- |
+| **S**  | 1-2 days  | Simple, well-defined task                   |
+| **M**  | 3-5 days  | Moderate complexity, some unknowns          |
+| **L**  | 1-2 weeks | Complex, multiple components involved       |
+| **XL** | 2+ weeks  | Very complex, significant architecture work |
 
 ---
 
@@ -64,6 +64,7 @@ The Quick Sale feature enables fast counter service by providing an intuitive me
 **Dependencies:** Menu service must be available with active menu items
 
 **Notes:**
+
 - Menu items should be fetched using React Query with appropriate caching
 - Consider implementing infinite scroll or pagination for stores with large menus (100+ items)
 
@@ -90,6 +91,7 @@ The Quick Sale feature enables fast counter service by providing an intuitive me
 **Dependencies:** US-SALE-001
 
 **Notes:**
+
 - Categories should be fetched from the existing category service
 - Consider caching categories longer (5+ minutes) as they change infrequently
 
@@ -116,6 +118,7 @@ The Quick Sale feature enables fast counter service by providing an intuitive me
 **Dependencies:** US-SALE-001
 
 **Notes:**
+
 - Search should be client-side filtering on already-loaded menu items for performance
 - Use the existing `useDebouncedValue` hook for debouncing
 
@@ -142,6 +145,7 @@ The Quick Sale feature enables fast counter service by providing an intuitive me
 **Dependencies:** US-SALE-001, Cart state management (Zustand store)
 
 **Notes:**
+
 - Use optimistic updates for instant feedback
 - Cart state should persist in localStorage to survive page refresh
 
@@ -169,6 +173,7 @@ The Quick Sale feature enables fast counter service by providing an intuitive me
 **Dependencies:** US-SALE-004
 
 **Notes:**
+
 - Tax and service charge percentages should come from store settings
 - Consider using a swipe-to-remove gesture for mobile/tablet
 
@@ -237,6 +242,7 @@ The Quick Sale feature enables fast counter service by providing an intuitive me
 **Dependencies:** US-SALE-001 through US-SALE-006
 
 **Notes:**
+
 - Shortcuts should be documented in a help tooltip accessible via "?" key
 - Ensure shortcuts don't conflict with browser defaults
 
@@ -287,6 +293,7 @@ Payment processing is record-only (no payment gateway integration). The system r
 **Dependencies:** US-SALE-009, payment.service.ts
 
 **Notes:**
+
 - Change calculation: changeGiven = amountTendered - orderTotal
 - Round to nearest cent (2 decimal places)
 
@@ -312,6 +319,7 @@ Payment processing is record-only (no payment gateway integration). The system r
 **Dependencies:** US-SALE-009, payment.service.ts
 
 **Notes:**
+
 - No payment gateway integration - this is purely for record keeping
 - Reference number helps with end-of-day reconciliation against card terminal reports
 
@@ -356,6 +364,7 @@ Payment processing is record-only (no payment gateway integration). The system r
 **Dependencies:** US-SALE-010, US-SALE-011
 
 **Notes:**
+
 - MVP uses browser print dialog (window.print())
 - Phase 2 may add direct thermal printer integration
 
@@ -408,6 +417,7 @@ Order management enables cashiers to view, search, and track orders in real-time
 **Dependencies:** US-SALE-014, useOrderSocket hook, useKitchenSocket hook
 
 **Notes:**
+
 - Leverage existing Socket.IO infrastructure
 - Consider adding a "mute notifications" toggle for noisy environments
 
@@ -551,6 +561,7 @@ Table management enables viewing floor maps, managing table sessions, joining ta
 **Dependencies:** US-SALE-020
 
 **Notes:**
+
 - Maximum joinable tables should be configurable (default: 4)
 - Joined tables share a single order session and bill
 
@@ -597,6 +608,7 @@ Table management enables viewing floor maps, managing table sessions, joining ta
 **Dependencies:** US-SALE-020, KDS integration
 
 **Notes:**
+
 - Common use case: customer orders dessert to take home, or orders extra food for family
 
 ---
@@ -711,6 +723,7 @@ Discounts enable applying percentage, fixed amount, or member point redemptions 
 **Dependencies:** US-SALE-027
 
 **Notes:**
+
 - Redemption rate should be configurable in store settings
 - Maximum redemption percentage should be configurable (default: 50%)
 
@@ -803,40 +816,40 @@ Reports provide operational visibility with daily summaries and quick stats acce
 
 ## Summary Table
 
-| Story ID | Title | Priority | Effort | Epic |
-|----------|-------|----------|--------|------|
-| US-SALE-001 | View Menu Items in Grid Layout | MUST | M | Quick Sale |
-| US-SALE-002 | Filter Menu Items by Category | MUST | S | Quick Sale |
-| US-SALE-003 | Search Menu Items | MUST | S | Quick Sale |
-| US-SALE-004 | Add Item to Cart | MUST | M | Quick Sale |
-| US-SALE-005 | View and Manage Cart | MUST | M | Quick Sale |
-| US-SALE-006 | Clear Cart | MUST | S | Quick Sale |
-| US-SALE-007 | Select Order Type | MUST | S | Quick Sale |
-| US-SALE-008 | Keyboard Shortcuts for Quick Sale | SHOULD | M | Quick Sale |
-| US-SALE-009 | Open Payment Panel | MUST | S | Payment Recording |
-| US-SALE-010 | Record Cash Payment with Change Calculation | MUST | M | Payment Recording |
-| US-SALE-011 | Record Card/Mobile Payment | MUST | S | Payment Recording |
-| US-SALE-012 | Record Other Payment Types | SHOULD | S | Payment Recording |
-| US-SALE-013 | Generate and Print Receipt | MUST | M | Payment Recording |
-| US-SALE-014 | View Active Orders Panel | MUST | M | Order Management |
-| US-SALE-015 | Receive Real-Time Order Updates | MUST | M | Order Management |
-| US-SALE-016 | Search Orders | MUST | M | Order Management |
-| US-SALE-017 | View Order Details | MUST | S | Order Management |
-| US-SALE-018 | Void Unpaid Order (Owner/Admin Only) | SHOULD | M | Order Management |
-| US-SALE-019 | View Table Floor Map | SHOULD | M | Table Management |
-| US-SALE-020 | Start Table Session | SHOULD | M | Table Management |
-| US-SALE-021 | Join Multiple Tables | SHOULD | L | Table Management |
-| US-SALE-022 | Unjoin Tables (Owner/Admin Approval Required) | SHOULD | M | Table Management |
-| US-SALE-023 | Mark Item as Takeaway from Table | SHOULD | M | Table Management |
-| US-SALE-024 | Process Table Payment | SHOULD | M | Table Management |
-| US-SALE-025 | Apply Percentage Discount | SHOULD | M | Discounts & Member Points |
-| US-SALE-026 | Apply Fixed Amount Discount | SHOULD | S | Discounts & Member Points |
-| US-SALE-027 | Look Up Member for Points Discount | SHOULD | M | Discounts & Member Points |
-| US-SALE-028 | Redeem Member Points for Discount | SHOULD | L | Discounts & Member Points |
-| US-SALE-029 | Approve Large Point Redemptions (Owner/Admin) | SHOULD | M | Discounts & Member Points |
-| US-SALE-030 | View Daily Summary Stats | SHOULD | M | Reports & Stats |
-| US-SALE-031 | View Top Selling Items | COULD | S | Reports & Stats |
-| US-SALE-032 | Navigate to Full Reports (Owner/Admin) | COULD | S | Reports & Stats |
+| Story ID    | Title                                         | Priority | Effort | Epic                      |
+| ----------- | --------------------------------------------- | -------- | ------ | ------------------------- |
+| US-SALE-001 | View Menu Items in Grid Layout                | MUST     | M      | Quick Sale                |
+| US-SALE-002 | Filter Menu Items by Category                 | MUST     | S      | Quick Sale                |
+| US-SALE-003 | Search Menu Items                             | MUST     | S      | Quick Sale                |
+| US-SALE-004 | Add Item to Cart                              | MUST     | M      | Quick Sale                |
+| US-SALE-005 | View and Manage Cart                          | MUST     | M      | Quick Sale                |
+| US-SALE-006 | Clear Cart                                    | MUST     | S      | Quick Sale                |
+| US-SALE-007 | Select Order Type                             | MUST     | S      | Quick Sale                |
+| US-SALE-008 | Keyboard Shortcuts for Quick Sale             | SHOULD   | M      | Quick Sale                |
+| US-SALE-009 | Open Payment Panel                            | MUST     | S      | Payment Recording         |
+| US-SALE-010 | Record Cash Payment with Change Calculation   | MUST     | M      | Payment Recording         |
+| US-SALE-011 | Record Card/Mobile Payment                    | MUST     | S      | Payment Recording         |
+| US-SALE-012 | Record Other Payment Types                    | SHOULD   | S      | Payment Recording         |
+| US-SALE-013 | Generate and Print Receipt                    | MUST     | M      | Payment Recording         |
+| US-SALE-014 | View Active Orders Panel                      | MUST     | M      | Order Management          |
+| US-SALE-015 | Receive Real-Time Order Updates               | MUST     | M      | Order Management          |
+| US-SALE-016 | Search Orders                                 | MUST     | M      | Order Management          |
+| US-SALE-017 | View Order Details                            | MUST     | S      | Order Management          |
+| US-SALE-018 | Void Unpaid Order (Owner/Admin Only)          | SHOULD   | M      | Order Management          |
+| US-SALE-019 | View Table Floor Map                          | SHOULD   | M      | Table Management          |
+| US-SALE-020 | Start Table Session                           | SHOULD   | M      | Table Management          |
+| US-SALE-021 | Join Multiple Tables                          | SHOULD   | L      | Table Management          |
+| US-SALE-022 | Unjoin Tables (Owner/Admin Approval Required) | SHOULD   | M      | Table Management          |
+| US-SALE-023 | Mark Item as Takeaway from Table              | SHOULD   | M      | Table Management          |
+| US-SALE-024 | Process Table Payment                         | SHOULD   | M      | Table Management          |
+| US-SALE-025 | Apply Percentage Discount                     | SHOULD   | M      | Discounts & Member Points |
+| US-SALE-026 | Apply Fixed Amount Discount                   | SHOULD   | S      | Discounts & Member Points |
+| US-SALE-027 | Look Up Member for Points Discount            | SHOULD   | M      | Discounts & Member Points |
+| US-SALE-028 | Redeem Member Points for Discount             | SHOULD   | L      | Discounts & Member Points |
+| US-SALE-029 | Approve Large Point Redemptions (Owner/Admin) | SHOULD   | M      | Discounts & Member Points |
+| US-SALE-030 | View Daily Summary Stats                      | SHOULD   | M      | Reports & Stats           |
+| US-SALE-031 | View Top Selling Items                        | COULD    | S      | Reports & Stats           |
+| US-SALE-032 | Navigate to Full Reports (Owner/Admin)        | COULD    | S      | Reports & Stats           |
 
 ---
 
@@ -844,57 +857,57 @@ Reports provide operational visibility with daily summaries and quick stats acce
 
 ### Phase 1 (MVP) - MUST Have Stories
 
-| Story | Effort | Days |
-|-------|--------|------|
-| US-SALE-001 | M | 3-5 |
-| US-SALE-002 | S | 1-2 |
-| US-SALE-003 | S | 1-2 |
-| US-SALE-004 | M | 3-5 |
-| US-SALE-005 | M | 3-5 |
-| US-SALE-006 | S | 1-2 |
-| US-SALE-007 | S | 1-2 |
-| US-SALE-009 | S | 1-2 |
-| US-SALE-010 | M | 3-5 |
-| US-SALE-011 | S | 1-2 |
-| US-SALE-013 | M | 3-5 |
-| US-SALE-014 | M | 3-5 |
-| US-SALE-015 | M | 3-5 |
-| US-SALE-016 | M | 3-5 |
-| US-SALE-017 | S | 1-2 |
-| **Total** | | **~25-40 days** |
+| Story       | Effort | Days            |
+| ----------- | ------ | --------------- |
+| US-SALE-001 | M      | 3-5             |
+| US-SALE-002 | S      | 1-2             |
+| US-SALE-003 | S      | 1-2             |
+| US-SALE-004 | M      | 3-5             |
+| US-SALE-005 | M      | 3-5             |
+| US-SALE-006 | S      | 1-2             |
+| US-SALE-007 | S      | 1-2             |
+| US-SALE-009 | S      | 1-2             |
+| US-SALE-010 | M      | 3-5             |
+| US-SALE-011 | S      | 1-2             |
+| US-SALE-013 | M      | 3-5             |
+| US-SALE-014 | M      | 3-5             |
+| US-SALE-015 | M      | 3-5             |
+| US-SALE-016 | M      | 3-5             |
+| US-SALE-017 | S      | 1-2             |
+| **Total**   |        | **~25-40 days** |
 
 **Estimated MVP Timeline:** 5-8 weeks (with 1 developer)
 
 ### Phase 2 - SHOULD Have Stories
 
-| Story | Effort | Days |
-|-------|--------|------|
-| US-SALE-008 | M | 3-5 |
-| US-SALE-012 | S | 1-2 |
-| US-SALE-018 | M | 3-5 |
-| US-SALE-019 | M | 3-5 |
-| US-SALE-020 | M | 3-5 |
-| US-SALE-021 | L | 5-10 |
-| US-SALE-022 | M | 3-5 |
-| US-SALE-023 | M | 3-5 |
-| US-SALE-024 | M | 3-5 |
-| US-SALE-025 | M | 3-5 |
-| US-SALE-026 | S | 1-2 |
-| US-SALE-027 | M | 3-5 |
-| US-SALE-028 | L | 5-10 |
-| US-SALE-029 | M | 3-5 |
-| US-SALE-030 | M | 3-5 |
-| **Total** | | **~45-75 days** |
+| Story       | Effort | Days            |
+| ----------- | ------ | --------------- |
+| US-SALE-008 | M      | 3-5             |
+| US-SALE-012 | S      | 1-2             |
+| US-SALE-018 | M      | 3-5             |
+| US-SALE-019 | M      | 3-5             |
+| US-SALE-020 | M      | 3-5             |
+| US-SALE-021 | L      | 5-10            |
+| US-SALE-022 | M      | 3-5             |
+| US-SALE-023 | M      | 3-5             |
+| US-SALE-024 | M      | 3-5             |
+| US-SALE-025 | M      | 3-5             |
+| US-SALE-026 | S      | 1-2             |
+| US-SALE-027 | M      | 3-5             |
+| US-SALE-028 | L      | 5-10            |
+| US-SALE-029 | M      | 3-5             |
+| US-SALE-030 | M      | 3-5             |
+| **Total**   |        | **~45-75 days** |
 
 **Estimated Phase 2 Timeline:** 9-15 weeks (with 1 developer)
 
 ### Phase 3 - COULD Have Stories
 
-| Story | Effort | Days |
-|-------|--------|------|
-| US-SALE-031 | S | 1-2 |
-| US-SALE-032 | S | 1-2 |
-| **Total** | | **~2-4 days** |
+| Story       | Effort | Days          |
+| ----------- | ------ | ------------- |
+| US-SALE-031 | S      | 1-2           |
+| US-SALE-032 | S      | 1-2           |
+| **Total**   |        | **~2-4 days** |
 
 ---
 
@@ -943,6 +956,6 @@ US-SALE-030 (Daily Stats)
 
 ## Document History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2025-11-26 | Business Analyst Agent | Initial user stories based on BRD |
+| Version | Date       | Author                 | Changes                           |
+| ------- | ---------- | ---------------------- | --------------------------------- |
+| 1.0     | 2025-11-26 | Business Analyst Agent | Initial user stories based on BRD |

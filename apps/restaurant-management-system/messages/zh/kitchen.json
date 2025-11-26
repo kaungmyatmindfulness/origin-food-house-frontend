@@ -51,6 +51,12 @@
       "note": "备注",
       "items": "项"
     },
+    "sessionType": {
+      "table": "桌子",
+      "counter": "柜台",
+      "phone": "电话订单",
+      "takeout": "外带"
+    },
     "notifications": {
       "orderUpdated": "订单已更新",
       "statusChanged": "订单状态已更改为",

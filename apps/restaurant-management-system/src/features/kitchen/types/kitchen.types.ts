@@ -40,6 +40,26 @@ export interface OrderItem {
   } | null;
 }
 
+/**
+ * Session type enum for order source identification
+ */
+export enum SessionType {
+  TABLE = 'TABLE',
+  COUNTER = 'COUNTER',
+  PHONE = 'PHONE',
+  TAKEOUT = 'TAKEOUT',
+}
+
+/**
+ * Session information included in order responses
+ */
+export interface OrderSession {
+  id: string;
+  sessionType: SessionType;
+  customerName?: string | null;
+  customerPhone?: string | null;
+}
+
 export interface Order {
   id: string;
   orderNumber: string;
@@ -58,6 +78,7 @@ export interface Order {
   orderItems: OrderItem[];
   createdAt: string;
   updatedAt: string;
+  session?: OrderSession | null;
 }
 
 export interface KdsQueryParams {

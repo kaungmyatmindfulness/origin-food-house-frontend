@@ -130,3 +130,31 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+/* Print styles for receipt printing */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #receipt-content,
+  #receipt-content * {
+    visibility: visible;
+  }
+
+  #receipt-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm; /* Standard thermal receipt width */
+    padding: 10mm;
+    font-size: 12px;
+    color: black;
+    background: white;
+  }
+
+  /* Hide elements with print:hidden class */
+  .print\:hidden {
+    display: none !important;
+  }
+}

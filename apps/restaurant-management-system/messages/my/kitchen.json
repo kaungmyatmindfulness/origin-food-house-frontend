@@ -51,6 +51,12 @@
       "note": "မှတ်ချက်",
       "items": "ပစ္စည်းများ"
     },
+    "sessionType": {
+      "table": "စားပွဲ",
+      "counter": "ကောင်တာ",
+      "phone": "ဖုန်းအော်ဒါ",
+      "takeout": "ထုတ်ယူမည်"
+    },
     "notifications": {
       "orderUpdated": "အော်ဒါ အသစ်ဖြစ်ပြီ",
       "statusChanged": "အော်ဒါအခြေအနေ ပြောင်းလဲသွားပြီ",

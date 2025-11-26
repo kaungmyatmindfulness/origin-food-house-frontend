@@ -21,6 +21,7 @@ This document provides a comprehensive Business Requirements Document (BRD) for 
 **Current Sales Page Location:** `apps/restaurant-management-system/src/app/[locale]/hub/sale/page.tsx`
 
 **Current Features:**
+
 - Page title and description
 - "Create Manual Order" button that opens a dialog
 - ManualOrderDialog supporting three session types: COUNTER, PHONE, TAKEOUT
@@ -28,41 +29,46 @@ This document provides a comprehensive Business Requirements Document (BRD) for 
 
 **Current Limitations:**
 
-| Gap | Impact | Priority |
-|-----|--------|----------|
-| No active orders panel | Staff cannot see orders in progress | Critical |
-| No order history/search | Cannot look up past orders for refunds | Critical |
-| No quick sale flow | Slow counter service, long queues | High |
-| No table integration | Cannot see dine-in orders or seat walk-ins | High |
-| No payment processing | Must navigate away to process payments | High |
-| No daily summary stats | Manager lacks operational visibility | Medium |
-| No quick actions bar | Repetitive navigation for common tasks | Medium |
-| No receipt printing | Requires separate system for receipts | Medium |
-| No offline mode | System unusable during internet outages | Low |
+| Gap                     | Impact                                     | Priority |
+| ----------------------- | ------------------------------------------ | -------- |
+| No active orders panel  | Staff cannot see orders in progress        | Critical |
+| No order history/search | Cannot look up past orders for refunds     | Critical |
+| No quick sale flow      | Slow counter service, long queues          | High     |
+| No table integration    | Cannot see dine-in orders or seat walk-ins | High     |
+| No payment processing   | Must navigate away to process payments     | High     |
+| No daily summary stats  | Manager lacks operational visibility       | Medium   |
+| No quick actions bar    | Repetitive navigation for common tasks     | Medium   |
+| No receipt printing     | Requires separate system for receipts      | Medium   |
+| No offline mode         | System unusable during internet outages    | Low      |
 
 ### 1.2 Existing System Capabilities
 
 Based on codebase analysis, the following services already exist and should be leveraged:
 
 **Order Management:**
+
 - `order.service.ts` - Cart operations, checkout, order status updates
 - `session.service.ts` - Manual session creation (COUNTER, PHONE, TAKEOUT, TABLE)
 - `kitchen.service.ts` - KDS order queries and status updates
 
 **Payment Processing:**
+
 - `payment.service.ts` - Record payments, get order payments, create refunds
 - `split-payment.service.ts` - Calculate splits (EVEN, BY_ITEM, CUSTOM), record split payments
 - `discount.service.ts` - Apply discounts (PERCENTAGE, FIXED_AMOUNT), approval workflow
 
 **Table Management:**
+
 - `table.service.ts` - Get all tables, batch sync
 - `table-state.service.ts` - Table status (VACANT, SEATED, ORDERING, SERVED, READY_TO_PAY, CLEANING)
 
 **Real-time Updates:**
+
 - Socket.IO integration for orders, kitchen, tables, and dashboard
 - WebSocket hooks: `useOrderSocket`, `useKitchenSocket`, `useTableSocket`, `useDashboardSocket`
 
 **Reporting:**
+
 - `report.service.ts` - Sales summary, popular items, payment breakdown, order status reports
 
 ---
@@ -75,29 +81,29 @@ Based on codebase analysis, the following services already exist and should be l
 
 #### Persona 1: Cashier (Standard User)
 
-| Attribute | Details |
-|-----------|---------|
-| **Role** | Frontline staff handling all day-to-day operations |
-| **Goals** | Process orders quickly, manage tables, handle payments accurately |
-| **Pain Points** | Slow system response, too many clicks per transaction, difficulty finding menu items |
-| **Needs** | Quick sale flow, numpad for cash handling, receipt printing, table management, order modification |
-| **Technical Skill** | Basic to Moderate - needs intuitive, minimal-click interface |
-| **Shift Pattern** | 8-12 hour shifts, high transaction volume during peak hours |
-| **Permissions** | Create orders, manage tables, process payments, apply standard discounts, view daily stats |
-| **Cannot Do** | Apply member point discounts beyond threshold, void orders, process refunds, modify system settings |
+| Attribute           | Details                                                                                             |
+| ------------------- | --------------------------------------------------------------------------------------------------- |
+| **Role**            | Frontline staff handling all day-to-day operations                                                  |
+| **Goals**           | Process orders quickly, manage tables, handle payments accurately                                   |
+| **Pain Points**     | Slow system response, too many clicks per transaction, difficulty finding menu items                |
+| **Needs**           | Quick sale flow, numpad for cash handling, receipt printing, table management, order modification   |
+| **Technical Skill** | Basic to Moderate - needs intuitive, minimal-click interface                                        |
+| **Shift Pattern**   | 8-12 hour shifts, high transaction volume during peak hours                                         |
+| **Permissions**     | Create orders, manage tables, process payments, apply standard discounts, view daily stats          |
+| **Cannot Do**       | Apply member point discounts beyond threshold, void orders, process refunds, modify system settings |
 
 #### Persona 2: Owner/Admin (Privileged User)
 
-| Attribute | Details |
-|-----------|---------|
-| **Role** | Restaurant owner or administrator with full system access |
-| **Goals** | Monitor operations, handle exceptions, manage discounts, review performance |
-| **Pain Points** | Lack of real-time visibility, needing to be physically present for approvals |
-| **Needs** | Dashboard summary, audit trail, discount approval, void/refund authority, full reporting |
-| **Technical Skill** | Variable - needs clear UI for administrative functions |
-| **Access Pattern** | Full access at any time, receives notifications for approval requests |
-| **Permissions** | All cashier permissions PLUS: approve large discounts, void orders, process refunds, manage member points, access all reports, modify settings |
-| **Special Actions** | Manager override PIN for sensitive operations |
+| Attribute           | Details                                                                                                                                        |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Role**            | Restaurant owner or administrator with full system access                                                                                      |
+| **Goals**           | Monitor operations, handle exceptions, manage discounts, review performance                                                                    |
+| **Pain Points**     | Lack of real-time visibility, needing to be physically present for approvals                                                                   |
+| **Needs**           | Dashboard summary, audit trail, discount approval, void/refund authority, full reporting                                                       |
+| **Technical Skill** | Variable - needs clear UI for administrative functions                                                                                         |
+| **Access Pattern**  | Full access at any time, receives notifications for approval requests                                                                          |
+| **Permissions**     | All cashier permissions PLUS: approve large discounts, void orders, process refunds, manage member points, access all reports, modify settings |
+| **Special Actions** | Manager override PIN for sensitive operations                                                                                                  |
 
 ### 2.2 User Journey Maps
 
@@ -130,6 +136,7 @@ Customer                    Cashier                      System
 ```
 
 **Pain Points to Solve:**
+
 - Menu item search should be instant (search-as-you-type)
 - Cart should update without page refresh
 - Payment should be in same flow (no navigation)
@@ -172,6 +179,7 @@ Customer                    Cashier                      System
 ```
 
 **Pain Points to Solve:**
+
 - Table status should update in real-time
 - Order-to-table association should be seamless
 - Cashier should be notified when order is ready
@@ -206,6 +214,7 @@ Customer                    Cashier                      System
 ```
 
 **Use Cases:**
+
 - Customer orders dessert to take home
 - Customer orders for family members at home
 - Leftover packaging requested during meal
@@ -243,6 +252,7 @@ Customer Group              Cashier                      System
 ```
 
 **Join Table Rules:**
+
 - Only VACANT or same-party tables can be joined
 - Joined tables share a single order session
 - Bill shows combined items
@@ -365,21 +375,22 @@ Customer                    Cashier                      Manager                
 ### 3.1 Quick Sale Flow (Primary Flow)
 
 **Entry Points:**
+
 1. Sales Page loads (default view)
 2. Keyboard shortcut: `Ctrl/Cmd + N` (New Quick Sale)
 
 **Flow Steps:**
 
-| Step | Action | System Response |
-|------|--------|-----------------|
-| 1 | Staff opens Sales Page | Show Quick Sale panel with menu grid |
-| 2 | Staff taps category | Filter menu items by category |
-| 3 | Staff taps menu item | Add to cart, show running total |
-| 4 | Staff taps item in cart | Open quantity/modification dialog |
-| 5 | Staff reviews cart | Show subtotal, tax, service charge, total |
-| 6 | Staff taps "Pay" | Open payment panel (same page) |
-| 7 | Staff selects payment method | Show relevant input (cash: numpad, card: transaction ID) |
-| 8 | Staff completes payment | Print receipt, send to kitchen, clear cart |
+| Step | Action                       | System Response                                          |
+| ---- | ---------------------------- | -------------------------------------------------------- |
+| 1    | Staff opens Sales Page       | Show Quick Sale panel with menu grid                     |
+| 2    | Staff taps category          | Filter menu items by category                            |
+| 3    | Staff taps menu item         | Add to cart, show running total                          |
+| 4    | Staff taps item in cart      | Open quantity/modification dialog                        |
+| 5    | Staff reviews cart           | Show subtotal, tax, service charge, total                |
+| 6    | Staff taps "Pay"             | Open payment panel (same page)                           |
+| 7    | Staff selects payment method | Show relevant input (cash: numpad, card: transaction ID) |
+| 8    | Staff completes payment      | Print receipt, send to kitchen, clear cart               |
 
 **Quick Sale Panel Layout:**
 
@@ -420,31 +431,32 @@ Customer                    Cashier                      Manager                
 
 **Flow:**
 
-| Step | Action | System Response |
-|------|--------|-----------------|
-| 1 | Cashier clicks "Tables" tab | Show floor map with table status |
-| 2 | Cashier clicks vacant table | Show "Start Session" dialog |
-| 3 | Cashier enters guest count | Create table session |
-| 4 | Cashier adds items | Associate items with table session |
-| 5 | (Optional) Mark item as "Takeaway" | Flag item for separate packaging |
-| 6 | Cashier confirms order | Send to kitchen, update table status |
-| 7 | Kitchen marks ready | Notify cashier (toast + sound) |
-| 8 | Cashier marks served | Update table status to SERVED |
-| 9 | Customer requests bill | Open bill view for table |
-| 10 | Record payment | Close session, mark table CLEANING |
+| Step | Action                             | System Response                      |
+| ---- | ---------------------------------- | ------------------------------------ |
+| 1    | Cashier clicks "Tables" tab        | Show floor map with table status     |
+| 2    | Cashier clicks vacant table        | Show "Start Session" dialog          |
+| 3    | Cashier enters guest count         | Create table session                 |
+| 4    | Cashier adds items                 | Associate items with table session   |
+| 5    | (Optional) Mark item as "Takeaway" | Flag item for separate packaging     |
+| 6    | Cashier confirms order             | Send to kitchen, update table status |
+| 7    | Kitchen marks ready                | Notify cashier (toast + sound)       |
+| 8    | Cashier marks served               | Update table status to SERVED        |
+| 9    | Customer requests bill             | Open bill view for table             |
+| 10   | Record payment                     | Close session, mark table CLEANING   |
 
 **Additional Table Features:**
 
 #### Join Tables
 
-| Step | Action | System Response |
-|------|--------|-----------------|
-| 1 | Cashier selects first table | Show table context menu |
-| 2 | Click "Join Tables" | Highlight joinable tables (VACANT or same session) |
-| 3 | Select tables to join | Create merged session |
-| 4 | Confirm join | All joined tables share single order/bill |
+| Step | Action                      | System Response                                    |
+| ---- | --------------------------- | -------------------------------------------------- |
+| 1    | Cashier selects first table | Show table context menu                            |
+| 2    | Click "Join Tables"         | Highlight joinable tables (VACANT or same session) |
+| 3    | Select tables to join       | Create merged session                              |
+| 4    | Confirm join                | All joined tables share single order/bill          |
 
 **Join Table Rules:**
+
 - Maximum tables to join: Configurable (default: 4)
 - Can only join VACANT tables or tables with same party
 - Joined tables display linked indicator on floor map
@@ -453,67 +465,71 @@ Customer                    Cashier                      Manager                
 
 #### Takeaway from Table
 
-| Step | Action | System Response |
-|------|--------|-----------------|
-| 1 | Adding item to table order | Show "Dine-in / Takeaway" toggle |
-| 2 | Select "Takeaway" | Mark item with takeaway flag |
-| 3 | Confirm order | Kitchen sees "TAKEAWAY" label on item |
-| 4 | Kitchen prepares | Pack takeaway items separately |
-| 5 | Bill generated | Shows all items, takeaway items marked |
+| Step | Action                     | System Response                        |
+| ---- | -------------------------- | -------------------------------------- |
+| 1    | Adding item to table order | Show "Dine-in / Takeaway" toggle       |
+| 2    | Select "Takeaway"          | Mark item with takeaway flag           |
+| 3    | Confirm order              | Kitchen sees "TAKEAWAY" label on item  |
+| 4    | Kitchen prepares           | Pack takeaway items separately         |
+| 5    | Bill generated             | Shows all items, takeaway items marked |
 
 ### 3.3 Takeaway/Delivery Order Flow
 
 **Entry Points:**
+
 1. Quick Sale > Select "Takeaway" type
 2. Phone order button
 3. Keyboard shortcut: `Ctrl/Cmd + T`
 
 **Flow:**
 
-| Step | Action | System Response |
-|------|--------|-----------------|
-| 1 | Staff clicks "New Takeaway" | Open order form with customer fields |
-| 2 | Enter customer name/phone | Save for order tracking |
-| 3 | Add items to order | Same menu selection as quick sale |
-| 4 | Set pickup/delivery time | Optional field for scheduling |
-| 5 | Confirm order | Generate order number, send to kitchen |
-| 6 | Process prepayment (optional) | Record partial/full payment |
-| 7 | Kitchen marks ready | Show in "Ready for Pickup" queue |
-| 8 | Customer arrives | Retrieve order by name/number |
-| 9 | Complete payment | Hand over order, close |
+| Step | Action                        | System Response                        |
+| ---- | ----------------------------- | -------------------------------------- |
+| 1    | Staff clicks "New Takeaway"   | Open order form with customer fields   |
+| 2    | Enter customer name/phone     | Save for order tracking                |
+| 3    | Add items to order            | Same menu selection as quick sale      |
+| 4    | Set pickup/delivery time      | Optional field for scheduling          |
+| 5    | Confirm order                 | Generate order number, send to kitchen |
+| 6    | Process prepayment (optional) | Record partial/full payment            |
+| 7    | Kitchen marks ready           | Show in "Ready for Pickup" queue       |
+| 8    | Customer arrives              | Retrieve order by name/number          |
+| 9    | Complete payment              | Hand over order, close                 |
 
 ### 3.4 Bill Splitting Flow
 
 **Entry Point:** Order details > Split Bill button
 
 **Supported Split Types:**
+
 1. **EVEN** - Divide total equally among N guests
 2. **BY_ITEM** - Assign specific items to each guest
 3. **CUSTOM** - Enter custom amounts per guest
 
 **Flow (Even Split):**
 
-| Step | Action | System Response |
-|------|--------|-----------------|
-| 1 | Staff clicks "Split Bill" | Open split dialog |
-| 2 | Select "Even Split" | Show guest count input |
-| 3 | Enter number of guests (e.g., 3) | Calculate amount per person |
-| 4 | System shows breakdown | Total $90 / 3 = $30 each |
-| 5 | Process Guest 1 payment | Record, show remaining: 2 guests |
-| 6 | Process Guest 2 payment | Record, show remaining: 1 guest |
-| 7 | Process Guest 3 payment | Record, mark PAID_IN_FULL |
-| 8 | Print receipts | Generate individual receipts |
+| Step | Action                           | System Response                  |
+| ---- | -------------------------------- | -------------------------------- |
+| 1    | Staff clicks "Split Bill"        | Open split dialog                |
+| 2    | Select "Even Split"              | Show guest count input           |
+| 3    | Enter number of guests (e.g., 3) | Calculate amount per person      |
+| 4    | System shows breakdown           | Total $90 / 3 = $30 each         |
+| 5    | Process Guest 1 payment          | Record, show remaining: 2 guests |
+| 6    | Process Guest 2 payment          | Record, show remaining: 1 guest  |
+| 7    | Process Guest 3 payment          | Record, mark PAID_IN_FULL        |
+| 8    | Print receipts                   | Generate individual receipts     |
 
 ### 3.5 Discount Application Flow
 
 **Entry Point:** Cart/Order > Apply Discount
 
 **Supported Discount Types:**
+
 1. **PERCENTAGE** - e.g., 10% off total
 2. **FIXED_AMOUNT** - e.g., $5 off
 3. **MEMBER_POINTS** - Redeem loyalty points for discount value
 
 **Approval Workflow:**
+
 - Cashier creates discount request with reason
 - If discount > threshold (configurable), requires Owner/Admin approval
 - Owner/Admin can approve/reject from notification or dashboard
@@ -532,23 +548,25 @@ Customer                    Cashier                      Manager                
 ### 3.6 Refund/Void Flow
 
 **Entry Points:**
+
 1. Order search > Select order > Refund
 2. Recent orders > Refund button
 
 **Void vs. Refund:**
+
 - **Void:** Cancel unpaid order (no money exchanged)
 - **Refund:** Return money for paid order
 
 **Flow:**
 
-| Step | Action | System Response |
-|------|--------|-----------------|
-| 1 | Search for order | Show order details |
-| 2 | Click "Refund" or "Void" | Show confirmation with reason field |
-| 3 | Enter reason (required) | Validate reason provided |
-| 4 | Owner/Admin authentication | Verify Owner/Admin PIN (required) |
-| 5 | Confirm action | Process refund/void |
-| 6 | Generate documentation | Print refund slip, update audit log |
+| Step | Action                     | System Response                     |
+| ---- | -------------------------- | ----------------------------------- |
+| 1    | Search for order           | Show order details                  |
+| 2    | Click "Refund" or "Void"   | Show confirmation with reason field |
+| 3    | Enter reason (required)    | Validate reason provided            |
+| 4    | Owner/Admin authentication | Verify Owner/Admin PIN (required)   |
+| 5    | Confirm action             | Process refund/void                 |
+| 6    | Generate documentation     | Print refund slip, update audit log |
 
 > **Note:** Refund/Void actions are Owner/Admin ONLY. Cashiers cannot perform these operations.
 
@@ -558,12 +576,12 @@ Customer                    Cashier                      Manager                
 
 **Payment Methods Supported:**
 
-| Method | UI Behavior | Notes |
-|--------|-------------|-------|
-| **Cash** | Show numpad for amount tendered, auto-calculate change | Must validate tendered >= total |
-| **Card** | Optional: Enter last 4 digits or transaction reference | For record/reconciliation only |
-| **Mobile/E-Wallet** | Optional: Enter reference number | For record/reconciliation only |
-| **Other** | Free-text note field | Flexible for gift cards, vouchers, etc. |
+| Method              | UI Behavior                                            | Notes                                   |
+| ------------------- | ------------------------------------------------------ | --------------------------------------- |
+| **Cash**            | Show numpad for amount tendered, auto-calculate change | Must validate tendered >= total         |
+| **Card**            | Optional: Enter last 4 digits or transaction reference | For record/reconciliation only          |
+| **Mobile/E-Wallet** | Optional: Enter reference number                       | For record/reconciliation only          |
+| **Other**           | Free-text note field                                   | Flexible for gift cards, vouchers, etc. |
 
 **Cash Payment Flow (Detailed):**
 
@@ -596,6 +614,7 @@ Customer                    Cashier                      Manager                
 ```
 
 **Change Calculation Rules:**
+
 - Change = Amount Tendered - Order Total
 - If tendered < total: Show error "Insufficient amount"
 - If tendered = total (Exact): Change = $0.00
@@ -648,25 +667,26 @@ The Sales Page should be organized into the following logical sections:
 
 #### 4.2.1 Quick Actions Bar
 
-| Action | Icon | Shortcut | Description |
-|--------|------|----------|-------------|
-| New Order | Plus | Ctrl+N | Start new quick sale |
-| Tables | Grid | Ctrl+T | View/manage tables |
-| Pickup Queue | Package | Ctrl+P | View ready-for-pickup orders |
-| Search Order | Search | Ctrl+F | Find order by number/customer |
-| Daily Stats | Chart | Ctrl+D | Toggle daily summary panel |
+| Action       | Icon    | Shortcut | Description                   |
+| ------------ | ------- | -------- | ----------------------------- |
+| New Order    | Plus    | Ctrl+N   | Start new quick sale          |
+| Tables       | Grid    | Ctrl+T   | View/manage tables            |
+| Pickup Queue | Package | Ctrl+P   | View ready-for-pickup orders  |
+| Search Order | Search  | Ctrl+F   | Find order by number/customer |
+| Daily Stats  | Chart   | Ctrl+D   | Toggle daily summary panel    |
 
 #### 4.2.2 Active Orders Panel
 
 Displays real-time order status in three lanes:
 
-| Lane | Orders Shown | Visual Indicator |
-|------|--------------|------------------|
-| **Preparing** | Orders in kitchen (PENDING, PREPARING) | Yellow badge |
-| **Ready** | Orders ready for serving/pickup (READY) | Green badge with pulse |
-| **Awaiting Payment** | Served but unpaid orders | Orange badge |
+| Lane                 | Orders Shown                            | Visual Indicator       |
+| -------------------- | --------------------------------------- | ---------------------- |
+| **Preparing**        | Orders in kitchen (PENDING, PREPARING)  | Yellow badge           |
+| **Ready**            | Orders ready for serving/pickup (READY) | Green badge with pulse |
+| **Awaiting Payment** | Served but unpaid orders                | Orange badge           |
 
 **Per-Order Display:**
+
 - Order number/table name
 - Time elapsed since order
 - Item count
@@ -676,6 +696,7 @@ Displays real-time order status in three lanes:
 #### 4.2.3 Menu Grid (Quick Sale View)
 
 **Components:**
+
 - Category filter bar (horizontal scroll)
 - Search input with instant results
 - Menu item cards in responsive grid
@@ -683,6 +704,7 @@ Displays real-time order status in three lanes:
 - Out-of-stock indicators
 
 **Menu Item Card:**
+
 ```
 +-------------------+
 |  [Image]          |
@@ -695,6 +717,7 @@ Displays real-time order status in three lanes:
 #### 4.2.4 Cart Panel
 
 **Always-visible sidebar showing:**
+
 - Current cart items with quantities
 - Per-item price and customizations
 - Remove/modify item buttons
@@ -707,12 +730,14 @@ Displays real-time order status in three lanes:
 #### 4.2.5 Tables View
 
 **Floor Map Display:**
+
 - Visual grid of tables with status colors
 - Guest count per occupied table
 - Time elapsed since seating
 - Click to view/manage table session
 
 **Table Card:**
+
 ```
 +-------------------+
 |  Table 5          |
@@ -725,6 +750,7 @@ Displays real-time order status in three lanes:
 #### 4.2.6 Pickup Queue View
 
 **For takeaway/phone orders:**
+
 - Queue number
 - Customer name
 - Order ready time
@@ -735,6 +761,7 @@ Displays real-time order status in three lanes:
 #### 4.2.7 Daily Summary Stats
 
 **Dashboard cards showing:**
+
 - Total sales today
 - Order count
 - Average order value
@@ -750,16 +777,16 @@ Displays real-time order status in three lanes:
 
 These features are essential for basic Sales Page functionality:
 
-| ID | Feature | Justification | Effort |
-|----|---------|---------------|--------|
-| M1 | Quick Sale menu grid | Core ordering functionality | High |
-| M2 | Cart panel with real-time updates | Essential for order building | Medium |
-| M3 | Basic payment flow (Cash, Card) | Cannot complete transactions without | High |
-| M4 | Active orders panel | Staff need visibility of pending work | Medium |
-| M5 | Order search | Required for refunds and lookups | Medium |
-| M6 | Receipt generation | Customers expect receipts | Medium |
-| M7 | Integration with existing KDS | Orders must flow to kitchen | Low |
-| M8 | Socket.IO real-time updates | Leverage existing infrastructure | Low |
+| ID  | Feature                           | Justification                         | Effort |
+| --- | --------------------------------- | ------------------------------------- | ------ |
+| M1  | Quick Sale menu grid              | Core ordering functionality           | High   |
+| M2  | Cart panel with real-time updates | Essential for order building          | Medium |
+| M3  | Basic payment flow (Cash, Card)   | Cannot complete transactions without  | High   |
+| M4  | Active orders panel               | Staff need visibility of pending work | Medium |
+| M5  | Order search                      | Required for refunds and lookups      | Medium |
+| M6  | Receipt generation                | Customers expect receipts             | Medium |
+| M7  | Integration with existing KDS     | Orders must flow to kitchen           | Low    |
+| M8  | Socket.IO real-time updates       | Leverage existing infrastructure      | Low    |
 
 **Estimated MVP Timeline:** 3-4 weeks
 
@@ -767,19 +794,19 @@ These features are essential for basic Sales Page functionality:
 
 Important features that significantly improve usability:
 
-| ID | Feature | Justification | Effort |
-|----|---------|---------------|--------|
-| S1 | Tables view integration | Many restaurants need table management | High |
-| S2 | **Join Tables** | Large groups need multiple tables as one session | Medium |
-| S3 | **Takeaway from Table** | Customers want to order items to-go while dining | Low |
-| S4 | Bill splitting (EVEN, CUSTOM) | Common customer request | Medium |
-| S5 | Discount application (%, fixed) | Sales promotions, complaint handling | Medium |
-| S6 | **Member Points Discount** | Loyalty program integration | Medium |
-| S7 | Daily summary stats | Owner/Admin needs visibility | Medium |
-| S8 | Takeaway queue view | Essential for takeaway-heavy operations | Medium |
-| S9 | Keyboard shortcuts | Power user efficiency | Low |
-| S10 | Audio notifications | Alert for ready orders | Low |
-| S11 | Order modification | Correct mistakes before kitchen | Medium |
+| ID  | Feature                         | Justification                                    | Effort |
+| --- | ------------------------------- | ------------------------------------------------ | ------ |
+| S1  | Tables view integration         | Many restaurants need table management           | High   |
+| S2  | **Join Tables**                 | Large groups need multiple tables as one session | Medium |
+| S3  | **Takeaway from Table**         | Customers want to order items to-go while dining | Low    |
+| S4  | Bill splitting (EVEN, CUSTOM)   | Common customer request                          | Medium |
+| S5  | Discount application (%, fixed) | Sales promotions, complaint handling             | Medium |
+| S6  | **Member Points Discount**      | Loyalty program integration                      | Medium |
+| S7  | Daily summary stats             | Owner/Admin needs visibility                     | Medium |
+| S8  | Takeaway queue view             | Essential for takeaway-heavy operations          | Medium |
+| S9  | Keyboard shortcuts              | Power user efficiency                            | Low    |
+| S10 | Audio notifications             | Alert for ready orders                           | Low    |
+| S11 | Order modification              | Correct mistakes before kitchen                  | Medium |
 
 **Estimated Phase 2 Timeline:** 5-6 weeks after MVP
 
@@ -787,29 +814,29 @@ Important features that significantly improve usability:
 
 Desirable features that enhance experience:
 
-| ID | Feature | Justification | Effort |
-|----|---------|---------------|--------|
-| C1 | Bill splitting by item | Restaurant preference | Medium |
-| C2 | Refund workflow (Owner/Admin) | Handle returns systematically | Medium |
-| C3 | Void workflow (Owner/Admin) | Cancel unpaid orders | Low |
-| C4 | Points earning on payment | Award points after successful payment | Medium |
-| C5 | Order history export | Reporting needs | Low |
-| C6 | Customizable menu grid layout | Restaurant preference | Medium |
-| C7 | Multi-currency support | International customers | High |
+| ID  | Feature                       | Justification                         | Effort |
+| --- | ----------------------------- | ------------------------------------- | ------ |
+| C1  | Bill splitting by item        | Restaurant preference                 | Medium |
+| C2  | Refund workflow (Owner/Admin) | Handle returns systematically         | Medium |
+| C3  | Void workflow (Owner/Admin)   | Cancel unpaid orders                  | Low    |
+| C4  | Points earning on payment     | Award points after successful payment | Medium |
+| C5  | Order history export          | Reporting needs                       | Low    |
+| C6  | Customizable menu grid layout | Restaurant preference                 | Medium |
+| C7  | Multi-currency support        | International customers               | High   |
 
 ### 5.4 WON'T Have (Out of Scope - Future)
 
 Features explicitly deferred:
 
-| ID | Feature | Reason |
-|----|---------|--------|
-| W1 | Payment gateway integration | Record-only by design (uses external terminals) |
-| W2 | Offline mode | Requires significant architecture change |
-| W3 | Delivery management | Separate module recommended |
-| W4 | Inventory integration | Backend not ready |
-| W5 | Kitchen display on Sales Page | KDS is separate module |
-| W6 | Customer-facing display | Hardware dependency |
-| W7 | Barcode scanning | Hardware dependency |
+| ID  | Feature                       | Reason                                          |
+| --- | ----------------------------- | ----------------------------------------------- |
+| W1  | Payment gateway integration   | Record-only by design (uses external terminals) |
+| W2  | Offline mode                  | Requires significant architecture change        |
+| W3  | Delivery management           | Separate module recommended                     |
+| W4  | Inventory integration         | Backend not ready                               |
+| W5  | Kitchen display on Sales Page | KDS is separate module                          |
+| W6  | Customer-facing display       | Hardware dependency                             |
+| W7  | Barcode scanning              | Hardware dependency                             |
 
 ---
 
@@ -1001,15 +1028,18 @@ Features explicitly deferred:
 **Integration Type:** Real-time bidirectional
 
 **Sales Page -> KDS:**
+
 - New order placed -> `order:created` WebSocket event
 - Order items added -> `order:updated` event
 - Order cancelled -> `order:cancelled` event
 
 **KDS -> Sales Page:**
+
 - Order status change -> Update active orders panel
 - Order ready -> Audio notification + visual indicator
 
 **Implementation:**
+
 - Leverage existing `useKitchenSocket` hook
 - Subscribe to `/kitchen` namespace
 - Listen for `orderStatusChanged` events
@@ -1019,15 +1049,18 @@ Features explicitly deferred:
 **Integration Type:** Real-time bidirectional
 
 **Sales Page -> Tables:**
+
 - Start table session -> Update table status to SEATED
 - Place order -> Update table status to ORDERING
 - Complete payment -> Update table status to CLEANING
 
 **Tables -> Sales Page:**
+
 - Table status change -> Update floor map
 - Session ended externally -> Refresh table list
 
 **Implementation:**
+
 - Leverage existing `useTableSocket` hook
 - Subscribe to `/table` namespace
 - Sync with `table-state.service.ts`
@@ -1039,11 +1072,13 @@ Features explicitly deferred:
 > **IMPORTANT:** This is a record-keeping system only. Actual payment processing happens outside the system (physical card terminals, cash registers, etc.). The POS simply records what payment method was used.
 
 **Services to Use:**
+
 - `payment.service.ts` for recording standard payments
 - `split-payment.service.ts` for recording split payments
 - `discount.service.ts` for discount handling
 
 **Flow:**
+
 1. Cashier selects payment method (Cash, Card, Mobile, Other)
 2. **For Cash:** Enter amount tendered → System calculates change
 3. **For Card/Mobile:** Optionally enter reference number
@@ -1052,10 +1087,11 @@ Features explicitly deferred:
 6. Handle error: Show user-friendly message
 
 **Cash Change Calculation:**
+
 ```typescript
 interface CashPaymentInput {
-  orderTotal: number;      // e.g., 45.63
-  amountTendered: number;  // e.g., 50.00
+  orderTotal: number; // e.g., 45.63
+  amountTendered: number; // e.g., 50.00
 }
 
 // Validation
@@ -1068,6 +1104,7 @@ const changeDue = amountTendered - orderTotal; // 4.37
 ```
 
 **Why No Payment Gateway?**
+
 - Restaurants typically use standalone card terminals
 - Reduces PCI compliance burden
 - Simpler implementation and maintenance
@@ -1079,6 +1116,7 @@ const changeDue = amountTendered - orderTotal; // 4.37
 **Integration Type:** Browser print API + optional thermal printer
 
 **Implementation Options:**
+
 1. **Browser Print (MVP):**
    - Generate HTML receipt
    - Call `window.print()` with receipt stylesheet
@@ -1090,6 +1128,7 @@ const changeDue = amountTendered - orderTotal; // 4.37
    - Send via WebSocket to print server
 
 **Receipt Content:**
+
 - Store name and address
 - Order number and date/time
 - Itemized list with prices
@@ -1104,6 +1143,7 @@ const changeDue = amountTendered - orderTotal; // 4.37
 **Integration Type:** WebSocket subscription
 
 **Implementation:**
+
 - Leverage existing `useDashboardSocket` hook
 - Listen for sales summary updates
 - Auto-refresh daily stats panel
@@ -1115,56 +1155,56 @@ const changeDue = amountTendered - orderTotal; // 4.37
 
 ### 8.1 Performance
 
-| Metric | Requirement |
-|--------|-------------|
-| Page load time | < 2 seconds (p95) |
-| Menu item search | < 300ms response |
-| Add to cart | < 100ms (optimistic UI) |
-| Real-time updates | < 500ms propagation |
+| Metric            | Requirement                         |
+| ----------------- | ----------------------------------- |
+| Page load time    | < 2 seconds (p95)                   |
+| Menu item search  | < 300ms response                    |
+| Add to cart       | < 100ms (optimistic UI)             |
+| Real-time updates | < 500ms propagation                 |
 | Concurrent orders | Support 50+ active orders per store |
 
 ### 8.2 Usability
 
-| Requirement | Description |
-|-------------|-------------|
-| Mobile responsive | Usable on tablets (min 768px) |
-| Touch-friendly | Min touch target 44x44px |
-| Keyboard navigation | Full keyboard support for power users |
-| Accessibility | WCAG 2.1 AA compliance |
-| Multi-language | Support all 4 languages (en, zh, my, th) |
+| Requirement         | Description                              |
+| ------------------- | ---------------------------------------- |
+| Mobile responsive   | Usable on tablets (min 768px)            |
+| Touch-friendly      | Min touch target 44x44px                 |
+| Keyboard navigation | Full keyboard support for power users    |
+| Accessibility       | WCAG 2.1 AA compliance                   |
+| Multi-language      | Support all 4 languages (en, zh, my, th) |
 
 ### 8.3 Reliability
 
-| Requirement | Description |
-|-------------|-------------|
-| Error handling | Graceful degradation with user-friendly messages |
-| Data persistence | Cart survives page refresh (localStorage) |
-| Optimistic updates | UI updates before server confirmation |
-| Rollback | Revert UI on server error |
+| Requirement        | Description                                      |
+| ------------------ | ------------------------------------------------ |
+| Error handling     | Graceful degradation with user-friendly messages |
+| Data persistence   | Cart survives page refresh (localStorage)        |
+| Optimistic updates | UI updates before server confirmation            |
+| Rollback           | Revert UI on server error                        |
 
 ### 8.4 Security
 
-| Requirement | Description |
-|-------------|-------------|
-| Authentication | JWT required for all API calls |
-| Authorization | Role-based access (two levels: Cashier, Owner/Admin) |
-| Audit logging | All financial transactions logged |
+| Requirement         | Description                                                     |
+| ------------------- | --------------------------------------------------------------- |
+| Authentication      | JWT required for all API calls                                  |
+| Authorization       | Role-based access (two levels: Cashier, Owner/Admin)            |
+| Audit logging       | All financial transactions logged                               |
 | Owner/Admin actions | Refunds, voids, large point redemptions require Owner/Admin PIN |
 
 **Permission Matrix:**
 
-| Action | Cashier | Owner/Admin |
-|--------|---------|-------------|
-| Create orders | ✅ | ✅ |
-| Process payments | ✅ | ✅ |
-| Apply standard discounts | ✅ | ✅ |
-| Apply large point discounts | ❌ | ✅ |
-| Void orders | ❌ | ✅ |
-| Process refunds | ❌ | ✅ |
-| Join/unjoin tables | ✅ (join only) | ✅ |
-| View daily stats | ✅ | ✅ |
-| View full reports | ❌ | ✅ |
-| Modify settings | ❌ | ✅ |
+| Action                      | Cashier        | Owner/Admin |
+| --------------------------- | -------------- | ----------- |
+| Create orders               | ✅             | ✅          |
+| Process payments            | ✅             | ✅          |
+| Apply standard discounts    | ✅             | ✅          |
+| Apply large point discounts | ❌             | ✅          |
+| Void orders                 | ❌             | ✅          |
+| Process refunds             | ❌             | ✅          |
+| Join/unjoin tables          | ✅ (join only) | ✅          |
+| View daily stats            | ✅             | ✅          |
+| View full reports           | ❌             | ✅          |
+| Modify settings             | ❌             | ✅          |
 
 ---
 
@@ -1173,11 +1213,13 @@ const changeDue = amountTendered - orderTotal; // 4.37
 ### 9.1 State Management
 
 **Use Zustand for:**
+
 - Current cart state
 - Active order view selection
 - UI preferences (collapsed panels, etc.)
 
 **Use React Query for:**
+
 - Menu items (cached, stale-while-revalidate)
 - Active orders (polling + WebSocket invalidation)
 - Order history (paginated, cached)
@@ -1222,16 +1264,16 @@ features/sales/
 
 ### 9.3 Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl/Cmd + N` | New quick sale |
-| `Ctrl/Cmd + T` | Open tables view |
-| `Ctrl/Cmd + P` | Open pickup queue |
-| `Ctrl/Cmd + F` | Search orders |
-| `Ctrl/Cmd + D` | Toggle daily stats |
-| `Enter` | Confirm current action |
-| `Escape` | Cancel/close dialog |
-| `1-9` | Select category (when focused) |
+| Shortcut       | Action                         |
+| -------------- | ------------------------------ |
+| `Ctrl/Cmd + N` | New quick sale                 |
+| `Ctrl/Cmd + T` | Open tables view               |
+| `Ctrl/Cmd + P` | Open pickup queue              |
+| `Ctrl/Cmd + F` | Search orders                  |
+| `Ctrl/Cmd + D` | Toggle daily stats             |
+| `Enter`        | Confirm current action         |
+| `Escape`       | Cancel/close dialog            |
+| `1-9`          | Select category (when focused) |
 
 ### 9.4 Translation Keys
 
@@ -1383,42 +1425,42 @@ Add to `messages/[locale]/sales.json`:
 
 ### A. Existing Services Reference
 
-| Service | Location | Purpose |
-|---------|----------|---------|
-| order.service.ts | features/orders/services | Cart & checkout |
-| session.service.ts | features/orders/services | Session management |
-| payment.service.ts | features/payments/services | Payment recording |
-| split-payment.service.ts | features/payments/services | Bill splitting |
-| discount.service.ts | features/discounts/services | Discounts |
-| table.service.ts | features/tables/services | Table CRUD |
-| table-state.service.ts | features/tables/services | Table status |
-| kitchen.service.ts | features/kitchen/services | KDS orders |
-| report.service.ts | features/reports/services | Sales reports |
+| Service                  | Location                    | Purpose            |
+| ------------------------ | --------------------------- | ------------------ |
+| order.service.ts         | features/orders/services    | Cart & checkout    |
+| session.service.ts       | features/orders/services    | Session management |
+| payment.service.ts       | features/payments/services  | Payment recording  |
+| split-payment.service.ts | features/payments/services  | Bill splitting     |
+| discount.service.ts      | features/discounts/services | Discounts          |
+| table.service.ts         | features/tables/services    | Table CRUD         |
+| table-state.service.ts   | features/tables/services    | Table status       |
+| kitchen.service.ts       | features/kitchen/services   | KDS orders         |
+| report.service.ts        | features/reports/services   | Sales reports      |
 
 ### B. Existing Components Reference
 
-| Component | Location | Reusable? |
-|-----------|----------|-----------|
-| ManualOrderDialog | features/orders/components | Yes |
-| PaymentDialog | features/payments/components | Yes |
-| RefundVoidDialog | features/payments/components | Yes |
-| DiscountDialog | features/discounts/components | Yes |
-| BillSplittingDialog | features/payments/components | Yes |
+| Component           | Location                      | Reusable? |
+| ------------------- | ----------------------------- | --------- |
+| ManualOrderDialog   | features/orders/components    | Yes       |
+| PaymentDialog       | features/payments/components  | Yes       |
+| RefundVoidDialog    | features/payments/components  | Yes       |
+| DiscountDialog      | features/discounts/components | Yes       |
+| BillSplittingDialog | features/payments/components  | Yes       |
 
 ### C. WebSocket Namespaces
 
-| Namespace | Events | Hook |
-|-----------|--------|------|
-| /order | orderCreated, orderUpdated | useOrderSocket |
-| /kitchen | orderStatusChanged | useKitchenSocket |
-| /table | tableStatusChanged | useTableSocket |
-| /dashboard | salesUpdated | useDashboardSocket |
+| Namespace  | Events                     | Hook               |
+| ---------- | -------------------------- | ------------------ |
+| /order     | orderCreated, orderUpdated | useOrderSocket     |
+| /kitchen   | orderStatusChanged         | useKitchenSocket   |
+| /table     | tableStatusChanged         | useTableSocket     |
+| /dashboard | salesUpdated               | useDashboardSocket |
 
 ---
 
 ## Document History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2025-11-26 | Business Analyst Agent | Initial analysis |
-| 1.1 | 2025-11-26 | Business Analyst Agent | Updated based on user feedback: simplified to 2 personas (Cashier, Owner/Admin), added Join Tables feature, added Takeaway from Table feature, added Member Points discount, clarified payment as record-only with cash change calculation |
+| Version | Date       | Author                 | Changes                                                                                                                                                                                                                                    |
+| ------- | ---------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1.0     | 2025-11-26 | Business Analyst Agent | Initial analysis                                                                                                                                                                                                                           |
+| 1.1     | 2025-11-26 | Business Analyst Agent | Updated based on user feedback: simplified to 2 personas (Cashier, Owner/Admin), added Join Tables feature, added Takeaway from Table feature, added Member Points discount, clarified payment as record-only with cash change calculation |

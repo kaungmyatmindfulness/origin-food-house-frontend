@@ -4,6 +4,9 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:rms": "turbo run dev --filter=@app/restaurant-management-system",
+    "dev:sos": "turbo run dev --filter=@app/self-ordering-system",
+    "dev:admin": "turbo run dev --filter=@app/admin-platform",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
