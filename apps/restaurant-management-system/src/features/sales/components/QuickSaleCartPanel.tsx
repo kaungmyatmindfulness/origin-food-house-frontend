@@ -68,16 +68,16 @@ function QuickSaleCartItem({
         </p>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1">
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="icon"
-            className="h-7 w-7"
+            className="h-11 w-11 active:scale-95"
             onClick={() => onUpdateQuantity(item.localId, item.quantity - 1)}
             disabled={disabled}
           >
-            <Minus className="h-3 w-3" />
+            <Minus className="h-5 w-5" />
           </Button>
 
           <span className="w-8 text-center text-sm font-medium">
@@ -87,22 +87,22 @@ function QuickSaleCartItem({
           <Button
             variant="outline"
             size="icon"
-            className="h-7 w-7"
+            className="h-11 w-11 active:scale-95"
             onClick={() => onUpdateQuantity(item.localId, item.quantity + 1)}
             disabled={disabled}
           >
-            <Plus className="h-3 w-3" />
+            <Plus className="h-5 w-5" />
           </Button>
         </div>
 
         <Button
           variant="ghost"
           size="icon"
-          className="text-destructive hover:text-destructive h-7 w-7"
+          className="text-destructive hover:text-destructive h-11 w-11 active:scale-95"
           onClick={() => onRemove(item.localId)}
           disabled={disabled}
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className="h-5 w-5" />
         </Button>
       </div>
     </div>

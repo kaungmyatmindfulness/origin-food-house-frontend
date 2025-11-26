@@ -98,23 +98,25 @@ export default function KitchenDashboard() {
           <Button
             variant="outline"
             size="icon"
+            className="h-11 w-11 active:scale-95"
             onClick={toggleSound}
             title={soundEnabled ? t('disableSound') : t('enableSound')}
           >
             {soundEnabled ? (
-              <Bell className="h-4 w-4" />
+              <Bell className="h-5 w-5" />
             ) : (
-              <BellOff className="h-4 w-4" />
+              <BellOff className="h-5 w-5" />
             )}
           </Button>
 
           <Button
             variant="outline"
             size="icon"
+            className="h-11 w-11 active:scale-95"
             onClick={() => refetch()}
             title={t('refresh')}
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className="h-5 w-5" />
           </Button>
         </div>
       </div>

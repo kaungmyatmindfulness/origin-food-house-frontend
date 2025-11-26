@@ -102,21 +102,21 @@ export function ActiveOrdersPanel({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8"
+            className="h-11 w-11 active:scale-95"
             onClick={() => refetch()}
             disabled={isRefetching}
           >
             <RefreshCw
-              className={cn('h-4 w-4', isRefetching && 'animate-spin')}
+              className={cn('h-5 w-5', isRefetching && 'animate-spin')}
             />
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8"
+            className="h-11 w-11 active:scale-95"
             onClick={() => setIsCollapsed(true)}
           >
-            <ChevronDown className="h-4 w-4" />
+            <ChevronDown className="h-5 w-5" />
           </Button>
         </div>
       </div>

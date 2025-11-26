@@ -298,12 +298,12 @@ function StoreTablesContent() {
                               type="button"
                               variant="ghost"
                               size="icon"
-                              className="text-muted-foreground hover:text-destructive h-8 w-8 shrink-0"
+                              className="text-muted-foreground hover:text-destructive h-11 w-11 shrink-0 active:scale-95"
                               onClick={() => remove(index)}
                               disabled={syncTablesMutation.isPending}
                               title={t('removeTable', { number: index + 1 })}
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Trash2 className="h-5 w-5" />
                             </Button>
                           </motion.div>
                         ))}

@@ -289,14 +289,14 @@ const { isLoading } = useProtected({
 
 ### Touch Target Size Reference
 
-| Element Type       | Minimum Size | Recommended Size | Tailwind Class     |
-| ------------------ | ------------ | ---------------- | ------------------ |
-| Primary buttons    | 44px height  | 48-56px height   | `h-11` to `h-14`   |
-| Icon buttons       | 44x44px      | 48x48px          | `h-11 w-11`        |
-| List items         | 44px height  | 48-56px height   | `min-h-11`         |
-| Input fields       | 44px height  | 48px height      | `h-11` or `h-12`   |
-| Checkboxes/Radios  | 24x24px      | 24x24px + padding| `h-6 w-6` + `p-2`  |
-| Tab items          | 44px height  | 48px height      | `min-h-11`         |
+| Element Type      | Minimum Size | Recommended Size  | Tailwind Class    |
+| ----------------- | ------------ | ----------------- | ----------------- |
+| Primary buttons   | 44px height  | 48-56px height    | `h-11` to `h-14`  |
+| Icon buttons      | 44x44px      | 48x48px           | `h-11 w-11`       |
+| List items        | 44px height  | 48-56px height    | `min-h-11`        |
+| Input fields      | 44px height  | 48px height       | `h-11` or `h-12`  |
+| Checkboxes/Radios | 24x24px      | 24x24px + padding | `h-6 w-6` + `p-2` |
+| Tab items         | 44px height  | 48px height       | `min-h-11`        |
 
 ### Spacing for Touch Interfaces
 
@@ -379,30 +379,99 @@ Optimize for 10-12" landscape tablets (1024px-1366px width):
 Tablets don't have hover state - all interactions must work with tap only:
 
 ```typescript
-// ❌ WRONG - Information only on hover
+// ❌ WRONG - Buttons only visible on hover (INVISIBLE on tablets!)
 <div className="group">
-  <Button>View Details</Button>
-  <div className="hidden group-hover:block">  {/* Never visible on tablet! */}
-    <p>Important information...</p>
-  </div>
+  <Card>...</Card>
+  <Button className="opacity-0 group-hover:opacity-100">  {/* Never visible! */}
+    Edit
+  </Button>
 </div>
 
-// ✅ CORRECT - Information always visible or tap-to-reveal
-<div>
-  <Button onClick={() => setShowDetails(!showDetails)}>
-    View Details
-    <ChevronDown className={cn("ml-2 h-4 w-4 transition-transform",
-      showDetails && "rotate-180"
-    )} />
-  </Button>
-  {showDetails && <p>Important information...</p>}
-</div>
+// ✅ CORRECT - Use DropdownMenu for multiple actions (preferred pattern)
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@repo/ui/components/dropdown-menu';
+
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button
+      size="icon"
+      variant="secondary"
+      className="absolute top-2 right-2 h-11 w-11 rounded-full shadow-md active:scale-95"
+    >
+      <MoreVertical className="h-5 w-5" />
+    </Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent align="end">
+    <DropdownMenuItem onClick={onEdit} className="min-h-11">
+      <Pencil className="mr-2 h-4 w-4" />
+      Edit
+    </DropdownMenuItem>
+    <DropdownMenuItem onClick={onTranslate} className="min-h-11">
+      <Languages className="mr-2 h-4 w-4" />
+      Translate
+    </DropdownMenuItem>
+    <DropdownMenuItem onClick={onDelete} className="min-h-11 text-destructive">
+      <Trash2 className="mr-2 h-4 w-4" />
+      Delete
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+
+// ✅ CORRECT - Always visible buttons (for single/few actions)
+<Button
+  size="icon"
+  className="h-10 w-10 shadow-md active:scale-95"  // Always visible
+>
+  <X className="h-5 w-5" />
+</Button>
 
 // ✅ CORRECT - Use press states instead of hover
 <Button className="active:scale-95 active:bg-primary/90">
   Tap Me
 </Button>
 ```
+
+### DropdownMenu Pattern (Recommended for Card Actions)
+
+When a card or list item has multiple actions (edit, delete, translate), use DropdownMenu:
+
+```typescript
+// ✅ CORRECT - Single trigger, multiple actions
+// Used in: item-card.tsx, category-card.tsx
+<Card className="group relative">
+  <CardContent>
+    {/* Card content */}
+  </CardContent>
+
+  {/* Single always-visible action trigger */}
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button
+        size="icon"
+        variant="secondary"
+        className="absolute top-2 right-2 h-11 w-11 rounded-full shadow-md active:scale-95"
+      >
+        <MoreVertical className="h-5 w-5" />
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end">
+      <DropdownMenuItem className="min-h-11">Edit</DropdownMenuItem>
+      <DropdownMenuItem className="min-h-11">Delete</DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</Card>
+```
+
+**Why DropdownMenu over hover-reveal buttons:**
+
+- Single visible trigger reduces visual clutter
+- All actions accessible via tap
+- Touch-friendly menu items with `min-h-11`
+- Consistent pattern across mobile, tablet, and desktop
 
 ### Dialog/Modal Sizing for Tablets
 
@@ -506,28 +575,60 @@ Use larger text sizes for tablet viewing distance:
   </div>
 </div>
 
-// Quantity Stepper
-<div className="flex items-center gap-1">
+// Quantity Stepper (actual implementation from CartItem.tsx)
+<div className="flex items-center gap-2">
   <Button
-    size="icon"
     variant="outline"
-    className="h-12 w-12 rounded-full"
-    onClick={() => setQty(q => Math.max(0, q - 1))}
+    size="icon"
+    className="h-11 w-11 active:scale-95"
+    onClick={handleDecrement}
+    disabled={disabled || item.quantity <= 1}
   >
     <Minus className="h-5 w-5" />
   </Button>
-  <span className="w-12 text-center text-xl font-medium tabular-nums">
-    {quantity}
+  <span className="w-8 text-center text-sm font-medium tabular-nums">
+    {item.quantity}
   </span>
   <Button
-    size="icon"
     variant="outline"
-    className="h-12 w-12 rounded-full"
-    onClick={() => setQty(q => q + 1)}
+    size="icon"
+    className="h-11 w-11 active:scale-95"
+    onClick={handleIncrement}
+    disabled={disabled}
   >
     <Plus className="h-5 w-5" />
   </Button>
 </div>
+
+// Delete Button with Touch Feedback
+<Button
+  variant="ghost"
+  size="icon"
+  className="text-destructive hover:text-destructive hover:bg-destructive/10 h-11 w-11 active:scale-95"
+  onClick={handleRemove}
+>
+  <Trash2 className="h-5 w-5" />
+</Button>
+
+// Navigation Item (from sidebar.tsx)
+<Link
+  href={item.href}
+  className="flex items-center gap-3 rounded px-3 py-3 min-h-11 text-base
+             transition-colors hover:bg-gray-50 active:bg-gray-100"
+>
+  <item.icon className="h-5 w-5" />
+  <span>{item.label}</span>
+</Link>
+
+// Icon Button Header Actions (from dashboard-header.tsx)
+<Button
+  variant="ghost"
+  size="icon"
+  className="relative h-11 w-11"
+  aria-label="Notifications"
+>
+  <Bell className="h-5 w-5" />
+</Button>
 ```
 
 ### Tablet-Specific Anti-Patterns

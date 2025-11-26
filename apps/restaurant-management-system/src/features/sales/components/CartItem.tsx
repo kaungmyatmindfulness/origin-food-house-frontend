@@ -77,15 +77,15 @@ export function CartItem({
       </div>
 
       {/* Quantity controls */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         <Button
           variant="outline"
           size="icon"
-          className="h-7 w-7"
+          className="h-11 w-11 active:scale-95"
           onClick={handleDecrement}
           disabled={disabled || item.quantity <= 1}
         >
-          <Minus className="h-3 w-3" />
+          <Minus className="h-5 w-5" />
         </Button>
         <span className="w-8 text-center text-sm font-medium">
           {item.quantity}
@@ -93,27 +93,27 @@ export function CartItem({
         <Button
           variant="outline"
           size="icon"
-          className="h-7 w-7"
+          className="h-11 w-11 active:scale-95"
           onClick={handleIncrement}
           disabled={disabled}
         >
-          <Plus className="h-3 w-3" />
+          <Plus className="h-5 w-5" />
         </Button>
       </div>
 
       {/* Line total and remove */}
-      <div className="flex flex-col items-end gap-1">
+      <div className="flex flex-col items-end gap-2">
         <p className="text-foreground font-semibold">
           {formatCurrency(lineTotal)}
         </p>
         <Button
           variant="ghost"
           size="icon"
-          className="text-destructive hover:text-destructive hover:bg-destructive/10 h-6 w-6"
+          className="text-destructive hover:text-destructive hover:bg-destructive/10 h-11 w-11 active:scale-95"
           onClick={handleRemove}
           disabled={disabled}
         >
-          <Trash2 className="h-3 w-3" />
+          <Trash2 className="h-5 w-5" />
         </Button>
       </div>
     </div>

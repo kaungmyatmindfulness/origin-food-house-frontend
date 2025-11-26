@@ -67,12 +67,12 @@ export function CustomizationGroupField({
         <Button
           type="button"
           variant="ghost"
-          size="sm"
+          size="icon"
           onClick={() => removeGroup(groupIndex)}
-          className="ml-2 text-red-500 hover:text-red-700"
+          className="ml-2 h-11 w-11 shrink-0 text-red-500 hover:bg-red-100 hover:text-red-700 active:scale-95 dark:hover:bg-red-900/50"
           aria-label="Remove group"
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className="h-5 w-5" />
         </Button>
       </div>
 
@@ -144,10 +144,10 @@ export function CustomizationGroupField({
               variant="ghost"
               size="icon"
               onClick={() => removeOption(optionIndex)}
-              className="h-8 w-8 shrink-0 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50"
+              className="h-11 w-11 shrink-0 text-red-500 hover:bg-red-100 active:scale-95 dark:hover:bg-red-900/50"
               aria-label="Remove option"
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-5 w-5" />
             </Button>
           </div>
         ))}

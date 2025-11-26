@@ -23,16 +23,17 @@ export function AccountPopover({ onLogout }: AccountPopoverProps) {
         initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -6 }}
+        className="space-y-1"
       >
         <Link
           href="/profile"
-          className="block px-2 py-1 text-sm text-gray-700 hover:bg-gray-100"
+          className="block min-h-11 rounded px-3 py-3 text-base text-gray-700 hover:bg-gray-100 active:bg-gray-200"
         >
           {t('profile')}
         </Link>
         <button
           onClick={onLogout}
-          className="block w-full px-2 py-1 text-left text-sm text-red-600 hover:bg-gray-100"
+          className="block min-h-11 w-full rounded px-3 py-3 text-left text-base text-red-600 hover:bg-gray-100 active:bg-gray-200"
         >
           {t('logout')}
         </button>

@@ -44,56 +44,56 @@ const useNavSections = () => {
       [
         {
           labelKey: 'sale',
-          icon: <ShoppingCart className="mr-2 h-3 w-3 text-gray-500" />,
+          icon: <ShoppingCart className="mr-2 h-5 w-5 text-gray-500" />,
           href: '/hub/sale',
         },
         {
           labelKey: 'kitchenDisplay',
-          icon: <ChefHat className="mr-2 h-3 w-3 text-gray-500" />,
+          icon: <ChefHat className="mr-2 h-5 w-5 text-gray-500" />,
           href: '/hub/kitchen',
         },
       ],
       [
         {
           labelKey: 'menu',
-          icon: <MenuIcon className="mr-2 h-3 w-3 text-gray-500" />,
+          icon: <MenuIcon className="mr-2 h-5 w-5 text-gray-500" />,
           href: '/hub/menu',
         },
         {
           labelKey: 'store',
-          icon: <Settings className="mr-2 h-3 w-3 text-gray-500" />,
+          icon: <Settings className="mr-2 h-5 w-5 text-gray-500" />,
           subItems: [
             {
               labelKey: 'choose',
               href: '/store/choose',
-              icon: <Store className="mr-2 h-3 w-3 text-gray-500" />,
+              icon: <Store className="mr-2 h-5 w-5 text-gray-500" />,
             },
             {
               labelKey: 'information',
               href: '/hub/store/information',
-              icon: <Info className="mr-2 h-3 w-3 text-gray-500" />,
+              icon: <Info className="mr-2 h-5 w-5 text-gray-500" />,
             },
             {
               labelKey: 'settings',
               href: '/hub/store/settings',
-              icon: <Settings className="mr-2 h-3 w-3 text-gray-500" />,
+              icon: <Settings className="mr-2 h-5 w-5 text-gray-500" />,
             },
           ],
         },
 
         {
           labelKey: 'tables',
-          icon: <LayoutGrid className="mr-2 h-3 w-3 text-gray-500" />,
+          icon: <LayoutGrid className="mr-2 h-5 w-5 text-gray-500" />,
           subItems: [
             {
               labelKey: 'manage',
               href: '/hub/tables/manage',
-              icon: <List className="mr-2 h-3 w-3 text-gray-500" />,
+              icon: <List className="mr-2 h-5 w-5 text-gray-500" />,
             },
             {
               labelKey: 'qrCodes',
               href: '/hub/tables/qr-code',
-              icon: <QrCode className="mr-2 h-3 w-3 text-gray-500" />,
+              icon: <QrCode className="mr-2 h-5 w-5 text-gray-500" />,
             },
           ],
         },
@@ -101,27 +101,27 @@ const useNavSections = () => {
       [
         {
           labelKey: 'storePersonnel',
-          icon: <Users className="mr-2 h-3 w-3 text-gray-500" />,
+          icon: <Users className="mr-2 h-5 w-5 text-gray-500" />,
           href: '/hub/store-personnel',
         },
         {
           labelKey: 'reports',
-          icon: <BarChart3 className="mr-2 h-3 w-3 text-gray-500" />,
+          icon: <BarChart3 className="mr-2 h-5 w-5 text-gray-500" />,
           subItems: [
             {
               labelKey: 'sales',
               href: '/hub/reports/sales',
-              icon: <DollarSign className="mr-2 h-3 w-3 text-gray-500" />,
+              icon: <DollarSign className="mr-2 h-5 w-5 text-gray-500" />,
             },
             {
               labelKey: 'salesHistory',
               href: '/hub/reports/history',
-              icon: <History className="mr-2 h-3 w-3 text-gray-500" />,
+              icon: <History className="mr-2 h-5 w-5 text-gray-500" />,
             },
             {
               labelKey: 'menuItems',
               href: '/hub/reports/menu',
-              icon: <List className="mr-2 h-3 w-3 text-gray-500" />,
+              icon: <List className="mr-2 h-5 w-5 text-gray-500" />,
             },
           ],
         },
@@ -172,16 +172,16 @@ export function DashboardSidebar({
         <button
           onClick={() => setCollapsed((prev) => !prev)}
           className={cn(
-            'flex items-center rounded px-2 py-1 text-sm transition-colors hover:bg-gray-50',
+            'flex min-h-11 items-center rounded px-3 py-3 text-base transition-colors hover:bg-gray-50 active:bg-gray-100',
             collapsed ? 'w-auto' : 'w-full'
           )}
           aria-label="Toggle sidebar collapse"
         >
           {collapsed ? (
-            <ChevronRight className="mr-2 h-3 w-3 text-gray-500" />
+            <ChevronRight className="h-5 w-5 text-gray-500" />
           ) : (
             <>
-              <ChevronLeft className="mr-1 h-4 w-4" />
+              <ChevronLeft className="mr-2 h-5 w-5" />
               <span>{t('collapse')}</span>
             </>
           )}
@@ -189,7 +189,7 @@ export function DashboardSidebar({
       </div>
 
       {/* Nav sections */}
-      <nav className="flex-1 overflow-y-auto text-sm">
+      <nav className="flex-1 overflow-y-auto text-base">
         {navSections.map((section, idx) => (
           <React.Fragment key={idx}>
             <div className="py-2">
@@ -201,9 +201,9 @@ export function DashboardSidebar({
                       key={item.labelKey}
                       href={item.href ?? '#'}
                       className={cn(
-                        'flex items-center rounded p-2 hover:bg-gray-50',
+                        'flex min-h-11 items-center rounded px-3 py-3 hover:bg-gray-50 active:bg-gray-100',
                         active && 'bg-gray-200 font-medium',
-                        collapsed ? 'justify-center' : 'pl-2'
+                        collapsed ? 'justify-center' : ''
                       )}
                     >
                       {item.icon}
@@ -218,7 +218,7 @@ export function DashboardSidebar({
                   <div key={item.labelKey} className="px-2 py-1">
                     <div
                       className={cn(
-                        'flex items-center rounded p-2 hover:bg-gray-50',
+                        'flex min-h-11 items-center rounded px-3 py-3 hover:bg-gray-50',
                         active && 'bg-gray-200 font-medium',
                         collapsed ? 'justify-center' : ''
                       )}
@@ -237,7 +237,7 @@ export function DashboardSidebar({
                               <Link
                                 href={sub.href}
                                 className={cn(
-                                  'flex items-center rounded px-2 py-1 hover:bg-gray-100',
+                                  'flex min-h-11 items-center rounded px-3 py-3 hover:bg-gray-100 active:bg-gray-200',
                                   subPath && 'bg-gray-200 font-medium'
                                 )}
                               >

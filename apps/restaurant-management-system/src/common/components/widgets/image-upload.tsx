@@ -175,12 +175,12 @@ export function ImageUpload({
             <button
               type="button"
               onClick={handleRemove}
-              className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-white p-1 text-sm opacity-0 shadow transition-opacity group-hover:opacity-100 hover:bg-gray-100 disabled:opacity-50"
+              className="absolute -top-2 -right-2 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md hover:bg-gray-100 active:scale-95 disabled:opacity-50"
               aria-label="Remove image"
               title="Remove image"
               disabled={isLoading || disabled}
             >
-              <X className="h-4 w-4 text-red-500" />
+              <X className="h-5 w-5 text-red-500" />
             </button>
           )}
         </div>
@@ -214,12 +214,12 @@ export function ImageUpload({
             <button
               type="button"
               onClick={handleRemove}
-              className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-white p-1 text-sm opacity-0 shadow transition-opacity group-hover:opacity-100 hover:bg-gray-100 disabled:opacity-50"
+              className="absolute -top-2 -right-2 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md hover:bg-gray-100 active:scale-95 disabled:opacity-50"
               aria-label="Remove image"
               title="Remove image"
               disabled={isLoading || disabled}
             >
-              <X className="h-4 w-4 text-red-500" />
+              <X className="h-5 w-5 text-red-500" />
             </button>
           )}
         </div>

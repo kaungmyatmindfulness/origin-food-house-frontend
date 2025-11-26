@@ -104,10 +104,10 @@ export function DashboardHeader() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative"
+                className="relative h-11 w-11"
                 aria-label="Notifications"
               >
-                <Bell className="h-4 w-4" />
+                <Bell className="h-5 w-5" />
               </Button>
             </PopoverTrigger>
             <NotificationPopover />
@@ -119,7 +119,7 @@ export function DashboardHeader() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="h-9 gap-2 px-2"
+                  className="h-11 gap-2 px-3"
                   aria-label="Account menu"
                   aria-haspopup="menu"
                 >

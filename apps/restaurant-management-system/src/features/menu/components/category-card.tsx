@@ -221,7 +221,7 @@ export function CategoryCard({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-muted-foreground hover:text-foreground h-11 w-11 shrink-0 sm:h-10 sm:w-10"
+                    className="text-muted-foreground hover:text-foreground h-11 w-11 shrink-0 active:scale-95"
                     onClick={handleStartEditing}
                     aria-label={`Edit name for category ${category.name}`}
                     disabled={
@@ -230,7 +230,7 @@ export function CategoryCard({
                       deleteCategoryMutation.isPending
                     }
                   >
-                    <Edit className="h-4 w-4" />
+                    <Edit className="h-5 w-5" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -245,7 +245,7 @@ export function CategoryCard({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-muted-foreground hover:text-foreground h-11 w-11 shrink-0 sm:h-10 sm:w-10"
+                    className="text-muted-foreground hover:text-foreground h-11 w-11 shrink-0 active:scale-95"
                     onClick={handleTranslateClick}
                     aria-label={`Translate category ${category.name}`}
                     disabled={
@@ -254,7 +254,7 @@ export function CategoryCard({
                       deleteCategoryMutation.isPending
                     }
                   >
-                    <Globe className="h-4 w-4" />
+                    <Globe className="h-5 w-5" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -299,25 +299,25 @@ export function CategoryCard({
             type="submit"
             variant="ghost"
             size="icon"
-            className="text-primary hover:bg-primary/10 h-8 w-8 shrink-0"
+            className="text-primary hover:bg-primary/10 h-11 w-11 shrink-0 active:scale-95"
             aria-label="Confirm rename"
             disabled={renameCategoryMutation.isPending}
           >
             {renameCategoryMutation.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
-              <Check className="h-4 w-4" />
+              <Check className="h-5 w-5" />
             )}
           </Button>
           <Button
             type="reset"
             variant="ghost"
             size="icon"
-            className="text-muted-foreground hover:bg-muted h-8 w-8 shrink-0"
+            className="text-muted-foreground hover:bg-muted h-11 w-11 shrink-0 active:scale-95"
             aria-label="Cancel rename"
             disabled={renameCategoryMutation.isPending}
           >
-            <X className="h-4 w-4" />
+            <X className="h-5 w-5" />
           </Button>
         </form>
       </Form>
@@ -354,7 +354,7 @@ export function CategoryCard({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="text-muted-foreground hover:text-foreground h-11 w-11 shrink-0 sm:h-10 sm:w-10"
+                      className="text-muted-foreground hover:text-foreground h-11 w-11 shrink-0 active:scale-95"
                       aria-label="Category actions"
                       disabled={
                         !selectedStoreId ||
@@ -364,9 +364,9 @@ export function CategoryCard({
                     >
                       {deleteCategoryMutation.isPending ||
                       renameCategoryMutation.isPending ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Loader2 className="h-5 w-5 animate-spin" />
                       ) : (
-                        <MoreVertical className="h-4 w-4" />
+                        <MoreVertical className="h-5 w-5" />
                       )}
                     </Button>
                   </PopoverTrigger>

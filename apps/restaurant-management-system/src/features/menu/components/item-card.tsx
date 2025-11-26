@@ -28,16 +28,11 @@ import { Badge } from '@repo/ui/components/badge';
 import { Button } from '@repo/ui/components/button';
 import { ConfirmationDialog } from '@repo/ui/components/confirmation-dialog';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@repo/ui/components/popover';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@repo/ui/components/tooltip';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@repo/ui/components/dropdown-menu';
 import { Switch } from '@repo/ui/components/switch';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -51,7 +46,6 @@ interface ItemCardProps {
 }
 
 export function ItemCard({ item, onSelect }: ItemCardProps) {
-  const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
   const [isTranslationDialogOpen, setIsTranslationDialogOpen] =
     React.useState(false);
 
@@ -154,28 +148,21 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
 
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsPopoverOpen(false);
     setEditMenuItemId(item.id);
   };
 
   const handleDeleteRequest = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsPopoverOpen(false);
     setIsConfirmDeleteDialogOpen(true);
   };
 
   const handleTranslateClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsPopoverOpen(false);
     setIsTranslationDialogOpen(true);
   };
 
   const handleConfirmDelete = () => {
     deleteItemMutation.mutate();
-  };
-
-  const handlePopoverTriggerClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
   };
 
   const handleToggleOutOfStock = (checked: boolean) => {
@@ -234,89 +221,54 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
             </Badge>
           )}
 
-          {/* Quick Edit Button */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="absolute top-1 right-20 h-8 w-8 rounded-full opacity-0 shadow-md transition-opacity group-hover:opacity-100"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleEditClick(e);
-                  }}
-                  aria-label={`Quick edit ${item.name}`}
-                  disabled={actionsDisabled}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Quick edit</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          {/* Translate Button */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="absolute top-1 right-10 h-8 w-8 rounded-full opacity-0 shadow-md transition-opacity group-hover:opacity-100"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleTranslateClick(e);
-                  }}
-                  aria-label={`Translate ${item.name}`}
-                  disabled={actionsDisabled}
-                >
-                  <Globe className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Manage translations</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          {/* More Actions Menu */}
-          <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-            <PopoverTrigger asChild>
+          {/* Actions Menu - Always visible, touch-friendly */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <Button
                 variant="secondary"
                 size="icon"
-                className="absolute top-1 right-1 h-8 w-8 rounded-full opacity-80 shadow-md hover:opacity-100"
-                onClick={handlePopoverTriggerClick}
+                className="absolute top-2 right-2 h-11 w-11 rounded-full shadow-md active:scale-95"
+                onClick={(e) => e.stopPropagation()}
                 aria-label={`Actions for ${item.name}`}
                 disabled={actionsDisabled}
               >
                 {deleteItemMutation.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
-                  <MoreVertical className="h-4 w-4" />
+                  <MoreVertical className="h-5 w-5" />
                 )}
               </Button>
-            </PopoverTrigger>
-            <PopoverContent
-              className="w-32 p-1"
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex flex-col text-sm">
-                <Button
-                  variant="ghost"
-                  className="text-destructive hover:bg-destructive/10 flex w-full items-center justify-start px-2 py-1.5 text-sm font-normal"
-                  onClick={handleDeleteRequest}
-                  disabled={actionsDisabled}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
-                </Button>
-              </div>
-            </PopoverContent>
-          </Popover>
+              <DropdownMenuItem
+                onClick={handleEditClick}
+                disabled={actionsDisabled}
+                className="min-h-11"
+              >
+                <Pencil className="mr-2 h-4 w-4" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={handleTranslateClick}
+                disabled={actionsDisabled}
+                className="min-h-11"
+              >
+                <Globe className="mr-2 h-4 w-4" />
+                Translate
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={handleDeleteRequest}
+                disabled={actionsDisabled}
+                className="text-destructive focus:text-destructive min-h-11"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <div className="space-y-2 p-3">
