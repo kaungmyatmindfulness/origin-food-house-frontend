@@ -1,13 +1,17 @@
-// In Next.js, this file would be called: app/providers.tsx
 'use client';
 
-// Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
+/**
+ * Application providers for the RMS application.
+ * Configured for offline-first static export (SSG).
+ */
 import {
   isServer,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
 import { client } from '@repo/api';
+
+import { NetworkProvider } from './network-provider';
 
 // Configure API client with base URL and credentials
 // This must be done at module level (before components render) to ensure
@@ -29,15 +33,26 @@ function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 1 * 60 * 1000,
-        gcTime: 30 * 60 * 1000,
+        staleTime: 60 * 1000, // 1 minute
+        gcTime: 30 * 60 * 1000, // 30 minutes - keep cached data longer for offline
         refetchOnWindowFocus: false,
         refetchOnReconnect: true,
         refetchOnMount: true,
-        retry: 1,
+        // Offline-first: Only retry if online
+        retry: (failureCount) => {
+          return (
+            typeof navigator !== 'undefined' &&
+            navigator.onLine &&
+            failureCount < 2
+          );
+        },
+        // Offline-first network mode
+        networkMode: 'offlineFirst',
       },
       mutations: {
         retry: 0,
+        // Offline-first network mode for mutations
+        networkMode: 'offlineFirst',
       },
     },
   });
@@ -67,6 +82,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <NetworkProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </NetworkProvider>
   );
 }

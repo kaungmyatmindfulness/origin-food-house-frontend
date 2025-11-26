@@ -1,8 +1,9 @@
 'use client';
 
-import { useLocale } from 'next-intl';
-import { useRouter } from 'next/navigation';
-import { useTransition } from 'react';
+/**
+ * Language switcher component using Zustand for SSG compatibility.
+ * Replaces the previous cookie-based approach that required server refresh.
+ */
 import { Globe } from 'lucide-react';
 
 import {
@@ -13,34 +14,23 @@ import {
 } from '@repo/ui/components/dropdown-menu';
 import { Button } from '@repo/ui/components/button';
 import { locales, localeNames, localeFlags, type Locale } from '@/i18n/config';
+import { useLocaleStore, selectLocale } from '@/i18n/locale.store';
 
 export function LanguageSwitcher() {
-  const locale = useLocale();
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const locale = useLocaleStore(selectLocale);
+  const setLocale = useLocaleStore((state) => state.setLocale);
 
   const handleLocaleChange = (newLocale: Locale) => {
-    startTransition(() => {
-      // Set locale cookie and refresh to apply new locale
-      document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
-      router.refresh();
-    });
+    setLocale(newLocale);
   };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="gap-2"
-          disabled={isPending}
-        >
+        <Button variant="ghost" size="sm" className="gap-2">
           <Globe className="h-4 w-4" />
-          <span className="hidden sm:inline">
-            {localeNames[locale as Locale]}
-          </span>
-          <span className="sm:hidden">{localeFlags[locale as Locale]}</span>
+          <span className="hidden sm:inline">{localeNames[locale]}</span>
+          <span className="sm:hidden">{localeFlags[locale]}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

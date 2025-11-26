@@ -8,12 +8,48 @@ Origin Food House is an enterprise-grade restaurant management system built as a
 
 **Monorepo Structure:**
 
-- `apps/restaurant-management-system` - POS system for restaurant staff (Port 3002)
-- `apps/self-ordering-system` - Customer-facing self-ordering app (Port 3001)
-- `apps/admin-platform` - Admin platform (in development)
-- `packages/api` - Shared API utilities with auto-generated types from OpenAPI
-- `packages/ui` - Shared shadcn/ui component library (52+ components)
-- `packages/eslint-config` & `packages/typescript-config` - Shared tooling
+| Package                             | Description                          | Port | Rendering       | CLAUDE.md                                            |
+| ----------------------------------- | ------------------------------------ | ---- | --------------- | ---------------------------------------------------- |
+| `apps/restaurant-management-system` | POS system for restaurant staff      | 3002 | **Static (SG)** | [Guide](apps/restaurant-management-system/CLAUDE.md) |
+| `apps/self-ordering-system`         | Customer-facing self-ordering        | 3001 | **SSR**         | [Guide](apps/self-ordering-system/CLAUDE.md)         |
+| `apps/admin-platform`               | Platform admin (in development)      | 3003 | **SSR**         | [Guide](apps/admin-platform/CLAUDE.md)               |
+| `packages/api`                      | Shared API utilities + OpenAPI types | -    | -               | -                                                    |
+| `packages/ui`                       | Shared shadcn/ui components (52+)    | -    | -               | -                                                    |
+| `packages/eslint-config`            | Shared ESLint configuration          | -    | -               | -                                                    |
+| `packages/typescript-config`        | Shared TypeScript configuration      | -    | -               | -                                                    |
+
+**Note:** Each app has its own CLAUDE.md with app-specific routes, features, and rendering patterns. This root file covers shared conventions.
+
+---
+
+## Rendering Strategies
+
+Each app uses a different rendering strategy based on its requirements:
+
+| App       | Strategy                    | Rationale                                                |
+| --------- | --------------------------- | -------------------------------------------------------- |
+| **RMS**   | Static Generation (SG)      | Future Tauri desktop integration, offline POS capability |
+| **SOS**   | Server-Side Rendering (SSR) | SEO for menu pages, fast first paint on mobile           |
+| **Admin** | Server-Side Rendering (SSR) | Fresh admin data, security (no client exposure)          |
+
+### Quick Reference
+
+```typescript
+// RMS: Static Generation - ALL client components
+'use client';
+export default function Page() {
+  const { data } = useQuery({ ... });  // Client-side fetch
+  return <Content data={data} />;
+}
+
+// SOS/Admin: SSR - Server component + client hydration
+export default async function Page() {
+  const data = await fetchData();      // Server-side fetch
+  return <ClientComponent initialData={data} />;
+}
+```
+
+**See each app's CLAUDE.md for detailed patterns and examples.**
 
 ---
 
