@@ -23,13 +23,18 @@ echo "✅ OpenAPI spec fetched successfully"
 
 echo "🔧 Fixing OpenAPI spec issues..."
 
-# Fix invalid $ref to String and Object schemas, and fix incorrect type declarations
+# Fix invalid $ref to String and Object schemas, fix incorrect type declarations,
+# and handle missing schema references
 python3 << EOF
 import json
+import re
 
 # Read the original spec
 with open('$API_DIR/openapi-spec.json', 'r') as f:
     spec = json.load(f)
+
+# Get all defined schemas
+defined_schemas = set(spec.get('components', {}).get('schemas', {}).keys())
 
 # Fix incorrect type declarations (type: object with maxLength should be type: string)
 def fix_incorrect_types(obj):
@@ -45,20 +50,39 @@ def fix_incorrect_types(obj):
 
 spec = fix_incorrect_types(spec)
 
-# Remove invalid schema references by replacing them with inline types
-def replace_invalid_refs(obj):
+# Track missing refs for reporting
+missing_refs = set()
+
+# Replace invalid/missing schema references with inline types
+def replace_invalid_refs(obj, path=""):
     if isinstance(obj, dict):
         if '\$ref' in obj:
-            if obj['\$ref'] == '#/components/schemas/String':
+            ref = obj['\$ref']
+            # Handle known invalid refs
+            if ref == '#/components/schemas/String':
                 return {'type': 'string'}
-            elif obj['\$ref'] == '#/components/schemas/Object':
+            elif ref == '#/components/schemas/Object':
                 return {'type': 'object', 'additionalProperties': True}
-        return {k: replace_invalid_refs(v) for k, v in obj.items()}
+            # Check for missing schema references
+            elif ref.startswith('#/components/schemas/'):
+                schema_name = ref.split('/')[-1]
+                if schema_name not in defined_schemas:
+                    missing_refs.add(schema_name)
+                    # Replace with unknown type (will be typed as 'unknown' in TypeScript)
+                    return {'type': 'object', 'description': f'Missing schema: {schema_name}', 'additionalProperties': True}
+        return {k: replace_invalid_refs(v, f"{path}.{k}") for k, v in obj.items()}
     elif isinstance(obj, list):
-        return [replace_invalid_refs(item) for item in obj]
+        return [replace_invalid_refs(item, f"{path}[{i}]") for i, item in enumerate(obj)]
     return obj
 
 spec = replace_invalid_refs(spec)
+
+# Report missing schemas
+if missing_refs:
+    print(f'⚠️  Found {len(missing_refs)} missing schema references:')
+    for ref in sorted(missing_refs):
+        print(f'   - {ref}')
+    print('   These have been replaced with generic object types.')
 
 # Write the fixed spec
 with open('$API_DIR/openapi-spec-fixed.json', 'w') as f:
@@ -81,6 +105,7 @@ echo "📝 Generating schema exports..."
 python3 << PYEOF
 import json
 import sys
+import os
 
 api_dir = "$API_DIR"
 
@@ -94,6 +119,34 @@ schema_names = sorted(schemas.keys())
 # Filter out invalid schema names (like "String", "Object" which are primitives)
 invalid_names = {'String', 'Object', 'Boolean', 'Number', 'Integer'}
 schema_names = [name for name in schema_names if name not in invalid_names]
+
+# Find missing schemas by scanning for "Missing schema:" in descriptions
+missing_schemas = set()
+def find_missing(obj):
+    if isinstance(obj, dict):
+        desc = obj.get('description', '')
+        if isinstance(desc, str) and 'Missing schema:' in desc:
+            schema_name = desc.replace('Missing schema:', '').strip()
+            missing_schemas.add(schema_name)
+        for v in obj.values():
+            find_missing(v)
+    elif isinstance(obj, list):
+        for item in obj:
+            find_missing(item)
+
+find_missing(spec)
+
+# Check which missing schemas have overrides defined
+overrides_file = f'{api_dir}/src/generated/schema-overrides.ts'
+overrides_defined = set()
+if os.path.exists(overrides_file):
+    with open(overrides_file, 'r') as f:
+        content = f.read()
+        for schema in missing_schemas:
+            if f'export interface {schema}' in content or f'export type {schema}' in content:
+                overrides_defined.add(schema)
+
+missing_without_override = missing_schemas - overrides_defined
 
 # Generate the schemas.ts content
 lines = [
@@ -203,12 +256,50 @@ for category, names in categories.items():
         lines.append(f"export type {name} = Schemas['{name}'];")
     lines.append('')
 
+# Re-export override types if they exist
+if os.path.exists(overrides_file) and overrides_defined:
+    lines.append('// =============================================================================')
+    lines.append('// Schema Overrides (manually defined for missing backend schemas)')
+    lines.append('// These types are defined in schema-overrides.ts because the backend')
+    lines.append('// OpenAPI spec does not export them. Remove when backend is fixed.')
+    lines.append('// =============================================================================')
+    lines.append('')
+    lines.append("export * from './schema-overrides';")
+    lines.append('')
+
 # Write the file
 with open(f'{api_dir}/src/generated/schemas.ts', 'w') as f:
     f.write('\n'.join(lines))
 
-print(f'✅ Generated {len(schema_names)} schema exports')
+print(f'✅ Generated {len(schema_names)} schema exports from OpenAPI')
+
+# Report status
+if missing_schemas:
+    print(f'')
+    print(f'📋 Missing Schemas Report:')
+    print(f'   Total missing: {len(missing_schemas)}')
+    print(f'   With overrides: {len(overrides_defined)}')
+    print(f'   Need attention: {len(missing_without_override)}')
+
+    if overrides_defined:
+        print(f'')
+        print(f'   ✅ Covered by schema-overrides.ts:')
+        for name in sorted(overrides_defined):
+            print(f'      - {name}')
+
+    if missing_without_override:
+        print(f'')
+        print(f'   ⚠️  NOT covered (add to schema-overrides.ts):')
+        for name in sorted(missing_without_override):
+            print(f'      - {name}')
+        print(f'')
+        print(f'   💡 Add these types to: packages/api/src/generated/schema-overrides.ts')
+else:
+    print(f'✅ All schemas are properly defined in OpenAPI spec!')
 PYEOF
 
-echo "🎉 Done! TypeScript types generated successfully at src/generated/api.d.ts"
-echo "🎉 Schema exports generated at src/generated/schemas.ts"
+echo ""
+echo "🎉 Done! TypeScript types generated successfully"
+echo "   📄 src/generated/api.d.ts - Full OpenAPI types"
+echo "   📄 src/generated/schemas.ts - Schema exports"
+echo "   📄 src/generated/schema-overrides.ts - Manual type overrides"

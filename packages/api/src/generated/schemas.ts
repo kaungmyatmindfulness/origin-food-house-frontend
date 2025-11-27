@@ -19,8 +19,7 @@ export type UpdateSessionDto = Schemas['UpdateSessionDto'];
 
 // Order DTOs
 export type KitchenOrderResponseDto = Schemas['KitchenOrderResponseDto'];
-export type OrderItemCustomizationResponseDto =
-  Schemas['OrderItemCustomizationResponseDto'];
+export type OrderItemCustomizationResponseDto = Schemas['OrderItemCustomizationResponseDto'];
 export type OrderItemResponseDto = Schemas['OrderItemResponseDto'];
 export type OrderResponseDto = Schemas['OrderResponseDto'];
 export type OrderStatusCountDto = Schemas['OrderStatusCountDto'];
@@ -28,12 +27,15 @@ export type OrderStatusReportDto = Schemas['OrderStatusReportDto'];
 export type UpdateOrderStatusDto = Schemas['UpdateOrderStatusDto'];
 
 // Standard API Response DTOs
+export type AuditLogPaginatedResponseDto = Schemas['AuditLogPaginatedResponseDto'];
 export type PaginatedResponseDto = Schemas['PaginatedResponseDto'];
 export type PaginationMeta = Schemas['PaginationMeta'];
 export type StandardApiErrorDetails = Schemas['StandardApiErrorDetails'];
 export type StandardApiResponse = Schemas['StandardApiResponse'];
 
 // User DTOs
+export type ActivityUserInfoDto = Schemas['ActivityUserInfoDto'];
+export type AdminSuspendUserDto = Schemas['AdminSuspendUserDto'];
 export type AdminUserResponseDto = Schemas['AdminUserResponseDto'];
 export type AuditLogUserDto = Schemas['AuditLogUserDto'];
 export type BanUserDto = Schemas['BanUserDto'];
@@ -42,13 +44,19 @@ export type InviteOrAssignRoleDto = Schemas['InviteOrAssignRoleDto'];
 export type InviteStaffDto = Schemas['InviteStaffDto'];
 export type ReactivateUserDto = Schemas['ReactivateUserDto'];
 export type SuspendUserDto = Schemas['SuspendUserDto'];
+export type UserActionResponseDto = Schemas['UserActionResponseDto'];
+export type UserActivityResponseDto = Schemas['UserActivityResponseDto'];
+export type UserAdminInfoDto = Schemas['UserAdminInfoDto'];
+export type UserCountsDto = Schemas['UserCountsDto'];
+export type UserDetailResponseDto = Schemas['UserDetailResponseDto'];
 export type UserProfileResponseDto = Schemas['UserProfileResponseDto'];
+export type UserResponseDto = Schemas['UserResponseDto'];
+export type UserSuspensionHistoryItemDto = Schemas['UserSuspensionHistoryItemDto'];
 
 // Cart DTOs
 export type AddToCartDto = Schemas['AddToCartDto'];
 export type CartItemCustomizationDto = Schemas['CartItemCustomizationDto'];
-export type CartItemCustomizationResponseDto =
-  Schemas['CartItemCustomizationResponseDto'];
+export type CartItemCustomizationResponseDto = Schemas['CartItemCustomizationResponseDto'];
 export type CartItemResponseDto = Schemas['CartItemResponseDto'];
 export type CartResponseDto = Schemas['CartResponseDto'];
 export type CheckoutCartDto = Schemas['CheckoutCartDto'];
@@ -62,11 +70,20 @@ export type QuickSaleItemDto = Schemas['QuickSaleItemDto'];
 export type UpdateKitchenStatusDto = Schemas['UpdateKitchenStatusDto'];
 
 // Store DTOs
+export type AdminStoreCountsDto = Schemas['AdminStoreCountsDto'];
+export type AdminStoreInformationDto = Schemas['AdminStoreInformationDto'];
+export type AdminStoreSettingDto = Schemas['AdminStoreSettingDto'];
+export type AdminStoreSubscriptionDto = Schemas['AdminStoreSubscriptionDto'];
+export type AdminStoreTierDto = Schemas['AdminStoreTierDto'];
 export type ChooseStoreDto = Schemas['ChooseStoreDto'];
 export type CreateStoreDto = Schemas['CreateStoreDto'];
 export type GetStoreDetailsResponseDto = Schemas['GetStoreDetailsResponseDto'];
-export type StoreInformationResponseDto =
-  Schemas['StoreInformationResponseDto'];
+export type PaymentStoreInfoDto = Schemas['PaymentStoreInfoDto'];
+export type StoreActionResponseDto = Schemas['StoreActionResponseDto'];
+export type StoreAnalyticsResponseDto = Schemas['StoreAnalyticsResponseDto'];
+export type StoreDetailResponseDto = Schemas['StoreDetailResponseDto'];
+export type StoreInformationResponseDto = Schemas['StoreInformationResponseDto'];
+export type StoreResponseDto = Schemas['StoreResponseDto'];
 export type StoreSettingResponseDto = Schemas['StoreSettingResponseDto'];
 export type StoreUsageDto = Schemas['StoreUsageDto'];
 export type UpdateStoreInformationDto = Schemas['UpdateStoreInformationDto'];
@@ -79,40 +96,36 @@ export type CategoryResponseDto = Schemas['CategoryResponseDto'];
 export type CreateCategoryDto = Schemas['CreateCategoryDto'];
 export type SortCategoryDto = Schemas['SortCategoryDto'];
 export type UpdateCategoryDto = Schemas['UpdateCategoryDto'];
-export type UpdateCategoryTranslationsDto =
-  Schemas['UpdateCategoryTranslationsDto'];
+export type UpdateCategoryTranslationsDto = Schemas['UpdateCategoryTranslationsDto'];
 export type UpsertCategoryDto = Schemas['UpsertCategoryDto'];
 
 // Menu Item DTOs
 export type CreateMenuItemDto = Schemas['CreateMenuItemDto'];
+export type MenuCategoryDto = Schemas['MenuCategoryDto'];
+export type MenuCustomizationGroupDto = Schemas['MenuCustomizationGroupDto'];
+export type MenuCustomizationOptionDto = Schemas['MenuCustomizationOptionDto'];
 export type MenuItemDeletedResponseDto = Schemas['MenuItemDeletedResponseDto'];
 export type MenuItemNestedResponseDto = Schemas['MenuItemNestedResponseDto'];
 export type MenuItemResponseDto = Schemas['MenuItemResponseDto'];
 export type PatchMenuItemDto = Schemas['PatchMenuItemDto'];
 export type SortMenuItemDto = Schemas['SortMenuItemDto'];
 export type UpdateMenuItemDto = Schemas['UpdateMenuItemDto'];
-export type UpdateMenuItemTranslationsDto =
-  Schemas['UpdateMenuItemTranslationsDto'];
+export type UpdateMenuItemTranslationsDto = Schemas['UpdateMenuItemTranslationsDto'];
 
 // Customization DTOs
-export type CustomizationGroupResponseDto =
-  Schemas['CustomizationGroupResponseDto'];
-export type CustomizationOptionResponseDto =
-  Schemas['CustomizationOptionResponseDto'];
-export type UpdateCustomizationGroupTranslationsDto =
-  Schemas['UpdateCustomizationGroupTranslationsDto'];
-export type UpdateCustomizationOptionTranslationsDto =
-  Schemas['UpdateCustomizationOptionTranslationsDto'];
-export type UpsertCustomizationGroupDto =
-  Schemas['UpsertCustomizationGroupDto'];
-export type UpsertCustomizationOptionDto =
-  Schemas['UpsertCustomizationOptionDto'];
+export type CustomizationGroupResponseDto = Schemas['CustomizationGroupResponseDto'];
+export type CustomizationOptionResponseDto = Schemas['CustomizationOptionResponseDto'];
+export type UpdateCustomizationGroupTranslationsDto = Schemas['UpdateCustomizationGroupTranslationsDto'];
+export type UpdateCustomizationOptionTranslationsDto = Schemas['UpdateCustomizationOptionTranslationsDto'];
+export type UpsertCustomizationGroupDto = Schemas['UpsertCustomizationGroupDto'];
+export type UpsertCustomizationOptionDto = Schemas['UpsertCustomizationOptionDto'];
 
 // Table DTOs
 export type BatchUpsertTableDto = Schemas['BatchUpsertTableDto'];
 export type CreateTableDto = Schemas['CreateTableDto'];
 export type TableDeletedResponseDto = Schemas['TableDeletedResponseDto'];
 export type TableResponseDto = Schemas['TableResponseDto'];
+export type TableStatus = Schemas['TableStatus'];
 export type UpdateTableDto = Schemas['UpdateTableDto'];
 export type UpdateTableStatusDto = Schemas['UpdateTableStatusDto'];
 export type UpsertTableDto = Schemas['UpsertTableDto'];
@@ -131,12 +144,17 @@ export type UsageBreakdownDto = Schemas['UsageBreakdownDto'];
 
 // Admin DTOs
 export type AddUserToStoreDto = Schemas['AddUserToStoreDto'];
-export type AdminPermissionsResponseDto =
-  Schemas['AdminPermissionsResponseDto'];
+export type AdminInfoDto = Schemas['AdminInfoDto'];
+export type AdminPermissionsResponseDto = Schemas['AdminPermissionsResponseDto'];
 export type AdminProfileResponseDto = Schemas['AdminProfileResponseDto'];
+export type AdminStoreUserDto = Schemas['AdminStoreUserDto'];
+export type AdminStoreUserStoreDto = Schemas['AdminStoreUserStoreDto'];
 export type BanStoreDto = Schemas['BanStoreDto'];
 export type ReactivateStoreDto = Schemas['ReactivateStoreDto'];
 export type SuspendStoreDto = Schemas['SuspendStoreDto'];
+export type UserStoreAssociationDto = Schemas['UserStoreAssociationDto'];
+export type UserStoreDetailsDto = Schemas['UserStoreDetailsDto'];
+export type UserStoreInfoDto = Schemas['UserStoreInfoDto'];
 export type ValidateAdminResponseDto = Schemas['ValidateAdminResponseDto'];
 export type ValidateAdminTokenDto = Schemas['ValidateAdminTokenDto'];
 
@@ -145,6 +163,8 @@ export type CalculateSplitDto = Schemas['CalculateSplitDto'];
 export type CreatePaymentRequestDto = Schemas['CreatePaymentRequestDto'];
 export type CreateRefundDto = Schemas['CreateRefundDto'];
 export type CreateRefundRequestDto = Schemas['CreateRefundRequestDto'];
+export type PaymentActionResponseDto = Schemas['PaymentActionResponseDto'];
+export type PaymentDetailResponseDto = Schemas['PaymentDetailResponseDto'];
 export type PaymentRequestResponseDto = Schemas['PaymentRequestResponseDto'];
 export type PaymentResponseDto = Schemas['PaymentResponseDto'];
 export type RecordPaymentDto = Schemas['RecordPaymentDto'];
@@ -156,17 +176,16 @@ export type VerifyPaymentDto = Schemas['VerifyPaymentDto'];
 
 // Translation DTOs
 export type BaseTranslationDto = Schemas['BaseTranslationDto'];
-export type TranslationWithDescriptionDto =
-  Schemas['TranslationWithDescriptionDto'];
+export type BaseTranslationResponseDto = Schemas['BaseTranslationResponseDto'];
+export type TranslationWithDescriptionDto = Schemas['TranslationWithDescriptionDto'];
+export type TranslationWithDescriptionResponseDto = Schemas['TranslationWithDescriptionResponseDto'];
 
 // Sort DTOs
 export type SortCategoriesPayloadDto = Schemas['SortCategoriesPayloadDto'];
 
 // Ownership Transfer DTOs
-export type InitiateOwnershipTransferDto =
-  Schemas['InitiateOwnershipTransferDto'];
-export type OwnershipTransferResponseDto =
-  Schemas['OwnershipTransferResponseDto'];
+export type InitiateOwnershipTransferDto = Schemas['InitiateOwnershipTransferDto'];
+export type OwnershipTransferResponseDto = Schemas['OwnershipTransferResponseDto'];
 export type VerifyOtpDto = Schemas['VerifyOtpDto'];
 
 // Business Hours DTOs
@@ -175,8 +194,7 @@ export type DayHoursDto = Schemas['DayHoursDto'];
 
 // Tax and Service Charge DTOs
 export type UpdateLoyaltyRulesDto = Schemas['UpdateLoyaltyRulesDto'];
-export type UpdateTaxAndServiceChargeDto =
-  Schemas['UpdateTaxAndServiceChargeDto'];
+export type UpdateTaxAndServiceChargeDto = Schemas['UpdateTaxAndServiceChargeDto'];
 
 // Other DTOs
 export type ApplyDiscountDto = Schemas['ApplyDiscountDto'];
@@ -186,7 +204,7 @@ export type DowngradeTierDto = Schemas['DowngradeTierDto'];
 export type FeatureAccessDto = Schemas['FeatureAccessDto'];
 export type ResourceUsageDto = Schemas['ResourceUsageDto'];
 export type SubscriptionResponseDto = Schemas['SubscriptionResponseDto'];
+export type SuspensionHistoryItemDto = Schemas['SuspensionHistoryItemDto'];
 export type TierResponseDto = Schemas['TierResponseDto'];
-export type TrialEligibilityResponseDto =
-  Schemas['TrialEligibilityResponseDto'];
+export type TrialEligibilityResponseDto = Schemas['TrialEligibilityResponseDto'];
 export type TrialInfoResponseDto = Schemas['TrialInfoResponseDto'];

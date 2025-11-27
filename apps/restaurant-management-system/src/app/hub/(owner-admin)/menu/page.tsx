@@ -84,8 +84,9 @@ export default function MenuPage() {
 
   // Unwrap the response data (API returns { data, message, success })
   // Cast to Category[] since the actual API response includes nested menuItems
+  // with isOutOfStock and proper string types for description/imagePath
   const categories = useMemo(
-    () => categoriesResponse?.data ?? [],
+    () => (categoriesResponse?.data as Category[] | undefined) ?? [],
     [categoriesResponse?.data]
   );
 

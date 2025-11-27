@@ -1,10 +1,48 @@
 /**
- * Supported locales in the application
+ * Menu Item Types
+ *
+ * Re-exports auto-generated types from @repo/api and provides
+ * frontend-specific utility types for translations.
+ */
+
+// Re-export all menu item-related types from auto-generated schemas
+export type {
+  MenuItemResponseDto,
+  MenuItemNestedResponseDto,
+  MenuItemDeletedResponseDto,
+  CreateMenuItemDto,
+  UpdateMenuItemDto,
+  PatchMenuItemDto,
+  SortMenuItemDto,
+  MenuCategoryDto,
+  MenuCustomizationGroupDto,
+  MenuCustomizationOptionDto,
+  CustomizationGroupResponseDto,
+  CustomizationOptionResponseDto,
+  UpsertCustomizationGroupDto,
+  UpsertCustomizationOptionDto,
+  UpdateMenuItemTranslationsDto,
+  UpdateCustomizationGroupTranslationsDto,
+  UpdateCustomizationOptionTranslationsDto,
+} from '@repo/api/generated/types';
+
+// Re-export translation DTOs from auto-generated schemas
+export type {
+  BaseTranslationDto,
+  BaseTranslationResponseDto,
+  TranslationWithDescriptionDto,
+  TranslationWithDescriptionResponseDto,
+} from '@repo/api/generated/types';
+
+/**
+ * Supported locales in the application.
+ * Matches the backend's supported locales enum.
  */
 export type SupportedLocale = 'en' | 'zh' | 'my' | 'th';
 
 /**
- * Base translation structure (name only)
+ * Base translation structure (name only).
+ * Used for frontend translation utilities.
  */
 export interface BaseTranslation {
   locale: SupportedLocale;
@@ -12,112 +50,41 @@ export interface BaseTranslation {
 }
 
 /**
- * Translation with description (for menu items)
+ * Translation with description (for menu items).
+ * Used for frontend translation utilities.
  */
 export interface TranslationWithDescription extends BaseTranslation {
   description?: string | null;
 }
 
 /**
- * Translation map type
+ * Translation map type for client-side locale lookup.
+ * Converts backend's array format to a map for easier access.
+ *
+ * @example
+ * // Convert API array to map
+ * const map = translations.reduce((acc, t) => ({ ...acc, [t.locale]: t }), {});
+ * // Access by locale
+ * const thaiName = map.th?.name;
  */
 export type TranslationMap<T = BaseTranslation> = Partial<
   Record<SupportedLocale, T>
 >;
 
 /**
- * DTO used within MenuItem DTOs to link or create a category.
- * If ID is provided, links/updates existing. If only name, creates new.
+ * Alias for MenuItemResponseDto.
+ * Used for backward compatibility in existing code.
+ *
+ * @deprecated Prefer using MenuItemResponseDto directly from @repo/api/generated/types
  */
-export interface UpsertCategoryDto {
-  id?: string;
-  name: string;
-}
+export type MenuItemDto = import('@repo/api/generated/types').MenuItemResponseDto;
 
 /**
- * DTO used within CustomizationGroup DTOs to add or update an option.
- * Provide ID to update existing, omit ID to create new.
+ * Lightweight menu item type with categoryId instead of nested category.
+ * Used for list views where the full category object isn't needed.
+ *
+ * @deprecated Consider using MenuItemResponseDto and accessing category.id
  */
-export interface UpsertCustomizationOptionDto {
-  id?: string;
-  name: string;
-  additionalPrice?: string;
-}
-
-/**
- * DTO used within MenuItem DTOs to add or update a customization group.
- * Provide ID to update existing, omit ID to create new.
- */
-export interface UpsertCustomizationGroupDto {
-  id?: string;
-  name: string;
-  minSelectable?: number;
-  maxSelectable?: number;
-  options: UpsertCustomizationOptionDto[];
-}
-
-/**
- * Represents a Category object as returned within a MenuItemDto.
- */
-export interface CategoryDto {
-  id: string;
-  name: string;
-  translations?: TranslationMap<BaseTranslation>;
-}
-
-/**
- * Represents a Customization Option object as returned within a MenuItemDto.
- */
-export interface CustomizationOptionDto {
-  id: string;
-  name: string;
-  additionalPrice: string;
-  translations?: TranslationMap<BaseTranslation>;
-}
-
-/**
- * Represents a Customization Group object as returned within a MenuItemDto.
- */
-export interface CustomizationGroupDto {
-  id: string;
-  name: string;
-  required: boolean;
-  minSelectable: number;
-  maxSelectable: number;
-  customizationOptions: CustomizationOptionDto[];
-  translations?: TranslationMap<BaseTranslation>;
-}
-
-/**
- * DTO for creating a new menu item (request body for POST /menu).
- */
-export interface CreateMenuItemDto {
-  name: string;
-  description?: string;
-  basePrice: string;
-  imagePath?: string;
-  category: UpsertCategoryDto;
-  customizationGroups?: UpsertCustomizationGroupDto[];
-  isHidden?: boolean;
-}
-
-export type UpdateMenuItemDto = CreateMenuItemDto;
-
-/**
- * Represents a full MenuItem object as returned by the API (e.g., in GET responses).
- */
-export interface MenuItemDto {
-  id: string;
-  name: string;
-  description?: string | null;
-  basePrice: string;
-  imagePath?: string | null;
-  category: CategoryDto;
-  customizationGroups: CustomizationGroupDto[];
-  isHidden: boolean;
-  translations?: TranslationMap<TranslationWithDescription>;
-}
-
 export interface MenuItem {
   id: string;
   name: string;

@@ -1,33 +1,48 @@
+/**
+ * Store Types
+ *
+ * Re-exports auto-generated types from @repo/api and provides
+ * frontend-specific extensions for features pending backend implementation.
+ */
+
 // Import generated types from OpenAPI spec
 import type {
   GetStoreDetailsResponseDto as GeneratedStoreDetailsDto,
   StoreSettingResponseDto as GeneratedStoreSettingDto,
   StoreInformationResponseDto as GeneratedStoreInformationDto,
-  UpdateStoreInformationDto,
-  UpdateStoreSettingDto,
 } from '@repo/api/generated/types';
 
-// Re-export generated types for backwards compatibility
-export type { UpdateStoreInformationDto, UpdateStoreSettingDto };
+// Re-export generated types that can be used directly
+export type {
+  UpdateStoreInformationDto,
+  UpdateStoreSettingDto,
+  CreateStoreDto,
+  InviteOrAssignRoleDto,
+  StoreUsageDto,
+} from '@repo/api/generated/types';
 
 /**
  * Extended StoreInformationResponseDto with correct field types.
  *
- * The generated types incorrectly type these fields as `{ [key: string]: unknown }`.
+ * The generated types incorrectly type some fields as `Record<string, never>`.
  * This extension provides the correct string types for these fields.
+ *
+ * Note: We omit and redefine all nullable string fields to fix the type mismatch.
  *
  * @see GeneratedStoreInformationDto for base fields from backend
  */
 export interface StoreInformationResponseDto
   extends Omit<
     GeneratedStoreInformationDto,
-    'logoUrl' | 'address' | 'phone' | 'email' | 'website'
+    'logoPath' | 'coverPhotoPath' | 'address' | 'phone' | 'email' | 'website' | 'description'
   > {
-  logoUrl?: string;
-  address?: string;
-  phone?: string;
-  email?: string;
-  website?: string;
+  logoPath?: string | null;
+  coverPhotoPath?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  website?: string | null;
+  description?: string | null;
 }
 
 /**
@@ -67,6 +82,9 @@ export interface StoreSettingResponseDto extends GeneratedStoreSettingDto {
  * - Store branding (logo, cover image)
  * - Tier-based features
  *
+ * Note: information and setting can be null if the store is newly created
+ * and hasn't been fully configured yet.
+ *
  * @see GeneratedStoreDetailsDto for base fields from backend
  */
 export interface GetStoreDetailsResponseDto
@@ -77,33 +95,16 @@ export interface GetStoreDetailsResponseDto
   coverImageUrl?: string;
   /** Store tier for feature gating (pending backend) */
   tier?: 'FREE' | 'STANDARD' | 'PREMIUM';
-  /** Extended store information with correct field types */
-  information: StoreInformationResponseDto;
-  /** Extended store settings with additional fields */
-  setting: StoreSettingResponseDto;
+  /** Extended store information with correct field types (null if not configured) */
+  information: StoreInformationResponseDto | null;
+  /** Extended store settings with additional fields (null if not configured) */
+  setting: StoreSettingResponseDto | null;
 }
 
 /**
  * Alias for GetStoreDetailsResponseDto for backwards compatibility.
  * Use GetStoreDetailsResponseDto directly in new code for clarity.
+ *
+ * @deprecated Prefer using GetStoreDetailsResponseDto directly
  */
 export type Store = GetStoreDetailsResponseDto;
-
-/**
- * DTO for creating a new store.
- * Maps to backend CreateStoreDto.
- */
-export interface CreateStoreDto {
-  name: string;
-  address?: string;
-  phone?: string;
-}
-
-/**
- * DTO for inviting or assigning roles to users.
- * Used in personnel management features.
- */
-export interface InviteOrAssignRoleDto {
-  email: string;
-  role: 'OWNER' | 'ADMIN' | 'CASHIER' | 'CHEF';
-}

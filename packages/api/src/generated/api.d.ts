@@ -4,9318 +4,11849 @@
  */
 
 export interface paths {
-  '/active-table-sessions/manual': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Create manual session (counter, phone, takeout)
-     * @description Staff-initiated orders without table association. Requires OWNER, ADMIN, SERVER, or CASHIER role.
-     */
-    post: operations['ActiveTableSessionController_createManualSession'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/active-table-sessions/join-by-table/{tableId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Join or create a session for a table
-     * @description Customers scan QR code on table. Returns existing active session or creates new one. SECURITY: Session token is only returned here.
-     */
-    post: operations['ActiveTableSessionController_joinByTable'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/active-table-sessions/{sessionId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get session by ID
-     * @description SECURITY: Session token is excluded from response
-     */
-    get: operations['ActiveTableSessionController_findOne'];
-    /**
-     * Update session (Restaurant Management System only)
-     * @description SECURITY: Session token is excluded from response. Store isolation enforced.
-     */
-    put: operations['ActiveTableSessionController_update'];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/active-table-sessions/token/{token}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get session by token
-     * @description SECURITY: Session token is excluded from response
-     */
-    get: operations['ActiveTableSessionController_findByToken'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/active-table-sessions': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get all active sessions for a store (POS)
-     * @description SECURITY: Session tokens are excluded from response
-     */
-    get: operations['ActiveTableSessionController_findActiveByStore'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/active-table-sessions/{sessionId}/close': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Close session (Restaurant Management System only)
-     * @description SECURITY: Session token is excluded from response. Store isolation enforced.
-     */
-    post: operations['ActiveTableSessionController_close'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/active-table-sessions/{sessionId}/orders': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get all orders for a session (SOS - Self-Order System)
-     * @description Retrieves all orders associated with an active table session. Public endpoint for customers.
-     */
-    get: operations['ActiveTableSessionController_getSessionOrders'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/auth/login/store': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Select a store to complete login */
-    post: operations['AuthController_loginWithStore'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/auth/auth0/config': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get Auth0 configuration for frontend */
-    get: operations['AuthController_getAuth0Config'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/auth/auth0/validate': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Validate Auth0 access token and sync user */
-    post: operations['AuthController_validateAuth0Token'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/auth/auth0/profile': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get user profile (Auth0 protected) */
-    get: operations['AuthController_getAuth0Profile'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/users/register': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Register a new user (sends verification email) */
-    post: operations['UserController_register'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/users/add-to-store': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Assign a user to a store with a role (Admin/Owner Protected - Example) */
-    post: operations['UserController_addUserToStore'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/users/{id}/stores': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get all store memberships for a specific user (Protected) */
-    get: operations['UserController_getUserStores'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/users/me': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get current logged-in user profile, optionally scoped to a store */
-    get: operations['UserController_getCurrentUser'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/users/stores/{storeId}/invite-staff': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Invite a staff member to join a store (Owner/Admin only) */
-    post: operations['UserController_inviteStaff'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/users/stores/{storeId}/users/{targetUserId}/role': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /** Change a user's role within a store (Owner only) */
-    patch: operations['UserController_changeRole'];
-    trace?: never;
-  };
-  '/users/stores/{storeId}/users/{targetUserId}/suspend': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /** Suspend a user account (Owner/Admin only) */
-    patch: operations['UserController_suspendUser'];
-    trace?: never;
-  };
-  '/users/stores/{storeId}/users/{targetUserId}/reactivate': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /** Reactivate a suspended user account (Owner/Admin only) */
-    patch: operations['UserController_reactivateUser'];
-    trace?: never;
-  };
-  '/stores/{storeId}/tiers': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get tier information for a store (Authenticated) */
-    get: operations['TierController_getStoreTier'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/tiers/usage': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get usage statistics for a store (Authenticated) */
-    get: operations['TierController_getStoreUsage'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/audit-logs': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get audit logs for a store (OWNER only) */
-    get: operations['AuditLogController_getStoreAuditLogs'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/audit-logs/export': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Export audit logs to CSV (OWNER only)
-     * @description Downloads audit logs as a CSV file with optional filters
-     */
-    get: operations['AuditLogController_exportAuditLogs'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/cart': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get current cart for session */
-    get: operations['CartController_getCart'];
-    put?: never;
-    post?: never;
-    /** Clear all items from cart */
-    delete: operations['CartController_clearCart'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/cart/items': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Add item to cart */
-    post: operations['CartController_addItem'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/cart/items/{cartItemId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /** Remove item from cart */
-    delete: operations['CartController_removeItem'];
-    options?: never;
-    head?: never;
-    /** Update cart item */
-    patch: operations['CartController_updateItem'];
-    trace?: never;
-  };
-  '/orders/checkout': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Checkout cart and create order
-     * @description Converts cart to order and clears the cart. SECURITY FIX: Requires session token (customers) or JWT (staff)
-     */
-    post: operations['OrderController_checkout'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/orders/quick-checkout': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Quick sale checkout (POS)
-     * @description Creates session, cart items, and order in a single atomic operation. Optimized for quick sale (counter/phone/takeout) orders where speed is critical. Bypasses the normal flow of creating session → adding items → checkout.
-     */
-    post: operations['OrderController_quickCheckout'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/orders/{orderId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get order by ID */
-    get: operations['OrderController_findOne'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/orders': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get all orders for a store with pagination (POS)
-     * @description Returns paginated list of orders for a specific store
-     */
-    get: operations['OrderController_findByStore'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/orders/{orderId}/status': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /**
-     * Update order status (POS)
-     * @description Update order status through kitchen workflow
-     */
-    patch: operations['OrderController_updateStatus'];
-    trace?: never;
-  };
-  '/orders/{orderId}/apply-discount': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Apply discount to order (POS)
-     * @description Apply percentage or fixed amount discount to an order. Implements 3-tier authorization: Small (<10%) = CASHIER, Medium (10-50%) = ADMIN, Large (>50%) = OWNER
-     */
-    post: operations['OrderController_applyDiscount'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/orders/{orderId}/discount': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /**
-     * Remove discount from order (POS)
-     * @description Remove previously applied discount. Requires ADMIN or OWNER role.
-     */
-    delete: operations['OrderController_removeDiscount'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/kitchen/orders': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get orders for kitchen display (CHEF, SERVER, ADMIN, OWNER) */
-    get: operations['KitchenController_getOrders'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/kitchen/orders/{orderId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get order details for kitchen display (CHEF, SERVER, ADMIN, OWNER) */
-    get: operations['KitchenController_getOrderDetails'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/kitchen/orders/{orderId}/status': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /** Update order kitchen status (CHEF, SERVER, ADMIN, OWNER) */
-    patch: operations['KitchenController_updateOrderStatus'];
-    trace?: never;
-  };
-  '/admin/auth/validate': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Validate Auth0 token and sync admin user
-     * @description Validates admin Auth0 token from separate admin tenant, syncs user to database, and returns internal JWT with permissions
-     */
-    post: operations['AdminAuthController_validateToken'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/auth/profile': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get current admin profile
-     * @description Returns profile information for the authenticated admin user
-     */
-    get: operations['AdminAuthController_getProfile'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/auth/permissions': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get admin permissions for frontend RBAC
-     * @description Returns list of permissions based on admin role for frontend authorization checks
-     */
-    get: operations['AdminAuthController_getPermissions'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/stores': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List all stores
-     * @description Get paginated list of all stores with filters
-     */
-    get: operations['AdminStoreController_listStores'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/stores/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get store detail
-     * @description Get detailed information for a specific store
-     */
-    get: operations['AdminStoreController_getStoreDetail'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/stores/{id}/suspend': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Suspend store
-     * @description Temporarily suspend a store and its operations
-     */
-    post: operations['AdminStoreController_suspendStore'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/stores/{id}/ban': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Ban store
-     * @description Permanently ban a store from the platform
-     */
-    post: operations['AdminStoreController_banStore'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/stores/{id}/reactivate': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Reactivate store
-     * @description Reactivate a suspended or banned store
-     */
-    post: operations['AdminStoreController_reactivateStore'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/stores/{id}/downgrade': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Downgrade store tier
-     * @description Force downgrade a store to a lower tier
-     */
-    post: operations['AdminStoreController_downgradeTier'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/stores/{id}/analytics': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get store analytics
-     * @description Get analytics and statistics for a specific store
-     */
-    get: operations['AdminStoreController_getStoreAnalytics'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/users': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List all users
-     * @description Get paginated list of all users with filters
-     */
-    get: operations['AdminUserController_listUsers'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/users/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get user detail
-     * @description Get detailed information for a specific user
-     */
-    get: operations['AdminUserController_getUserDetail'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/users/{id}/suspend': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Suspend user
-     * @description Temporarily suspend a user account
-     */
-    post: operations['AdminUserController_suspendUser'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/users/{id}/ban': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Ban user
-     * @description Permanently ban a user from the platform
-     */
-    post: operations['AdminUserController_banUser'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/users/{id}/reactivate': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Reactivate user
-     * @description Reactivate a suspended user account
-     */
-    post: operations['AdminUserController_reactivateUser'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/users/{id}/password-reset': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Force password reset
-     * @description Invalidate user JWT tokens to force re-authentication
-     */
-    post: operations['AdminUserController_forcePasswordReset'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/users/{id}/activity': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get user activity
-     * @description Get activity history and statistics for a specific user
-     */
-    get: operations['AdminUserController_getUserActivity'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/payments': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get payment queue
-     * @description Get list of pending payment requests awaiting admin verification
-     */
-    get: operations['AdminPaymentController_getPaymentQueue'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/payments/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get payment detail
-     * @description Get detailed information for a specific payment request
-     */
-    get: operations['AdminPaymentController_getPaymentDetail'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/payments/{id}/verify': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Verify payment
-     * @description Approve a pending payment request
-     */
-    post: operations['AdminPaymentController_verifyPayment'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/payments/{id}/reject': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Reject payment
-     * @description Reject a pending payment request
-     */
-    post: operations['AdminPaymentController_rejectPayment'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/payment-requests': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Create payment request for tier upgrade (Owner/Admin only)
-     * @description Creates a new payment request for upgrading the store subscription tier
-     */
-    post: operations['PaymentRequestController_createPaymentRequest'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/payment-requests/{id}/upload-proof': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Upload payment proof (Owner/Admin only)
-     * @description Upload payment proof image for a pending payment request
-     */
-    post: operations['PaymentRequestController_uploadPaymentProof'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/payment-requests/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get payment request details (Owner/Admin only)
-     * @description Retrieve details of a specific payment request
-     */
-    get: operations['PaymentRequestController_getPaymentRequest'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/payment-requests/store/{storeId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get all payment requests for store (Owner/Admin only)
-     * @description Retrieve all payment requests for a specific store
-     */
-    get: operations['PaymentRequestController_getStorePaymentRequests'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/payment-requests': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get payment requests queue (PLATFORM_ADMIN only) */
-    get: operations['AdminVerificationController_getPaymentQueue'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/payment-requests/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get payment request detail (PLATFORM_ADMIN only) */
-    get: operations['AdminVerificationController_getPaymentRequestDetail'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/payment-requests/{id}/payment-proof': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get payment proof presigned URL (PLATFORM_ADMIN only) */
-    get: operations['AdminVerificationController_getPaymentProof'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/payment-requests/{id}/verify': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Approve payment request (PLATFORM_ADMIN only) */
-    post: operations['AdminVerificationController_verifyPayment'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/payment-requests/{id}/reject': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Reject payment request (PLATFORM_ADMIN only) */
-    post: operations['AdminVerificationController_rejectPayment'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/admin/payment-requests/metrics/dashboard': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get admin dashboard metrics (PLATFORM_ADMIN only) */
-    get: operations['AdminVerificationController_getAdminMetrics'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/trials/eligibility': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Check if user is eligible for trial
-     * @description Returns whether the authenticated user can start a trial for a new store
-     */
-    get: operations['TrialController_checkEligibility'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/trials/store/{storeId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get trial info for store (Owner/Admin only)
-     * @description Returns trial status and remaining days for a store
-     */
-    get: operations['TrialController_getTrialInfo'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/ownership-transfers': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Initiate ownership transfer (Owner only)
-     * @description Start the ownership transfer process. An OTP will be sent to the current owner's email for verification.
-     */
-    post: operations['OwnershipTransferController_initiateTransfer'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/ownership-transfers/{id}/verify-otp': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Verify OTP and complete ownership transfer (Owner only)
-     * @description Complete the ownership transfer by verifying the OTP sent to the current owner's email
-     */
-    post: operations['OwnershipTransferController_verifyOtp'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/ownership-transfers/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /**
-     * Cancel ownership transfer (Owner only)
-     * @description Cancel a pending ownership transfer before it's completed
-     */
-    delete: operations['OwnershipTransferController_cancelTransfer'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/refund-requests': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Request refund (Owner/Admin only)
-     * @description Submit a refund request for an active subscription
-     */
-    post: operations['RefundController_requestRefund'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/refund-requests/store/{storeId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get refund requests for store (Owner/Admin only)
-     * @description Retrieve all refund requests for a specific store
-     */
-    get: operations['RefundController_getStoreRefundRequests'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/subscriptions/store/{storeId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get subscription for store (Owner/Admin only) */
-    get: operations['SubscriptionController_getStoreSubscription'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/upload/image': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Upload an image file with configurable resizing
-     * @description Uploads an image file and generates optimized versions based on the selected preset. Supports menu items, store logos, cover photos, and payment proofs (no resize).
-     */
-    post: operations['UploadController_uploadImage'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/health': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Health check endpoint
-     * @description Returns the health status of the API service
-     */
-    get: operations['HealthController_healthCheck'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/categories': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get all active categories (with items) for a specific store (Public)
-     * @description Retrieves categories for a store. The storeId parameter can be either a UUID or a store slug for public access.
-     */
-    get: operations['CategoryController_findAll'];
-    put?: never;
-    /** Create a new category (OWNER/ADMIN Required) */
-    post: operations['CategoryController_create'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/categories/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get a specific category by ID (Public) */
-    get: operations['CategoryController_findOne'];
-    put?: never;
-    post?: never;
-    /** Delete a category (OWNER/ADMIN Required) */
-    delete: operations['CategoryController_remove'];
-    options?: never;
-    head?: never;
-    /** Update a category name (OWNER/ADMIN Required) */
-    patch: operations['CategoryController_update'];
-    trace?: never;
-  };
-  '/stores/{storeId}/categories/sort': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /** Reorder categories and their menu items (OWNER/ADMIN Required) */
-    patch: operations['CategoryController_sortCategories'];
-    trace?: never;
-  };
-  '/stores/{storeId}/categories/{id}/translations': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /**
-     * Update category translations (OWNER or ADMIN)
-     * @description Add or update translations for a category. Supports multiple locales: en, zh, my, th
-     */
-    patch: operations['CategoryController_updateCategoryTranslations'];
-    trace?: never;
-  };
-  '/stores/{storeId}/categories/{id}/translations/{locale}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /**
-     * Delete a specific translation for a category (OWNER or ADMIN)
-     * @description Remove a translation in a specific locale (en, zh, my, th) from a category
-     */
-    delete: operations['CategoryController_deleteCategoryTranslation'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/menu-items': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get all menu items for a specific store (Public) */
-    get: operations['MenuController_getStoreMenuItems'];
-    put?: never;
-    /** Create a menu item (OWNER or ADMIN) */
-    post: operations['MenuController_createMenuItem'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/menu-items/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get a single menu item by ID (Public) */
-    get: operations['MenuController_getMenuItemById'];
-    /** Update a menu item (OWNER or ADMIN) */
-    put: operations['MenuController_updateMenuItem'];
-    post?: never;
-    /** Delete a menu item (OWNER or ADMIN) */
-    delete: operations['MenuController_deleteMenuItem'];
-    options?: never;
-    head?: never;
-    /** Partially update a menu item (OWNER, ADMIN, or CHEF) */
-    patch: operations['MenuController_patchMenuItem'];
-    trace?: never;
-  };
-  '/stores/{storeId}/menu-items/{id}/translations': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /**
-     * Update menu item translations (OWNER or ADMIN)
-     * @description Add or update translations for a menu item. Supports multiple locales: en, zh, my, th
-     */
-    put: operations['MenuController_updateMenuItemTranslations'];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/menu-items/{id}/translations/{locale}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    /**
-     * Delete a specific translation for a menu item (OWNER or ADMIN)
-     * @description Remove a translation in a specific locale (en, zh, my, th) from a menu item
-     */
-    delete: operations['MenuController_deleteMenuItemTranslation'];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/customizations/groups/{id}/translations': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /**
-     * Update customization group translations (OWNER or ADMIN)
-     * @description Add or update translations for a customization group (e.g., 'Size', 'Spice Level')
-     */
-    put: operations['CustomizationController_updateGroupTranslations'];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/customizations/options/{id}/translations': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /**
-     * Update customization option translations (OWNER or ADMIN)
-     * @description Add or update translations for a customization option (e.g., 'Large', 'Spicy')
-     */
-    put: operations['CustomizationController_updateOptionTranslations'];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/payments/orders/{orderId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get all payments for an order */
-    get: operations['PaymentController_findPaymentsByOrder'];
-    put?: never;
-    /**
-     * Record payment for an order (POS)
-     * @description Record a payment and update order status if fully paid
-     */
-    post: operations['PaymentController_recordPayment'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/payments/orders/{orderId}/summary': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get payment summary for an order */
-    get: operations['PaymentController_getPaymentSummary'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/payments/orders/{orderId}/refunds': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get all refunds for an order */
-    get: operations['PaymentController_findRefundsByOrder'];
-    put?: never;
-    /**
-     * Create refund for an order (POS)
-     * @description Issue a refund for a paid order
-     */
-    post: operations['PaymentController_createRefund'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/payments/orders/{orderId}/calculate-split': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Calculate bill split amounts for an order
-     * @description Calculate how to split an order bill among guests (EVEN, BY_ITEM, or CUSTOM)
-     */
-    post: operations['PaymentController_calculateSplit'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/payments/orders/{orderId}/split-payment': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Record a split payment for an order
-     * @description Record a split payment as part of a bill splitting transaction
-     */
-    post: operations['PaymentController_recordSplitPayment'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/reports/sales-summary': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get sales summary report (OWNER, ADMIN) */
-    get: operations['ReportController_getSalesSummary'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/reports/payment-breakdown': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get payment method breakdown report (OWNER, ADMIN) */
-    get: operations['ReportController_getPaymentBreakdown'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/reports/popular-items': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get popular menu items report (OWNER, ADMIN) */
-    get: operations['ReportController_getPopularItems'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/reports/order-status': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get order status distribution report (OWNER, ADMIN) */
-    get: operations['ReportController_getOrderStatusReport'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{id}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get public details for a specific store by ID */
-    get: operations['StoreController_getStoreDetails'];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Create a store (creator becomes OWNER) */
-    post: operations['StoreController_createStore'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{id}/information': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /** Update a store details (OWNER or ADMIN only) */
-    put: operations['StoreController_updateStoreInformation'];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{id}/settings': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /** Update store settings (OWNER or ADMIN only) */
-    put: operations['StoreController_updateStoreSettings'];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{id}/members': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Add store member or update existing member role (OWNER, ADMIN)
-     * @description Invite a new user or update role for an existing user by email. Owner can assign any role. Admin can assign SERVER/CHEF/CASHIER roles.
-     */
-    post: operations['StoreController_inviteOrAssignRoleByEmail'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{id}/settings/tax-and-service': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /** Update tax and service charge rates (OWNER or ADMIN only) */
-    patch: operations['StoreController_updateTaxAndServiceCharge'];
-    trace?: never;
-  };
-  '/stores/{id}/settings/business-hours': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /** Update business hours (OWNER or ADMIN only) */
-    patch: operations['StoreController_updateBusinessHours'];
-    trace?: never;
-  };
-  '/stores/{id}/settings/branding': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Upload branding images (logo and/or cover) (OWNER or ADMIN only) */
-    post: operations['StoreController_uploadBranding'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{id}/settings/loyalty-rules': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /** Update loyalty program rules (OWNER only) */
-    patch: operations['StoreController_updateLoyaltyRules'];
-    trace?: never;
-  };
-  '/stores/{storeId}/tables': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get all tables for a specific store (Public) */
-    get: operations['TableController_findAllByStore'];
-    put?: never;
-    /** Create a new table (OWNER/ADMIN Required) */
-    post: operations['TableController_createTable'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/tables/batch-sync': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    /**
-     * Synchronize tables for a store (OWNER/ADMIN Required)
-     * @description Creates/Updates tables based on the input list. Deletes any existing tables for the store that are NOT included in the input list (by ID). Checks for active sessions before deleting.
-     */
-    put: operations['TableController_syncTables'];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/stores/{storeId}/tables/{tableId}': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get a specific table by ID (Public) */
-    get: operations['TableController_findOne'];
-    put?: never;
-    post?: never;
-    /** Delete a table (OWNER/ADMIN Required) */
-    delete: operations['TableController_deleteTable'];
-    options?: never;
-    head?: never;
-    /** Update a table name (OWNER/ADMIN Required) */
-    patch: operations['TableController_updateTable'];
-    trace?: never;
-  };
-  '/stores/{storeId}/tables/{tableId}/status': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /**
-     * Update table status (OWNER/ADMIN/SERVER Required)
-     * @description Updates table status with validation of state transitions. Valid transitions follow the table lifecycle: VACANT → SEATED → ORDERING → SERVED → READY_TO_PAY → CLEANING → VACANT
-     */
-    patch: operations['TableController_updateTableStatus'];
-    trace?: never;
-  };
+    "/active-table-sessions/manual": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ActiveTableSessionController_createManualSession"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/active-table-sessions/join-by-table/{tableId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ActiveTableSessionController_joinByTable"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/active-table-sessions/{sessionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get session by ID */
+        get: operations["ActiveTableSessionController_findOne"];
+        put: operations["ActiveTableSessionController_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/active-table-sessions/token/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ActiveTableSessionController_findByToken"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/active-table-sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ActiveTableSessionController_findActiveByStore"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/active-table-sessions/{sessionId}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ActiveTableSessionController_close"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/active-table-sessions/{sessionId}/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ActiveTableSessionController_getSessionOrders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/login/store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Select a store to complete login */
+        post: operations["AuthController_loginWithStore"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/auth0/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Auth0 configuration for frontend */
+        get: operations["AuthController_getAuth0Config"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/auth0/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Validate Auth0 access token and sync user */
+        post: operations["AuthController_validateAuth0Token"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/auth0/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get user profile (Auth0 protected) */
+        get: operations["AuthController_getAuth0Profile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Register a new user (sends verification email) */
+        post: operations["UserController_register"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/add-to-store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UserController_addUserToStore"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{id}/stores": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all store memberships for a specific user (Protected) */
+        get: operations["UserController_getUserStores"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get current logged-in user profile, optionally scoped to a store */
+        get: operations["UserController_getCurrentUser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/stores/{storeId}/invite-staff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Invite a staff member to join a store (Owner/Admin only) */
+        post: operations["UserController_inviteStaff"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/stores/{storeId}/users/{targetUserId}/role": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Change a user's role within a store (Owner only) */
+        patch: operations["UserController_changeRole"];
+        trace?: never;
+    };
+    "/users/stores/{storeId}/users/{targetUserId}/suspend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Suspend a user account (Owner/Admin only) */
+        patch: operations["UserController_suspendUser"];
+        trace?: never;
+    };
+    "/users/stores/{storeId}/users/{targetUserId}/reactivate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reactivate a suspended user account (Owner/Admin only) */
+        patch: operations["UserController_reactivateUser"];
+        trace?: never;
+    };
+    "/stores/{storeId}/tiers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get tier information for a store (Authenticated) */
+        get: operations["TierController_getStoreTier"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/tiers/usage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get usage statistics for a store (Authenticated) */
+        get: operations["TierController_getStoreUsage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/audit-logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get audit logs for a store (OWNER only) */
+        get: operations["AuditLogController_getStoreAuditLogs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/audit-logs/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export audit logs to CSV (OWNER only)
+         * @description Downloads audit logs as a CSV file with optional filters
+         */
+        get: operations["AuditLogController_exportAuditLogs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cart": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get current cart for session */
+        get: operations["CartController_getCart"];
+        put?: never;
+        post?: never;
+        /** Clear all items from cart */
+        delete: operations["CartController_clearCart"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cart/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add item to cart */
+        post: operations["CartController_addItem"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cart/items/{cartItemId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove item from cart */
+        delete: operations["CartController_removeItem"];
+        options?: never;
+        head?: never;
+        /** Update cart item */
+        patch: operations["CartController_updateItem"];
+        trace?: never;
+    };
+    "/orders/checkout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Checkout cart and create order
+         * @description Converts cart to order and clears the cart. SECURITY FIX: Requires session token (customers) or JWT (staff)
+         */
+        post: operations["OrderController_checkout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/quick-checkout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Quick sale checkout (POS)
+         * @description Creates session, cart items, and order in a single atomic operation. Optimized for quick sale (counter/phone/takeout) orders where speed is critical. Bypasses the normal flow of creating session -> adding items -> checkout.
+         */
+        post: operations["OrderController_quickCheckout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/{orderId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Order by ID */
+        get: operations["OrderController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all orders for a store with pagination (POS)
+         * @description Returns paginated list of orders for a specific store
+         */
+        get: operations["OrderController_findByStore"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/{orderId}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update order status (POS)
+         * @description Update order status through kitchen workflow
+         */
+        patch: operations["OrderController_updateStatus"];
+        trace?: never;
+    };
+    "/orders/{orderId}/apply-discount": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Apply discount to order (POS)
+         * @description Apply percentage or fixed amount discount to an order. Implements 3-tier authorization: Small (<10%) = CASHIER, Medium (10-50%) = ADMIN, Large (>50%) = OWNER
+         */
+        post: operations["OrderController_applyDiscount"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/orders/{orderId}/discount": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Remove discount from order (POS)
+         * @description Remove previously applied discount. Requires ADMIN or OWNER role.
+         */
+        delete: operations["OrderController_removeDiscount"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/kitchen/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get orders for kitchen display (CHEF, SERVER, ADMIN, OWNER) */
+        get: operations["KitchenController_getOrders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/kitchen/orders/{orderId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["KitchenController_getOrderDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/kitchen/orders/{orderId}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["KitchenController_updateOrderStatus"];
+        trace?: never;
+    };
+    "/admin/auth/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Validate Auth0 token and sync admin user */
+        post: operations["AdminAuthController_validateToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/auth/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminAuthController_getProfile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/auth/permissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminAuthController_getPermissions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/stores": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List all stores */
+        get: operations["AdminStoreController_listStores"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/stores/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get store detail */
+        get: operations["AdminStoreController_getStoreDetail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/stores/{id}/suspend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Suspend store */
+        post: operations["AdminStoreController_suspendStore"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/stores/{id}/ban": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Ban store */
+        post: operations["AdminStoreController_banStore"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/stores/{id}/reactivate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reactivate store */
+        post: operations["AdminStoreController_reactivateStore"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/stores/{id}/downgrade": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Downgrade store tier */
+        post: operations["AdminStoreController_downgradeTier"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/stores/{id}/analytics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminStoreController_getStoreAnalytics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List all users */
+        get: operations["AdminUserController_listUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/users/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get user detail */
+        get: operations["AdminUserController_getUserDetail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/users/{id}/suspend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Suspend user */
+        post: operations["AdminUserController_suspendUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/users/{id}/ban": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Ban user */
+        post: operations["AdminUserController_banUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/users/{id}/reactivate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reactivate user */
+        post: operations["AdminUserController_reactivateUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/users/{id}/password-reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Force password reset */
+        post: operations["AdminUserController_forcePasswordReset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/users/{id}/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminUserController_getUserActivity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get payment queue */
+        get: operations["AdminPaymentController_getPaymentQueue"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/payments/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get payment detail */
+        get: operations["AdminPaymentController_getPaymentDetail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/payments/{id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify payment */
+        post: operations["AdminPaymentController_verifyPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/payments/{id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject payment */
+        post: operations["AdminPaymentController_rejectPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payment-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create payment request for tier upgrade (Owner/Admin only)
+         * @description Creates a new payment request for upgrading the store subscription tier
+         */
+        post: operations["PaymentRequestController_createPaymentRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payment-requests/{id}/upload-proof": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload payment proof (Owner/Admin only)
+         * @description Upload payment proof image for a pending payment request
+         */
+        post: operations["PaymentRequestController_uploadPaymentProof"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payment-requests/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get payment request details (Owner/Admin only)
+         * @description Retrieve details of a specific payment request
+         */
+        get: operations["PaymentRequestController_getPaymentRequest"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payment-requests/store/{storeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all payment requests for store (Owner/Admin only)
+         * @description Retrieve all payment requests for a specific store
+         */
+        get: operations["PaymentRequestController_getStorePaymentRequests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/payment-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get payment requests queue (PLATFORM_ADMIN only) */
+        get: operations["AdminVerificationController_getPaymentQueue"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/payment-requests/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get payment request detail (PLATFORM_ADMIN only) */
+        get: operations["AdminVerificationController_getPaymentRequestDetail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/payment-requests/{id}/payment-proof": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get payment proof presigned URL (PLATFORM_ADMIN only) */
+        get: operations["AdminVerificationController_getPaymentProof"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/payment-requests/{id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve payment request (PLATFORM_ADMIN only) */
+        post: operations["AdminVerificationController_verifyPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/payment-requests/{id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject payment request (PLATFORM_ADMIN only) */
+        post: operations["AdminVerificationController_rejectPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/payment-requests/metrics/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get admin dashboard metrics (PLATFORM_ADMIN only) */
+        get: operations["AdminVerificationController_getAdminMetrics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/trials/eligibility": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Check if user is eligible for trial
+         * @description Returns whether the authenticated user can start a trial for a new store
+         */
+        get: operations["TrialController_checkEligibility"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/trials/store/{storeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get trial info for store (Owner/Admin only)
+         * @description Returns trial status and remaining days for a store
+         */
+        get: operations["TrialController_getTrialInfo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ownership-transfers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Initiate ownership transfer (Owner only)
+         * @description Start the ownership transfer process. An OTP will be sent to the current owner's email for verification.
+         */
+        post: operations["OwnershipTransferController_initiateTransfer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ownership-transfers/{id}/verify-otp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify OTP and complete ownership transfer (Owner only)
+         * @description Complete the ownership transfer by verifying the OTP sent to the current owner's email
+         */
+        post: operations["OwnershipTransferController_verifyOtp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/ownership-transfers/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Cancel ownership transfer (Owner only)
+         * @description Cancel a pending ownership transfer before it's completed
+         */
+        delete: operations["OwnershipTransferController_cancelTransfer"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/refund-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Request refund (Owner/Admin only)
+         * @description Submit a refund request for an active subscription
+         */
+        post: operations["RefundController_requestRefund"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/refund-requests/store/{storeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get refund requests for store (Owner/Admin only)
+         * @description Retrieve all refund requests for a specific store
+         */
+        get: operations["RefundController_getStoreRefundRequests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/subscriptions/store/{storeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get subscription for store (Owner/Admin only) */
+        get: operations["SubscriptionController_getStoreSubscription"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/upload/image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UploadController_uploadImage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Health check endpoint
+         * @description Returns the health status of the API service
+         */
+        get: operations["HealthController_healthCheck"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all active categories (with items) for a specific store (Public) */
+        get: operations["CategoryController_findAll"];
+        put?: never;
+        /** Create category (OWNER/ADMIN) */
+        post: operations["CategoryController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/categories/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a specific category by ID (Public) */
+        get: operations["CategoryController_findOne"];
+        put?: never;
+        post?: never;
+        /** Delete category (OWNER/ADMIN) */
+        delete: operations["CategoryController_remove"];
+        options?: never;
+        head?: never;
+        /** Update a category name (OWNER/ADMIN Required) */
+        patch: operations["CategoryController_update"];
+        trace?: never;
+    };
+    "/stores/{storeId}/categories/sort": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reorder categories and their menu items (OWNER/ADMIN Required) */
+        patch: operations["CategoryController_sortCategories"];
+        trace?: never;
+    };
+    "/stores/{storeId}/categories/{id}/translations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update category translations (OWNER or ADMIN)
+         * @description Add or update translations for a category. Supports multiple locales: en, zh, my, th
+         */
+        patch: operations["CategoryController_updateCategoryTranslations"];
+        trace?: never;
+    };
+    "/stores/{storeId}/categories/{id}/translations/{locale}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete a specific translation for a category (OWNER or ADMIN)
+         * @description Remove a translation in a specific locale (en, zh, my, th) from a category
+         */
+        delete: operations["CategoryController_deleteCategoryTranslation"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/menu-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all menu items for a specific store (Public) */
+        get: operations["MenuController_getStoreMenuItems"];
+        put?: never;
+        /** Create menu item (OWNER or ADMIN) */
+        post: operations["MenuController_createMenuItem"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/menu-items/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a single menu item by ID (Public) */
+        get: operations["MenuController_getMenuItemById"];
+        /** Update menu item (OWNER or ADMIN) */
+        put: operations["MenuController_updateMenuItem"];
+        post?: never;
+        /** Delete menu item (OWNER or ADMIN) */
+        delete: operations["MenuController_deleteMenuItem"];
+        options?: never;
+        head?: never;
+        /** Partially update menu item (OWNER, ADMIN, or CHEF) */
+        patch: operations["MenuController_patchMenuItem"];
+        trace?: never;
+    };
+    "/stores/{storeId}/menu-items/{id}/translations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update menu item translations (OWNER or ADMIN)
+         * @description Add or update translations for a menu item. Supports multiple locales: en, zh, my, th
+         */
+        put: operations["MenuController_updateMenuItemTranslations"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/menu-items/{id}/translations/{locale}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete a specific translation for a menu item (OWNER or ADMIN)
+         * @description Remove a translation in a specific locale (en, zh, my, th) from a menu item
+         */
+        delete: operations["MenuController_deleteMenuItemTranslation"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/customizations/groups/{id}/translations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update customization group translations (OWNER or ADMIN)
+         * @description Add or update translations for a customization group (e.g., 'Size', 'Spice Level')
+         */
+        put: operations["CustomizationController_updateGroupTranslations"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/customizations/options/{id}/translations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update customization option translations (OWNER or ADMIN)
+         * @description Add or update translations for a customization option (e.g., 'Large', 'Spicy')
+         */
+        put: operations["CustomizationController_updateOptionTranslations"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payments/orders/{orderId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PaymentController_findPaymentsByOrder"];
+        put?: never;
+        post: operations["PaymentController_recordPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payments/orders/{orderId}/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PaymentController_getPaymentSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payments/orders/{orderId}/refunds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PaymentController_findRefundsByOrder"];
+        put?: never;
+        post: operations["PaymentController_createRefund"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payments/orders/{orderId}/calculate-split": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PaymentController_calculateSplit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payments/orders/{orderId}/split-payment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PaymentController_recordSplitPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/reports/sales-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ReportController_getSalesSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/reports/payment-breakdown": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ReportController_getPaymentBreakdown"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/reports/popular-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ReportController_getPopularItems"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/reports/order-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ReportController_getOrderStatusReport"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get public details for a specific store by ID */
+        get: operations["StoreController_getStoreDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a store (creator becomes OWNER) */
+        post: operations["StoreController_createStore"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{id}/information": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update a store details (OWNER or ADMIN only) */
+        put: operations["StoreController_updateStoreInformation"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{id}/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update store settings (OWNER or ADMIN only) */
+        put: operations["StoreController_updateStoreSettings"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{id}/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add store member or update existing member role (OWNER, ADMIN) */
+        post: operations["StoreController_inviteOrAssignRoleByEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{id}/settings/tax-and-service": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update tax and service charge rates (OWNER or ADMIN only) */
+        patch: operations["StoreController_updateTaxAndServiceCharge"];
+        trace?: never;
+    };
+    "/stores/{id}/settings/business-hours": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update business hours (OWNER or ADMIN only) */
+        patch: operations["StoreController_updateBusinessHours"];
+        trace?: never;
+    };
+    "/stores/{id}/settings/branding": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["StoreController_uploadBranding"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{id}/settings/loyalty-rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update loyalty program rules (OWNER only) */
+        patch: operations["StoreController_updateLoyaltyRules"];
+        trace?: never;
+    };
+    "/stores/{storeId}/tables": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all tables for a specific store (Public) */
+        get: operations["TableController_findAllByStore"];
+        put?: never;
+        /** Create table (OWNER/ADMIN) */
+        post: operations["TableController_createTable"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/tables/batch-sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Synchronize tables for a store (OWNER/ADMIN)
+         * @description Creates/Updates tables based on the input list. Deletes any existing tables for the store that are NOT included in the input list (by ID). Checks for active sessions before deleting.
+         */
+        put: operations["TableController_syncTables"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/stores/{storeId}/tables/{tableId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a specific table by ID (Public) */
+        get: operations["TableController_findOne"];
+        put?: never;
+        post?: never;
+        /** Delete table (OWNER/ADMIN) */
+        delete: operations["TableController_deleteTable"];
+        options?: never;
+        head?: never;
+        /** Update a table name (OWNER/ADMIN) */
+        patch: operations["TableController_updateTable"];
+        trace?: never;
+    };
+    "/stores/{storeId}/tables/{tableId}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update table status (OWNER/ADMIN/SERVER)
+         * @description Updates table status with validation of state transitions. Valid transitions follow the table lifecycle: VACANT -> SEATED -> ORDERING -> SERVED -> READY_TO_PAY -> CLEANING -> VACANT
+         */
+        patch: operations["TableController_updateTableStatus"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    CreateManualSessionDto: {
-      /**
-       * @description Type of manual session (COUNTER, PHONE, or TAKEOUT)
-       * @example COUNTER
-       * @enum {string}
-       */
-      sessionType: 'TABLE' | 'COUNTER' | 'PHONE' | 'TAKEOUT';
-      /**
-       * @description Optional customer name
-       * @example John Doe
-       */
-      customerName?: string;
-      /**
-       * @description Optional customer phone number
-       * @example +1234567890
-       */
-      customerPhone?: string;
-      /**
-       * @description Number of guests in the session
-       * @example 2
-       */
-      guestCount?: number;
-    };
-    SessionCreatedResponseDto: {
-      /** @description Session ID */
-      id: string;
-      /** @description Store ID */
-      storeId: string;
-      /** @description Table ID */
-      tableId: Record<string, never> | null;
-      /**
-       * @description Session status
-       * @enum {string}
-       */
-      status: 'ACTIVE' | 'CLOSED';
-      /** @description Number of guests */
-      guestCount: number;
-      /** @description Session token for authentication - ONLY provided on session creation */
-      sessionToken: string;
-      /** @description Closed timestamp */
-      closedAt: Record<string, never> | null;
-      /**
-       * Format: date-time
-       * @description Created timestamp
-       */
-      createdAt: string;
-      /**
-       * Format: date-time
-       * @description Updated timestamp
-       */
-      updatedAt: string;
-    };
-    JoinSessionDto: {
-      /**
-       * @description Number of guests in the session
-       * @example 4
-       */
-      guestCount?: number;
-    };
-    SessionResponseDto: {
-      /** @description Session ID */
-      id: string;
-      /** @description Store ID */
-      storeId: string;
-      /** @description Table ID */
-      tableId: Record<string, never> | null;
-      /**
-       * @description Session status
-       * @enum {string}
-       */
-      status: 'ACTIVE' | 'CLOSED';
-      /** @description Number of guests */
-      guestCount: number;
-      /** @description Closed timestamp */
-      closedAt: Record<string, never> | null;
-      /**
-       * Format: date-time
-       * @description Created timestamp
-       */
-      createdAt: string;
-      /**
-       * Format: date-time
-       * @description Updated timestamp
-       */
-      updatedAt: string;
-    };
-    UpdateSessionDto: {
-      /**
-       * @description Number of guests in the session
-       * @example 4
-       */
-      guestCount?: number;
-      /**
-       * @description Session status
-       * @enum {string}
-       */
-      status?: 'ACTIVE' | 'CLOSED';
-    };
-    OrderItemCustomizationResponseDto: {
-      id: string;
-      customizationOptionId: string;
-      finalPrice: string | null;
-    };
-    OrderItemResponseDto: {
-      id: string;
-      menuItemId: Record<string, never> | null;
-      price: string;
-      quantity: number;
-      finalPrice: string | null;
-      notes: Record<string, never> | null;
-      customizations: components['schemas']['OrderItemCustomizationResponseDto'][];
-    };
-    OrderResponseDto: {
-      id: string;
-      orderNumber: string;
-      storeId: string;
-      sessionId: Record<string, never> | null;
-      tableName: string;
-      /** @enum {string} */
-      status:
-        | 'PENDING'
-        | 'PREPARING'
-        | 'READY'
-        | 'SERVED'
-        | 'COMPLETED'
-        | 'CANCELLED';
-      /** @enum {string} */
-      orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
-      paidAt: Record<string, never> | null;
-      subTotal: string;
-      vatRateSnapshot: string | null;
-      serviceChargeRateSnapshot: string | null;
-      vatAmount: string;
-      serviceChargeAmount: string;
-      grandTotal: string;
-      /** @enum {string|null} */
-      discountType: 'PERCENTAGE' | 'FIXED_AMOUNT' | null;
-      discountValue: string | null;
-      discountAmount: string | null;
-      discountReason: Record<string, never> | null;
-      discountAppliedBy: Record<string, never> | null;
-      discountAppliedAt: Record<string, never> | null;
-      /** @description Total amount paid across all payments (supports bill splitting) */
-      totalPaid: string;
-      /** @description Remaining balance to be paid */
-      remainingBalance: string;
-      /** @description Whether the order is fully paid */
-      isPaidInFull: boolean;
-      orderItems: components['schemas']['OrderItemResponseDto'][];
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-    };
-    ChooseStoreDto: {
-      /**
-       * @description The ID (UUID) of the store the user wants to act under
-       * @example 5
-       */
-      storeId: string;
-    };
-    StandardApiErrorDetails: {
-      /**
-       * @description Machine-readable error code identifying the error type (e.g., validation, auth, system error).
-       * @example ERROR_CODE_IDENTIFIER
-       */
-      code: string;
-      /**
-       * @description A human-readable message specifically describing this error.
-       * @example A detailed error message explaining what went wrong.
-       */
-      message: string;
-      /**
-       * @description Identifies the specific input field related to the error, if applicable (often used for validation errors).
-       * @example relevantFieldName
-       */
-      field?: Record<string, never> | null;
-    };
-    StandardApiResponse: {
-      /**
-       * @example success
-       * @enum {string}
-       */
-      status: 'success' | 'error';
-      /** @description Response data payload when status is "success". */
-      data?: Record<string, never> | null;
-      /**
-       * @description A general human-readable message about the operation outcome.
-       * @example Operation successful
-       */
-      message?: Record<string, never> | null;
-      /** @description Array of error details when status is "error". Usually empty on success. */
-      errors?: components['schemas']['StandardApiErrorDetails'][] | null;
-    };
-    UserProfileResponseDto: {
-      /**
-       * @description User's unique identifier
-       * @example 123
-       */
-      id: string;
-      /**
-       * @description User's email address
-       * @example user@example.com
-       */
-      email: string;
-      /**
-       * @description User's display name
-       * @example Jane Doe
-       */
-      name?: Record<string, never> | null;
-      /**
-       * @description Indicates if the user email is verified
-       * @example true
-       */
-      verified: boolean;
-      /**
-       * @description User's role in the specific store requested via query parameter (if provided and user is a member)
-       * @example CASHIER
-       * @enum {string|null}
-       */
-      selectedStoreRole?:
-        | 'PLATFORM_ADMIN'
-        | 'OWNER'
-        | 'ADMIN'
-        | 'CHEF'
-        | 'CASHIER'
-        | 'SERVER'
-        | null;
-      /**
-       * Format: date-time
-       * @description Timestamp when the user was created
-       */
-      createdAt: string;
-    };
-    CreateUserDto: {
-      /** @example john@example.com */
-      email: string;
-      /** @example John Doe */
-      name?: string;
-    };
-    AddUserToStoreDto: {
-      userId: string;
-      storeId: string;
-      /** @enum {string} */
-      role:
-        | 'PLATFORM_ADMIN'
-        | 'OWNER'
-        | 'ADMIN'
-        | 'CHEF'
-        | 'CASHIER'
-        | 'SERVER';
-    };
-    InviteStaffDto: {
-      /**
-       * @description Email address of the staff member to invite
-       * @example newstaff@example.com
-       */
-      email: string;
-      /**
-       * @description Role to assign to the staff member
-       * @example SERVER
-       * @enum {string}
-       */
-      role:
-        | 'PLATFORM_ADMIN'
-        | 'OWNER'
-        | 'ADMIN'
-        | 'CHEF'
-        | 'CASHIER'
-        | 'SERVER';
-    };
-    ChangeRoleDto: {
-      /**
-       * @description New role to assign to the user
-       * @example ADMIN
-       * @enum {string}
-       */
-      role:
-        | 'PLATFORM_ADMIN'
-        | 'OWNER'
-        | 'ADMIN'
-        | 'CHEF'
-        | 'CASHIER'
-        | 'SERVER';
-    };
-    SuspendUserDto: {
-      /** @example Suspicious activity detected */
-      reason: string;
-    };
-    TierResponseDto: {
-      /**
-       * @description Subscription ID
-       * @example 0194ca3b-...
-       */
-      id: string;
-      /**
-       * @description Store ID
-       * @example 0194ca3b-...
-       */
-      storeId: string;
-      /**
-       * @description Current tier
-       * @example STANDARD
-       * @enum {string}
-       */
-      tier: 'FREE' | 'STANDARD' | 'PREMIUM';
-      /**
-       * @description External subscription ID
-       * @example sub_123
-       */
-      subscriptionId?: string;
-      /**
-       * @description Subscription status
-       * @example ACTIVE
-       * @enum {string}
-       */
-      subscriptionStatus:
-        | 'ACTIVE'
-        | 'CANCELLED'
-        | 'PAST_DUE'
-        | 'TRIAL'
-        | 'SUSPENDED';
-      /**
-       * @description Billing cycle
-       * @example MONTHLY
-       * @enum {string}
-       */
-      billingCycle: 'MONTHLY' | 'YEARLY';
-      /**
-       * Format: date-time
-       * @description Current period start date
-       * @example 2025-01-01T00:00:00.000Z
-       */
-      currentPeriodStart?: string;
-      /**
-       * Format: date-time
-       * @description Current period end date
-       * @example 2025-02-01T00:00:00.000Z
-       */
-      currentPeriodEnd?: string;
-      /**
-       * Format: date-time
-       * @description Trial end date
-       * @example 2025-01-15T00:00:00.000Z
-       */
-      trialEndsAt?: string;
-      /**
-       * Format: date-time
-       * @description Created at timestamp
-       */
-      createdAt: string;
-      /**
-       * Format: date-time
-       * @description Updated at timestamp
-       */
-      updatedAt: string;
-    };
-    ResourceUsageDto: {
-      /**
-       * @description Current usage count
-       * @example 15
-       */
-      current: number;
-      /**
-       * @description Maximum allowed by tier
-       * @example 20
-       */
-      limit: number;
-      /**
-       * @description Usage percentage (calculated)
-       * @example 75
-       */
-      percentage: number;
-    };
-    UsageBreakdownDto: {
-      tables: components['schemas']['ResourceUsageDto'];
-      menuItems: components['schemas']['ResourceUsageDto'];
-      staff: components['schemas']['ResourceUsageDto'];
-      monthlyOrders: components['schemas']['ResourceUsageDto'];
-    };
-    FeatureAccessDto: {
-      /**
-       * @description Access to Kitchen Display System
-       * @example true
-       */
-      kds: boolean;
-      /**
-       * @description Access to Loyalty Program
-       * @example false
-       */
-      loyalty: boolean;
-      /**
-       * @description Access to Advanced Reports
-       * @example false
-       */
-      advancedReports: boolean;
-    };
-    StoreUsageDto: {
-      /**
-       * @example STANDARD
-       * @enum {string}
-       */
-      tier: 'FREE' | 'STANDARD' | 'PREMIUM';
-      usage: components['schemas']['UsageBreakdownDto'];
-      features: components['schemas']['FeatureAccessDto'];
-    };
-    AuditLogUserDto: {
-      /**
-       * @description User ID
-       * @example 0194ca3b-...
-       */
-      id: string;
-      /**
-       * @description User email
-       * @example user@example.com
-       */
-      email?: string;
-      /**
-       * @description User name
-       * @example John Doe
-       */
-      name?: string;
-    };
-    AuditLogEntryDto: {
-      /**
-       * @description Audit log ID
-       * @example 0194ca3b-...
-       */
-      id: string;
-      /**
-       * @description Store ID
-       * @example 0194ca3b-...
-       */
-      storeId: string;
-      /** @description User who performed the action */
-      user?: components['schemas']['AuditLogUserDto'];
-      /**
-       * @description Action performed
-       * @example MENU_ITEM_CREATED
-       * @enum {string}
-       */
-      action:
-        | 'STORE_CREATED'
-        | 'STORE_UPDATED'
-        | 'STORE_DELETED'
-        | 'USER_ADDED'
-        | 'USER_REMOVED'
-        | 'USER_ROLE_CHANGED'
-        | 'MENU_ITEM_CREATED'
-        | 'MENU_ITEM_UPDATED'
-        | 'MENU_ITEM_DELETED'
-        | 'ORDER_CREATED'
-        | 'ORDER_UPDATED'
-        | 'ORDER_CANCELLED'
-        | 'PAYMENT_CREATED'
-        | 'PAYMENT_REFUNDED'
-        | 'SETTINGS_UPDATED';
-      /**
-       * @description Type of entity affected
-       * @example MenuItem
-       */
-      entityType: string;
-      /**
-       * @description ID of the affected entity
-       * @example 0194ca3b-...
-       */
-      entityId?: string;
-      /**
-       * @description Additional action-specific details
-       * @example {
-       *       "previousValue": "10.00",
-       *       "newValue": "12.00"
-       *     }
-       */
-      details?: Record<string, never>;
-      /**
-       * @description IP address of the requester
-       * @example 192.168.1.1
-       */
-      ipAddress?: string;
-      /**
-       * @description User agent of the requester
-       * @example Mozilla/5.0...
-       */
-      userAgent?: string;
-      /**
-       * Format: date-time
-       * @description Timestamp of the action
-       */
-      createdAt: string;
-    };
-    PaginationMeta: {
-      /**
-       * @description Total number of items
-       * @example 100
-       */
-      total: number;
-      /**
-       * @description Current page number
-       * @example 1
-       */
-      page: number;
-      /**
-       * @description Number of items per page
-       * @example 20
-       */
-      limit: number;
-      /**
-       * @description Total number of pages
-       * @example 5
-       */
-      totalPages: number;
-      /**
-       * @description Whether there is a next page
-       * @example true
-       */
-      hasNext: boolean;
-      /**
-       * @description Whether there is a previous page
-       * @example false
-       */
-      hasPrev: boolean;
-    };
-    PaginatedResponseDto: {
-      /** @description Array of items */
-      items: string[];
-      /** @description Pagination metadata */
-      meta: components['schemas']['PaginationMeta'];
-    };
-    CartItemCustomizationResponseDto: {
-      id: string;
-      customizationOptionId: string;
-      optionName: string;
-      additionalPrice: string;
-    };
-    CartItemResponseDto: {
-      id: string;
-      menuItemId: Record<string, never>;
-      menuItemName: string;
-      basePrice: string;
-      quantity: number;
-      notes: Record<string, never> | null;
-      customizations: components['schemas']['CartItemCustomizationResponseDto'][];
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-    };
-    CartResponseDto: {
-      id: string;
-      sessionId: string;
-      storeId: string;
-      subTotal: string;
-      items: components['schemas']['CartItemResponseDto'][];
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-    };
-    CartItemCustomizationDto: {
-      /**
-       * @description Customization option ID
-       * @example 01234567
-       */
-      customizationOptionId: string;
-    };
-    AddToCartDto: {
-      /**
-       * @description Menu item ID to add to cart
-       * @example 01234567
-       */
-      menuItemId: string;
-      /**
-       * @description Quantity of the item
-       * @example 2
-       */
-      quantity: number;
-      /**
-       * @description Special instructions or notes
-       * @example No onions please
-       */
-      notes?: string;
-      /** @description Selected customization options */
-      customizations?: components['schemas']['CartItemCustomizationDto'][];
-    };
-    UpdateCartItemDto: {
-      /**
-       * @description Updated quantity
-       * @example 3
-       */
-      quantity?: number;
-      /**
-       * @description Updated notes
-       * @example Extra spicy
-       */
-      notes?: string;
-    };
-    CheckoutCartDto: {
-      /**
-       * @description Order type
-       * @default DINE_IN
-       * @example DINE_IN
-       * @enum {string}
-       */
-      orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
-      /**
-       * @description Table name (from session)
-       * @example Table 5
-       */
-      tableName?: string;
-    };
-    QuickSaleItemDto: {
-      /**
-       * @description Menu item ID
-       * @example 550e8400-e29b-41d4-a716-446655440000
-       */
-      menuItemId: string;
-      /**
-       * @description Quantity of the item
-       * @example 2
-       */
-      quantity: number;
-      /**
-       * @description Array of customization option IDs
-       * @example [
-       *       "550e8400-e29b-41d4-a716-446655440001"
-       *     ]
-       */
-      customizationOptionIds?: string[];
-      /**
-       * @description Notes for the item
-       * @example No onions
-       */
-      notes?: string;
-    };
-    QuickSaleCheckoutDto: {
-      /**
-       * @description Store ID
-       * @example 550e8400-e29b-41d4-a716-446655440000
-       */
-      storeId: string;
-      /**
-       * @description Session type (COUNTER, PHONE, or TAKEOUT - not TABLE)
-       * @example COUNTER
-       * @enum {string}
-       */
-      sessionType: 'COUNTER' | 'PHONE' | 'TAKEOUT';
-      /**
-       * @description Order type
-       * @example DINE_IN
-       * @enum {string}
-       */
-      orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
-      /** @description Array of items to checkout */
-      items: components['schemas']['QuickSaleItemDto'][];
-      /**
-       * @description Customer name (optional, useful for phone/takeout orders)
-       * @example John Doe
-       */
-      customerName?: string;
-      /**
-       * @description Customer phone number (optional, useful for phone orders)
-       * @example +1234567890
-       */
-      customerPhone?: string;
-      /**
-       * @description Notes for the entire order
-       * @example Rush order
-       */
-      orderNotes?: string;
-    };
-    UpdateOrderStatusDto: {
-      /**
-       * @description New order status
-       * @example PREPARING
-       * @enum {string}
-       */
-      status:
-        | 'PENDING'
-        | 'PREPARING'
-        | 'READY'
-        | 'SERVED'
-        | 'COMPLETED'
-        | 'CANCELLED';
-    };
-    ApplyDiscountDto: Record<string, never>;
-    KitchenOrderResponseDto: {
-      /** @description Order ID */
-      id: string;
-      /** @description Store ID */
-      storeId: string;
-      /** @description Order number */
-      orderNumber: string;
-      /** @description Table name */
-      tableName: string;
-      /**
-       * @description Order type
-       * @enum {string}
-       */
-      orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
-      /**
-       * @description Order status
-       * @enum {string}
-       */
-      status:
-        | 'PENDING'
-        | 'PREPARING'
-        | 'READY'
-        | 'SERVED'
-        | 'COMPLETED'
-        | 'CANCELLED';
-      /** @description Grand total */
-      grandTotal: string;
-      /**
-       * Format: date-time
-       * @description Order created timestamp
-       */
-      createdAt: string;
-      /**
-       * Format: date-time
-       * @description Order updated timestamp
-       */
-      updatedAt: string;
-      /** @description Order items */
-      orderItems: unknown[];
-    };
-    UpdateKitchenStatusDto: {
-      /**
-       * @description New kitchen status
-       * @example PREPARING
-       * @enum {string}
-       */
-      status:
-        | 'PENDING'
-        | 'PREPARING'
-        | 'READY'
-        | 'SERVED'
-        | 'COMPLETED'
-        | 'CANCELLED';
-    };
-    ValidateAdminTokenDto: {
-      /**
-       * @description Auth0 access token from admin tenant
-       * @example eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
-       */
-      auth0Token: string;
-    };
-    AdminUserResponseDto: {
-      id: string;
-      email: string;
-      name: string;
-      /** @enum {string} */
-      role:
-        | 'SUPER_ADMIN'
-        | 'PLATFORM_ADMIN'
-        | 'SUPPORT_AGENT'
-        | 'FINANCE_ADMIN'
-        | 'COMPLIANCE_OFFICER';
-      isActive: boolean;
-      lastLoginAt: Record<string, never>;
-    };
-    ValidateAdminResponseDto: {
-      adminUser: components['schemas']['AdminUserResponseDto'];
-      /** @description Internal JWT for authenticated API requests */
-      jwt: string;
-      /**
-       * @description List of permissions based on admin role
-       * @example [
-       *       "stores:read",
-       *       "users:read",
-       *       "payments:verify"
-       *     ]
-       */
-      permissions: string[];
-    };
-    AdminProfileResponseDto: {
-      /** @example adm_1234567 */
-      id: string;
-      /** @example admin@originfoodhouse.com */
-      email: string;
-      /** @example John Doe */
-      name: string;
-      /**
-       * @example PLATFORM_ADMIN
-       * @enum {string}
-       */
-      role:
-        | 'SUPER_ADMIN'
-        | 'PLATFORM_ADMIN'
-        | 'SUPPORT_AGENT'
-        | 'FINANCE_ADMIN'
-        | 'COMPLIANCE_OFFICER';
-      /** @example true */
-      isActive: boolean;
-      /** @example 2025-10-28T10:00:00.000Z */
-      lastLoginAt: Record<string, never> | null;
-      /**
-       * Format: date-time
-       * @example 2025-10-01T10:00:00.000Z
-       */
-      createdAt: string;
-    };
-    AdminPermissionsResponseDto: {
-      /** @example PLATFORM_ADMIN */
-      role: string;
-      /**
-       * @example [
-       *       "store:manage",
-       *       "user:manage",
-       *       "payment:manage"
-       *     ]
-       */
-      permissions: string[];
-    };
-    SuspendStoreDto: {
-      /** @example Payment fraud detected */
-      reason: string;
-    };
-    BanStoreDto: {
-      /** @example Repeated terms of service violations */
-      reason: string;
-    };
-    ReactivateStoreDto: {
-      /** @example Issue resolved, reactivating store */
-      note?: string;
-    };
-    DowngradeTierDto: {
-      /**
-       * @description Target tier ID to downgrade to
-       * @example tier_free
-       * @enum {string}
-       */
-      targetTierId: 'tier_free' | 'tier_standard' | 'tier_premium';
-      /** @example Payment declined multiple times */
-      reason: string;
-    };
-    BanUserDto: {
-      /** @example Multiple policy violations */
-      reason: string;
-    };
-    ReactivateUserDto: {
-      /** @example Issue resolved, reactivating user */
-      note?: string;
-    };
-    PaymentRequestResponseDto: {
-      /**
-       * @description Payment request ID
-       * @example 0194ca3b-...
-       */
-      id: string;
-      /**
-       * @description Store ID
-       * @example 0194ca3b-...
-       */
-      storeId: string;
-      /**
-       * @description User ID who created the request
-       * @example 0194ca3b-...
-       */
-      userId: string;
-      /**
-       * @description Requested tier
-       * @example PREMIUM
-       * @enum {string}
-       */
-      requestedTier: 'FREE' | 'STANDARD' | 'PREMIUM';
-      /**
-       * @description Payment request status
-       * @example PENDING
-       * @enum {string}
-       */
-      status: 'PENDING' | 'APPROVED' | 'REJECTED';
-      /**
-       * @description Payment proof image path
-       * @example payment-proofs/store-id/uuid-original.jpg
-       */
-      paymentProofPath?: string;
-      /**
-       * @description Admin notes
-       * @example Payment verified
-       */
-      adminNotes?: string;
-      /**
-       * Format: date-time
-       * @description Created at timestamp
-       */
-      createdAt: string;
-      /**
-       * Format: date-time
-       * @description Updated at timestamp
-       */
-      updatedAt: string;
-    };
-    CreatePaymentRequestDto: {
-      /**
-       * @description Requested subscription tier
-       * @example STANDARD
-       * @enum {string}
-       */
-      tier: 'FREE' | 'STANDARD' | 'PREMIUM';
-      /**
-       * @description Store ID for the subscription
-       * @example abc1234
-       */
-      storeId: string;
-    };
-    VerifyPaymentDto: {
-      /**
-       * @description Admin notes for payment verification
-       * @example Payment verified via bank statement
-       */
-      notes?: string;
-    };
-    RejectPaymentDto: {
-      /**
-       * @description Reason for rejecting the payment
-       * @example Payment proof is unclear or invalid
-       */
-      rejectionReason: string;
-    };
-    TrialEligibilityResponseDto: {
-      /**
-       * @description Whether user is eligible for trial
-       * @example true
-       */
-      eligible: boolean;
-    };
-    TrialInfoResponseDto: {
-      /**
-       * @description Whether store is currently on trial
-       * @example true
-       */
-      isTrialActive: boolean;
-      /**
-       * @description Trial start date
-       * @example 2025-01-01T00:00:00.000Z
-       */
-      trialStartedAt?: Record<string, never>;
-      /**
-       * @description Trial end date
-       * @example 2025-01-15T00:00:00.000Z
-       */
-      trialEndsAt?: Record<string, never>;
-      /**
-       * @description Days remaining in trial
-       * @example 7
-       */
-      daysRemaining: number;
-      /**
-       * @description Whether the store can start a new trial
-       * @example false
-       */
-      canStartTrial: boolean;
-    };
-    OwnershipTransferResponseDto: {
-      /**
-       * @description Transfer ID
-       * @example 0194ca3b-...
-       */
-      id: string;
-      /**
-       * @description Store ID
-       * @example 0194ca3b-...
-       */
-      storeId: string;
-      /**
-       * @description Current owner user ID
-       * @example 0194ca3b-...
-       */
-      fromUserId: string;
-      /**
-       * @description New owner email
-       * @example newowner@example.com
-       */
-      toEmail: string;
-      /**
-       * @description Transfer status
-       * @example PENDING
-       * @enum {string}
-       */
-      status: 'PENDING' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
-      /**
-       * Format: date-time
-       * @description Transfer expires at
-       * @example 2025-01-02T00:00:00.000Z
-       */
-      expiresAt: string;
-      /**
-       * Format: date-time
-       * @description Created at timestamp
-       */
-      createdAt: string;
-      /**
-       * Format: date-time
-       * @description Updated at timestamp
-       */
-      updatedAt: string;
-    };
-    InitiateOwnershipTransferDto: {
-      /**
-       * @description Store ID for ownership transfer
-       * @example abc1234
-       */
-      storeId: string;
-      /**
-       * @description Email of the new owner
-       * @example newowner@example.com
-       */
-      newOwnerEmail: string;
-    };
-    VerifyOtpDto: {
-      /**
-       * @description 6-digit OTP code
-       * @example 123456
-       */
-      otp: string;
-    };
-    RefundRequestResponseDto: {
-      /**
-       * @description Refund request ID
-       * @example 0194ca3b-...
-       */
-      id: string;
-      /**
-       * @description Subscription ID
-       * @example 0194ca3b-...
-       */
-      subscriptionId: string;
-      /**
-       * @description User ID who requested refund
-       * @example 0194ca3b-...
-       */
-      userId: string;
-      /**
-       * @description Reason for refund request
-       * @example Not satisfied with the service
-       */
-      reason: string;
-      /**
-       * @description Refund status
-       * @example PENDING
-       * @enum {string}
-       */
-      status: 'PENDING' | 'APPROVED' | 'REJECTED';
-      /**
-       * @description Admin notes
-       * @example Refund approved
-       */
-      adminNotes?: string;
-      /**
-       * Format: date-time
-       * @description Created at timestamp
-       */
-      createdAt: string;
-      /**
-       * Format: date-time
-       * @description Updated at timestamp
-       */
-      updatedAt: string;
-    };
-    CreateRefundRequestDto: {
-      /**
-       * @description Subscription ID for the refund request
-       * @example sub_abc1
-       */
-      subscriptionId: string;
-      /**
-       * @description Reason for requesting refund
-       * @example Not satisfied with the service quality
-       */
-      reason: string;
-    };
-    SubscriptionResponseDto: {
-      /**
-       * @description Subscription ID
-       * @example 0194ca3b-...
-       */
-      id: string;
-      /**
-       * @description Store ID
-       * @example 0194ca3b-...
-       */
-      storeId: string;
-      /**
-       * @description Current tier
-       * @example STANDARD
-       * @enum {string}
-       */
-      tier: 'FREE' | 'STANDARD' | 'PREMIUM';
-      /**
-       * @description Subscription status
-       * @example ACTIVE
-       * @enum {string}
-       */
-      status: 'ACTIVE' | 'CANCELLED' | 'PAST_DUE' | 'TRIAL' | 'SUSPENDED';
-      /**
-       * @description Billing cycle
-       * @example MONTHLY
-       * @enum {string}
-       */
-      billingCycle: 'MONTHLY' | 'YEARLY';
-      /**
-       * Format: date-time
-       * @description Current period start date
-       * @example 2025-01-01T00:00:00.000Z
-       */
-      currentPeriodStart?: string;
-      /**
-       * Format: date-time
-       * @description Current period end date
-       * @example 2025-02-01T00:00:00.000Z
-       */
-      currentPeriodEnd?: string;
-      /**
-       * Format: date-time
-       * @description Trial end date (if on trial)
-       * @example 2025-01-15T00:00:00.000Z
-       */
-      trialEndsAt?: string;
-      /**
-       * Format: date-time
-       * @description Created at timestamp
-       */
-      createdAt: string;
-      /**
-       * Format: date-time
-       * @description Updated at timestamp
-       */
-      updatedAt: string;
-    };
-    ImageMetadataDto: {
-      /**
-       * @description Original image width in pixels
-       * @example 1920
-       */
-      originalWidth?: number;
-      /**
-       * @description Original image height in pixels
-       * @example 1080
-       */
-      originalHeight?: number;
-      /**
-       * @description Image format (e.g., 'jpeg', 'png', 'webp', 'pdf')
-       * @example jpeg
-       */
-      format?: string;
-      /**
-       * @description Original file size in bytes
-       * @example 2048576
-       */
-      originalSize: number;
-      /**
-       * @description Whether the image has transparency (alpha channel)
-       * @example false
-       */
-      hasAlpha?: boolean;
-      /**
-       * @description Color space of the image (e.g., 'srgb', 'cmyk')
-       * @example srgb
-       */
-      space?: string;
-      /**
-       * @description Generated versions with their metadata (dimensions and sizes, no URLs)
-       * @example {
-       *       "small": {
-       *         "width": 400,
-       *         "height": 300,
-       *         "size": 51200
-       *       },
-       *       "medium": {
-       *         "width": 800,
-       *         "height": 600,
-       *         "size": 102400
-       *       },
-       *       "large": {
-       *         "width": 1200,
-       *         "height": 900,
-       *         "size": 204800
-       *       }
-       *     }
-       */
-      versions: Record<string, never>;
-    };
-    UploadImageResponseDto: {
-      /**
-       * @description Base S3 path without version suffix. Frontend constructs full URLs using: baseUrl + basePath + '-' + size + '.webp'
-       * @example uploads/abc-123-def-456
-       */
-      basePath: string;
-      /**
-       * @description Available image sizes generated for this upload
-       * @example [
-       *       "small",
-       *       "medium",
-       *       "large"
-       *     ]
-       */
-      availableSizes: string[];
-      /**
-       * @description Primary/default size for this preset (recommended size to display)
-       * @example medium
-       * @enum {string}
-       */
-      primarySize: 'original' | 'small' | 'medium' | 'large';
-      /** @description Metadata about the uploaded image including dimensions, file sizes, and format details for all generated versions. */
-      metadata: components['schemas']['ImageMetadataDto'];
-    };
-    MenuItemNestedResponseDto: {
-      /** @example 147 */
-      id: string;
-      /** @example Generic Granite Cheese */
-      name: string;
-      /** @example The lavender Bike combines... */
-      description?: Record<string, never> | null;
-      /** @example 49.11 */
-      basePrice?: string | null;
-      /**
-       * @description Base S3 path
-       * @example uploads/abc-123-def
-       */
-      imagePath?: Record<string, never> | null;
-      /** @example 2 */
-      sortOrder: number;
-    };
-    CategoryResponseDto: {
-      /** @example 6 */
-      id: string;
-      /**
-       * @description Category name (default/fallback). Use translations map for localized names.
-       * @example Books
-       */
-      name: string;
-      /** @example 1 */
-      storeId: string;
-      /** @example 1 */
-      sortOrder: number;
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-      /**
-       * @description Translations map by locale (e.g., { 'en': {...}, 'th': {...} }).
-       * @example {
-       *       "en": {
-       *         "locale": "en",
-       *         "name": "Appetizers"
-       *       },
-       *       "th": {
-       *         "locale": "th",
-       *         "name": "อาหารว่าง"
-       *       }
-       *     }
-       */
-      translations?: Record<string, never> | null;
-    };
-    CategoryBasicResponseDto: {
-      /** @example 6 */
-      id: string;
-      /** @example Appetizers */
-      name: string;
-      /** @example 1 */
-      storeId: string;
-      /** @example 1 */
-      sortOrder: number;
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-    };
-    CategoryDeletedResponseDto: {
-      /**
-       * @description The ID (UUID) of the deleted category.
-       * @example 6
-       */
-      id: string;
-    };
-    CustomizationOptionResponseDto: {
-      /** Format: uuid */
-      id: string;
-      /** @description Option name (default/fallback). Use translations map for localized names. */
-      name: string;
-      additionalPrice?: string | null;
-      /**
-       * @description Translations map by locale (e.g., { 'en': {...}, 'th': {...} }).
-       * @example {
-       *       "en": {
-       *         "locale": "en",
-       *         "name": "Large"
-       *       },
-       *       "th": {
-       *         "locale": "th",
-       *         "name": "ใหญ่"
-       *       }
-       *     }
-       */
-      translations?: Record<string, never> | null;
-    };
-    CustomizationGroupResponseDto: {
-      /** @example 219 */
-      id: string;
-      /**
-       * @description Group name (default/fallback). Use translations map for localized names.
-       * @example Size
-       */
-      name: string;
-      /** @example false */
-      required: boolean;
-      /** @example 0 */
-      minSelectable: number;
-      /** @example 1 */
-      maxSelectable: number;
-      /** @example 147 */
-      menuItemId: string;
-      customizationOptions: components['schemas']['CustomizationOptionResponseDto'][];
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-      /**
-       * @description Translations map by locale (e.g., { 'en': {...}, 'th': {...} }).
-       * @example {
-       *       "en": {
-       *         "locale": "en",
-       *         "name": "Size"
-       *       },
-       *       "th": {
-       *         "locale": "th",
-       *         "name": "ขนาด"
-       *       }
-       *     }
-       */
-      translations?: Record<string, never> | null;
-    };
-    CreateCategoryDto: {
-      /** @example Main Dishes */
-      name: string;
-    };
-    SortMenuItemDto: {
-      /**
-       * @description Menu item ID (UUID)
-       * @example 1
-       */
-      id: string;
-      /**
-       * @description Sort order for this menu item
-       * @example 2
-       */
-      sortOrder: number;
-    };
-    SortCategoryDto: {
-      /**
-       * @description Category ID (UUID)
-       * @example 1
-       */
-      id: string;
-      /**
-       * @description Sort order for this category
-       * @example 5
-       */
-      sortOrder: number;
-      /** @description List of menu items under this category with updated sort orders */
-      menuItems: components['schemas']['SortMenuItemDto'][];
-    };
-    SortCategoriesPayloadDto: {
-      /** @description Array of categories + associated menu items sort orders */
-      categories: components['schemas']['SortCategoryDto'][];
-    };
-    UpdateCategoryDto: {
-      /** @example Desserts */
-      name?: string;
-    };
-    BaseTranslationDto: {
-      /**
-       * @description Locale code
-       * @example en
-       * @enum {string}
-       */
-      locale: 'en' | 'zh' | 'my' | 'th';
-      /**
-       * @description Translated name
-       * @example Appetizers
-       */
-      name: string;
-    };
-    UpdateCategoryTranslationsDto: {
-      /**
-       * @description Array of translations to add/update
-       * @example [
-       *       {
-       *         "locale": "th",
-       *         "name": "อาหารเรียกน้ำย่อย"
-       *       },
-       *       {
-       *         "locale": "zh",
-       *         "name": "开胃菜"
-       *       }
-       *     ]
-       */
-      translations: components['schemas']['BaseTranslationDto'][];
-    };
-    MenuItemDeletedResponseDto: {
-      /**
-       * @description The ID (UUID) of the deleted menu item.
-       * @example 1
-       */
-      id: string;
-    };
-    MenuItemResponseDto: {
-      /** @example 147 */
-      id: string;
-      /**
-       * @description Item name (default/fallback). Use translations map for localized names.
-       * @example Generic Granite Cheese
-       */
-      name: string;
-      /**
-       * @description Item description (default/fallback). Use translations map for localized descriptions.
-       * @example The lavender Bike combines Bolivia aesthetics...
-       */
-      description?: Record<string, never> | null;
-      /**
-       * @description Base price, formatted as string.
-       * @example 49.11
-       */
-      basePrice: string;
-      /**
-       * @description Base S3 path for image. Frontend constructs URL: baseUrl + imagePath + '-' + size + '.webp'
-       * @example uploads/abc-123-def
-       */
-      imagePath?: Record<string, never> | null;
-      /**
-       * @description Indicates if the item is temporarily hidden (e.g., out of stock).
-       * @example false
-       */
-      isHidden: boolean;
-      /**
-       * @description Indicates if the item is currently out of stock.
-       * @example false
-       */
-      isOutOfStock: boolean;
-      /**
-       * @description Kitchen routing area for this item
-       * @example GRILL
-       * @enum {string}
-       */
-      routingArea:
-        | 'GRILL'
-        | 'FRY'
-        | 'SALAD'
-        | 'DRINKS'
-        | 'DESSERT'
-        | 'APPETIZER'
-        | 'SOUP'
-        | 'OTHER';
-      /**
-       * @description Expected preparation time in minutes
-       * @example 15
-       */
-      preparationTimeMinutes?: number | null;
-      /** @example 6 */
-      categoryId: string;
-      /** @example 1 */
-      storeId: string;
-      /** @example 2 */
-      sortOrder: number;
-      /**
-       * Format: date-time
-       * @description Creation timestamp
-       */
-      createdAt: string;
-      /**
-       * Format: date-time
-       * @description Last update timestamp
-       */
-      updatedAt: string;
-      category: components['schemas']['CategoryResponseDto'];
-      customizationGroups: components['schemas']['CustomizationGroupResponseDto'][];
-      /**
-       * @description Translations map by locale (e.g., { 'en': {...}, 'th': {...} }). Use for multi-language support.
-       * @example {
-       *       "en": {
-       *         "locale": "en",
-       *         "name": "Pad Thai",
-       *         "description": "Thai stir-fried noodles"
-       *       },
-       *       "th": {
-       *         "locale": "th",
-       *         "name": "ผัดไทย",
-       *         "description": "ก๋วยเตี๋ยวผัดไทย"
-       *       }
-       *     }
-       */
-      translations?: Record<string, never> | null;
-    };
-    UpsertCategoryDto: {
-      /**
-       * Format: uuid
-       * @description ID (UUID) of the option to update. Omit to create a new option within the group.
-       * @example 018eb1ca-18e9-7634-8009-11d0e817b99f
-       */
-      id?: string;
-      /** @example Main Dishes */
-      name: string;
-    };
-    UpsertCustomizationOptionDto: {
-      /**
-       * Format: uuid
-       * @description ID (UUID) of the option to update. Omit to create a new option within the group.
-       * @example 018eb1ca-18e9-7634-8009-11d0e817b99f
-       */
-      id?: string;
-      /** @example Large */
-      name: string;
-      /**
-       * @description Optional: Additional price for this option. Must be zero or positive. Send as string (e.g., "1.50", "0", "0.00"). Defaults to 0 if omitted.
-       * @default 0.00
-       * @example 1.50
-       */
-      additionalPrice: string | null;
-    };
-    UpsertCustomizationGroupDto: {
-      /**
-       * Format: uuid
-       * @description ID (UUID) of the existing group to update.
-       * @example 018eb1ca-18e9-7634-8009-11d0e817b99f
-       */
-      id?: string;
-      /** @example Size */
-      name: string;
-      /**
-       * @description Is selecting an option from this group mandatory?
-       * @default false
-       * @example true
-       */
-      required: boolean;
-      /**
-       * @description Minimum number of options required if group is required (usually 1 if required=true)
-       * @default 0
-       * @example 1
-       */
-      minSelectable: number;
-      /**
-       * @description Maximum number of options allowed (e.g., 1 for size, >1 for toppings)
-       * @default 1
-       * @example 1
-       */
-      maxSelectable: number;
-      options: components['schemas']['UpsertCustomizationOptionDto'][];
-    };
-    CreateMenuItemDto: {
-      /** @example Pad Krapow Moo */
-      name: string;
-      /** @example Stir-fried minced pork with holy basil, served with rice. */
-      description?: string;
-      /**
-       * @description Base price before customizations
-       * @example 9.5
-       */
-      basePrice: string;
-      /**
-       * @description Base S3 path for the menu item image (without version suffix). Frontend constructs URLs as: baseUrl + imagePath + '-' + size + '.webp'
-       * @example uploads/abc-123-def-456
-       */
-      imagePath?: string;
-      /**
-       * @description Set to true to temporarily hide the item (e.g., out of stock). Defaults to false (visible).
-       * @example false
-       */
-      isHidden?: boolean;
-      /**
-       * @description Kitchen routing area for this item (e.g., GRILL, FRY, DRINKS). Defaults to OTHER.
-       * @example GRILL
-       * @enum {string}
-       */
-      routingArea?:
-        | 'GRILL'
-        | 'FRY'
-        | 'SALAD'
-        | 'DRINKS'
-        | 'DESSERT'
-        | 'APPETIZER'
-        | 'SOUP'
-        | 'OTHER';
-      /**
-       * @description Expected preparation time in minutes
-       * @example 15
-       */
-      preparationTimeMinutes?: number;
-      /** @description Category for the item. Provide ID to link/update existing, or just name to create new. */
-      category: components['schemas']['UpsertCategoryDto'];
-      /** @description Optional customization groups (e.g., Size, Spice Level, Add-ons). Omit IDs for new groups/options. */
-      customizationGroups?: components['schemas']['UpsertCustomizationGroupDto'][];
-    };
-    UpdateMenuItemDto: {
-      /** @example Pad Krapow Moo Kai Dao */
-      name?: string;
-      /** @example Stir-fried minced pork with holy basil, served with rice and fried egg. */
-      description?: string;
-      /**
-       * @description Base price before customizations
-       * @example 9.5
-       */
-      basePrice: number;
-      /**
-       * @description Base S3 path for the menu item image (without version suffix). Frontend constructs URLs as: baseUrl + imagePath + '-' + size + '.webp'
-       * @example uploads/abc-123-def-456
-       */
-      imagePath?: string;
-      /**
-       * @description Set to true to temporarily hide the item (e.g., out of stock). Defaults to false (visible).
-       * @example false
-       */
-      isHidden?: boolean;
-      /**
-       * @description Kitchen routing area for this item (e.g., GRILL, FRY, DRINKS).
-       * @example GRILL
-       * @enum {string}
-       */
-      routingArea?:
-        | 'GRILL'
-        | 'FRY'
-        | 'SALAD'
-        | 'DRINKS'
-        | 'DESSERT'
-        | 'APPETIZER'
-        | 'SOUP'
-        | 'OTHER';
-      /**
-       * @description Expected preparation time in minutes
-       * @example 15
-       */
-      preparationTimeMinutes?: number;
-      /** @description Optional: Update or change category. Provide ID to link/update existing, or just name to create new. */
-      category?: components['schemas']['UpsertCategoryDto'];
-      /** @description Optional: Full list of desired customization groups. Provide IDs to update existing groups/options. Groups/options missing IDs will be created. Existing groups/options NOT included in this array (by ID) WILL BE DELETED. */
-      customizationGroups?: components['schemas']['UpsertCustomizationGroupDto'][];
-    };
-    PatchMenuItemDto: {
-      /**
-       * @description Set out-of-stock status
-       * @example true
-       */
-      isOutOfStock?: boolean;
-      /**
-       * @description Set hidden status
-       * @example false
-       */
-      isHidden?: boolean;
-    };
-    TranslationWithDescriptionDto: {
-      /**
-       * @description Locale code
-       * @example en
-       * @enum {string}
-       */
-      locale: 'en' | 'zh' | 'my' | 'th';
-      /**
-       * @description Translated name
-       * @example Appetizers
-       */
-      name: string;
-      /**
-       * @description Translated description
-       * @example Delicious appetizers to start your meal
-       */
-      description?: Record<string, never> | null;
-    };
-    UpdateMenuItemTranslationsDto: {
-      /**
-       * @description Array of translations to add/update
-       * @example [
-       *       {
-       *         "locale": "th",
-       *         "name": "ผัดไทย",
-       *         "description": "ก๋วยเตี๋ยวผัดไทยรสอร่อย"
-       *       },
-       *       {
-       *         "locale": "zh",
-       *         "name": "泰式炒河粉",
-       *         "description": "美味的泰国炒面"
-       *       }
-       *     ]
-       */
-      translations: components['schemas']['TranslationWithDescriptionDto'][];
-    };
-    UpdateCustomizationGroupTranslationsDto: {
-      /**
-       * @description Array of translations to add/update
-       * @example [
-       *       {
-       *         "locale": "th",
-       *         "name": "ขนาด"
-       *       },
-       *       {
-       *         "locale": "zh",
-       *         "name": "尺寸"
-       *       }
-       *     ]
-       */
-      translations: components['schemas']['BaseTranslationDto'][];
-    };
-    UpdateCustomizationOptionTranslationsDto: {
-      /**
-       * @description Array of translations to add/update
-       * @example [
-       *       {
-       *         "locale": "th",
-       *         "name": "ใหญ่"
-       *       },
-       *       {
-       *         "locale": "zh",
-       *         "name": "大"
-       *       }
-       *     ]
-       */
-      translations: components['schemas']['BaseTranslationDto'][];
-    };
-    RecordPaymentDto: {
-      /**
-       * @description Payment amount (as string for Decimal precision)
-       * @example 150.00
-       */
-      amount: string;
-      /**
-       * @description Payment method
-       * @example CASH
-       * @enum {string}
-       */
-      paymentMethod:
-        | 'CASH'
-        | 'CREDIT_CARD'
-        | 'DEBIT_CARD'
-        | 'MOBILE_PAYMENT'
-        | 'OTHER';
-      /**
-       * @description Amount tendered by customer (for cash payments only)
-       * @example 200.00
-       */
-      amountTendered?: string;
-      /**
-       * @description External transaction ID (for card/mobile payments)
-       * @example TXN123456789
-       */
-      transactionId?: string;
-      /**
-       * @description Additional notes
-       * @example Paid in full
-       */
-      notes?: string;
-    };
-    PaymentResponseDto: {
-      id: string;
-      orderId: string;
-      amount: string;
-      /** @enum {string} */
-      paymentMethod:
-        | 'CASH'
-        | 'CREDIT_CARD'
-        | 'DEBIT_CARD'
-        | 'MOBILE_PAYMENT'
-        | 'OTHER';
-      amountTendered: string | null;
-      change: string | null;
-      transactionId: Record<string, never> | null;
-      notes: Record<string, never> | null;
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-    };
-    CreateRefundDto: {
-      /**
-       * @description Refund amount (as string for Decimal precision)
-       * @example 50.00
-       */
-      amount: string;
-      /**
-       * @description Reason for refund
-       * @example Item returned
-       */
-      reason?: string;
-      /**
-       * @description Staff member who processed the refund
-       * @example John Doe
-       */
-      refundedBy?: string;
-    };
-    RefundResponseDto: {
-      id: string;
-      orderId: string;
-      amount: string;
-      reason: Record<string, never> | null;
-      refundedBy: Record<string, never> | null;
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-    };
-    CalculateSplitDto: {
-      /**
-       * @description Split type to calculate
-       * @example EVEN
-       * @enum {string}
-       */
-      splitType: 'EVEN' | 'BY_ITEM' | 'CUSTOM';
-      /** @description Split data based on split type */
-      splitData: Record<string, never>;
-    };
-    RecordSplitPaymentDto: {
-      /**
-       * @description Payment method
-       * @example CASH
-       * @enum {string}
-       */
-      paymentMethod:
-        | 'CASH'
-        | 'CREDIT_CARD'
-        | 'DEBIT_CARD'
-        | 'MOBILE_PAYMENT'
-        | 'OTHER';
-      /**
-       * @description Payment amount (as string for Decimal precision)
-       * @example 50.00
-       */
-      amount: string;
-      /**
-       * @description Amount tendered by customer (for cash payments only)
-       * @example 50.00
-       */
-      amountTendered?: string;
-      /**
-       * @description Change to return (calculated automatically for cash)
-       * @example 0.00
-       */
-      change?: string;
-      /**
-       * @description Split type
-       * @example EVEN
-       * @enum {string}
-       */
-      splitType: 'EVEN' | 'BY_ITEM' | 'CUSTOM';
-      /**
-       * @description Guest number for this split payment (1, 2, 3, etc.)
-       * @example 1
-       */
-      guestNumber: number;
-      /**
-       * @description Split metadata (JSON object with calculation details)
-       * @example {
-       *       "guestCount": 2,
-       *       "assignedItems": []
-       *     }
-       */
-      splitMetadata?: Record<string, never>;
-      /**
-       * @description External transaction ID (for card/mobile payments)
-       * @example TXN123456789
-       */
-      transactionId?: string;
-    };
-    SalesSummaryDto: {
-      /**
-       * @description Total sales amount
-       * @example 12500.00
-       */
-      totalSales: string;
-      /**
-       * @description Total number of orders
-       * @example 125
-       */
-      orderCount: number;
-      /**
-       * @description Average order value
-       * @example 100.00
-       */
-      averageOrderValue: string;
-      /**
-       * @description Total VAT collected
-       * @example 875.00
-       */
-      totalVat: string;
-      /**
-       * @description Total service charge collected
-       * @example 0.00
-       */
-      totalServiceCharge: string;
-      /**
-       * Format: date-time
-       * @description Date range start
-       */
-      startDate: string;
-      /**
-       * Format: date-time
-       * @description Date range end
-       */
-      endDate: string;
-    };
-    PaymentMethodBreakdownDto: {
-      /**
-       * @description Payment method
-       * @enum {string}
-       */
-      paymentMethod:
-        | 'CASH'
-        | 'CREDIT_CARD'
-        | 'DEBIT_CARD'
-        | 'MOBILE_PAYMENT'
-        | 'OTHER';
-      /**
-       * @description Total amount for this payment method
-       * @example 5000.00
-       */
-      totalAmount: string;
-      /**
-       * @description Number of transactions
-       * @example 50
-       */
-      transactionCount: number;
-      /**
-       * @description Percentage of total sales
-       * @example 40.5
-       */
-      percentage: number;
-    };
-    PaymentBreakdownDto: {
-      /** @description Breakdown by payment method */
-      breakdown: components['schemas']['PaymentMethodBreakdownDto'][];
-      /**
-       * Format: date-time
-       * @description Date range start
-       */
-      startDate: string;
-      /**
-       * Format: date-time
-       * @description Date range end
-       */
-      endDate: string;
-    };
-    PopularItemDto: {
-      /** @description Menu item ID */
-      menuItemId: string;
-      /** @description Menu item name */
-      menuItemName: string;
-      /**
-       * @description Total quantity sold
-       * @example 150
-       */
-      quantitySold: number;
-      /**
-       * @description Total revenue from this item
-       * @example 1500.00
-       */
-      totalRevenue: string;
-      /**
-       * @description Number of orders containing this item
-       * @example 75
-       */
-      orderCount: number;
-    };
-    PopularItemsDto: {
-      /** @description List of popular items */
-      items: components['schemas']['PopularItemDto'][];
-      /**
-       * Format: date-time
-       * @description Date range start
-       */
-      startDate: string;
-      /**
-       * Format: date-time
-       * @description Date range end
-       */
-      endDate: string;
-    };
-    OrderStatusCountDto: {
-      /**
-       * @description Order status
-       * @enum {string}
-       */
-      status:
-        | 'PENDING'
-        | 'PREPARING'
-        | 'READY'
-        | 'SERVED'
-        | 'COMPLETED'
-        | 'CANCELLED';
-      /**
-       * @description Number of orders with this status
-       * @example 25
-       */
-      count: number;
-      /**
-       * @description Percentage of total orders
-       * @example 20.5
-       */
-      percentage: number;
-    };
-    OrderStatusReportDto: {
-      /** @description Order status distribution */
-      statusDistribution: components['schemas']['OrderStatusCountDto'][];
-      /**
-       * @description Total number of orders
-       * @example 125
-       */
-      totalOrders: number;
-      /**
-       * Format: date-time
-       * @description Date range start
-       */
-      startDate: string;
-      /**
-       * Format: date-time
-       * @description Date range end
-       */
-      endDate: string;
-    };
-    StoreInformationResponseDto: {
-      /** Format: uuid */
-      id: string;
-      /** Format: uuid */
-      storeId: string;
-      name: string;
-      /**
-       * @description Base S3 path for logo
-       * @example uploads/abc-123-def
-       */
-      logoPath?: Record<string, never> | null;
-      /**
-       * @description Base S3 path for cover photo
-       * @example uploads/def-456-ghi
-       */
-      coverPhotoPath?: Record<string, never> | null;
-      address?: Record<string, never> | null;
-      phone?: Record<string, never> | null;
-      email?: Record<string, never> | null;
-      website?: Record<string, never> | null;
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-    };
-    StoreSettingResponseDto: {
-      /**
-       * Format: uuid
-       * @description Setting record ID
-       */
-      id: string;
-      /**
-       * Format: uuid
-       * @description ID of the associated store
-       */
-      storeId: string;
-      /**
-       * @description Store currency code
-       * @example USD
-       * @enum {string}
-       */
-      currency: 'THB' | 'MMK' | 'USD' | 'EUR' | 'JPY' | 'CNY' | 'SGD' | 'HKD';
-      /**
-       * @description VAT rate (e.g., 0.07 for 7%)
-       * @example 0.07
-       */
-      vatRate?: string | null;
-      /**
-       * @description Service charge rate (e.g., 0.10 for 10%)
-       * @example 0.10
-       */
-      serviceChargeRate?: string | null;
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-    };
-    GetStoreDetailsResponseDto: {
-      /**
-       * Format: uuid
-       * @description Store's unique identifier
-       */
-      id: string;
-      /**
-       * @description Store's unique URL slug
-       * @example demo-cafe
-       */
-      slug: string;
-      information: components['schemas']['StoreInformationResponseDto'] | null;
-      setting: components['schemas']['StoreSettingResponseDto'] | null;
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-    };
-    CreateStoreDto: {
-      /**
-       * @description Store's display name
-       * @example My New Cafe
-       */
-      name: string;
-      /**
-       * @description Store's physical address
-       * @example 456 Side St, Anytown
-       */
-      address?: string;
-      /**
-       * @description Store's contact phone number
-       * @example 555-987-6543
-       */
-      phone?: string;
-      /**
-       * @description Store's contact email address
-       * @example info@mynewcafe.com
-       */
-      email?: string;
-      /**
-       * @description Store's website URL
-       * @example https://mynewcafe.com
-       */
-      website?: string;
-    };
-    UpdateStoreInformationDto: {
-      /**
-       * @description Store's display name
-       * @example My New Cafe
-       */
-      name: string;
-      /**
-       * @description Store's logo base path (S3). Frontend constructs URL: baseUrl + logoPath + '-' + size + '.webp'
-       * @example uploads/abc-123-def-456
-       */
-      logoPath?: string | null;
-      /**
-       * @description Store's cover photo base path (S3). Frontend constructs URL: baseUrl + coverPhotoPath + '-' + size + '.webp'
-       * @example uploads/def-456-ghi-789
-       */
-      coverPhotoPath?: string | null;
-      /**
-       * @description Store's physical address
-       * @example 456 Side St, Anytown
-       */
-      address?: string | null;
-      /**
-       * @description Store's contact phone number
-       * @example 555-987-6543
-       */
-      phone?: string | null;
-      /**
-       * @description Store's contact email address
-       * @example info@mynewcafe.com
-       */
-      email?: string | null;
-      /**
-       * @description Store's website URL
-       * @example https://mynewcafe.com
-       */
-      website?: string | null;
-    };
-    UpdateStoreSettingDto: {
-      /**
-       * @description Update the default currency for the store.
-       * @example THB
-       * @enum {string}
-       */
-      currency?: 'THB' | 'MMK' | 'USD' | 'EUR' | 'JPY' | 'CNY' | 'SGD' | 'HKD';
-      /**
-       * @description Update the VAT rate. Send as a string (e.g., "0.07" for 7%, "0.125" for 12.5%). Send null or omit to remove/keep unchanged. Must be between "0.000" and "0.999".
-       * @example 0.07
-       */
-      vatRate?: string | null;
-      /**
-       * @description Update the Service Charge rate. Send as a string (e.g., "0.10" for 10%). Send null or omit to remove/keep unchanged. Must be between "0.000" and "0.999".
-       * @example 0.10
-       */
-      serviceChargeRate?: string | null;
-    };
-    InviteOrAssignRoleDto: {
-      /**
-       * @description The email of the user to invite or assign a role to
-       * @example newuser@example.com
-       */
-      email: string;
-      /**
-       * @description The new role for the user in this store
-       * @example ADMIN
-       * @enum {string}
-       */
-      role:
-        | 'PLATFORM_ADMIN'
-        | 'OWNER'
-        | 'ADMIN'
-        | 'CHEF'
-        | 'CASHIER'
-        | 'SERVER';
-    };
-    UpdateTaxAndServiceChargeDto: {
-      /**
-       * @description VAT rate as decimal string (e.g., "0.07" for 7%)
-       * @example 0.07
-       */
-      vatRate: string;
-      /**
-       * @description Service charge rate as decimal string (e.g., "0.10" for 10%)
-       * @example 0.10
-       */
-      serviceChargeRate: string;
-    };
-    DayHoursDto: {
-      /**
-       * @description Whether the store is closed on this day
-       * @example false
-       */
-      closed: boolean;
-      /**
-       * @description Opening time in HH:MM format (required if not closed)
-       * @example 09:00
-       */
-      open?: string;
-      /**
-       * @description Closing time in HH:MM format (required if not closed)
-       * @example 22:00
-       */
-      close?: string;
-    };
-    BusinessHoursDto: {
-      /** @description Business hours for Monday */
-      monday: components['schemas']['DayHoursDto'];
-      /** @description Business hours for Tuesday */
-      tuesday: components['schemas']['DayHoursDto'];
-      /** @description Business hours for Wednesday */
-      wednesday: components['schemas']['DayHoursDto'];
-      /** @description Business hours for Thursday */
-      thursday: components['schemas']['DayHoursDto'];
-      /** @description Business hours for Friday */
-      friday: components['schemas']['DayHoursDto'];
-      /** @description Business hours for Saturday */
-      saturday: components['schemas']['DayHoursDto'];
-      /** @description Business hours for Sunday */
-      sunday: components['schemas']['DayHoursDto'];
-    };
-    UpdateLoyaltyRulesDto: {
-      /**
-       * @description Points earned per currency unit (e.g., "0.1" = 1 point per 10 THB)
-       * @example 0.1
-       */
-      pointRate: string;
-      /**
-       * @description Currency value per point for redemption (e.g., "0.1" = 100 points = 10 THB)
-       * @example 0.1
-       */
-      redemptionRate: string;
-      /**
-       * @description Number of days before loyalty points expire (0-3650)
-       * @example 365
-       */
-      expiryDays: number;
-    };
-    TableResponseDto: {
-      /** Format: uuid */
-      id: string;
-      /** Format: uuid */
-      storeId: string;
-      /** @example Table 10 */
-      name: string;
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-    };
-    TableDeletedResponseDto: {
-      /**
-       * Format: uuid
-       * @description ID of the deleted table.
-       */
-      id: string;
-      /**
-       * @description Indicator that the deletion was successful.
-       * @example true
-       */
-      deleted: boolean;
-    };
-    UpsertTableDto: {
-      /**
-       * Format: uuid
-       * @description ID (UUID) of the table to update. Omit to create a new table.
-       * @example 018ec1a8-0f9b-7d9c-a4f2-0d3f1a0f9b8c
-       */
-      id?: string;
-      /**
-       * @description Display name or number for the table (must be unique within the store)
-       * @example Table 12 / Patio Seat 4
-       */
-      name: string;
-    };
-    BatchUpsertTableDto: {
-      /** @description An array of table objects to create or update. Any existing tables for the store NOT included in this list (by ID) will be deleted. */
-      tables: components['schemas']['UpsertTableDto'][];
-    };
-    UpdateTableStatusDto: {
-      /**
-       * @description New status for the table
-       * @example SEATED
-       * @enum {string}
-       */
-      status:
-        | 'VACANT'
-        | 'SEATED'
-        | 'ORDERING'
-        | 'SERVED'
-        | 'READY_TO_PAY'
-        | 'CLEANING';
-    };
-    CreateTableDto: {
-      /**
-       * @description Display name or number for the table (unique within the store)
-       * @example Table 10
-       */
-      name: string;
-    };
-    UpdateTableDto: {
-      /**
-       * @description New display name or number for the table (unique within the store)
-       * @example Patio 5
-       */
-      name?: string;
-    };
-  };
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+    schemas: {
+        CreateManualSessionDto: {
+            /**
+             * @description Type of manual session (COUNTER, PHONE, or TAKEOUT)
+             * @example COUNTER
+             * @enum {string}
+             */
+            sessionType: "TABLE" | "COUNTER" | "PHONE" | "TAKEOUT";
+            /**
+             * @description Optional customer name
+             * @example John Doe
+             */
+            customerName?: string;
+            /**
+             * @description Optional customer phone number
+             * @example +1234567890
+             */
+            customerPhone?: string;
+            /**
+             * @description Number of guests in the session
+             * @example 2
+             */
+            guestCount?: number;
+        };
+        JoinSessionDto: {
+            /**
+             * @description Number of guests in the session
+             * @example 4
+             */
+            guestCount?: number;
+        };
+        UpdateSessionDto: {
+            /**
+             * @description Number of guests in the session
+             * @example 4
+             */
+            guestCount?: number;
+            /**
+             * @description Session status
+             * @enum {string}
+             */
+            status?: "ACTIVE" | "CLOSED";
+        };
+        ChooseStoreDto: {
+            /**
+             * @description The ID (UUID) of the store the user wants to act under
+             * @example 5
+             */
+            storeId: string;
+        };
+        StandardApiErrorDetails: {
+            /**
+             * @description Machine-readable error code identifying the error type (e.g., validation, auth, system error).
+             * @example ERROR_CODE_IDENTIFIER
+             */
+            code: string;
+            /**
+             * @description A human-readable message specifically describing this error.
+             * @example A detailed error message explaining what went wrong.
+             */
+            message: string;
+            /**
+             * @description Identifies the specific input field related to the error, if applicable (often used for validation errors).
+             * @example relevantFieldName
+             */
+            field?: Record<string, never> | null;
+        };
+        StandardApiResponse: {
+            /**
+             * @example success
+             * @enum {string}
+             */
+            status: "success" | "error";
+            /** @description Response data payload when status is "success". */
+            data?: Record<string, never> | null;
+            /**
+             * @description A general human-readable message about the operation outcome.
+             * @example Operation successful
+             */
+            message?: Record<string, never> | null;
+            /** @description Array of error details when status is "error". Usually empty on success. */
+            errors?: components["schemas"]["StandardApiErrorDetails"][] | null;
+        };
+        UserProfileResponseDto: {
+            /**
+             * @description User's unique identifier
+             * @example 123
+             */
+            id: string;
+            /**
+             * @description User's email address
+             * @example user@example.com
+             */
+            email: string;
+            /**
+             * @description User's display name
+             * @example Jane Doe
+             */
+            name?: Record<string, never> | null;
+            /**
+             * @description Indicates if the user email is verified
+             * @example true
+             */
+            verified: boolean;
+            /**
+             * @description User's role in the specific store requested via query parameter (if provided and user is a member)
+             * @example CASHIER
+             * @enum {string|null}
+             */
+            selectedStoreRole?: "PLATFORM_ADMIN" | "OWNER" | "ADMIN" | "CHEF" | "CASHIER" | "SERVER" | null;
+            /**
+             * Format: date-time
+             * @description Timestamp when the user was created
+             */
+            createdAt: string;
+        };
+        CreateUserDto: {
+            /** @example john@example.com */
+            email: string;
+            /** @example John Doe */
+            name?: string;
+        };
+        AddUserToStoreDto: {
+            userId: string;
+            storeId: string;
+            /** @enum {string} */
+            role: "PLATFORM_ADMIN" | "OWNER" | "ADMIN" | "CHEF" | "CASHIER" | "SERVER";
+        };
+        InviteStaffDto: {
+            /**
+             * @description Email address of the staff member to invite
+             * @example newstaff@example.com
+             */
+            email: string;
+            /**
+             * @description Role to assign to the staff member
+             * @example SERVER
+             * @enum {string}
+             */
+            role: "PLATFORM_ADMIN" | "OWNER" | "ADMIN" | "CHEF" | "CASHIER" | "SERVER";
+        };
+        ChangeRoleDto: {
+            /**
+             * @description New role to assign to the user
+             * @example ADMIN
+             * @enum {string}
+             */
+            role: "PLATFORM_ADMIN" | "OWNER" | "ADMIN" | "CHEF" | "CASHIER" | "SERVER";
+        };
+        SuspendUserDto: {
+            /**
+             * @description Reason for suspending the user
+             * @example Violated company policy on multiple occasions
+             */
+            reason: string;
+        };
+        TierResponseDto: {
+            /**
+             * @description Subscription ID
+             * @example 0194ca3b-...
+             */
+            id: string;
+            /**
+             * @description Store ID
+             * @example 0194ca3b-...
+             */
+            storeId: string;
+            /**
+             * @description Current tier
+             * @example STANDARD
+             * @enum {string}
+             */
+            tier: "FREE" | "STANDARD" | "PREMIUM";
+            /**
+             * @description External subscription ID
+             * @example sub_123
+             */
+            subscriptionId?: string;
+            /**
+             * @description Subscription status
+             * @example ACTIVE
+             * @enum {string}
+             */
+            subscriptionStatus: "ACTIVE" | "CANCELLED" | "PAST_DUE" | "TRIAL" | "SUSPENDED";
+            /**
+             * @description Billing cycle
+             * @example MONTHLY
+             * @enum {string}
+             */
+            billingCycle: "MONTHLY" | "YEARLY";
+            /**
+             * Format: date-time
+             * @description Current period start date
+             * @example 2025-01-01T00:00:00.000Z
+             */
+            currentPeriodStart?: string;
+            /**
+             * Format: date-time
+             * @description Current period end date
+             * @example 2025-02-01T00:00:00.000Z
+             */
+            currentPeriodEnd?: string;
+            /**
+             * Format: date-time
+             * @description Trial end date
+             * @example 2025-01-15T00:00:00.000Z
+             */
+            trialEndsAt?: string;
+            /**
+             * Format: date-time
+             * @description Created at timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Updated at timestamp
+             */
+            updatedAt: string;
+        };
+        ResourceUsageDto: {
+            /**
+             * @description Current usage count
+             * @example 15
+             */
+            current: number;
+            /**
+             * @description Maximum allowed by tier
+             * @example 20
+             */
+            limit: number;
+            /**
+             * @description Usage percentage (calculated)
+             * @example 75
+             */
+            percentage: number;
+        };
+        UsageBreakdownDto: {
+            tables: components["schemas"]["ResourceUsageDto"];
+            menuItems: components["schemas"]["ResourceUsageDto"];
+            staff: components["schemas"]["ResourceUsageDto"];
+            monthlyOrders: components["schemas"]["ResourceUsageDto"];
+        };
+        FeatureAccessDto: {
+            /**
+             * @description Access to Kitchen Display System
+             * @example true
+             */
+            kds: boolean;
+            /**
+             * @description Access to Loyalty Program
+             * @example false
+             */
+            loyalty: boolean;
+            /**
+             * @description Access to Advanced Reports
+             * @example false
+             */
+            advancedReports: boolean;
+        };
+        StoreUsageDto: {
+            /**
+             * @example STANDARD
+             * @enum {string}
+             */
+            tier: "FREE" | "STANDARD" | "PREMIUM";
+            usage: components["schemas"]["UsageBreakdownDto"];
+            features: components["schemas"]["FeatureAccessDto"];
+        };
+        AuditLogUserDto: {
+            /**
+             * @description User ID
+             * @example 0194ca3b-...
+             */
+            id: string;
+            /**
+             * @description User email
+             * @example user@example.com
+             */
+            email?: string;
+            /**
+             * @description User name
+             * @example John Doe
+             */
+            name?: string;
+        };
+        AuditLogEntryDto: {
+            /**
+             * @description Audit log ID
+             * @example 0194ca3b-...
+             */
+            id: string;
+            /**
+             * @description Store ID
+             * @example 0194ca3b-...
+             */
+            storeId: string;
+            /** @description User who performed the action */
+            user?: components["schemas"]["AuditLogUserDto"];
+            /**
+             * @description Action performed
+             * @example MENU_ITEM_CREATED
+             * @enum {string}
+             */
+            action: "STORE_CREATED" | "STORE_UPDATED" | "STORE_DELETED" | "USER_ADDED" | "USER_REMOVED" | "USER_ROLE_CHANGED" | "MENU_ITEM_CREATED" | "MENU_ITEM_UPDATED" | "MENU_ITEM_DELETED" | "ORDER_CREATED" | "ORDER_UPDATED" | "ORDER_CANCELLED" | "PAYMENT_CREATED" | "PAYMENT_REFUNDED" | "SETTINGS_UPDATED";
+            /**
+             * @description Type of entity affected
+             * @example MenuItem
+             */
+            entityType: string;
+            /**
+             * @description ID of the affected entity
+             * @example 0194ca3b-...
+             */
+            entityId?: string;
+            /**
+             * @description Additional action-specific details
+             * @example {
+             *       "previousValue": "10.00",
+             *       "newValue": "12.00"
+             *     }
+             */
+            details?: Record<string, never>;
+            /**
+             * @description IP address of the requester
+             * @example 192.168.1.1
+             */
+            ipAddress?: string;
+            /**
+             * @description User agent of the requester
+             * @example Mozilla/5.0...
+             */
+            userAgent?: string;
+            /**
+             * Format: date-time
+             * @description Timestamp of the action
+             */
+            createdAt: string;
+        };
+        AuditLogPaginatedResponseDto: {
+            /** @description Array of audit log entries */
+            logs: components["schemas"]["AuditLogEntryDto"][];
+            /**
+             * @description Total count of matching logs
+             * @example 100
+             */
+            total: number;
+            /**
+             * @description Current page number
+             * @example 1
+             */
+            page: number;
+            /**
+             * @description Items per page
+             * @example 50
+             */
+            limit: number;
+        };
+        CartItemCustomizationDto: {
+            /**
+             * @description Customization option ID
+             * @example 01234567
+             */
+            customizationOptionId: string;
+        };
+        AddToCartDto: {
+            /**
+             * @description Menu item ID to add to cart
+             * @example 01234567
+             */
+            menuItemId: string;
+            /**
+             * @description Quantity of the item
+             * @example 2
+             */
+            quantity: number;
+            /**
+             * @description Special instructions or notes
+             * @example No onions please
+             */
+            notes?: string;
+            /** @description Selected customization options */
+            customizations?: components["schemas"]["CartItemCustomizationDto"][];
+        };
+        UpdateCartItemDto: {
+            /**
+             * @description Updated quantity
+             * @example 3
+             */
+            quantity?: number;
+            /**
+             * @description Updated notes
+             * @example Extra spicy
+             */
+            notes?: string;
+        };
+        CheckoutCartDto: {
+            /**
+             * @description Order type
+             * @default DINE_IN
+             * @example DINE_IN
+             * @enum {string}
+             */
+            orderType: "DINE_IN" | "TAKEAWAY" | "DELIVERY";
+            /**
+             * @description Table name (from session)
+             * @example Table 5
+             */
+            tableName?: string;
+        };
+        QuickSaleItemDto: {
+            /**
+             * @description Menu item ID
+             * @example 550e8400-e29b-41d4-a716-446655440000
+             */
+            menuItemId: string;
+            /**
+             * @description Quantity of the item
+             * @example 2
+             */
+            quantity: number;
+            /**
+             * @description Array of customization option IDs
+             * @example [
+             *       "550e8400-e29b-41d4-a716-446655440001"
+             *     ]
+             */
+            customizationOptionIds?: string[];
+            /**
+             * @description Notes for the item
+             * @example No onions
+             */
+            notes?: string;
+        };
+        QuickSaleCheckoutDto: {
+            /**
+             * @description Store ID
+             * @example 550e8400-e29b-41d4-a716-446655440000
+             */
+            storeId: string;
+            /**
+             * @description Session type (COUNTER, PHONE, or TAKEOUT - not TABLE)
+             * @example COUNTER
+             * @enum {string}
+             */
+            sessionType: "COUNTER" | "PHONE" | "TAKEOUT";
+            /**
+             * @description Order type
+             * @example DINE_IN
+             * @enum {string}
+             */
+            orderType: "DINE_IN" | "TAKEAWAY" | "DELIVERY";
+            /** @description Array of items to checkout */
+            items: components["schemas"]["QuickSaleItemDto"][];
+            /**
+             * @description Customer name (optional, useful for phone/takeout orders)
+             * @example John Doe
+             */
+            customerName?: string;
+            /**
+             * @description Customer phone number (optional, useful for phone orders)
+             * @example +1234567890
+             */
+            customerPhone?: string;
+            /**
+             * @description Notes for the entire order
+             * @example Rush order
+             */
+            orderNotes?: string;
+        };
+        UpdateOrderStatusDto: {
+            /**
+             * @description New order status
+             * @example PREPARING
+             * @enum {string}
+             */
+            status: "PENDING" | "PREPARING" | "READY" | "SERVED" | "COMPLETED" | "CANCELLED";
+        };
+        ApplyDiscountDto: Record<string, never>;
+        UpdateKitchenStatusDto: {
+            /**
+             * @description New kitchen status
+             * @example PREPARING
+             * @enum {string}
+             */
+            status: "PENDING" | "PREPARING" | "READY" | "SERVED" | "COMPLETED" | "CANCELLED";
+        };
+        ValidateAdminTokenDto: {
+            /**
+             * @description Auth0 access token from admin tenant
+             * @example eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+             */
+            auth0Token: string;
+        };
+        SuspendStoreDto: {
+            /** @example Payment fraud detected */
+            reason: string;
+        };
+        BanStoreDto: {
+            /** @example Repeated terms of service violations */
+            reason: string;
+        };
+        ReactivateStoreDto: {
+            /** @example Issue resolved, reactivating store */
+            note?: string;
+        };
+        DowngradeTierDto: {
+            /**
+             * @description Target tier ID to downgrade to
+             * @example tier_free
+             * @enum {string}
+             */
+            targetTierId: "tier_free" | "tier_standard" | "tier_premium";
+            /** @example Payment declined multiple times */
+            reason: string;
+        };
+        AdminSuspendUserDto: {
+            /** @example Suspicious activity detected */
+            reason: string;
+        };
+        BanUserDto: {
+            /** @example Multiple policy violations */
+            reason: string;
+        };
+        ReactivateUserDto: {
+            /** @example Issue resolved, reactivating user */
+            note?: string;
+        };
+        VerifyPaymentDto: {
+            /**
+             * @description Admin notes for payment verification
+             * @example Payment verified via bank statement
+             */
+            notes?: string;
+        };
+        RejectPaymentDto: {
+            /**
+             * @description Reason for rejecting the payment
+             * @example Payment proof is unclear or invalid
+             */
+            rejectionReason: string;
+        };
+        PaymentRequestResponseDto: {
+            /**
+             * @description Payment request ID
+             * @example 0194ca3b-...
+             */
+            id: string;
+            /**
+             * @description Subscription ID
+             * @example 0194ca3b-...
+             */
+            subscriptionId: string;
+            /**
+             * @description Payment request status
+             * @example PENDING_VERIFICATION
+             * @enum {string}
+             */
+            status: "PENDING_VERIFICATION" | "VERIFIED" | "ACTIVATED" | "REJECTED";
+            /**
+             * @description Requested subscription tier
+             * @example PREMIUM
+             * @enum {string}
+             */
+            requestedTier: "FREE" | "STANDARD" | "PREMIUM";
+            /**
+             * @description Payment proof image path
+             * @example payment-proofs/store-id/uuid-original.jpg
+             */
+            paymentProofPath?: Record<string, never>;
+            /**
+             * @description Admin notes
+             * @example Payment verified
+             */
+            notes?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @description Created at timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Updated at timestamp
+             */
+            updatedAt: string;
+        };
+        CreatePaymentRequestDto: {
+            /**
+             * @description Requested subscription tier
+             * @example STANDARD
+             * @enum {string}
+             */
+            tier: "FREE" | "STANDARD" | "PREMIUM";
+            /**
+             * @description Store ID for the subscription
+             * @example 0194ca3b-...
+             */
+            storeId: string;
+            /**
+             * @description Requested subscription duration in days
+             * @default 365
+             * @example 365
+             */
+            requestedDuration: number;
+            /**
+             * @description Payment amount (max 2 decimal places)
+             * @example 99.99
+             */
+            amount: number;
+            /**
+             * @description Currency for the payment
+             * @default USD
+             * @example USD
+             * @enum {string}
+             */
+            currency: "THB" | "MMK" | "USD" | "EUR" | "JPY" | "CNY" | "SGD" | "HKD";
+            /**
+             * @description Bank transfer details (JSON object with bank name, account number, etc.)
+             * @example {
+             *       "bankName": "Bank of America",
+             *       "accountNumber": "****1234",
+             *       "transferDate": "2025-01-15",
+             *       "referenceNumber": "TXN123456"
+             *     }
+             */
+            bankTransferDetails?: Record<string, never>;
+        };
+        TrialEligibilityResponseDto: {
+            /**
+             * @description Whether user is eligible for trial
+             * @example true
+             */
+            eligible: boolean;
+        };
+        TrialInfoResponseDto: {
+            /**
+             * @description Whether store is currently on trial
+             * @example true
+             */
+            isTrialActive: boolean;
+            /**
+             * @description Trial start date
+             * @example 2025-01-01T00:00:00.000Z
+             */
+            trialStartedAt?: Record<string, never>;
+            /**
+             * @description Trial end date
+             * @example 2025-01-15T00:00:00.000Z
+             */
+            trialEndsAt?: Record<string, never>;
+            /**
+             * @description Days remaining in trial
+             * @example 7
+             */
+            daysRemaining: number;
+            /**
+             * @description Whether the store can start a new trial
+             * @example false
+             */
+            canStartTrial: boolean;
+        };
+        OwnershipTransferResponseDto: {
+            /**
+             * @description Transfer ID
+             * @example 0194ca3b-...
+             */
+            id: string;
+            /**
+             * @description Store ID
+             * @example 0194ca3b-...
+             */
+            storeId: string;
+            /**
+             * @description Transfer status
+             * @example PENDING_OTP
+             * @enum {string}
+             */
+            status: "PENDING_OTP" | "COMPLETED" | "EXPIRED" | "CANCELLED";
+            /**
+             * @description Notes about the transfer
+             * @example Ownership transfer for business sale
+             */
+            notes?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @description Created at timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Updated at timestamp
+             */
+            updatedAt: string;
+        };
+        InitiateOwnershipTransferDto: {
+            /**
+             * @description Store ID for ownership transfer
+             * @example abc1234
+             */
+            storeId: string;
+            /**
+             * @description Email of the new owner
+             * @example newowner@example.com
+             */
+            newOwnerEmail: string;
+        };
+        VerifyOtpDto: {
+            /**
+             * @description 6-digit OTP code
+             * @example 123456
+             */
+            otp: string;
+        };
+        RefundRequestResponseDto: {
+            /**
+             * @description Refund request ID
+             * @example 0194ca3b-...
+             */
+            id: string;
+            /**
+             * @description Subscription ID
+             * @example 0194ca3b-...
+             */
+            subscriptionId: string;
+            /**
+             * @description Transaction ID
+             * @example 0194ca3b-...
+             */
+            transactionId: string;
+            /**
+             * @description Requested refund amount (Decimal)
+             * @example 99.00
+             */
+            requestedAmount: string;
+            /**
+             * @description Currency for the refund
+             * @example USD
+             * @enum {string}
+             */
+            currency: "THB" | "MMK" | "USD" | "EUR" | "JPY" | "CNY" | "SGD" | "HKD";
+            /**
+             * @description Reason for refund request
+             * @example Not satisfied with the service
+             */
+            reason: string;
+            /**
+             * @description Refund status
+             * @example REQUESTED
+             * @enum {string}
+             */
+            status: "REQUESTED" | "APPROVED" | "REJECTED" | "PROCESSED";
+            /**
+             * @description User who requested the refund
+             * @example 0194ca3b-...
+             */
+            requestedBy: string;
+            /**
+             * Format: date-time
+             * @description Requested at timestamp
+             */
+            requestedAt: string;
+            /**
+             * @description Admin who reviewed the refund request
+             * @example 0194ca3b-...
+             */
+            reviewedBy?: Record<string, never> | null;
+            /** @description When the refund was reviewed */
+            reviewedAt?: Record<string, never> | null;
+            /**
+             * @description Notes from admin approval
+             * @example Approved due to valid reason
+             */
+            approvalNotes?: Record<string, never> | null;
+            /**
+             * @description Reason for rejection
+             * @example Request does not meet refund policy criteria
+             */
+            rejectionReason?: Record<string, never> | null;
+            /**
+             * @description Admin who processed the refund
+             * @example 0194ca3b-...
+             */
+            processedBy?: Record<string, never> | null;
+            /** @description When the refund was processed */
+            processedAt?: Record<string, never> | null;
+            /**
+             * @description Method used for refund (e.g., bank transfer, original payment method)
+             * @example bank_transfer
+             */
+            refundMethod?: Record<string, never> | null;
+            /**
+             * @description Path to refund proof document/image
+             * @example refunds/store-id/uuid-proof.jpg
+             */
+            refundProofPath?: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @description Created at timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Updated at timestamp
+             */
+            updatedAt: string;
+        };
+        CreateRefundRequestDto: {
+            /**
+             * @description Subscription ID for the refund request
+             * @example sub_abc1
+             */
+            subscriptionId: string;
+            /**
+             * @description Reason for requesting refund
+             * @example Not satisfied with the service quality
+             */
+            reason: string;
+        };
+        SubscriptionResponseDto: {
+            /**
+             * @description Subscription ID
+             * @example 0194ca3b-...
+             */
+            id: string;
+            /**
+             * @description Store ID
+             * @example 0194ca3b-...
+             */
+            storeId: string;
+            /**
+             * @description Current tier
+             * @example STANDARD
+             * @enum {string}
+             */
+            tier: "FREE" | "STANDARD" | "PREMIUM";
+            /**
+             * @description Subscription status
+             * @example ACTIVE
+             * @enum {string}
+             */
+            status: "TRIAL" | "ACTIVE" | "EXPIRED" | "CANCELLED" | "SUSPENDED";
+            /**
+             * @description Billing cycle
+             * @example MONTHLY
+             * @enum {string}
+             */
+            billingCycle: "MONTHLY" | "YEARLY";
+            /**
+             * Format: date-time
+             * @description Current period start date
+             * @example 2025-01-01T00:00:00.000Z
+             */
+            currentPeriodStart?: string;
+            /**
+             * Format: date-time
+             * @description Current period end date
+             * @example 2025-02-01T00:00:00.000Z
+             */
+            currentPeriodEnd?: string;
+            /**
+             * Format: date-time
+             * @description Trial end date (if on trial)
+             * @example 2025-01-15T00:00:00.000Z
+             */
+            trialEndsAt?: string;
+            /**
+             * Format: date-time
+             * @description Created at timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Updated at timestamp
+             */
+            updatedAt: string;
+        };
+        ImageMetadataDto: {
+            /**
+             * @description Original image width in pixels
+             * @example 1920
+             */
+            originalWidth?: number;
+            /**
+             * @description Original image height in pixels
+             * @example 1080
+             */
+            originalHeight?: number;
+            /**
+             * @description Image format (e.g., 'jpeg', 'png', 'webp', 'pdf')
+             * @example jpeg
+             */
+            format?: string;
+            /**
+             * @description Original file size in bytes
+             * @example 2048576
+             */
+            originalSize: number;
+            /**
+             * @description Whether the image has transparency (alpha channel)
+             * @example false
+             */
+            hasAlpha?: boolean;
+            /**
+             * @description Color space of the image (e.g., 'srgb', 'cmyk')
+             * @example srgb
+             */
+            space?: string;
+            /**
+             * @description Generated versions with their metadata (dimensions and sizes, no URLs)
+             * @example {
+             *       "small": {
+             *         "width": 400,
+             *         "height": 300,
+             *         "size": 51200
+             *       },
+             *       "medium": {
+             *         "width": 800,
+             *         "height": 600,
+             *         "size": 102400
+             *       },
+             *       "large": {
+             *         "width": 1200,
+             *         "height": 900,
+             *         "size": 204800
+             *       }
+             *     }
+             */
+            versions: Record<string, never>;
+        };
+        UploadImageResponseDto: {
+            /**
+             * @description Base S3 path without version suffix. Frontend constructs full URLs using: baseUrl + basePath + '-' + size + '.webp'
+             * @example uploads/abc-123-def-456
+             */
+            basePath: string;
+            /**
+             * @description Available image sizes generated for this upload
+             * @example [
+             *       "small",
+             *       "medium",
+             *       "large"
+             *     ]
+             */
+            availableSizes: string[];
+            /**
+             * @description Primary/default size for this preset (recommended size to display)
+             * @example medium
+             * @enum {string}
+             */
+            primarySize: "original" | "small" | "medium" | "large";
+            /** @description Metadata about the uploaded image including dimensions, file sizes, and format details for all generated versions. */
+            metadata: components["schemas"]["ImageMetadataDto"];
+        };
+        BaseTranslationResponseDto: {
+            /**
+             * @description Locale code
+             * @example en
+             * @enum {string}
+             */
+            locale: "en" | "zh" | "my" | "th";
+            /**
+             * @description Translated name
+             * @example Appetizers
+             */
+            name: string;
+        };
+        TranslationWithDescriptionResponseDto: {
+            /**
+             * @description Locale code
+             * @example en
+             * @enum {string}
+             */
+            locale: "en" | "zh" | "my" | "th";
+            /**
+             * @description Translated name
+             * @example Appetizers
+             */
+            name: string;
+            /**
+             * @description Translated description
+             * @example Delicious appetizers to start your meal
+             */
+            description?: Record<string, never> | null;
+        };
+        CustomizationOptionResponseDto: {
+            /** @example 0194ca3b-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
+            id: string;
+            /** @example Large */
+            name: string;
+            /** @example 3.25 */
+            additionalPrice?: string | null;
+            /** @example 0194ca3b-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
+            customizationGroupId: string;
+            /**
+             * @description Translations for the customization option name.
+             * @example [
+             *       {
+             *         "locale": "en",
+             *         "name": "Large"
+             *       },
+             *       {
+             *         "locale": "th",
+             *         "name": "ใหญ่"
+             *       }
+             *     ]
+             */
+            translations?: components["schemas"]["BaseTranslationResponseDto"][];
+        };
+        CustomizationGroupResponseDto: {
+            /** @example 0194ca3b-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
+            id: string;
+            /** @example Size */
+            name: string;
+            /** @example false */
+            required: boolean;
+            /** @example 0 */
+            minSelectable: number;
+            /** @example 1 */
+            maxSelectable: number;
+            /** @example 0194ca3b-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
+            menuItemId: string;
+            /**
+             * @description Translations for the customization group name.
+             * @example [
+             *       {
+             *         "locale": "en",
+             *         "name": "Size"
+             *       },
+             *       {
+             *         "locale": "th",
+             *         "name": "ขนาด"
+             *       }
+             *     ]
+             */
+            translations?: components["schemas"]["BaseTranslationResponseDto"][];
+            customizationOptions: components["schemas"]["CustomizationOptionResponseDto"][];
+        };
+        MenuItemNestedResponseDto: {
+            /** @example 0194ca3b-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
+            id: string;
+            /** @example Pad Thai */
+            name: string;
+            /** @example Classic Thai stir-fried rice noodles */
+            description?: Record<string, never> | null;
+            /**
+             * @description Base price, formatted as string.
+             * @example 49.11
+             */
+            basePrice: string;
+            /**
+             * @description Base S3 path
+             * @example uploads/abc-123-def
+             */
+            imagePath?: Record<string, never> | null;
+            /** @example 2 */
+            sortOrder: number;
+            /**
+             * @description Translations for the menu item in different locales.
+             * @example [
+             *       {
+             *         "locale": "en",
+             *         "name": "Pad Thai",
+             *         "description": "Classic Thai stir-fried rice noodles"
+             *       },
+             *       {
+             *         "locale": "th",
+             *         "name": "ผัดไทย",
+             *         "description": "ผัดไทยแบบดั้งเดิม"
+             *       }
+             *     ]
+             */
+            translations?: components["schemas"]["TranslationWithDescriptionResponseDto"][];
+            /** @description Customization groups for this menu item. */
+            customizationGroups?: components["schemas"]["CustomizationGroupResponseDto"][];
+        };
+        CategoryResponseDto: {
+            /**
+             * @description Unique identifier for the category.
+             * @example 0194ca3b-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+             */
+            id: string;
+            /**
+             * @description Name of the category.
+             * @example Appetizers
+             */
+            name: string;
+            /**
+             * @description ID (UUID) of the store this category belongs to.
+             * @example 0194ca3b-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+             */
+            storeId: string;
+            /**
+             * @description Sort order of the category within the store.
+             * @example 1
+             */
+            sortOrder: number;
+            /**
+             * @description Translations for the category name in different locales.
+             * @example [
+             *       {
+             *         "locale": "en",
+             *         "name": "Appetizers"
+             *       },
+             *       {
+             *         "locale": "th",
+             *         "name": "อาหารเรียกน้ำย่อย"
+             *       }
+             *     ]
+             */
+            translations?: components["schemas"]["BaseTranslationResponseDto"][];
+            /**
+             * Format: date-time
+             * @description Timestamp when the category was created.
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Timestamp when the category was last updated.
+             */
+            updatedAt: string;
+            /** @description Menu items belonging to this category, ordered by their sortOrder. */
+            menuItems: components["schemas"]["MenuItemNestedResponseDto"][];
+        };
+        CategoryBasicResponseDto: {
+            /** @example 6 */
+            id: string;
+            /** @example Appetizers */
+            name: string;
+            /** @example 1 */
+            storeId: string;
+            /** @example 1 */
+            sortOrder: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        CategoryDeletedResponseDto: {
+            /**
+             * @description The ID (UUID) of the deleted category.
+             * @example 6
+             */
+            id: string;
+        };
+        CreateCategoryDto: {
+            /** @example Main Dishes */
+            name: string;
+        };
+        SortMenuItemDto: {
+            /**
+             * @description Menu item ID (UUID)
+             * @example 1
+             */
+            id: string;
+            /**
+             * @description Sort order for this menu item
+             * @example 2
+             */
+            sortOrder: number;
+        };
+        SortCategoryDto: {
+            /**
+             * @description Category ID (UUID)
+             * @example 1
+             */
+            id: string;
+            /**
+             * @description Sort order for this category
+             * @example 5
+             */
+            sortOrder: number;
+            /** @description List of menu items under this category with updated sort orders */
+            menuItems: components["schemas"]["SortMenuItemDto"][];
+        };
+        SortCategoriesPayloadDto: {
+            /** @description Array of categories + associated menu items sort orders */
+            categories: components["schemas"]["SortCategoryDto"][];
+        };
+        UpdateCategoryDto: {
+            /** @example Desserts */
+            name?: string;
+        };
+        BaseTranslationDto: {
+            /**
+             * @description Locale code
+             * @example en
+             * @enum {string}
+             */
+            locale: "en" | "zh" | "my" | "th";
+            /**
+             * @description Translated name
+             * @example Appetizers
+             */
+            name: string;
+        };
+        UpdateCategoryTranslationsDto: {
+            /**
+             * @description Array of translations to add/update
+             * @example [
+             *       {
+             *         "locale": "th",
+             *         "name": "อาหารเรียกน้ำย่อย"
+             *       },
+             *       {
+             *         "locale": "zh",
+             *         "name": "开胃菜"
+             *       }
+             *     ]
+             */
+            translations: components["schemas"]["BaseTranslationDto"][];
+        };
+        MenuItemDeletedResponseDto: {
+            /**
+             * @description The ID (UUID) of the deleted menu item.
+             * @example 1
+             */
+            id: string;
+        };
+        MenuCategoryDto: {
+            /** @example 6 */
+            id: string;
+            /**
+             * @description Category name (default/fallback). Use translations map for localized names.
+             * @example Books
+             */
+            name: string;
+            /** @example 1 */
+            storeId: string;
+            /** @example 1 */
+            sortOrder: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * @description Translations map by locale (e.g., { 'en': {...}, 'th': {...} }).
+             * @example {
+             *       "en": {
+             *         "locale": "en",
+             *         "name": "Appetizers"
+             *       },
+             *       "th": {
+             *         "locale": "th",
+             *         "name": "อาหารว่าง"
+             *       }
+             *     }
+             */
+            translations?: Record<string, never> | null;
+        };
+        MenuCustomizationOptionDto: {
+            /** Format: uuid */
+            id: string;
+            /** @description Option name (default/fallback). Use translations map for localized names. */
+            name: string;
+            additionalPrice?: string | null;
+            /**
+             * @description Translations map by locale (e.g., { 'en': {...}, 'th': {...} }).
+             * @example {
+             *       "en": {
+             *         "locale": "en",
+             *         "name": "Large"
+             *       },
+             *       "th": {
+             *         "locale": "th",
+             *         "name": "ใหญ่"
+             *       }
+             *     }
+             */
+            translations?: Record<string, never> | null;
+        };
+        MenuCustomizationGroupDto: {
+            /** @example 219 */
+            id: string;
+            /**
+             * @description Group name (default/fallback). Use translations map for localized names.
+             * @example Size
+             */
+            name: string;
+            /** @example false */
+            required: boolean;
+            /** @example 0 */
+            minSelectable: number;
+            /** @example 1 */
+            maxSelectable: number;
+            /** @example 147 */
+            menuItemId: string;
+            customizationOptions: components["schemas"]["MenuCustomizationOptionDto"][];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /**
+             * @description Translations map by locale (e.g., { 'en': {...}, 'th': {...} }).
+             * @example {
+             *       "en": {
+             *         "locale": "en",
+             *         "name": "Size"
+             *       },
+             *       "th": {
+             *         "locale": "th",
+             *         "name": "ขนาด"
+             *       }
+             *     }
+             */
+            translations?: Record<string, never> | null;
+        };
+        MenuItemResponseDto: {
+            /** @example 147 */
+            id: string;
+            /**
+             * @description Item name (default/fallback). Use translations map for localized names.
+             * @example Generic Granite Cheese
+             */
+            name: string;
+            /**
+             * @description Item description (default/fallback). Use translations map for localized descriptions.
+             * @example The lavender Bike combines Bolivia aesthetics...
+             */
+            description?: Record<string, never> | null;
+            /**
+             * @description Base price, formatted as string.
+             * @example 49.11
+             */
+            basePrice: string;
+            /**
+             * @description Base S3 path for image. Frontend constructs URL: baseUrl + imagePath + '-' + size + '.webp'
+             * @example uploads/abc-123-def
+             */
+            imagePath?: Record<string, never> | null;
+            /**
+             * @description Indicates if the item is temporarily hidden (e.g., out of stock).
+             * @example false
+             */
+            isHidden: boolean;
+            /**
+             * @description Indicates if the item is currently out of stock.
+             * @example false
+             */
+            isOutOfStock: boolean;
+            /**
+             * @description Kitchen routing area for this item
+             * @example GRILL
+             * @enum {string}
+             */
+            routingArea: "GRILL" | "FRY" | "SALAD" | "DRINKS" | "DESSERT" | "APPETIZER" | "SOUP" | "OTHER";
+            /**
+             * @description Expected preparation time in minutes
+             * @example 15
+             */
+            preparationTimeMinutes?: number | null;
+            /** @example 6 */
+            categoryId: string;
+            /** @example 1 */
+            storeId: string;
+            /** @example 2 */
+            sortOrder: number;
+            /**
+             * Format: date-time
+             * @description Creation timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Last update timestamp
+             */
+            updatedAt: string;
+            category: components["schemas"]["MenuCategoryDto"];
+            customizationGroups: components["schemas"]["MenuCustomizationGroupDto"][];
+            /**
+             * @description Translations map by locale (e.g., { 'en': {...}, 'th': {...} }). Use for multi-language support.
+             * @example {
+             *       "en": {
+             *         "locale": "en",
+             *         "name": "Pad Thai",
+             *         "description": "Thai stir-fried noodles"
+             *       },
+             *       "th": {
+             *         "locale": "th",
+             *         "name": "ผัดไทย",
+             *         "description": "ก๋วยเตี๋ยวผัดไทย"
+             *       }
+             *     }
+             */
+            translations?: Record<string, never> | null;
+        };
+        UpsertCategoryDto: {
+            /**
+             * Format: uuid
+             * @description ID (UUID) of the option to update. Omit to create a new option within the group.
+             * @example 018eb1ca-18e9-7634-8009-11d0e817b99f
+             */
+            id?: string;
+            /** @example Main Dishes */
+            name: string;
+        };
+        UpsertCustomizationOptionDto: {
+            /**
+             * Format: uuid
+             * @description ID (UUID) of the option to update. Omit to create a new option within the group.
+             * @example 018eb1ca-18e9-7634-8009-11d0e817b99f
+             */
+            id?: string;
+            /** @example Large */
+            name: string;
+            /**
+             * @description Optional: Additional price for this option. Must be zero or positive. Send as string (e.g., "1.50", "0", "0.00"). Defaults to 0 if omitted.
+             * @default 0.00
+             * @example 1.50
+             */
+            additionalPrice: string | null;
+        };
+        UpsertCustomizationGroupDto: {
+            /**
+             * Format: uuid
+             * @description ID (UUID) of the existing group to update.
+             * @example 018eb1ca-18e9-7634-8009-11d0e817b99f
+             */
+            id?: string;
+            /** @example Size */
+            name: string;
+            /**
+             * @description Is selecting an option from this group mandatory?
+             * @default false
+             * @example true
+             */
+            required: boolean;
+            /**
+             * @description Minimum number of options required if group is required (usually 1 if required=true)
+             * @default 0
+             * @example 1
+             */
+            minSelectable: number;
+            /**
+             * @description Maximum number of options allowed (e.g., 1 for size, >1 for toppings)
+             * @default 1
+             * @example 1
+             */
+            maxSelectable: number;
+            options: components["schemas"]["UpsertCustomizationOptionDto"][];
+        };
+        CreateMenuItemDto: {
+            /** @example Pad Krapow Moo */
+            name: string;
+            /** @example Stir-fried minced pork with holy basil, served with rice. */
+            description?: string;
+            /**
+             * @description Base price before customizations
+             * @example 9.5
+             */
+            basePrice: string;
+            /**
+             * @description Base S3 path for the menu item image (without version suffix). Frontend constructs URLs as: baseUrl + imagePath + '-' + size + '.webp'
+             * @example uploads/abc-123-def-456
+             */
+            imagePath?: string;
+            /**
+             * @description Set to true to temporarily hide the item (e.g., out of stock). Defaults to false (visible).
+             * @example false
+             */
+            isHidden?: boolean;
+            /**
+             * @description Kitchen routing area for this item (e.g., GRILL, FRY, DRINKS). Defaults to OTHER.
+             * @example GRILL
+             * @enum {string}
+             */
+            routingArea?: "GRILL" | "FRY" | "SALAD" | "DRINKS" | "DESSERT" | "APPETIZER" | "SOUP" | "OTHER";
+            /**
+             * @description Expected preparation time in minutes
+             * @example 15
+             */
+            preparationTimeMinutes?: number;
+            /** @description Category for the item. Provide ID to link/update existing, or just name to create new. */
+            category: components["schemas"]["UpsertCategoryDto"];
+            /** @description Optional customization groups (e.g., Size, Spice Level, Add-ons). Omit IDs for new groups/options. */
+            customizationGroups?: components["schemas"]["UpsertCustomizationGroupDto"][];
+        };
+        UpdateMenuItemDto: {
+            /** @example Pad Krapow Moo Kai Dao */
+            name?: string;
+            /** @example Stir-fried minced pork with holy basil, served with rice and fried egg. */
+            description?: string;
+            /**
+             * @description Base price before customizations
+             * @example 9.5
+             */
+            basePrice: number;
+            /**
+             * @description Base S3 path for the menu item image (without version suffix). Frontend constructs URLs as: baseUrl + imagePath + '-' + size + '.webp'
+             * @example uploads/abc-123-def-456
+             */
+            imagePath?: string;
+            /**
+             * @description Set to true to temporarily hide the item (e.g., out of stock). Defaults to false (visible).
+             * @example false
+             */
+            isHidden?: boolean;
+            /**
+             * @description Kitchen routing area for this item (e.g., GRILL, FRY, DRINKS).
+             * @example GRILL
+             * @enum {string}
+             */
+            routingArea?: "GRILL" | "FRY" | "SALAD" | "DRINKS" | "DESSERT" | "APPETIZER" | "SOUP" | "OTHER";
+            /**
+             * @description Expected preparation time in minutes
+             * @example 15
+             */
+            preparationTimeMinutes?: number;
+            /** @description Optional: Update or change category. Provide ID to link/update existing, or just name to create new. */
+            category?: components["schemas"]["UpsertCategoryDto"];
+            /** @description Optional: Full list of desired customization groups. Provide IDs to update existing groups/options. Groups/options missing IDs will be created. Existing groups/options NOT included in this array (by ID) WILL BE DELETED. */
+            customizationGroups?: components["schemas"]["UpsertCustomizationGroupDto"][];
+        };
+        PatchMenuItemDto: {
+            /**
+             * @description Set out-of-stock status
+             * @example true
+             */
+            isOutOfStock?: boolean;
+            /**
+             * @description Set hidden status
+             * @example false
+             */
+            isHidden?: boolean;
+        };
+        TranslationWithDescriptionDto: {
+            /**
+             * @description Locale code
+             * @example en
+             * @enum {string}
+             */
+            locale: "en" | "zh" | "my" | "th";
+            /**
+             * @description Translated name
+             * @example Appetizers
+             */
+            name: string;
+            /**
+             * @description Translated description
+             * @example Delicious appetizers to start your meal
+             */
+            description?: Record<string, never> | null;
+        };
+        UpdateMenuItemTranslationsDto: {
+            /**
+             * @description Array of translations to add/update
+             * @example [
+             *       {
+             *         "locale": "th",
+             *         "name": "ผัดไทย",
+             *         "description": "ก๋วยเตี๋ยวผัดไทยรสอร่อย"
+             *       },
+             *       {
+             *         "locale": "zh",
+             *         "name": "泰式炒河粉",
+             *         "description": "美味的泰国炒面"
+             *       }
+             *     ]
+             */
+            translations: components["schemas"]["TranslationWithDescriptionDto"][];
+        };
+        UpdateCustomizationGroupTranslationsDto: {
+            /**
+             * @description Array of translations to add/update
+             * @example [
+             *       {
+             *         "locale": "th",
+             *         "name": "ขนาด"
+             *       },
+             *       {
+             *         "locale": "zh",
+             *         "name": "尺寸"
+             *       }
+             *     ]
+             */
+            translations: components["schemas"]["BaseTranslationDto"][];
+        };
+        UpdateCustomizationOptionTranslationsDto: {
+            /**
+             * @description Array of translations to add/update
+             * @example [
+             *       {
+             *         "locale": "th",
+             *         "name": "ใหญ่"
+             *       },
+             *       {
+             *         "locale": "zh",
+             *         "name": "大"
+             *       }
+             *     ]
+             */
+            translations: components["schemas"]["BaseTranslationDto"][];
+        };
+        RecordPaymentDto: {
+            /**
+             * @description Payment amount (as string for Decimal precision)
+             * @example 150.00
+             */
+            amount: string;
+            /**
+             * @description Payment method
+             * @example CASH
+             * @enum {string}
+             */
+            paymentMethod: "CASH" | "CREDIT_CARD" | "DEBIT_CARD" | "MOBILE_PAYMENT" | "OTHER";
+            /**
+             * @description Amount tendered by customer (for cash payments only)
+             * @example 200.00
+             */
+            amountTendered?: string;
+            /**
+             * @description External transaction ID (for card/mobile payments)
+             * @example TXN123456789
+             */
+            transactionId?: string;
+            /**
+             * @description Additional notes
+             * @example Paid in full
+             */
+            notes?: string;
+        };
+        CreateRefundDto: {
+            /**
+             * @description Refund amount (as string for Decimal precision)
+             * @example 50.00
+             */
+            amount: string;
+            /**
+             * @description Reason for refund
+             * @example Item returned
+             */
+            reason?: string;
+            /**
+             * @description Staff member who processed the refund
+             * @example John Doe
+             */
+            refundedBy?: string;
+        };
+        CalculateSplitDto: {
+            /**
+             * @description Split type to calculate
+             * @example EVEN
+             * @enum {string}
+             */
+            splitType: "EVEN" | "BY_ITEM" | "CUSTOM";
+            /** @description Split data based on split type */
+            splitData: Record<string, never>;
+        };
+        RecordSplitPaymentDto: {
+            /**
+             * @description Payment method
+             * @example CASH
+             * @enum {string}
+             */
+            paymentMethod: "CASH" | "CREDIT_CARD" | "DEBIT_CARD" | "MOBILE_PAYMENT" | "OTHER";
+            /**
+             * @description Payment amount (as string for Decimal precision)
+             * @example 50.00
+             */
+            amount: string;
+            /**
+             * @description Amount tendered by customer (for cash payments only)
+             * @example 50.00
+             */
+            amountTendered?: string;
+            /**
+             * @description Change to return (calculated automatically for cash)
+             * @example 0.00
+             */
+            change?: string;
+            /**
+             * @description Split type
+             * @example EVEN
+             * @enum {string}
+             */
+            splitType: "EVEN" | "BY_ITEM" | "CUSTOM";
+            /**
+             * @description Guest number for this split payment (1, 2, 3, etc.)
+             * @example 1
+             */
+            guestNumber: number;
+            /**
+             * @description Split metadata (JSON object with calculation details)
+             * @example {
+             *       "guestCount": 2,
+             *       "assignedItems": []
+             *     }
+             */
+            splitMetadata?: Record<string, never>;
+            /**
+             * @description External transaction ID (for card/mobile payments)
+             * @example TXN123456789
+             */
+            transactionId?: string;
+        };
+        StoreInformationResponseDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            storeId: string;
+            name: string;
+            /**
+             * @description Base S3 path for logo
+             * @example uploads/abc-123-def
+             */
+            logoPath?: Record<string, never> | null;
+            /**
+             * @description Base S3 path for cover photo
+             * @example uploads/def-456-ghi
+             */
+            coverPhotoPath?: Record<string, never> | null;
+            address?: Record<string, never> | null;
+            phone?: Record<string, never> | null;
+            email?: Record<string, never> | null;
+            website?: Record<string, never> | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        StoreSettingResponseDto: {
+            /**
+             * Format: uuid
+             * @description Setting record ID
+             */
+            id: string;
+            /**
+             * Format: uuid
+             * @description ID of the associated store
+             */
+            storeId: string;
+            /**
+             * @description Store currency code
+             * @example USD
+             * @enum {string}
+             */
+            currency: "THB" | "MMK" | "USD" | "EUR" | "JPY" | "CNY" | "SGD" | "HKD";
+            /**
+             * @description VAT rate (e.g., 0.07 for 7%)
+             * @example 0.07
+             */
+            vatRate?: string | null;
+            /**
+             * @description Service charge rate (e.g., 0.10 for 10%)
+             * @example 0.10
+             */
+            serviceChargeRate?: string | null;
+            /**
+             * @description Business hours configuration as JSON (keys: days of week, values: open/close times)
+             * @example {
+             *       "monday": {
+             *         "open": "09:00",
+             *         "close": "22:00",
+             *         "isOpen": true
+             *       },
+             *       "tuesday": {
+             *         "open": "09:00",
+             *         "close": "22:00",
+             *         "isOpen": true
+             *       }
+             *     }
+             */
+            businessHours?: Record<string, never> | null;
+            /**
+             * @description Special hours configuration as JSON (holidays, special events)
+             * @example {
+             *       "2025-12-25": {
+             *         "open": "10:00",
+             *         "close": "18:00",
+             *         "note": "Christmas Day"
+             *       }
+             *     }
+             */
+            specialHours?: Record<string, never> | null;
+            /**
+             * @description Whether to accept orders when the store is closed
+             * @default false
+             */
+            acceptOrdersWhenClosed: boolean;
+            /**
+             * @description Whether loyalty program is enabled for this store
+             * @default false
+             */
+            loyaltyEnabled: boolean;
+            /**
+             * @description Points earned per currency unit spent (e.g., 0.1 = 1 point per 10 units)
+             * @example 0.1
+             */
+            loyaltyPointRate?: string | null;
+            /**
+             * @description Currency value per point redeemed (e.g., 0.1 = 10 currency per 100 points)
+             * @example 0.1
+             */
+            loyaltyRedemptionRate?: string | null;
+            /**
+             * @description Number of days before loyalty points expire
+             * @default 365
+             * @example 365
+             */
+            loyaltyPointExpiryDays: number | null;
+            /**
+             * @description Primary locale for the store
+             * @default en
+             * @example en
+             */
+            primaryLocale: string;
+            /**
+             * @description List of enabled locales for multi-language support
+             * @default [
+             *       "en"
+             *     ]
+             * @example [
+             *       "en",
+             *       "th",
+             *       "my"
+             *     ]
+             */
+            enabledLocales: string[];
+            /**
+             * @description Whether multi-language support is enabled
+             * @default false
+             */
+            multiLanguageEnabled: boolean;
+            /**
+             * Format: date-time
+             * @description Timestamp when multi-language was migrated/enabled
+             */
+            multiLanguageMigratedAt?: string | null;
+            /**
+             * Format: date-time
+             * @description Record creation timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Record last update timestamp
+             */
+            updatedAt: string;
+        };
+        GetStoreDetailsResponseDto: {
+            /**
+             * Format: uuid
+             * @description Store's unique identifier
+             */
+            id: string;
+            /**
+             * @description Store's unique URL slug
+             * @example demo-cafe
+             */
+            slug: string;
+            /**
+             * @description Current suspension status of the store
+             * @example ACTIVE
+             * @enum {string}
+             */
+            suspensionStatus: "ACTIVE" | "SUSPENDED" | "BANNED" | "PENDING_REVIEW";
+            /**
+             * Format: date-time
+             * @description Date when the store was suspended
+             */
+            suspendedAt?: string | null;
+            /** @description Reason for store suspension */
+            suspensionReason?: string | null;
+            information: components["schemas"]["StoreInformationResponseDto"] | null;
+            setting: components["schemas"]["StoreSettingResponseDto"] | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        CreateStoreDto: {
+            /**
+             * @description Store's display name
+             * @example My New Cafe
+             */
+            name: string;
+            /**
+             * @description Store's physical address
+             * @example 456 Side St, Anytown
+             */
+            address?: string;
+            /**
+             * @description Store's contact phone number
+             * @example 555-987-6543
+             */
+            phone?: string;
+            /**
+             * @description Store's contact email address
+             * @example info@mynewcafe.com
+             */
+            email?: string;
+            /**
+             * @description Store's website URL
+             * @example https://mynewcafe.com
+             */
+            website?: string;
+        };
+        UpdateStoreInformationDto: {
+            /**
+             * @description Store's display name
+             * @example My New Cafe
+             */
+            name: string;
+            /**
+             * @description Store's logo base path (S3). Frontend constructs URL: baseUrl + logoPath + '-' + size + '.webp'
+             * @example uploads/abc-123-def-456
+             */
+            logoPath?: string | null;
+            /**
+             * @description Store's cover photo base path (S3). Frontend constructs URL: baseUrl + coverPhotoPath + '-' + size + '.webp'
+             * @example uploads/def-456-ghi-789
+             */
+            coverPhotoPath?: string | null;
+            /**
+             * @description Store's physical address
+             * @example 456 Side St, Anytown
+             */
+            address?: string | null;
+            /**
+             * @description Store's contact phone number
+             * @example 555-987-6543
+             */
+            phone?: string | null;
+            /**
+             * @description Store's contact email address
+             * @example info@mynewcafe.com
+             */
+            email?: string | null;
+            /**
+             * @description Store's website URL
+             * @example https://mynewcafe.com
+             */
+            website?: string | null;
+        };
+        UpdateStoreSettingDto: {
+            /**
+             * @description Update the default currency for the store.
+             * @example THB
+             * @enum {string}
+             */
+            currency?: "THB" | "MMK" | "USD" | "EUR" | "JPY" | "CNY" | "SGD" | "HKD";
+            /**
+             * @description Update the VAT rate. Send as a string (e.g., "0.07" for 7%, "0.125" for 12.5%). Send null or omit to remove/keep unchanged. Must be between "0.000" and "0.999".
+             * @example 0.07
+             */
+            vatRate?: string | null;
+            /**
+             * @description Update the Service Charge rate. Send as a string (e.g., "0.10" for 10%). Send null or omit to remove/keep unchanged. Must be between "0.000" and "0.999".
+             * @example 0.10
+             */
+            serviceChargeRate?: string | null;
+        };
+        InviteOrAssignRoleDto: {
+            /**
+             * @description The email of the user to invite or assign a role to
+             * @example newuser@example.com
+             */
+            email: string;
+            /**
+             * @description The new role for the user in this store
+             * @example ADMIN
+             * @enum {string}
+             */
+            role: "PLATFORM_ADMIN" | "OWNER" | "ADMIN" | "CHEF" | "CASHIER" | "SERVER";
+        };
+        UpdateTaxAndServiceChargeDto: {
+            /**
+             * @description VAT rate as decimal string (e.g., "0.07" for 7%)
+             * @example 0.07
+             */
+            vatRate: string;
+            /**
+             * @description Service charge rate as decimal string (e.g., "0.10" for 10%)
+             * @example 0.10
+             */
+            serviceChargeRate: string;
+        };
+        DayHoursDto: {
+            /**
+             * @description Whether the store is closed on this day
+             * @example false
+             */
+            closed: boolean;
+            /**
+             * @description Opening time in HH:MM format (required if not closed)
+             * @example 09:00
+             */
+            open?: string;
+            /**
+             * @description Closing time in HH:MM format (required if not closed)
+             * @example 22:00
+             */
+            close?: string;
+        };
+        BusinessHoursDto: {
+            /** @description Business hours for Monday */
+            monday: components["schemas"]["DayHoursDto"];
+            /** @description Business hours for Tuesday */
+            tuesday: components["schemas"]["DayHoursDto"];
+            /** @description Business hours for Wednesday */
+            wednesday: components["schemas"]["DayHoursDto"];
+            /** @description Business hours for Thursday */
+            thursday: components["schemas"]["DayHoursDto"];
+            /** @description Business hours for Friday */
+            friday: components["schemas"]["DayHoursDto"];
+            /** @description Business hours for Saturday */
+            saturday: components["schemas"]["DayHoursDto"];
+            /** @description Business hours for Sunday */
+            sunday: components["schemas"]["DayHoursDto"];
+        };
+        UpdateLoyaltyRulesDto: {
+            /**
+             * @description Points earned per currency unit (e.g., "0.1" = 1 point per 10 THB)
+             * @example 0.1
+             */
+            pointRate: string;
+            /**
+             * @description Currency value per point for redemption (e.g., "0.1" = 100 points = 10 THB)
+             * @example 0.1
+             */
+            redemptionRate: string;
+            /**
+             * @description Number of days before loyalty points expire (0-3650)
+             * @example 365
+             */
+            expiryDays: number;
+        };
+        /**
+         * @description Current status of the table
+         * @enum {string}
+         */
+        TableStatus: "VACANT" | "SEATED" | "ORDERING" | "SERVED" | "READY_TO_PAY" | "CLEANING";
+        TableResponseDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            storeId: string;
+            /** @example Table 10 */
+            name: string;
+            /**
+             * @description Current status of the table
+             * @example VACANT
+             */
+            currentStatus: components["schemas"]["TableStatus"];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        TableDeletedResponseDto: {
+            /**
+             * Format: uuid
+             * @description ID of the deleted table.
+             */
+            id: string;
+            /**
+             * @description Indicator that the deletion was successful.
+             * @example true
+             */
+            deleted: boolean;
+        };
+        UpsertTableDto: {
+            /**
+             * Format: uuid
+             * @description ID (UUID) of the table to update. Omit to create a new table.
+             * @example 018ec1a8-0f9b-7d9c-a4f2-0d3f1a0f9b8c
+             */
+            id?: string;
+            /**
+             * @description Display name or number for the table (must be unique within the store)
+             * @example Table 12 / Patio Seat 4
+             */
+            name: string;
+        };
+        BatchUpsertTableDto: {
+            /** @description An array of table objects to create or update. Any existing tables for the store NOT included in this list (by ID) will be deleted. */
+            tables: components["schemas"]["UpsertTableDto"][];
+        };
+        UpdateTableStatusDto: {
+            /**
+             * @description New status for the table
+             * @example SEATED
+             * @enum {string}
+             */
+            status: "VACANT" | "SEATED" | "ORDERING" | "SERVED" | "READY_TO_PAY" | "CLEANING";
+        };
+        CreateTableDto: {
+            /**
+             * @description Display name or number for the table (unique within the store)
+             * @example Table 10
+             */
+            name: string;
+        };
+        UpdateTableDto: {
+            /**
+             * @description New display name or number for the table (unique within the store)
+             * @example Patio 5
+             */
+            name?: string;
+        };
+        PaginationMeta: {
+            /**
+             * @description Total number of items
+             * @example 100
+             */
+            total: number;
+            /**
+             * @description Current page number
+             * @example 1
+             */
+            page: number;
+            /**
+             * @description Number of items per page
+             * @example 20
+             */
+            limit: number;
+            /**
+             * @description Total number of pages
+             * @example 5
+             */
+            totalPages: number;
+            /**
+             * @description Whether there is a next page
+             * @example true
+             */
+            hasNext: boolean;
+            /**
+             * @description Whether there is a previous page
+             * @example false
+             */
+            hasPrev: boolean;
+        };
+        PaginatedResponseDto: {
+            /** @description Array of items */
+            items: string[];
+            /** @description Pagination metadata */
+            meta: components["schemas"]["PaginationMeta"];
+        };
+        SessionCreatedResponseDto: {
+            /** @description Session ID */
+            id: string;
+            /** @description Store ID */
+            storeId: string;
+            /** @description Table ID */
+            tableId: Record<string, never> | null;
+            /**
+             * @description Session type
+             * @default TABLE
+             * @enum {string}
+             */
+            sessionType: "TABLE" | "COUNTER" | "PHONE" | "TAKEOUT";
+            /**
+             * @description Session status
+             * @enum {string}
+             */
+            status: "ACTIVE" | "CLOSED";
+            /** @description Customer name */
+            customerName?: Record<string, never> | null;
+            /** @description Customer phone number */
+            customerPhone?: Record<string, never> | null;
+            /** @description Number of guests */
+            guestCount: number;
+            /** @description Session token for authentication - ONLY provided on session creation */
+            sessionToken: string;
+            /** @description Closed timestamp */
+            closedAt: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @description Created timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Updated timestamp
+             */
+            updatedAt: string;
+        };
+        SessionResponseDto: {
+            /** @description Session ID */
+            id: string;
+            /** @description Store ID */
+            storeId: string;
+            /** @description Table ID */
+            tableId: Record<string, never> | null;
+            /**
+             * @description Session type
+             * @default TABLE
+             * @enum {string}
+             */
+            sessionType: "TABLE" | "COUNTER" | "PHONE" | "TAKEOUT";
+            /**
+             * @description Session status
+             * @enum {string}
+             */
+            status: "ACTIVE" | "CLOSED";
+            /** @description Customer name */
+            customerName?: Record<string, never> | null;
+            /** @description Customer phone number */
+            customerPhone?: Record<string, never> | null;
+            /** @description Number of guests */
+            guestCount: number;
+            /** @description Closed timestamp */
+            closedAt: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @description Created timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Updated timestamp
+             */
+            updatedAt: string;
+        };
+        CartItemCustomizationResponseDto: {
+            id: string;
+            customizationOptionId: string;
+            optionName: string;
+            additionalPrice: string;
+        };
+        CartItemResponseDto: {
+            id: string;
+            menuItemId: Record<string, never>;
+            menuItemName: string;
+            basePrice: string;
+            quantity: number;
+            notes: Record<string, never> | null;
+            customizations: components["schemas"]["CartItemCustomizationResponseDto"][];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        CartResponseDto: {
+            id: string;
+            sessionId: string;
+            storeId: string;
+            subTotal: string;
+            items: components["schemas"]["CartItemResponseDto"][];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        OrderItemCustomizationResponseDto: {
+            id: string;
+            customizationOptionId: string;
+            finalPrice: string | null;
+        };
+        OrderItemResponseDto: {
+            id: string;
+            menuItemId: Record<string, never> | null;
+            price: string;
+            quantity: number;
+            finalPrice: string | null;
+            notes: Record<string, never> | null;
+            customizations: components["schemas"]["OrderItemCustomizationResponseDto"][];
+        };
+        OrderResponseDto: {
+            id: string;
+            orderNumber: string;
+            storeId: string;
+            sessionId: Record<string, never> | null;
+            tableName: string;
+            /** @enum {string} */
+            status: "PENDING" | "PREPARING" | "READY" | "SERVED" | "COMPLETED" | "CANCELLED";
+            /** @enum {string} */
+            orderType: "DINE_IN" | "TAKEAWAY" | "DELIVERY";
+            paidAt: Record<string, never> | null;
+            subTotal: string;
+            vatRateSnapshot: string | null;
+            serviceChargeRateSnapshot: string | null;
+            vatAmount: string;
+            serviceChargeAmount: string;
+            grandTotal: string;
+            /** @enum {string|null} */
+            discountType: "PERCENTAGE" | "FIXED_AMOUNT" | null;
+            discountValue: string | null;
+            discountAmount: string | null;
+            discountReason: Record<string, never> | null;
+            discountAppliedBy: Record<string, never> | null;
+            discountAppliedAt: Record<string, never> | null;
+            /** @description Total amount paid across all payments (supports bill splitting) */
+            totalPaid: string;
+            /** @description Remaining balance to be paid */
+            remainingBalance: string;
+            /** @description Whether the order is fully paid */
+            isPaidInFull: boolean;
+            orderItems: components["schemas"]["OrderItemResponseDto"][];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        KitchenOrderResponseDto: {
+            /** @description Order ID */
+            id: string;
+            /** @description Store ID */
+            storeId: string;
+            /** @description Order number */
+            orderNumber: string;
+            /** @description Table name */
+            tableName: string;
+            /**
+             * @description Order type
+             * @enum {string}
+             */
+            orderType: "DINE_IN" | "TAKEAWAY" | "DELIVERY";
+            /**
+             * @description Order status
+             * @enum {string}
+             */
+            status: "PENDING" | "PREPARING" | "READY" | "SERVED" | "COMPLETED" | "CANCELLED";
+            /** @description Grand total */
+            grandTotal: string;
+            /**
+             * Format: date-time
+             * @description Order created timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Order updated timestamp
+             */
+            updatedAt: string;
+            /** @description Order items */
+            orderItems: unknown[];
+        };
+        PaymentResponseDto: {
+            /** @description Payment request ID */
+            id: string;
+            /**
+             * @description Payment request status
+             * @enum {string}
+             */
+            status: "PENDING_VERIFICATION" | "VERIFIED" | "ACTIVATED" | "REJECTED";
+            /**
+             * @description Requested subscription tier
+             * @enum {string}
+             */
+            requestedTier: "FREE" | "STANDARD" | "PREMIUM";
+            /** @description Payment amount */
+            amount: string;
+            /**
+             * @description Currency
+             * @enum {string}
+             */
+            currency: "THB" | "MMK" | "USD" | "EUR" | "JPY" | "CNY" | "SGD" | "HKD";
+            /** @description Store information */
+            store?: components["schemas"]["PaymentStoreInfoDto"];
+            /**
+             * Format: date-time
+             * @description Created at timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Updated at timestamp
+             */
+            updatedAt: string;
+        };
+        RefundResponseDto: {
+            id: string;
+            orderId: string;
+            amount: string;
+            reason: Record<string, never> | null;
+            refundedBy: Record<string, never> | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        AdminUserResponseDto: {
+            id: string;
+            email: string;
+            name: string;
+            /** @enum {string} */
+            role: "SUPER_ADMIN" | "PLATFORM_ADMIN" | "SUPPORT_AGENT" | "FINANCE_ADMIN" | "COMPLIANCE_OFFICER";
+            isActive: boolean;
+            lastLoginAt: Record<string, never>;
+        };
+        ValidateAdminResponseDto: {
+            adminUser: components["schemas"]["AdminUserResponseDto"];
+            /** @description Internal JWT for authenticated API requests */
+            jwt: string;
+            /**
+             * @description List of permissions based on admin role
+             * @example [
+             *       "stores:read",
+             *       "users:read",
+             *       "payments:verify"
+             *     ]
+             */
+            permissions: string[];
+        };
+        AdminProfileResponseDto: {
+            /** @example adm_1234567 */
+            id: string;
+            /** @example admin@originfoodhouse.com */
+            email: string;
+            /** @example John Doe */
+            name: string;
+            /**
+             * @example PLATFORM_ADMIN
+             * @enum {string}
+             */
+            role: "SUPER_ADMIN" | "PLATFORM_ADMIN" | "SUPPORT_AGENT" | "FINANCE_ADMIN" | "COMPLIANCE_OFFICER";
+            /** @example true */
+            isActive: boolean;
+            /** @example 2025-10-28T10:00:00.000Z */
+            lastLoginAt: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @example 2025-10-01T10:00:00.000Z
+             */
+            createdAt: string;
+        };
+        AdminPermissionsResponseDto: {
+            /** @example PLATFORM_ADMIN */
+            role: string;
+            /**
+             * @example [
+             *       "store:manage",
+             *       "user:manage",
+             *       "payment:manage"
+             *     ]
+             */
+            permissions: string[];
+        };
+        AdminStoreInformationDto: {
+            /** @description Store information ID */
+            id: string;
+            /** @description Store name */
+            name: string;
+            /** @description Store description */
+            description?: Record<string, never>;
+            /** @description Store phone number */
+            phone?: Record<string, never>;
+            /** @description Store email */
+            email?: Record<string, never>;
+            /** @description Store address */
+            address?: Record<string, never>;
+            /** @description Store logo path */
+            logoPath?: Record<string, never>;
+            /** @description Store cover photo path */
+            coverPhotoPath?: Record<string, never>;
+        };
+        AdminStoreSubscriptionDto: {
+            /** @description Subscription ID */
+            id: string;
+            /**
+             * @description Subscription tier
+             * @enum {string}
+             */
+            tier: "FREE" | "STANDARD" | "PREMIUM";
+            /**
+             * @description Subscription status
+             * @enum {string}
+             */
+            status: "TRIAL" | "ACTIVE" | "EXPIRED" | "CANCELLED" | "SUSPENDED" | "PAST_DUE" | "CANCELED" | "TRIALING";
+            /**
+             * @description Billing cycle
+             * @enum {string}
+             */
+            billingCycle: "MONTHLY" | "ANNUAL";
+            /** @description Current period start date */
+            currentPeriodStart?: Record<string, never>;
+            /** @description Current period end date */
+            currentPeriodEnd?: Record<string, never>;
+            /** @description Trial end date */
+            trialEndsAt?: Record<string, never>;
+        };
+        AdminStoreTierDto: {
+            /** @description Tier ID */
+            id: string;
+            /**
+             * @description Current tier
+             * @enum {string}
+             */
+            tier: "FREE" | "STANDARD" | "PREMIUM";
+        };
+        AdminStoreCountsDto: {
+            /** @description Number of users in store */
+            userStores: number;
+            /** @description Number of orders */
+            orders: number;
+            /** @description Number of tables */
+            tables?: number;
+            /** @description Number of menu items */
+            menuItems?: number;
+            /** @description Number of categories */
+            categories?: number;
+        };
+        StoreResponseDto: {
+            /** @description Store ID */
+            id: string;
+            /** @description Store slug */
+            slug: string;
+            /** @description Store suspended status */
+            isSuspended: boolean;
+            /** @description Store banned status */
+            isBanned: boolean;
+            /**
+             * Format: date-time
+             * @description Created at timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Updated at timestamp
+             */
+            updatedAt: string;
+            /** @description Store information */
+            information?: components["schemas"]["AdminStoreInformationDto"];
+            /** @description Store subscription */
+            subscription?: components["schemas"]["AdminStoreSubscriptionDto"];
+            /** @description Store tier */
+            tier?: components["schemas"]["AdminStoreTierDto"];
+            /** @description Store counts */
+            _count: components["schemas"]["AdminStoreCountsDto"];
+        };
+        AdminStoreSettingDto: {
+            /** @description Setting ID */
+            id: string;
+            /** @description Currency code */
+            currency: string;
+            /** @description VAT rate */
+            vatRate?: Record<string, never>;
+            /** @description Service charge rate */
+            serviceChargeRate?: Record<string, never>;
+            /** @description Loyalty enabled */
+            loyaltyEnabled: boolean;
+        };
+        AdminStoreUserDto: {
+            /** @description User ID */
+            id: string;
+            /** @description User email */
+            email: string;
+            /** @description User name */
+            name?: Record<string, never>;
+            /** @description User suspended status */
+            isSuspended: boolean;
+        };
+        AdminStoreUserStoreDto: {
+            /** @description User store relation ID */
+            id: string;
+            /** @description User role in store */
+            role: string;
+            /** @description User details */
+            user: components["schemas"]["AdminStoreUserDto"];
+        };
+        StoreDetailResponseDto: {
+            /** @description Store ID */
+            id: string;
+            /** @description Store slug */
+            slug: string;
+            /** @description Store suspended status */
+            isSuspended: boolean;
+            /** @description Store banned status */
+            isBanned: boolean;
+            /**
+             * Format: date-time
+             * @description Created at timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Updated at timestamp
+             */
+            updatedAt: string;
+            /** @description Store information */
+            information?: components["schemas"]["AdminStoreInformationDto"];
+            /** @description Store setting */
+            setting?: components["schemas"]["AdminStoreSettingDto"];
+            /** @description Store subscription */
+            subscription?: components["schemas"]["AdminStoreSubscriptionDto"];
+            /** @description Store tier */
+            tier?: components["schemas"]["AdminStoreTierDto"];
+            /** @description Store users */
+            userStores: components["schemas"]["AdminStoreUserStoreDto"][];
+            /** @description Store counts */
+            _count: components["schemas"]["AdminStoreCountsDto"];
+        };
+        StoreActionResponseDto: {
+            /** @description Store ID */
+            id: string;
+            /** @description Store slug */
+            slug: string;
+            /** @description Store suspended status */
+            isSuspended: boolean;
+            /** @description Store banned status */
+            isBanned: boolean;
+            /**
+             * Format: date-time
+             * @description Updated at timestamp
+             */
+            updatedAt: string;
+        };
+        AdminInfoDto: {
+            /** @description Admin ID */
+            id: string;
+            /** @description Admin email */
+            email: string;
+            /** @description Admin name */
+            name?: Record<string, never>;
+        };
+        SuspensionHistoryItemDto: {
+            /** @description Suspension ID */
+            id: string;
+            /** @description Suspension reason */
+            reason: string;
+            /**
+             * Format: date-time
+             * @description Suspended at timestamp
+             */
+            suspendedAt: string;
+            /** @description Reactivated at timestamp */
+            reactivatedAt?: Record<string, never>;
+            /** @description Admin who suspended */
+            suspendedByAdmin?: components["schemas"]["AdminInfoDto"];
+            /** @description Admin who reactivated */
+            reactivatedByAdmin?: components["schemas"]["AdminInfoDto"];
+        };
+        StoreAnalyticsResponseDto: {
+            /** @description Total number of orders */
+            totalOrders: number;
+            /** @description Total revenue */
+            totalRevenue: number;
+            /** @description Number of active users */
+            activeUsers: number;
+            /** @description Suspension history */
+            suspensionHistory: components["schemas"]["SuspensionHistoryItemDto"][];
+        };
+        UserStoreInfoDto: {
+            /** @description Store name */
+            name: string;
+        };
+        UserStoreDetailsDto: {
+            /** @description Store ID */
+            id: string;
+            /** @description Store slug */
+            slug: string;
+            /** @description Store information */
+            information?: components["schemas"]["UserStoreInfoDto"];
+        };
+        UserStoreAssociationDto: {
+            /** @description User store relation ID */
+            id: string;
+            /** @description User ID */
+            userId: string;
+            /** @description Store ID */
+            storeId: string;
+            /** @description User role in store */
+            role: string;
+            /** @description Store details */
+            store: components["schemas"]["UserStoreDetailsDto"];
+        };
+        UserCountsDto: {
+            /** @description Number of stores user belongs to */
+            userStores: number;
+        };
+        UserResponseDto: {
+            /** @description User ID */
+            id: string;
+            /** @description User email */
+            email: string;
+            /** @description User name */
+            name?: Record<string, never>;
+            /** @description User suspended status */
+            isSuspended: boolean;
+            /** @description Suspended at timestamp */
+            suspendedAt?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @description Created at timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Updated at timestamp
+             */
+            updatedAt: string;
+            /** @description User's store associations */
+            userStores: components["schemas"]["UserStoreAssociationDto"][];
+            /** @description User counts */
+            _count: components["schemas"]["UserCountsDto"];
+        };
+        UserDetailResponseDto: {
+            /** @description User ID */
+            id: string;
+            /** @description User email */
+            email: string;
+            /** @description User name */
+            name?: Record<string, never>;
+            /** @description User suspended status */
+            isSuspended: boolean;
+            /** @description Suspended at timestamp */
+            suspendedAt?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @description Created at timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Updated at timestamp
+             */
+            updatedAt: string;
+            /** @description User's store associations */
+            userStores: components["schemas"]["UserStoreAssociationDto"][];
+            /** @description User counts */
+            _count: components["schemas"]["UserCountsDto"];
+        };
+        UserActionResponseDto: {
+            /** @description User ID */
+            id: string;
+            /** @description User email */
+            email: string;
+            /** @description User name */
+            name?: Record<string, never>;
+            /** @description User suspended status */
+            isSuspended: boolean;
+            /** @description Suspended at timestamp */
+            suspendedAt?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @description Updated at timestamp
+             */
+            updatedAt: string;
+        };
+        ActivityUserInfoDto: {
+            /** @description User ID */
+            id: string;
+            /** @description User email */
+            email: string;
+            /** @description User name */
+            name?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @description Created at timestamp
+             */
+            createdAt: string;
+            /** @description User suspended status */
+            isSuspended: boolean;
+            /** @description Suspended at timestamp */
+            suspendedAt?: Record<string, never>;
+        };
+        UserAdminInfoDto: {
+            /** @description Admin ID */
+            id: string;
+            /** @description Admin email */
+            email: string;
+            /** @description Admin name */
+            name?: Record<string, never>;
+        };
+        UserSuspensionHistoryItemDto: {
+            /** @description Suspension ID */
+            id: string;
+            /** @description Suspension reason */
+            reason: string;
+            /**
+             * Format: date-time
+             * @description Suspended at timestamp
+             */
+            suspendedAt: string;
+            /** @description Reactivated at timestamp */
+            reactivatedAt?: Record<string, never>;
+            /** @description Admin who suspended */
+            suspendedByAdmin?: components["schemas"]["UserAdminInfoDto"];
+            /** @description Admin who reactivated */
+            reactivatedByAdmin?: components["schemas"]["UserAdminInfoDto"];
+        };
+        UserActivityResponseDto: {
+            /** @description User info */
+            user: components["schemas"]["ActivityUserInfoDto"];
+            /** @description Number of stores user belongs to */
+            storeCount: number;
+            /** @description Suspension history */
+            suspensionHistory: components["schemas"]["UserSuspensionHistoryItemDto"][];
+        };
+        PaymentStoreInfoDto: {
+            /** @description Store ID */
+            id: string;
+            /** @description Store slug */
+            slug: string;
+            /** @description Store name */
+            name?: Record<string, never>;
+        };
+        PaymentDetailResponseDto: {
+            /** @description Payment request ID */
+            id: string;
+            /** @description Subscription ID */
+            subscriptionId: string;
+            /**
+             * @description Payment request status
+             * @enum {string}
+             */
+            status: "PENDING_VERIFICATION" | "VERIFIED" | "ACTIVATED" | "REJECTED";
+            /**
+             * @description Requested subscription tier
+             * @enum {string}
+             */
+            requestedTier: "FREE" | "STANDARD" | "PREMIUM";
+            /** @description Payment amount */
+            amount: string;
+            /**
+             * @description Currency
+             * @enum {string}
+             */
+            currency: "THB" | "MMK" | "USD" | "EUR" | "JPY" | "CNY" | "SGD" | "HKD";
+            /** @description Requested duration in days */
+            requestedDuration?: Record<string, never>;
+            /** @description Payment proof path */
+            paymentProofPath?: Record<string, never>;
+            /** @description Bank transfer details */
+            bankTransferDetails?: Record<string, never>;
+            /** @description Admin notes */
+            notes?: Record<string, never>;
+            /** @description Verified by admin ID */
+            verifiedBy?: Record<string, never>;
+            /** @description Verified at timestamp */
+            verifiedAt?: Record<string, never>;
+            /** @description Activated by admin ID */
+            activatedBy?: Record<string, never>;
+            /** @description Activated at timestamp */
+            activatedAt?: Record<string, never>;
+            /** @description Rejected by admin ID */
+            rejectedBy?: Record<string, never>;
+            /** @description Rejected at timestamp */
+            rejectedAt?: Record<string, never>;
+            /** @description Rejection reason */
+            rejectionReason?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @description Created at timestamp
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @description Updated at timestamp
+             */
+            updatedAt: string;
+        };
+        PaymentActionResponseDto: {
+            /** @description Payment request ID */
+            id: string;
+            /**
+             * @description Payment request status
+             * @enum {string}
+             */
+            status: "PENDING_VERIFICATION" | "VERIFIED" | "ACTIVATED" | "REJECTED";
+            /** @description Admin notes */
+            notes?: Record<string, never>;
+            /** @description Rejection reason */
+            rejectionReason?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @description Updated at timestamp
+             */
+            updatedAt: string;
+        };
+        SalesSummaryDto: {
+            /**
+             * @description Total sales amount
+             * @example 12500.00
+             */
+            totalSales: string;
+            /**
+             * @description Total number of orders
+             * @example 125
+             */
+            orderCount: number;
+            /**
+             * @description Average order value
+             * @example 100.00
+             */
+            averageOrderValue: string;
+            /**
+             * @description Total VAT collected
+             * @example 875.00
+             */
+            totalVat: string;
+            /**
+             * @description Total service charge collected
+             * @example 0.00
+             */
+            totalServiceCharge: string;
+            /**
+             * Format: date-time
+             * @description Date range start
+             */
+            startDate: string;
+            /**
+             * Format: date-time
+             * @description Date range end
+             */
+            endDate: string;
+        };
+        PaymentMethodBreakdownDto: {
+            /**
+             * @description Payment method
+             * @enum {string}
+             */
+            paymentMethod: "CASH" | "CREDIT_CARD" | "DEBIT_CARD" | "MOBILE_PAYMENT" | "OTHER";
+            /**
+             * @description Total amount for this payment method
+             * @example 5000.00
+             */
+            totalAmount: string;
+            /**
+             * @description Number of transactions
+             * @example 50
+             */
+            transactionCount: number;
+            /**
+             * @description Percentage of total sales
+             * @example 40.5
+             */
+            percentage: number;
+        };
+        PaymentBreakdownDto: {
+            /** @description Breakdown by payment method */
+            breakdown: components["schemas"]["PaymentMethodBreakdownDto"][];
+            /**
+             * Format: date-time
+             * @description Date range start
+             */
+            startDate: string;
+            /**
+             * Format: date-time
+             * @description Date range end
+             */
+            endDate: string;
+        };
+        PopularItemDto: {
+            /** @description Menu item ID */
+            menuItemId: string;
+            /** @description Menu item name */
+            menuItemName: string;
+            /**
+             * @description Total quantity sold
+             * @example 150
+             */
+            quantitySold: number;
+            /**
+             * @description Total revenue from this item
+             * @example 1500.00
+             */
+            totalRevenue: string;
+            /**
+             * @description Number of orders containing this item
+             * @example 75
+             */
+            orderCount: number;
+        };
+        PopularItemsDto: {
+            /** @description List of popular items */
+            items: components["schemas"]["PopularItemDto"][];
+            /**
+             * Format: date-time
+             * @description Date range start
+             */
+            startDate: string;
+            /**
+             * Format: date-time
+             * @description Date range end
+             */
+            endDate: string;
+        };
+        OrderStatusCountDto: {
+            /**
+             * @description Order status
+             * @enum {string}
+             */
+            status: "PENDING" | "PREPARING" | "READY" | "SERVED" | "COMPLETED" | "CANCELLED";
+            /**
+             * @description Number of orders with this status
+             * @example 25
+             */
+            count: number;
+            /**
+             * @description Percentage of total orders
+             * @example 20.5
+             */
+            percentage: number;
+        };
+        OrderStatusReportDto: {
+            /** @description Order status distribution */
+            statusDistribution: components["schemas"]["OrderStatusCountDto"][];
+            /**
+             * @description Total number of orders
+             * @example 125
+             */
+            totalOrders: number;
+            /**
+             * Format: date-time
+             * @description Date range start
+             */
+            startDate: string;
+            /**
+             * Format: date-time
+             * @description Date range end
+             */
+            endDate: string;
+        };
+    };
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  ActiveTableSessionController_createManualSession: {
-    parameters: {
-      query: {
-        /** @description Store ID */
-        storeId: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateManualSessionDto'];
-      };
-    };
-    responses: {
-      /** @description Manual session created successfully */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['SessionCreatedResponseDto'];
-        };
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ActiveTableSessionController_joinByTable: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Table ID from QR code */
-        tableId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['JoinSessionDto'];
-      };
-    };
-    responses: {
-      /** @description Session joined/created successfully (includes session token) */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['SessionCreatedResponseDto'];
-        };
-      };
-      /** @description Table not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ActiveTableSessionController_findOne: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Session ID */
-        sessionId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Session found (session token excluded for security) */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['SessionResponseDto'];
-        };
-      };
-      /** @description Session not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ActiveTableSessionController_update: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Session ID */
-        sessionId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateSessionDto'];
-      };
-    };
-    responses: {
-      /** @description Session updated (session token excluded for security) */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['SessionResponseDto'];
-        };
-      };
-      /** @description Insufficient permissions or cross-store access */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Session not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ActiveTableSessionController_findByToken: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Session token */
-        token: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Session found (session token excluded for security) */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['SessionResponseDto'];
-        };
-      };
-      /** @description Invalid session token */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ActiveTableSessionController_findActiveByStore: {
-    parameters: {
-      query: {
-        /** @description Store ID */
-        storeId: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Active sessions retrieved (session tokens excluded) */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['SessionResponseDto'][];
-        };
-      };
-    };
-  };
-  ActiveTableSessionController_close: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Session ID */
-        sessionId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Session closed (session token excluded for security) */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['SessionResponseDto'];
-        };
-      };
-      /** @description Session already closed */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions or cross-store access */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Session not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ActiveTableSessionController_getSessionOrders: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Active table session ID */
-        sessionId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Orders retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['OrderResponseDto'][];
-        };
-      };
-      /** @description Session not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AuthController_loginWithStore: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['ChooseStoreDto'];
-      };
-    };
-    responses: {
-      /** @description Store selected. Full JWT set in HttpOnly cookie. Token contains { sub, storeId, role }. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'];
-        };
-      };
-      /** @description Invalid/Expired Token or User not member of store. */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description User/Membership data not found (should be rare). */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AuthController_getAuth0Config: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Auth0 configuration retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': unknown;
-        };
-      };
-    };
-  };
-  AuthController_validateAuth0Token: {
-    parameters: {
-      query?: never;
-      header: {
-        authorization: string;
-        /** @description Bearer <auth0-access-token> */
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Auth0 token validated and user synced successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': unknown;
-        };
-      };
-      /** @description Invalid Auth0 token or Auth0 is not enabled */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AuthController_getAuth0Profile: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description User profile retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Invalid or missing Auth0 token */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  UserController_register: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateUserDto'];
-      };
-    };
-    responses: {
-      /** @description User registered successfully. Verification email sent. */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'];
-        };
-      };
-      /** @description Validation error (e.g., email exists, disposable domain, invalid input) */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal server error (e.g., failed to send email) */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  UserController_addUserToStore: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['AddUserToStoreDto'];
-      };
-    };
-    responses: {
-      /** @description User assigned/updated in store successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'];
-        };
-      };
-      /** @description Validation error (e.g., invalid role, missing fields) */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description User does not have permission to perform this action. */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description User or Store not found. */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  UserController_getUserStores: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the target user */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description List of user store memberships retrieved. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'];
-        };
-      };
-      /** @description User does not have permission to view this. */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Target user not found. */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  UserController_getCurrentUser: {
-    parameters: {
-      query?: {
-        /** @description Optional: ID (UUID) of the store to get user context (e.g., role) for. */
-        storeId?: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Current user profile retrieved successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['UserProfileResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Current user profile retrieved successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  UserController_inviteStaff: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['InviteStaffDto'];
-      };
-    };
-    responses: {
-      /** @description Staff invitation sent successfully. */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'];
-        };
-      };
-      /** @description Invalid input or user already a member */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions or tier limit reached */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  UserController_changeRole: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the user whose role to change */
-        targetUserId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['ChangeRoleDto'];
-      };
-    };
-    responses: {
-      /** @description User role updated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'];
-        };
-      };
-      /** @description Cannot change own role */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions (Owner only) */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description User not found in store */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  UserController_suspendUser: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the user to suspend */
-        targetUserId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['SuspendUserDto'];
-      };
-    };
-    responses: {
-      /** @description User suspended successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'];
-        };
-      };
-      /** @description Cannot suspend yourself */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions (Owner/Admin only) */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description User not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  UserController_reactivateUser: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the user to reactivate */
-        targetUserId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description User reactivated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'];
-        };
-      };
-      /** @description Insufficient permissions (Owner/Admin only) */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description User not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  TierController_getStoreTier: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Tier information retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['TierResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Tier information retrieved successfully */
-            message?: string;
-          };
-        };
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  TierController_getStoreUsage: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Usage statistics retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['StoreUsageDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Usage statistics retrieved successfully */
-            message?: string;
-          };
-        };
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AuditLogController_getStoreAuditLogs: {
-    parameters: {
-      query?: {
-        /** @description Page number (1-indexed) */
-        page?: number;
-        /** @description Items per page (max 100) */
-        limit?: number;
-        /** @description Filter by action type */
-        action?:
-          | 'STORE_SETTING_CHANGED'
-          | 'MENU_PRICE_CHANGED'
-          | 'MENU_ITEM_86D'
-          | 'PAYMENT_REFUNDED'
-          | 'ORDER_VOIDED'
-          | 'USER_ROLE_CHANGED'
-          | 'USER_SUSPENDED'
-          | 'USER_REACTIVATED'
-          | 'TIER_UPGRADED'
-          | 'TIER_DOWNGRADED'
-          | 'PAYMENT_REQUEST_CREATED'
-          | 'PAYMENT_VERIFIED'
-          | 'SUBSCRIPTION_ACTIVATED'
-          | 'SUBSCRIPTION_CANCELLED'
-          | 'SUBSCRIPTION_EXPIRED'
-          | 'TRIAL_STARTED'
-          | 'TRIAL_EXPIRED'
-          | 'TRIAL_CONVERTED'
-          | 'REFUND_REQUESTED'
-          | 'REFUND_APPROVED'
-          | 'REFUND_REJECTED'
-          | 'REFUND_PROCESSED'
-          | 'OWNERSHIP_TRANSFER_INITIATED'
-          | 'OWNERSHIP_TRANSFER_COMPLETED'
-          | 'TIER_AUTO_DOWNGRADED'
-          | 'TRIAL_WARNING_SENT'
-          | 'ADMIN_STORE_SUSPENDED'
-          | 'ADMIN_STORE_BANNED'
-          | 'ADMIN_STORE_REACTIVATED'
-          | 'ADMIN_USER_SUSPENDED'
-          | 'ADMIN_USER_BANNED'
-          | 'ADMIN_USER_REACTIVATED'
-          | 'ADMIN_SUBSCRIPTION_OVERRIDDEN'
-          | 'ADMIN_PAYMENT_VERIFIED'
-          | 'ADMIN_PAYMENT_REJECTED'
-          | 'ADMIN_REFUND_APPROVED'
-          | 'ADMIN_IMPERSONATION_STARTED'
-          | 'ADMIN_IMPERSONATION_ENDED';
-        /** @description Filter by user ID */
-        userId?: string;
-      };
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Audit logs retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['AuditLogEntryDto'][];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Audit logs retrieved successfully */
-            message?: string;
-          };
-        };
-      };
-      /** @description Only store owners can view audit logs */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AuditLogController_exportAuditLogs: {
-    parameters: {
-      query?: {
-        /** @description Filter by action type */
-        action?:
-          | 'STORE_SETTING_CHANGED'
-          | 'MENU_PRICE_CHANGED'
-          | 'MENU_ITEM_86D'
-          | 'PAYMENT_REFUNDED'
-          | 'ORDER_VOIDED'
-          | 'USER_ROLE_CHANGED'
-          | 'USER_SUSPENDED'
-          | 'USER_REACTIVATED'
-          | 'TIER_UPGRADED'
-          | 'TIER_DOWNGRADED'
-          | 'PAYMENT_REQUEST_CREATED'
-          | 'PAYMENT_VERIFIED'
-          | 'SUBSCRIPTION_ACTIVATED'
-          | 'SUBSCRIPTION_CANCELLED'
-          | 'SUBSCRIPTION_EXPIRED'
-          | 'TRIAL_STARTED'
-          | 'TRIAL_EXPIRED'
-          | 'TRIAL_CONVERTED'
-          | 'REFUND_REQUESTED'
-          | 'REFUND_APPROVED'
-          | 'REFUND_REJECTED'
-          | 'REFUND_PROCESSED'
-          | 'OWNERSHIP_TRANSFER_INITIATED'
-          | 'OWNERSHIP_TRANSFER_COMPLETED'
-          | 'TIER_AUTO_DOWNGRADED'
-          | 'TRIAL_WARNING_SENT'
-          | 'ADMIN_STORE_SUSPENDED'
-          | 'ADMIN_STORE_BANNED'
-          | 'ADMIN_STORE_REACTIVATED'
-          | 'ADMIN_USER_SUSPENDED'
-          | 'ADMIN_USER_BANNED'
-          | 'ADMIN_USER_REACTIVATED'
-          | 'ADMIN_SUBSCRIPTION_OVERRIDDEN'
-          | 'ADMIN_PAYMENT_VERIFIED'
-          | 'ADMIN_PAYMENT_REJECTED'
-          | 'ADMIN_REFUND_APPROVED'
-          | 'ADMIN_IMPERSONATION_STARTED'
-          | 'ADMIN_IMPERSONATION_ENDED';
-        /** @description Filter by user ID */
-        userId?: string;
-        /** @description Start date filter (ISO 8601 format) */
-        startDate?: string;
-        /** @description End date filter (ISO 8601 format) */
-        endDate?: string;
-      };
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Only store owners can export audit logs */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  CartController_getCart: {
-    parameters: {
-      query: {
-        /** @description Active table session ID */
-        sessionId: string;
-      };
-      header?: {
-        /** @description Session token for customer access (SOS app) */
-        'x-session-token'?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Cart retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['CartResponseDto'];
-        };
-      };
-      /** @description Authentication required */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Access denied */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Session not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  CartController_clearCart: {
-    parameters: {
-      query: {
-        /** @description Active table session ID */
-        sessionId: string;
-      };
-      header?: {
-        /** @description Session token for customer access (SOS app) */
-        'x-session-token'?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Cart cleared successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['CartResponseDto'];
-        };
-      };
-      /** @description Authentication required */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Access denied */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Cart not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  CartController_addItem: {
-    parameters: {
-      query: {
-        /** @description Active table session ID */
-        sessionId: string;
-      };
-      header?: {
-        /** @description Session token for customer access (SOS app) */
-        'x-session-token'?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['AddToCartDto'];
-      };
-    };
-    responses: {
-      /** @description Item added to cart successfully */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['CartResponseDto'];
-        };
-      };
-      /** @description Invalid input */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Authentication required */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Access denied */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Menu item or session not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  CartController_removeItem: {
-    parameters: {
-      query: {
-        /** @description Active table session ID */
-        sessionId: string;
-      };
-      header?: {
-        /** @description Session token for customer access (SOS app) */
-        'x-session-token'?: string;
-      };
-      path: {
-        /** @description Cart item ID */
-        cartItemId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Item removed from cart successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['CartResponseDto'];
-        };
-      };
-      /** @description Authentication required */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Access denied */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Cart item not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  CartController_updateItem: {
-    parameters: {
-      query: {
-        /** @description Active table session ID */
-        sessionId: string;
-      };
-      header?: {
-        /** @description Session token for customer access (SOS app) */
-        'x-session-token'?: string;
-      };
-      path: {
-        /** @description Cart item ID */
-        cartItemId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateCartItemDto'];
-      };
-    };
-    responses: {
-      /** @description Cart item updated successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['CartResponseDto'];
-        };
-      };
-      /** @description Invalid input */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Authentication required */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Access denied */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Cart item not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  OrderController_checkout: {
-    parameters: {
-      query: {
-        /** @description Active table session ID */
-        sessionId: string;
-      };
-      header?: {
-        /** @description Session token for customer authentication (optional if JWT provided) */
-        'x-session-token'?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CheckoutCartDto'];
-      };
-    };
-    responses: {
-      /** @description Order created successfully */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['OrderResponseDto'];
-        };
-      };
-      /** @description Cart is empty or invalid */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Authentication required: Provide session token or JWT */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Invalid session token or insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Session or cart not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  OrderController_quickCheckout: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['QuickSaleCheckoutDto'];
-      };
-    };
-    responses: {
-      /** @description Order created successfully */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['OrderResponseDto'];
-        };
-      };
-      /** @description Invalid session type or empty items array */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Authentication required */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions for this store */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Menu item not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  OrderController_findOne: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Order ID */
-        orderId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Order retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['OrderResponseDto'];
-        };
-      };
-      /** @description Order not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  OrderController_findByStore: {
-    parameters: {
-      query: {
-        /** @description Store ID */
-        storeId: string;
-        /** @description Page number (1-indexed) */
-        page?: number;
-        /** @description Items per page (max 100) */
-        limit?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Orders retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['PaginatedResponseDto'];
-        };
-      };
-    };
-  };
-  OrderController_updateStatus: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Order ID */
-        orderId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateOrderStatusDto'];
-      };
-    };
-    responses: {
-      /** @description Order status updated successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['OrderResponseDto'];
-        };
-      };
-      /** @description Invalid status transition */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Order not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  OrderController_applyDiscount: {
-    parameters: {
-      query: {
-        /** @description Store ID */
-        storeId: string;
-      };
-      header?: never;
-      path: {
-        /** @description Order ID */
-        orderId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['ApplyDiscountDto'];
-      };
-    };
-    responses: {
-      /** @description Discount applied successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['OrderResponseDto'];
-        };
-      };
-      /** @description Invalid discount or order already paid */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions for discount amount */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Order not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  OrderController_removeDiscount: {
-    parameters: {
-      query: {
-        /** @description Store ID */
-        storeId: string;
-      };
-      header?: never;
-      path: {
-        /** @description Order ID */
-        orderId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Discount removed successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['OrderResponseDto'];
-        };
-      };
-      /** @description Order already paid */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Order not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  KitchenController_getOrders: {
-    parameters: {
-      query?: {
-        /** @description Filter by order status */
-        status?:
-          | 'PENDING'
-          | 'PREPARING'
-          | 'READY'
-          | 'SERVED'
-          | 'COMPLETED'
-          | 'CANCELLED';
-        /** @description Filter by menu item routing area */
-        routingArea?:
-          | 'GRILL'
-          | 'FRY'
-          | 'SALAD'
-          | 'DRINKS'
-          | 'DESSERT'
-          | 'APPETIZER'
-          | 'SOUP'
-          | 'OTHER';
-      };
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Orders retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['KitchenOrderResponseDto'][];
-        };
-      };
-    };
-  };
-  KitchenController_getOrderDetails: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the order */
-        orderId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Order details retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['KitchenOrderResponseDto'];
-        };
-      };
-    };
-  };
-  KitchenController_updateOrderStatus: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the order */
-        orderId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateKitchenStatusDto'];
-      };
-    };
-    responses: {
-      /** @description Order status updated successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['KitchenOrderResponseDto'];
-        };
-      };
-    };
-  };
-  AdminAuthController_validateToken: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['ValidateAdminTokenDto'];
-      };
-    };
-    responses: {
-      /** @description Token validated successfully, admin user synced */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['ValidateAdminResponseDto'];
-        };
-      };
-      /** @description Invalid request body */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Invalid or expired Auth0 token */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Admin account is inactive */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminAuthController_getProfile: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Admin profile retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['AdminProfileResponseDto'];
-        };
-      };
-      /** @description Not authenticated */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Not authorized as admin */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminAuthController_getPermissions: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Admin permissions retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['AdminPermissionsResponseDto'];
-        };
-      };
-      /** @description Not authenticated */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Not authorized as admin */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminStoreController_listStores: {
-    parameters: {
-      query?: {
-        page?: number;
-        limit?: number;
-        search?: string;
-        status?: 'ACTIVE' | 'SUSPENDED' | 'BANNED';
-        tierId?: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Stores retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminStoreController_getStoreDetail: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Store detail retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminStoreController_suspendStore: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['SuspendStoreDto'];
-      };
-    };
-    responses: {
-      /** @description Store suspended successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store is already suspended */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminStoreController_banStore: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['BanStoreDto'];
-      };
-    };
-    responses: {
-      /** @description Store banned successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store is already banned */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminStoreController_reactivateStore: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['ReactivateStoreDto'];
-      };
-    };
-    responses: {
-      /** @description Store reactivated successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store is not suspended or banned */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminStoreController_downgradeTier: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['DowngradeTierDto'];
-      };
-    };
-    responses: {
-      /** @description Store tier downgraded successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store or target tier not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminStoreController_getStoreAnalytics: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Store analytics retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminUserController_listUsers: {
-    parameters: {
-      query?: {
-        page?: number;
-        limit?: number;
-        search?: string;
-        isSuspended?: boolean;
-        storeId?: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Users retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminUserController_getUserDetail: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description User detail retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description User not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminUserController_suspendUser: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['SuspendUserDto'];
-      };
-    };
-    responses: {
-      /** @description User suspended successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description User is already suspended */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description User not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminUserController_banUser: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['BanUserDto'];
-      };
-    };
-    responses: {
-      /** @description User banned successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description User not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminUserController_reactivateUser: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['ReactivateUserDto'];
-      };
-    };
-    responses: {
-      /** @description User reactivated successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description User is not suspended */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description User not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminUserController_forcePasswordReset: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Password reset forced successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description User not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminUserController_getUserActivity: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description User activity retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description User not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminPaymentController_getPaymentQueue: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Payment queue retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminPaymentController_getPaymentDetail: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Payment detail retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Payment request not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminPaymentController_verifyPayment: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Payment verified successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Payment request not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminPaymentController_rejectPayment: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Payment rejected successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Payment request not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  PaymentRequestController_createPaymentRequest: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreatePaymentRequestDto'];
-      };
-    };
-    responses: {
-      /** @description Payment request created successfully */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['PaymentRequestResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Payment request created successfully */
-            message?: string;
-          };
-        };
-      };
-      /** @description Invalid tier or request already exists */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions (OWNER/ADMIN required) */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  PaymentRequestController_uploadPaymentProof: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Payment request ID (UUID) */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'multipart/form-data': {
-          /**
-           * Format: binary
-           * @description Payment proof image (JPEG, PNG, WebP)
-           */
-          file: string;
-        };
-      };
-    };
-    responses: {
-      /** @description Payment proof uploaded successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['PaymentRequestResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Payment proof uploaded successfully */
-            message?: string;
-          };
-        };
-      };
-      /** @description Invalid file type or size */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions or not request owner */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Payment request not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  PaymentRequestController_getPaymentRequest: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Payment request ID (UUID) */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Payment request details retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['PaymentRequestResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Payment request details retrieved successfully */
-            message?: string;
-          };
-        };
-      };
-      /** @description Insufficient permissions or not request owner */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Payment request not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  PaymentRequestController_getStorePaymentRequests: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Store ID (UUID) */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Payment requests retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['PaymentRequestResponseDto'][];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Payment requests retrieved successfully */
-            message?: string;
-          };
-        };
-      };
-      /** @description Insufficient permissions (OWNER/ADMIN required) */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  AdminVerificationController_getPaymentQueue: {
-    parameters: {
-      query?: {
-        /** @description Filter by payment status */
-        status?: 'PENDING_VERIFICATION' | 'VERIFIED' | 'ACTIVATED' | 'REJECTED';
-        /** @description Page number (default: 1) */
-        page?: number;
-        /** @description Items per page (default: 20) */
-        limit?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Payment requests queue retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: {
-              [key: string]: unknown;
+    ActiveTableSessionController_createManualSession: {
+        parameters: {
+            query: {
+                /** @description Store ID */
+                storeId: string;
             };
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Payment requests queue retrieved successfully */
-            message?: string;
-          };
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
-    };
-  };
-  AdminVerificationController_getPaymentRequestDetail: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Payment request ID */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Payment request detail retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: {
-              [key: string]: unknown;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateManualSessionDto"];
             };
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Payment request detail retrieved successfully */
-            message?: string;
-          };
         };
-      };
-    };
-  };
-  AdminVerificationController_getPaymentProof: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Payment request ID */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Payment proof URL retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: {
-              [key: string]: unknown;
+        responses: {
+            /** @description Manual session created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["SessionCreatedResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Manual session created successfully */
+                        message?: string;
+                    };
+                };
             };
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Payment proof URL retrieved successfully */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  AdminVerificationController_verifyPayment: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Payment request ID */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['VerifyPaymentDto'];
-      };
-    };
-    responses: {
-      /** @description Payment verified successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: {
-              [key: string]: unknown;
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Payment verified successfully */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  AdminVerificationController_rejectPayment: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Payment request ID */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['RejectPaymentDto'];
-      };
-    };
-    responses: {
-      /** @description Payment rejected successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: {
-              [key: string]: unknown;
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Payment rejected successfully */
-            message?: string;
-          };
         };
-      };
     };
-  };
-  AdminVerificationController_getAdminMetrics: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Dashboard metrics retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: {
-              [key: string]: unknown;
+    ActiveTableSessionController_joinByTable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Table ID from QR code */
+                tableId: string;
             };
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Dashboard metrics retrieved successfully */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  TrialController_checkEligibility: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Trial eligibility status retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['TrialEligibilityResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Trial eligibility status retrieved successfully */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  TrialController_getTrialInfo: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Store ID (UUID) */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Trial information retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['TrialInfoResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Trial information retrieved successfully */
-            message?: string;
-          };
-        };
-      };
-      /** @description Insufficient permissions (OWNER/ADMIN required) */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  OwnershipTransferController_initiateTransfer: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['InitiateOwnershipTransferDto'];
-      };
-    };
-    responses: {
-      /** @description Ownership transfer initiated successfully */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['OwnershipTransferResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Ownership transfer initiated successfully */
-            message?: string;
-          };
-        };
-      };
-      /** @description New owner email is invalid or same as current owner */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Only store owners can transfer ownership */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  OwnershipTransferController_verifyOtp: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Transfer ID (UUID) */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['VerifyOtpDto'];
-      };
-    };
-    responses: {
-      /** @description Ownership transfer completed successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['OwnershipTransferResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Ownership transfer completed successfully */
-            message?: string;
-          };
-        };
-      };
-      /** @description Invalid OTP or transfer already completed/cancelled */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Only the initiating owner can verify the transfer */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Transfer not found or expired */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  OwnershipTransferController_cancelTransfer: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Transfer ID (UUID) */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Ownership transfer cancelled successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['OwnershipTransferResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Ownership transfer cancelled successfully */
-            message?: string;
-          };
-        };
-      };
-      /** @description Transfer already completed or cancelled */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Only the initiating owner can cancel the transfer */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Transfer not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  RefundController_requestRefund: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateRefundRequestDto'];
-      };
-    };
-    responses: {
-      /** @description Refund request created successfully */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['RefundRequestResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Refund request created successfully */
-            message?: string;
-          };
-        };
-      };
-      /** @description Subscription not eligible for refund */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Insufficient permissions or not subscription owner */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Subscription not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  RefundController_getStoreRefundRequests: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Store ID (UUID) */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Refund requests retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['RefundRequestResponseDto'][];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Refund requests retrieved successfully */
-            message?: string;
-          };
-        };
-      };
-      /** @description Insufficient permissions (OWNER/ADMIN required) */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  SubscriptionController_getStoreSubscription: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Store ID (UUID) */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Subscription retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['SubscriptionResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Subscription retrieved successfully */
-            message?: string;
-          };
-        };
-      };
-      /** @description Insufficient permissions (OWNER/ADMIN required) */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store or subscription not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  UploadController_uploadImage: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** @description Image file to upload (jpg, jpeg, png, webp) with optional size preset */
-    requestBody: {
-      content: {
-        'multipart/form-data': {
-          /**
-           * Format: binary
-           * @description Image file (max 10MB)
-           */
-          file: string;
-          /**
-           * @description Size preset for image resizing (defaults to 'menu-item')
-           * @default menu-item
-           * @enum {string}
-           */
-          sizePreset?:
-            | 'menu-item'
-            | 'store-logo'
-            | 'cover-photo'
-            | 'payment-proof';
-        };
-      };
-    };
-    responses: {
-      /** @description Image uploaded and processed successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['UploadImageResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Image uploaded and processed successfully */
-            message?: string;
-          };
-        };
-      };
-      /** @description Unauthorized. */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  HealthController_healthCheck: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Service is healthy */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': {
-            /** @example ok */
-            status?: string;
-            /** @example 2025-11-27T10:30:00.000Z */
-            timestamp?: string;
-          };
-        };
-      };
-    };
-  };
-  CategoryController_findAll: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Store UUID or slug */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description List of active categories with included active menu items. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['CategoryResponseDto'][];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example List of active categories with included active menu items. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  CategoryController_create: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateCategoryDto'];
-      };
-    };
-    responses: {
-      /** @description Category created successfully. */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['CategoryBasicResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Category created successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  CategoryController_findOne: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Store UUID or slug */
-        storeId: string;
-        /** @description ID (UUID) of the category to fetch */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  CategoryController_remove: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the category to delete */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Category deleted successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['CategoryDeletedResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Category deleted successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  CategoryController_update: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the category to update */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateCategoryDto'];
-      };
-    };
-    responses: {
-      /** @description Category updated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['CategoryBasicResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Category updated successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  CategoryController_sortCategories: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['SortCategoriesPayloadDto'];
-      };
-    };
-    responses: {
-      /** @description Categories and items reordered successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: string;
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Categories and items reordered successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  CategoryController_updateCategoryTranslations: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the category */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateCategoryTranslationsDto'];
-      };
-    };
-    responses: {
-      /** @description Category translations updated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: string;
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Category translations updated successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  CategoryController_deleteCategoryTranslation: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the category */
-        id: string;
-        /** @description Locale to delete (en, zh, my, th) */
-        locale: 'en' | 'zh' | 'my' | 'th';
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Category translation deleted successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: string;
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Category translation deleted successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  MenuController_getStoreMenuItems: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description List of menu items retrieved successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['MenuItemResponseDto'][];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example List of menu items retrieved successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  MenuController_createMenuItem: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateMenuItemDto'];
-      };
-    };
-    responses: {
-      /** @description Menu item created successfully. */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: string;
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Menu item created successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  MenuController_getMenuItemById: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the menu item */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Menu item details retrieved successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['MenuItemResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Menu item details retrieved successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  MenuController_updateMenuItem: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the menu item */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateMenuItemDto'];
-      };
-    };
-    responses: {
-      /** @description Menu item updated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['MenuItemResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Menu item updated successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  MenuController_deleteMenuItem: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the menu item */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Menu item deleted successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['MenuItemDeletedResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Menu item deleted successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  MenuController_patchMenuItem: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the menu item */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['PatchMenuItemDto'];
-      };
-    };
-    responses: {
-      /** @description Menu item updated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['MenuItemResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Menu item updated successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  MenuController_updateMenuItemTranslations: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the menu item */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateMenuItemTranslationsDto'];
-      };
-    };
-    responses: {
-      /** @description Menu item translations updated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: string;
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Menu item translations updated successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  MenuController_deleteMenuItemTranslation: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the menu item */
-        id: string;
-        /** @description Locale to delete (en, zh, my, th) */
-        locale: 'en' | 'zh' | 'my' | 'th';
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Menu item translation deleted successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: string;
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Menu item translation deleted successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  CustomizationController_updateGroupTranslations: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the customization group */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateCustomizationGroupTranslationsDto'];
-      };
-    };
-    responses: {
-      /** @description Customization group translations updated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: string;
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Customization group translations updated successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  CustomizationController_updateOptionTranslations: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the customization option */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateCustomizationOptionTranslationsDto'];
-      };
-    };
-    responses: {
-      /** @description Customization option translations updated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: string;
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Customization option translations updated successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  PaymentController_findPaymentsByOrder: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Order ID */
-        orderId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Payments retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['PaymentResponseDto'][];
-        };
-      };
-      /** @description Forbidden - insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Order not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  PaymentController_recordPayment: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Order ID */
-        orderId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['RecordPaymentDto'];
-      };
-    };
-    responses: {
-      /** @description Payment recorded successfully */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['PaymentResponseDto'];
-        };
-      };
-      /** @description Invalid payment amount */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Forbidden - insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Order not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  PaymentController_getPaymentSummary: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Order ID */
-        orderId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Payment summary retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Forbidden - insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Order not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  PaymentController_findRefundsByOrder: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Order ID */
-        orderId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Refunds retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['RefundResponseDto'][];
-        };
-      };
-      /** @description Forbidden - insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Order not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  PaymentController_createRefund: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Order ID */
-        orderId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateRefundDto'];
-      };
-    };
-    responses: {
-      /** @description Refund created successfully */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['RefundResponseDto'];
-        };
-      };
-      /** @description Invalid refund amount */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Forbidden - insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Order not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  PaymentController_calculateSplit: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Order ID */
-        orderId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CalculateSplitDto'];
-      };
-    };
-    responses: {
-      /** @description Split calculation completed successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Invalid split data */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Order not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  PaymentController_recordSplitPayment: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description Order ID */
-        orderId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['RecordSplitPaymentDto'];
-      };
-    };
-    responses: {
-      /** @description Split payment recorded successfully */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['PaymentResponseDto'];
-        };
-      };
-      /** @description Invalid payment or overpayment */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Forbidden - insufficient permissions */
-      403: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Order not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  ReportController_getSalesSummary: {
-    parameters: {
-      query: {
-        /** @description Start date (ISO 8601) */
-        startDate: string;
-        /** @description End date (ISO 8601) */
-        endDate: string;
-      };
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Sales summary retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['SalesSummaryDto'];
-        };
-      };
-    };
-  };
-  ReportController_getPaymentBreakdown: {
-    parameters: {
-      query: {
-        /** @description Start date (ISO 8601) */
-        startDate: string;
-        /** @description End date (ISO 8601) */
-        endDate: string;
-      };
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Payment breakdown retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['PaymentBreakdownDto'];
-        };
-      };
-    };
-  };
-  ReportController_getPopularItems: {
-    parameters: {
-      query: {
-        /** @description Number of items to return (default 10) */
-        limit?: number;
-        /** @description Start date (ISO 8601) */
-        startDate: string;
-        /** @description End date (ISO 8601) */
-        endDate: string;
-      };
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Popular items retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['PopularItemsDto'];
-        };
-      };
-    };
-  };
-  ReportController_getOrderStatusReport: {
-    parameters: {
-      query: {
-        /** @description Start date (ISO 8601) */
-        startDate: string;
-        /** @description End date (ISO 8601) */
-        endDate: string;
-      };
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Order status report retrieved successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['OrderStatusReportDto'];
-        };
-      };
-    };
-  };
-  StoreController_getStoreDetails: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store to retrieve */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Store details retrieved successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['GetStoreDetailsResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Store details retrieved successfully. */
-            message?: string;
-          };
-        };
-      };
-      /** @description Store not found. */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  StoreController_createStore: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateStoreDto'];
-      };
-    };
-    responses: {
-      /** @description Store created successfully. */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: string;
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Store created successfully. */
-            message?: string;
-          };
-        };
-      };
-      /** @description Unauthorized - Invalid or missing JWT. */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  StoreController_updateStoreInformation: {
-    parameters: {
-      query: {
-        storeId: string;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateStoreInformationDto'];
-      };
-    };
-    responses: {
-      /** @description Store updated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'];
-        };
-      };
-      /** @description Unauthorized - Invalid or missing JWT. */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  StoreController_updateStoreSettings: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store whose settings to update */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateStoreSettingDto'];
-      };
-    };
-    responses: {
-      /** @description Store settings updated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['StoreSettingResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Store settings updated successfully. */
-            message?: string;
-          };
-        };
-      };
-      /** @description Unauthorized - Invalid or missing JWT. */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  StoreController_inviteOrAssignRoleByEmail: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['InviteOrAssignRoleDto'];
-      };
-    };
-    responses: {
-      /** @description Member added or role updated successfully. */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: string;
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Member added or role updated successfully. */
-            message?: string;
-          };
-        };
-      };
-      /** @description Unauthorized - Invalid or missing JWT. */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Store not found. */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  StoreController_updateTaxAndServiceCharge: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateTaxAndServiceChargeDto'];
-      };
-    };
-    responses: {
-      /** @description Tax and service charge rates updated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['StoreSettingResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Tax and service charge rates updated successfully. */
-            message?: string;
-          };
-        };
-      };
-      /** @description Unauthorized - Invalid or missing JWT. */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  StoreController_updateBusinessHours: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['BusinessHoursDto'];
-      };
-    };
-    responses: {
-      /** @description Business hours updated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['StoreSettingResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Business hours updated successfully. */
-            message?: string;
-          };
-        };
-      };
-      /** @description Unauthorized - Invalid or missing JWT. */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  StoreController_uploadBranding: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Branding uploaded successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['StoreInformationResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Branding uploaded successfully. */
-            message?: string;
-          };
-        };
-      };
-      /** @description Unauthorized - Invalid or missing JWT. */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  StoreController_updateLoyaltyRules: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateLoyaltyRulesDto'];
-      };
-    };
-    responses: {
-      /** @description Loyalty rules updated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['StoreSettingResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Loyalty rules updated successfully. */
-            message?: string;
-          };
-        };
-      };
-      /** @description Unauthorized - Invalid or missing JWT. */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  TableController_findAllByStore: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description List of tables for the store, naturally sorted by name. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['TableResponseDto'][];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example List of tables for the store, naturally sorted by name. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  TableController_createTable: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['CreateTableDto'];
-      };
-    };
-    responses: {
-      /** @description Table created successfully. */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['TableResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Table created successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  TableController_syncTables: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['BatchUpsertTableDto'];
-      };
-    };
-    responses: {
-      /** @description Tables synchronized successfully. Returns the final list of tables for the store. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['TableResponseDto'][];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Tables synchronized successfully. Returns the final list of tables for the store. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  TableController_findOne: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the table */
-        tableId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Table details retrieved successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['TableResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Table details retrieved successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  TableController_deleteTable: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the table to delete */
-        tableId: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Table deleted successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['TableDeletedResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Table deleted successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  TableController_updateTable: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the table to update */
-        tableId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateTableDto'];
-      };
-    };
-    responses: {
-      /** @description Table updated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['TableResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Table updated successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
-  TableController_updateTableStatus: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description ID (UUID) of the store */
-        storeId: string;
-        /** @description ID (UUID) of the table to update status */
-        tableId: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['UpdateTableStatusDto'];
-      };
-    };
-    responses: {
-      /** @description Table status updated successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['StandardApiResponse'] & {
-            /** @example success */
-            status?: string;
-            data?: components['schemas']['TableResponseDto'];
-            /** @example null */
-            errors?: unknown[] | null;
-            /** @example Table status updated successfully. */
-            message?: string;
-          };
-        };
-      };
-    };
-  };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["JoinSessionDto"];
+            };
+        };
+        responses: {
+            /** @description Session joined/created successfully (includes session token) */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["SessionCreatedResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Session joined/created successfully (includes session token) */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Table not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ActiveTableSessionController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Session ID */
+                sessionId: string;
+                /** @description Session ID */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description SECURITY: Session token is excluded from response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["SessionResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example SECURITY: Session token is excluded from response */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description session not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ActiveTableSessionController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Session ID */
+                sessionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateSessionDto"];
+            };
+        };
+        responses: {
+            /** @description Session updated (session token excluded for security) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["SessionResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Session updated (session token excluded for security) */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ActiveTableSessionController_findByToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Session token */
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Session found (session token excluded for security) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["SessionResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Session found (session token excluded for security) */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid session token */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ActiveTableSessionController_findActiveByStore: {
+        parameters: {
+            query: {
+                /** @description Store ID */
+                storeId: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Active sessions retrieved (session tokens excluded) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["SessionResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Active sessions retrieved (session tokens excluded) */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ActiveTableSessionController_close: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Session ID */
+                sessionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Session closed (session token excluded for security) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["SessionResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Session closed (session token excluded for security) */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Session already closed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ActiveTableSessionController_getSessionOrders: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Active table session ID */
+                sessionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Orders retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["OrderResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Orders retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Session not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthController_loginWithStore: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChooseStoreDto"];
+            };
+        };
+        responses: {
+            /** @description Store selected. Full JWT set in HttpOnly cookie. Token contains { sub, storeId, role }. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User/Membership data not found (should be rare). */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthController_getAuth0Config: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Auth0 configuration retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StandardApiResponse"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Auth0 configuration retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthController_validateAuth0Token: {
+        parameters: {
+            query?: never;
+            header: {
+                authorization: string;
+                /** @description Bearer <auth0-access-token> */
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Auth0 token validated and user synced successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StandardApiResponse"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Auth0 token validated and user synced successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid Auth0 token or Auth0 is not enabled */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthController_getAuth0Profile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User profile retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_register: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateUserDto"];
+            };
+        };
+        responses: {
+            /** @description User registered successfully. Verification email sent. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"];
+                };
+            };
+            /** @description Validation error (e.g., email exists, disposable domain, invalid input) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal server error (e.g., failed to send email) */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_addUserToStore: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddUserToStoreDto"];
+            };
+        };
+        responses: {
+            /** @description User assigned/updated in store successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StandardApiResponse"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example User assigned/updated in store successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_getUserStores: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the target user */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of user store memberships retrieved. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StandardApiResponse"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example List of user store memberships retrieved. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_getCurrentUser: {
+        parameters: {
+            query?: {
+                /** @description Optional: ID (UUID) of the store to get user context (e.g., role) for. */
+                storeId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current user profile retrieved successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["UserProfileResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Current user profile retrieved successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_inviteStaff: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InviteStaffDto"];
+            };
+        };
+        responses: {
+            /** @description Staff invitation sent successfully. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"];
+                };
+            };
+            /** @description Invalid input or user already a member */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_changeRole: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the user whose role to change */
+                targetUserId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeRoleDto"];
+            };
+        };
+        responses: {
+            /** @description User role updated successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StandardApiResponse"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example User role updated successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_suspendUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the user to suspend */
+                targetUserId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SuspendUserDto"];
+            };
+        };
+        responses: {
+            /** @description User suspended successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StandardApiResponse"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example User suspended successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_reactivateUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the user to reactivate */
+                targetUserId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User reactivated successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StandardApiResponse"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example User reactivated successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TierController_getStoreTier: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tier information retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["TierResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Tier information retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Store not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TierController_getStoreUsage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Usage statistics retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StoreUsageDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Usage statistics retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Store not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuditLogController_getStoreAuditLogs: {
+        parameters: {
+            query?: {
+                /** @description Page number (1-indexed) */
+                page?: number;
+                /** @description Items per page (max 100) */
+                limit?: number;
+                /** @description Filter by action type */
+                action?: "STORE_SETTING_CHANGED" | "MENU_PRICE_CHANGED" | "MENU_ITEM_86D" | "PAYMENT_REFUNDED" | "ORDER_VOIDED" | "USER_ROLE_CHANGED" | "USER_SUSPENDED" | "USER_REACTIVATED" | "TIER_UPGRADED" | "TIER_DOWNGRADED" | "PAYMENT_REQUEST_CREATED" | "PAYMENT_VERIFIED" | "SUBSCRIPTION_ACTIVATED" | "SUBSCRIPTION_CANCELLED" | "SUBSCRIPTION_EXPIRED" | "TRIAL_STARTED" | "TRIAL_EXPIRED" | "TRIAL_CONVERTED" | "REFUND_REQUESTED" | "REFUND_APPROVED" | "REFUND_REJECTED" | "REFUND_PROCESSED" | "OWNERSHIP_TRANSFER_INITIATED" | "OWNERSHIP_TRANSFER_COMPLETED" | "TIER_AUTO_DOWNGRADED" | "TRIAL_WARNING_SENT" | "ADMIN_STORE_SUSPENDED" | "ADMIN_STORE_BANNED" | "ADMIN_STORE_REACTIVATED" | "ADMIN_USER_SUSPENDED" | "ADMIN_USER_BANNED" | "ADMIN_USER_REACTIVATED" | "ADMIN_SUBSCRIPTION_OVERRIDDEN" | "ADMIN_PAYMENT_VERIFIED" | "ADMIN_PAYMENT_REJECTED" | "ADMIN_REFUND_APPROVED" | "ADMIN_IMPERSONATION_STARTED" | "ADMIN_IMPERSONATION_ENDED";
+                /** @description Filter by user ID */
+                userId?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Audit logs retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["AuditLogPaginatedResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Audit logs retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Store not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuditLogController_exportAuditLogs: {
+        parameters: {
+            query?: {
+                /** @description Filter by action type */
+                action?: "STORE_SETTING_CHANGED" | "MENU_PRICE_CHANGED" | "MENU_ITEM_86D" | "PAYMENT_REFUNDED" | "ORDER_VOIDED" | "USER_ROLE_CHANGED" | "USER_SUSPENDED" | "USER_REACTIVATED" | "TIER_UPGRADED" | "TIER_DOWNGRADED" | "PAYMENT_REQUEST_CREATED" | "PAYMENT_VERIFIED" | "SUBSCRIPTION_ACTIVATED" | "SUBSCRIPTION_CANCELLED" | "SUBSCRIPTION_EXPIRED" | "TRIAL_STARTED" | "TRIAL_EXPIRED" | "TRIAL_CONVERTED" | "REFUND_REQUESTED" | "REFUND_APPROVED" | "REFUND_REJECTED" | "REFUND_PROCESSED" | "OWNERSHIP_TRANSFER_INITIATED" | "OWNERSHIP_TRANSFER_COMPLETED" | "TIER_AUTO_DOWNGRADED" | "TRIAL_WARNING_SENT" | "ADMIN_STORE_SUSPENDED" | "ADMIN_STORE_BANNED" | "ADMIN_STORE_REACTIVATED" | "ADMIN_USER_SUSPENDED" | "ADMIN_USER_BANNED" | "ADMIN_USER_REACTIVATED" | "ADMIN_SUBSCRIPTION_OVERRIDDEN" | "ADMIN_PAYMENT_VERIFIED" | "ADMIN_PAYMENT_REJECTED" | "ADMIN_REFUND_APPROVED" | "ADMIN_IMPERSONATION_STARTED" | "ADMIN_IMPERSONATION_ENDED";
+                /** @description Filter by user ID */
+                userId?: string;
+                /** @description Start date filter (ISO 8601 format) */
+                startDate?: string;
+                /** @description End date filter (ISO 8601 format) */
+                endDate?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CartController_getCart: {
+        parameters: {
+            query: {
+                /** @description Active table session ID */
+                sessionId: string;
+            };
+            header?: {
+                /** @description Session token for customer access (SOS app) */
+                "x-session-token"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Cart retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["CartResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Cart retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CartController_clearCart: {
+        parameters: {
+            query: {
+                /** @description Active table session ID */
+                sessionId: string;
+            };
+            header?: {
+                /** @description Session token for customer access (SOS app) */
+                "x-session-token"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Cart cleared successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["CartResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Cart cleared successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CartController_addItem: {
+        parameters: {
+            query: {
+                /** @description Active table session ID */
+                sessionId: string;
+            };
+            header?: {
+                /** @description Session token for customer access (SOS app) */
+                "x-session-token"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddToCartDto"];
+            };
+        };
+        responses: {
+            /** @description Item added to cart successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["CartResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Item added to cart successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CartController_removeItem: {
+        parameters: {
+            query: {
+                /** @description Active table session ID */
+                sessionId: string;
+            };
+            header?: {
+                /** @description Session token for customer access (SOS app) */
+                "x-session-token"?: string;
+            };
+            path: {
+                /** @description Cart item ID */
+                cartItemId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Item removed from cart successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["CartResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Item removed from cart successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CartController_updateItem: {
+        parameters: {
+            query: {
+                /** @description Active table session ID */
+                sessionId: string;
+            };
+            header?: {
+                /** @description Session token for customer access (SOS app) */
+                "x-session-token"?: string;
+            };
+            path: {
+                /** @description Cart item ID */
+                cartItemId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCartItemDto"];
+            };
+        };
+        responses: {
+            /** @description Cart item updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["CartResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Cart item updated successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_checkout: {
+        parameters: {
+            query: {
+                /** @description Active table session ID */
+                sessionId: string;
+            };
+            header?: {
+                /** @description Session token for customer authentication (optional if JWT provided) */
+                "x-session-token"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckoutCartDto"];
+            };
+        };
+        responses: {
+            /** @description Order created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["OrderResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Order created successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_quickCheckout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuickSaleCheckoutDto"];
+            };
+        };
+        responses: {
+            /** @description Order created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["OrderResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Order created successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Order ID */
+                orderId: string;
+                /** @description Order ID */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Order retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["OrderResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Order retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Order not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_findByStore: {
+        parameters: {
+            query: {
+                /** @description Store ID */
+                storeId: string;
+                /** @description Page number (1-indexed) */
+                page?: number;
+                /** @description Items per page (max 100) */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Orders retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["PaginatedResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Orders retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_updateStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Order ID */
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateOrderStatusDto"];
+            };
+        };
+        responses: {
+            /** @description Order status updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["OrderResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Order status updated successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_applyDiscount: {
+        parameters: {
+            query: {
+                /** @description Store ID */
+                storeId: string;
+            };
+            header?: never;
+            path: {
+                /** @description Order ID */
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApplyDiscountDto"];
+            };
+        };
+        responses: {
+            /** @description Discount applied successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["OrderResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Discount applied successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrderController_removeDiscount: {
+        parameters: {
+            query: {
+                /** @description Store ID */
+                storeId: string;
+            };
+            header?: never;
+            path: {
+                /** @description Order ID */
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Discount removed successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["OrderResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Discount removed successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    KitchenController_getOrders: {
+        parameters: {
+            query?: {
+                /** @description Filter by order status */
+                status?: "PENDING" | "PREPARING" | "READY" | "SERVED" | "COMPLETED" | "CANCELLED";
+                /** @description Filter by menu item routing area */
+                routingArea?: "GRILL" | "FRY" | "SALAD" | "DRINKS" | "DESSERT" | "APPETIZER" | "SOUP" | "OTHER";
+            };
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description kitchen orders retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["KitchenOrderResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example kitchen orders retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Store not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    KitchenController_getOrderDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the order */
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Order details retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["KitchenOrderResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Order details retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    KitchenController_updateOrderStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the order */
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateKitchenStatusDto"];
+            };
+        };
+        responses: {
+            /** @description Order status updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["KitchenOrderResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Order status updated successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminAuthController_validateToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ValidateAdminTokenDto"];
+            };
+        };
+        responses: {
+            /** @description Token validated successfully, admin user synced */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["ValidateAdminResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Token validated successfully, admin user synced */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminAuthController_getProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Admin profile retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["AdminProfileResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Admin profile retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminAuthController_getPermissions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Admin permissions retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["AdminPermissionsResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Admin permissions retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminStoreController_listStores: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                search?: string;
+                status?: "ACTIVE" | "SUSPENDED" | "BANNED";
+                tierId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Stores retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StoreResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Stores retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminStoreController_getStoreDetail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Store detail retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StoreDetailResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Store detail retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminStoreController_suspendStore: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SuspendStoreDto"];
+            };
+        };
+        responses: {
+            /** @description Store suspended successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StoreActionResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Store suspended successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminStoreController_banStore: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BanStoreDto"];
+            };
+        };
+        responses: {
+            /** @description Store banned successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StoreActionResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Store banned successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminStoreController_reactivateStore: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReactivateStoreDto"];
+            };
+        };
+        responses: {
+            /** @description Store reactivated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StoreActionResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Store reactivated successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminStoreController_downgradeTier: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DowngradeTierDto"];
+            };
+        };
+        responses: {
+            /** @description Store tier downgraded successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StoreActionResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Store tier downgraded successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminStoreController_getStoreAnalytics: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Store analytics retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StoreAnalyticsResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Store analytics retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminUserController_listUsers: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                search?: string;
+                isSuspended?: boolean;
+                storeId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Users retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["UserResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Users retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminUserController_getUserDetail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the user */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User detail retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["UserDetailResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example User detail retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminUserController_suspendUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the user */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminSuspendUserDto"];
+            };
+        };
+        responses: {
+            /** @description User suspended successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["UserActionResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example User suspended successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminUserController_banUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the user */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BanUserDto"];
+            };
+        };
+        responses: {
+            /** @description User banned successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["UserActionResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example User banned successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminUserController_reactivateUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the user */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReactivateUserDto"];
+            };
+        };
+        responses: {
+            /** @description User reactivated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["UserActionResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example User reactivated successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminUserController_forcePasswordReset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the user */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Password reset forced successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["UserActionResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Password reset forced successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminUserController_getUserActivity: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description User activity retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["UserActivityResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example User activity retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminPaymentController_getPaymentQueue: {
+        parameters: {
+            query?: {
+                /** @description Page number */
+                page?: number;
+                /** @description Number of items per page */
+                limit?: number;
+                /** @description Filter by payment status */
+                status?: "PENDING_VERIFICATION" | "VERIFIED" | "ACTIVATED" | "REJECTED";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Payment queue retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["PaymentResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payment queue retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminPaymentController_getPaymentDetail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the payment request */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Payment detail retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["PaymentDetailResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payment detail retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminPaymentController_verifyPayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the payment */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyPaymentDto"];
+            };
+        };
+        responses: {
+            /** @description Payment verified successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["PaymentActionResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payment verified successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminPaymentController_rejectPayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the payment */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RejectPaymentDto"];
+            };
+        };
+        responses: {
+            /** @description Payment rejected successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["PaymentActionResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payment rejected successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentRequestController_createPaymentRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePaymentRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Payment request created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["PaymentRequestResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payment request created successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentRequestController_uploadPaymentProof: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Payment request ID (UUID) */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description Payment proof image (JPEG, PNG, WebP)
+                     */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Payment proof uploaded successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["PaymentRequestResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payment proof uploaded successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentRequestController_getPaymentRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Payment request ID (UUID) */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Payment request details retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["PaymentRequestResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payment request details retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentRequestController_getStorePaymentRequests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Store ID (UUID) */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Payment requests retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["PaymentRequestResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payment requests retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminVerificationController_getPaymentQueue: {
+        parameters: {
+            query?: {
+                /** @description Filter by payment status */
+                status?: "PENDING_VERIFICATION" | "VERIFIED" | "ACTIVATED" | "REJECTED";
+                /** @description Page number (default: 1) */
+                page?: number;
+                /** @description Items per page (default: 20) */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Payment requests queue retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: {
+                            [key: string]: unknown;
+                        };
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payment requests queue retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminVerificationController_getPaymentRequestDetail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Payment request ID (UUID) */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Payment request detail retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: {
+                            [key: string]: unknown;
+                        };
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payment request detail retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminVerificationController_getPaymentProof: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Payment request ID (UUID) */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Payment proof URL retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: {
+                            [key: string]: unknown;
+                        };
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payment proof URL retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminVerificationController_verifyPayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Payment request ID (UUID) */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyPaymentDto"];
+            };
+        };
+        responses: {
+            /** @description Payment verified successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: {
+                            [key: string]: unknown;
+                        };
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payment verified successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminVerificationController_rejectPayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Payment request ID (UUID) */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RejectPaymentDto"];
+            };
+        };
+        responses: {
+            /** @description Payment rejected successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: {
+                            [key: string]: unknown;
+                        };
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payment rejected successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminVerificationController_getAdminMetrics: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Dashboard metrics retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: {
+                            [key: string]: unknown;
+                        };
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Dashboard metrics retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TrialController_checkEligibility: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Trial eligibility status retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["TrialEligibilityResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Trial eligibility status retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TrialController_getTrialInfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Store ID (UUID) */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Trial information retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["TrialInfoResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Trial information retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OwnershipTransferController_initiateTransfer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InitiateOwnershipTransferDto"];
+            };
+        };
+        responses: {
+            /** @description Ownership transfer initiated successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["OwnershipTransferResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Ownership transfer initiated successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OwnershipTransferController_verifyOtp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Transfer ID (UUID) */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyOtpDto"];
+            };
+        };
+        responses: {
+            /** @description Ownership transfer completed successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["OwnershipTransferResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Ownership transfer completed successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OwnershipTransferController_cancelTransfer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Transfer ID (UUID) */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ownership transfer cancelled successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["OwnershipTransferResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Ownership transfer cancelled successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    RefundController_requestRefund: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateRefundRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Refund request created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["RefundRequestResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Refund request created successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    RefundController_getStoreRefundRequests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Store ID (UUID) */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Refund requests retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["RefundRequestResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Refund requests retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    SubscriptionController_getStoreSubscription: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Store ID (UUID) */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Subscription retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["SubscriptionResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Subscription retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UploadController_uploadImage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Image file to upload (jpg, jpeg, png, webp) with optional size preset */
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description Image file (max 10MB)
+                     */
+                    file: string;
+                    /**
+                     * @description Size preset for image resizing (defaults to 'menu-item')
+                     * @default menu-item
+                     * @enum {string}
+                     */
+                    sizePreset?: "menu-item" | "store-logo" | "cover-photo" | "payment-proof";
+                };
+            };
+        };
+        responses: {
+            /** @description Image uploaded and processed successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["UploadImageResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Image uploaded and processed successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HealthController_healthCheck: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Service is healthy */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example ok */
+                        status?: string;
+                        /** @example 2025-11-27T10:30:00.000Z */
+                        timestamp?: string;
+                    };
+                };
+            };
+        };
+    };
+    CategoryController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Store UUID or slug */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of active categories with included active menu items. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["CategoryResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example List of active categories with included active menu items. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Store not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CategoryController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCategoryDto"];
+            };
+        };
+        responses: {
+            /** @description category created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["CategoryBasicResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example category created successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Store not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CategoryController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Store UUID or slug */
+                storeId: string;
+                /** @description ID (UUID) of the category to fetch */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description category retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["CategoryBasicResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example category retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description category not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CategoryController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the category to delete */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description category deleted successfully */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CategoryController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the category to update */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCategoryDto"];
+            };
+        };
+        responses: {
+            /** @description category updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["CategoryBasicResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example category updated successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CategoryController_sortCategories: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SortCategoriesPayloadDto"];
+            };
+        };
+        responses: {
+            /** @description Categories and items reordered successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: string;
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Categories and items reordered successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CategoryController_updateCategoryTranslations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the category */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCategoryTranslationsDto"];
+            };
+        };
+        responses: {
+            /** @description Category translations updated successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: string;
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Category translations updated successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CategoryController_deleteCategoryTranslation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the category */
+                id: string;
+                /** @description Locale to delete (en, zh, my, th) */
+                locale: "en" | "zh" | "my" | "th";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Category translation deleted successfully. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MenuController_getStoreMenuItems: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description menu items retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["MenuItemResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example menu items retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Store not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MenuController_createMenuItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateMenuItemDto"];
+            };
+        };
+        responses: {
+            /** @description menu item created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["MenuItemResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example menu item created successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Store not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MenuController_getMenuItemById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the menu item */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description menu item retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["MenuItemResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example menu item retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description menu item not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MenuController_updateMenuItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the menu item */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateMenuItemDto"];
+            };
+        };
+        responses: {
+            /** @description menu item updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["MenuItemResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example menu item updated successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MenuController_deleteMenuItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the menu item */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description menu item deleted successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["MenuItemDeletedResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example menu item deleted successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MenuController_patchMenuItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the menu item */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PatchMenuItemDto"];
+            };
+        };
+        responses: {
+            /** @description menu item updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["MenuItemResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example menu item updated successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MenuController_updateMenuItemTranslations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the menu item */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateMenuItemTranslationsDto"];
+            };
+        };
+        responses: {
+            /** @description Menu item translations updated successfully. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MenuController_deleteMenuItemTranslation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the menu item */
+                id: string;
+                /** @description Locale to delete (en, zh, my, th) */
+                locale: "en" | "zh" | "my" | "th";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Menu item translation deleted successfully. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CustomizationController_updateGroupTranslations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the customization group */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCustomizationGroupTranslationsDto"];
+            };
+        };
+        responses: {
+            /** @description Customization group translations updated successfully. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CustomizationController_updateOptionTranslations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the customization option */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCustomizationOptionTranslationsDto"];
+            };
+        };
+        responses: {
+            /** @description Customization option translations updated successfully. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentController_findPaymentsByOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Order ID */
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Payments retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["PaymentResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payments retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentController_recordPayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Order ID */
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecordPaymentDto"];
+            };
+        };
+        responses: {
+            /** @description Payment recorded successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["PaymentResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payment recorded successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentController_getPaymentSummary: {
+        parameters: {
+            query?: {
+                /** @description Payment summary for the order */
+                summary?: unknown;
+            };
+            header?: never;
+            path: {
+                /** @description Order ID */
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentController_findRefundsByOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Order ID */
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Refunds retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["RefundResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Refunds retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentController_createRefund: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Order ID */
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateRefundDto"];
+            };
+        };
+        responses: {
+            /** @description Refund created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["RefundResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Refund created successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentController_calculateSplit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Order ID */
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalculateSplitDto"];
+            };
+        };
+        responses: {
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentController_recordSplitPayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Order ID */
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecordSplitPaymentDto"];
+            };
+        };
+        responses: {
+            /** @description Split payment recorded successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["PaymentResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Split payment recorded successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReportController_getSalesSummary: {
+        parameters: {
+            query: {
+                /** @description Start date (ISO 8601) */
+                startDate: string;
+                /** @description End date (ISO 8601) */
+                endDate: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Sales summary retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["SalesSummaryDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Sales summary retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReportController_getPaymentBreakdown: {
+        parameters: {
+            query: {
+                /** @description Start date (ISO 8601) */
+                startDate: string;
+                /** @description End date (ISO 8601) */
+                endDate: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Payment breakdown retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["PaymentBreakdownDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Payment breakdown retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReportController_getPopularItems: {
+        parameters: {
+            query: {
+                /** @description Number of items to return (default 10) */
+                limit?: number;
+                /** @description Start date (ISO 8601) */
+                startDate: string;
+                /** @description End date (ISO 8601) */
+                endDate: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Popular items retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["PopularItemsDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Popular items retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReportController_getOrderStatusReport: {
+        parameters: {
+            query: {
+                /** @description Start date (ISO 8601) */
+                startDate: string;
+                /** @description End date (ISO 8601) */
+                endDate: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Order status report retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["OrderStatusReportDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Order status report retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StoreController_getStoreDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store to retrieve */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Store details retrieved successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["GetStoreDetailsResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Store details retrieved successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description store not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StoreController_createStore: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateStoreDto"];
+            };
+        };
+        responses: {
+            /** @description Store created successfully. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StandardApiResponse"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Store created successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StoreController_updateStoreInformation: {
+        parameters: {
+            query: {
+                storeId: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateStoreInformationDto"];
+            };
+        };
+        responses: {
+            /** @description Store updated successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StandardApiResponse"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Store updated successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StoreController_updateStoreSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store whose settings to update */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateStoreSettingDto"];
+            };
+        };
+        responses: {
+            /** @description Store settings updated successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StoreSettingResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Store settings updated successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StoreController_inviteOrAssignRoleByEmail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InviteOrAssignRoleDto"];
+            };
+        };
+        responses: {
+            /** @description Member added or role updated successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StandardApiResponse"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Member added or role updated successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StoreController_updateTaxAndServiceCharge: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTaxAndServiceChargeDto"];
+            };
+        };
+        responses: {
+            /** @description Tax and service charge rates updated successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StoreSettingResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Tax and service charge rates updated successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StoreController_updateBusinessHours: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BusinessHoursDto"];
+            };
+        };
+        responses: {
+            /** @description Business hours updated successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StoreSettingResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Business hours updated successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StoreController_uploadBranding: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Branding uploaded successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StoreInformationResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Branding uploaded successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    StoreController_updateLoyaltyRules: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateLoyaltyRulesDto"];
+            };
+        };
+        responses: {
+            /** @description Loyalty rules updated successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["StoreSettingResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Loyalty rules updated successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TableController_findAllByStore: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of tables for the store, naturally sorted by name. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["TableResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example List of tables for the store, naturally sorted by name. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Store not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TableController_createTable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTableDto"];
+            };
+        };
+        responses: {
+            /** @description table created successfully */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["TableResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example table created successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Store not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TableController_syncTables: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BatchUpsertTableDto"];
+            };
+        };
+        responses: {
+            /** @description Tables synchronized successfully. Returns the final list of tables for the store. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["TableResponseDto"][];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Tables synchronized successfully. Returns the final list of tables for the store. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TableController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the table */
+                tableId: string;
+                /** @description ID (UUID) of the table */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description table retrieved successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["TableResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example table retrieved successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description table not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TableController_deleteTable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the table to delete */
+                tableId: string;
+                /** @description ID (UUID) of the table to delete */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description table deleted successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["TableDeletedResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example table deleted successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TableController_updateTable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the table to update */
+                tableId: string;
+                /** @description ID (UUID) of the table to update */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTableDto"];
+            };
+        };
+        responses: {
+            /** @description table updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["TableResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example table updated successfully */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Invalid input data */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TableController_updateTableStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ID (UUID) of the store */
+                storeId: string;
+                /** @description ID (UUID) of the table to update status */
+                tableId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTableStatusDto"];
+            };
+        };
+        responses: {
+            /** @description Table status updated successfully. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardApiResponse"] & {
+                        /** @example success */
+                        status?: string;
+                        data?: components["schemas"]["TableResponseDto"];
+                        /** @example null */
+                        errors?: unknown[] | null;
+                        /** @example Table status updated successfully. */
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient permissions for this operation */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
 }

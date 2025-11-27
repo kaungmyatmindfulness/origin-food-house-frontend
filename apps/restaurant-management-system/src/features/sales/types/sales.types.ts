@@ -5,16 +5,15 @@
  * Note: API response types should be imported from @repo/api/generated/types
  */
 
-import type { MenuItemDto } from '@/features/menu/types/menu-item.types';
+import type { MenuItemResponseDto } from '@repo/api/generated/types';
 
 /**
  * Extended menu item type for sales display.
- * Includes optional isOutOfStock field which may come from the API
- * but isn't in the base MenuItemDto.
+ * MenuItemResponseDto already includes isOutOfStock.
+ *
+ * @deprecated Use MenuItemResponseDto directly from @repo/api/generated/types
  */
-export type SalesMenuItem = MenuItemDto & {
-  isOutOfStock?: boolean;
-};
+export type SalesMenuItem = MenuItemResponseDto;
 
 /**
  * View mode for the sales interface

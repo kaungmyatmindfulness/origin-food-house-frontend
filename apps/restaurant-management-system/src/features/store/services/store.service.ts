@@ -12,7 +12,7 @@ import type {
   StoreSettingResponseDto,
   UpdateStoreInformationDto,
   UpdateStoreSettingDto,
-} from '@repo/api/generated/types';
+} from '@/features/store/types/store.types';
 
 /** Store creation response */
 interface StoreCreatedResponse {

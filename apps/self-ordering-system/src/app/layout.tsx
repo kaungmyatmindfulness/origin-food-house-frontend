@@ -3,8 +3,8 @@ import { Providers } from '@/utils/providers';
 import '@repo/ui/globals.css';
 
 export const metadata: Metadata = {
-  title: 'Admin Platform - Origin Food House',
-  description: 'Platform administration and management',
+  title: 'Self Ordering System - Origin Food House',
+  description: 'TBA',
 };
 
 export default function RootLayout({
