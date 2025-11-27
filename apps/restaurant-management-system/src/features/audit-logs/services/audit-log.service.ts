@@ -1,4 +1,11 @@
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
+/**
+ * Audit Log Service
+ *
+ * Service layer for audit log-related API operations.
+ * Uses openapi-fetch for type-safe API calls.
+ */
+
+import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
   AuditLogFilters,
   PaginatedAuditLogsResponse,
@@ -8,24 +15,41 @@ import type {
  * Fetches paginated audit logs for a store with optional filters
  */
 export async function getAuditLogs(
-  _storeId: string,
+  storeId: string,
   page: number,
   filters: AuditLogFilters
 ): Promise<PaginatedAuditLogsResponse> {
-  const storeId = _storeId;
-  const params = new URLSearchParams({
+  // Build query params from filters
+  const queryParams: Record<string, string> = {
     page: page.toString(),
     limit: '50',
-    ...Object.fromEntries(
-      Object.entries(filters).filter(([, v]) => v !== undefined && v !== '')
-    ),
-  });
+  };
 
-  const res = await apiFetch<PaginatedAuditLogsResponse>(
-    `/audit-logs/${storeId}?${params}`
+  // Add non-empty filters to query params
+  for (const [key, value] of Object.entries(filters)) {
+    if (value !== undefined && value !== '') {
+      queryParams[key] = String(value);
+    }
+  }
+
+  const { data, error, response } = await apiClient.GET(
+    '/audit-logs/{storeId}',
+    {
+      params: {
+        path: { storeId },
+        query: queryParams,
+      },
+    }
   );
 
-  return unwrapData(res, 'Failed to fetch audit logs');
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch audit logs',
+      response.status
+    );
+  }
+
+  return data.data as PaginatedAuditLogsResponse;
 }
 
 /**
@@ -42,20 +66,18 @@ export async function exportAuditLogsCsv(
   );
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-  const token = localStorage.getItem('accessToken'); // Get from auth storage
 
+  // Note: Using raw fetch for blob response since openapi-fetch doesn't handle blob responses well
   const response = await fetch(
     `${baseUrl}/audit-logs/${storeId}/export?${params}`,
     {
       method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: 'include',
     }
   );
 
   if (!response.ok) {
-    throw new Error('Failed to export audit logs');
+    throw new ApiError('Failed to export audit logs', response.status);
   }
 
   return response.blob();

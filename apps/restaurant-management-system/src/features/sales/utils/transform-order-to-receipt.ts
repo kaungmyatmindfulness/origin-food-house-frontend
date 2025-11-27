@@ -82,10 +82,15 @@ interface OrderWithPayments extends OrderResponseDto {
 export function transformOrderToReceiptData(
   order: OrderWithPayments
 ): ReceiptOrderData {
+  // Extract properties that need transformation
+  const { orderItems, discountAmount, ...rest } = order;
+
   return {
-    ...order,
+    ...rest,
+    // Convert null discountAmount to undefined for optional field
+    discountAmount: discountAmount ?? undefined,
     orderItems:
-      order.orderItems?.map((item) => {
+      orderItems?.map((item) => {
         // Cast to extended type to access potential menuItemName
         const extendedItem = item as unknown as OrderItemWithMenuName;
         return {

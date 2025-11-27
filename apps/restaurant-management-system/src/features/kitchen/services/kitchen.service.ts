@@ -1,5 +1,11 @@
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
+/**
+ * Kitchen Service
+ *
+ * Service layer for Kitchen Display System API operations.
+ * Uses openapi-fetch for type-safe API calls.
+ */
 
+import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
   KdsQueryParams,
   Order,
@@ -16,18 +22,25 @@ import type {
 export async function getKdsOrders(
   params: KdsQueryParams
 ): Promise<PaginatedOrders> {
-  const queryParams: Record<string, string> = {};
-  if (params.storeId) queryParams.storeId = params.storeId;
-  if (params.status) queryParams.status = params.status;
-  if (params.page) queryParams.page = String(params.page);
-  if (params.limit) queryParams.limit = String(params.limit);
-
-  const queryString = new URLSearchParams(queryParams).toString();
-  const res = await apiFetch<PaginatedOrders>(`/orders/kds?${queryString}`, {
-    method: 'GET',
+  const { data, error, response } = await apiClient.GET('/orders/kds', {
+    params: {
+      query: {
+        storeId: params.storeId,
+        status: params.status,
+        page: params.page ? String(params.page) : undefined,
+        limit: params.limit ? String(params.limit) : undefined,
+      },
+    },
   });
 
-  return unwrapData(res, 'Failed to fetch KDS orders');
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch KDS orders',
+      response.status
+    );
+  }
+
+  return data.data as PaginatedOrders;
 }
 
 /**
@@ -41,12 +54,22 @@ export async function updateOrderStatus(
   orderId: string,
   dto: UpdateOrderStatusDto
 ): Promise<Order> {
-  const res = await apiFetch<Order>(`/orders/${orderId}/status`, {
-    method: 'PATCH',
-    body: JSON.stringify(dto),
-  });
+  const { data, error, response } = await apiClient.PATCH(
+    '/orders/{orderId}/status',
+    {
+      params: { path: { orderId } },
+      body: dto,
+    }
+  );
 
-  return unwrapData(res, 'Failed to update order status');
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to update order status',
+      response.status
+    );
+  }
+
+  return data.data as Order;
 }
 
 /**
@@ -60,9 +83,19 @@ export async function getOrderById(
   orderId: string,
   storeId: string
 ): Promise<Order> {
-  const res = await apiFetch<Order>(`/orders/${orderId}?storeId=${storeId}`, {
-    method: 'GET',
+  const { data, error, response } = await apiClient.GET('/orders/{orderId}', {
+    params: {
+      path: { orderId },
+      query: { storeId },
+    },
   });
 
-  return unwrapData(res, 'Failed to fetch order');
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch order',
+      response.status
+    );
+  }
+
+  return data.data as Order;
 }

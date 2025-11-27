@@ -1,4 +1,11 @@
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
+/**
+ * Quick Sale Checkout Service
+ *
+ * Service layer for quick sale checkout API operations.
+ * Uses openapi-fetch for type-safe API calls.
+ */
+
+import { apiClient, ApiError } from '@/utils/apiFetch';
 import type { OrderResponseDto } from '@repo/api/generated/types';
 
 import type { DraftCartItem } from '../store/quick-sale-cart.store';
@@ -57,26 +64,34 @@ export async function quickSaleCheckout(
   const orderType = getOrderTypeFromSessionType(sessionType);
 
   // Single API call for quick checkout
-  const res = await apiFetch<OrderResponseDto>('/orders/quick-checkout', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      storeId,
-      sessionType,
-      orderType,
-      items: items.map((item) => ({
-        menuItemId: item.menuItemId,
-        quantity: item.quantity,
-        customizationOptionIds: item.customizations.map((c) => c.optionId),
-        notes: item.notes,
-      })),
-      customerName,
-      customerPhone,
-      orderNotes,
-    }),
-  });
+  const { data, error, response } = await apiClient.POST(
+    '/orders/quick-checkout',
+    {
+      body: {
+        storeId,
+        sessionType,
+        orderType,
+        items: items.map((item) => ({
+          menuItemId: item.menuItemId,
+          quantity: item.quantity,
+          customizationOptionIds: item.customizations.map((c) => c.optionId),
+          notes: item.notes,
+        })),
+        customerName,
+        customerPhone,
+        orderNotes,
+      },
+    }
+  );
 
-  const order = unwrapData(res, 'Failed to checkout');
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to checkout',
+      response.status
+    );
+  }
+
+  const order = data.data as OrderResponseDto;
 
   // sessionId should always be present for quick checkout orders
   // since we create the session as part of the checkout

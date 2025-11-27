@@ -60,7 +60,9 @@ export function CartItem({
         {/* Customizations */}
         {item.customizations && item.customizations.length > 0 && (
           <p className="text-muted-foreground mt-0.5 text-xs">
-            {item.customizations.map((c) => c.optionName).join(', ')}
+            {item.customizations
+              .map((c: { optionName: string }) => c.optionName)
+              .join(', ')}
           </p>
         )}
 

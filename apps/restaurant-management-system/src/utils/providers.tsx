@@ -3,31 +3,17 @@
 /**
  * Application providers for the RMS application.
  * Configured for offline-first static export (SSG).
+ *
+ * Note: API client is configured in @/utils/apiFetch.ts using openapi-fetch.
+ * The client is created at module level with auth middleware and error handling.
  */
 import {
   isServer,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import { client } from '@repo/api';
 
 import { NetworkProvider } from './network-provider';
-
-// Configure API client with base URL and credentials
-// This must be done at module level (before components render) to ensure
-// all API calls use the correct configuration
-const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-if (baseUrl) {
-  client.setConfig({
-    baseUrl,
-    credentials: 'include', // Send cookies with cross-origin requests
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-} else {
-  console.error('NEXT_PUBLIC_API_URL is not defined in environment variables');
-}
 
 function makeQueryClient() {
   return new QueryClient({

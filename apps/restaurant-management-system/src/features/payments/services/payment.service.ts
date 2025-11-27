@@ -1,4 +1,11 @@
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
+/**
+ * Payment Service
+ *
+ * Service layer for payment-related API operations.
+ * Uses openapi-fetch for type-safe API calls.
+ */
+
+import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
   PaymentResponseDto,
   RecordPaymentDto,
@@ -16,15 +23,22 @@ export async function recordPayment(
   orderId: string,
   data: RecordPaymentDto
 ): Promise<PaymentResponseDto> {
-  const res = await apiFetch<PaymentResponseDto>(
-    `/payments/orders/${orderId}/payments`,
+  const { data: res, error, response } = await apiClient.POST(
+    '/payments/orders/{orderId}/payments',
     {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      params: { path: { orderId } },
+      body: data,
     }
   );
-  return unwrapData(res, 'Failed to record payment');
+
+  if (error || !res?.data) {
+    throw new ApiError(
+      res?.message || 'Failed to record payment',
+      response.status
+    );
+  }
+
+  return res.data as PaymentResponseDto;
 }
 
 /**
@@ -35,10 +49,21 @@ export async function recordPayment(
 export async function getOrderPayments(
   orderId: string
 ): Promise<PaymentResponseDto[]> {
-  const res = await apiFetch<PaymentResponseDto[]>(
-    `/payments/orders/${orderId}/payments`
+  const { data, error, response } = await apiClient.GET(
+    '/payments/orders/{orderId}/payments',
+    {
+      params: { path: { orderId } },
+    }
   );
-  return unwrapData(res, 'Failed to fetch payments');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch payments',
+      response.status
+    );
+  }
+
+  return data.data as PaymentResponseDto[];
 }
 
 /**
@@ -51,13 +76,20 @@ export async function createRefund(
   orderId: string,
   data: CreateRefundDto
 ): Promise<RefundResponseDto> {
-  const res = await apiFetch<RefundResponseDto>(
-    `/payments/orders/${orderId}/refunds`,
+  const { data: res, error, response } = await apiClient.POST(
+    '/payments/orders/{orderId}/refunds',
     {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      params: { path: { orderId } },
+      body: data,
     }
   );
-  return unwrapData(res, 'Failed to create refund');
+
+  if (error || !res?.data) {
+    throw new ApiError(
+      res?.message || 'Failed to create refund',
+      response.status
+    );
+  }
+
+  return res.data as RefundResponseDto;
 }

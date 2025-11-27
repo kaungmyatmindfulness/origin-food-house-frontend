@@ -27,8 +27,7 @@ import { Input } from '@repo/ui/components/input';
 import { Switch } from '@repo/ui/components/switch';
 import { Alert, AlertDescription, AlertTitle } from '@repo/ui/components/alert';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
-import type { ApiError } from '@/utils/apiFetch';
+import { apiClient, ApiError } from '@/utils/apiFetch';
 
 const loyaltyProgramSchema = z.object({
   enabled: z.boolean(),
@@ -103,19 +102,29 @@ export function LoyaltyProgramTab({
     ApiError | Error,
     LoyaltyProgramFormData
   >({
-    mutationFn: async (data: LoyaltyProgramFormData) => {
+    mutationFn: async (formData: LoyaltyProgramFormData) => {
       const apiData = {
-        pointRate: data.pointRate?.toString() || null,
-        redemptionRate: data.redemptionRate?.toString() || null,
-        expiryDays: data.expiryDays || null,
+        pointRate: formData.pointRate?.toString() || null,
+        redemptionRate: formData.redemptionRate?.toString() || null,
+        expiryDays: formData.expiryDays || null,
       };
 
-      const res = await apiFetch(`/stores/${storeId}/settings/loyalty-rules`, {
-        method: 'PATCH',
-        body: JSON.stringify(apiData),
-      });
+      const { data, error, response } = await apiClient.PATCH(
+        '/stores/{id}/settings/loyalty-rules',
+        {
+          params: { path: { id: storeId } },
+          body: apiData,
+        }
+      );
 
-      return unwrapData(res, 'Failed to update loyalty rules');
+      if (error || !data?.data) {
+        throw new ApiError(
+          data?.message || 'Failed to update loyalty rules',
+          response.status
+        );
+      }
+
+      return data.data;
     },
     onSuccess: () => {
       toast.success(t('updateSuccess'));

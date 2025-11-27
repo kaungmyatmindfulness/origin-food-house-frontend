@@ -1,10 +1,11 @@
-import {
-  categoryControllerFindAll,
-  categoryControllerCreate,
-  categoryControllerUpdate,
-  categoryControllerRemove,
-  categoryControllerSortCategories,
-} from '@repo/api/generated';
+/**
+ * Category Service
+ *
+ * Service layer for category-related API operations.
+ * Uses openapi-fetch for type-safe API calls.
+ */
+
+import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
   Category,
   CreateCategoryDto,
@@ -17,46 +18,54 @@ import type {
  *
  * @param storeId - The ID of the store whose categories are to be fetched.
  * @returns A promise resolving to an array of Category objects.
- * @throws {NetworkError | ApiError} - Throws on fetch/API errors. Throws Error if data is null on success.
+ * @throws {ApiError} - Throws on fetch/API errors.
  */
 export async function getCategories(storeId: string): Promise<Category[]> {
-  const response = await categoryControllerFindAll({
-    path: {
-      storeId,
-    },
-  });
+  const { data, error, response } = await apiClient.GET(
+    '/stores/{storeId}/categories',
+    {
+      params: { path: { storeId } },
+    }
+  );
 
-  if (!response.data?.data) {
-    throw new Error('Failed to retrieve categories: No data returned by API.');
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to retrieve categories',
+      response.status
+    );
   }
 
-  return response.data.data as Category[];
+  return data.data as Category[];
 }
 
 /**
  * Creates a new category for a specific store.
  *
  * @param storeId - The ID of the store.
- * @param data - The category data to create.
+ * @param categoryData - The category data to create.
  * @returns A promise resolving to the created Category object.
- * @throws {NetworkError | ApiError} - Throws on fetch/API errors.
+ * @throws {ApiError} - Throws on fetch/API errors.
  */
 export async function createCategory(
   storeId: string,
-  data: CreateCategoryDto
+  categoryData: CreateCategoryDto
 ): Promise<Category> {
-  const response = await categoryControllerCreate({
-    path: {
-      storeId,
-    },
-    body: data,
-  });
+  const { data, error, response } = await apiClient.POST(
+    '/stores/{storeId}/categories',
+    {
+      params: { path: { storeId } },
+      body: categoryData,
+    }
+  );
 
-  if (!response.data?.data) {
-    throw new Error('Failed to create category: No data returned by API.');
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to create category',
+      response.status
+    );
   }
 
-  return response.data.data as Category;
+  return data.data as Category;
 }
 
 /**
@@ -64,28 +73,31 @@ export async function createCategory(
  *
  * @param storeId - The ID of the store.
  * @param categoryId - The ID of the category to update.
- * @param data - The updated category data.
+ * @param categoryData - The updated category data.
  * @returns A promise resolving to the updated Category object.
- * @throws {NetworkError | ApiError} - Throws on fetch/API errors.
+ * @throws {ApiError} - Throws on fetch/API errors.
  */
 export async function updateCategory(
   storeId: string,
   categoryId: string,
-  data: UpdateCategoryDto
+  categoryData: UpdateCategoryDto
 ): Promise<Category> {
-  const response = await categoryControllerUpdate({
-    path: {
-      storeId,
-      id: categoryId,
-    },
-    body: data,
-  });
+  const { data, error, response } = await apiClient.PATCH(
+    '/stores/{storeId}/categories/{id}',
+    {
+      params: { path: { storeId, id: categoryId } },
+      body: categoryData,
+    }
+  );
 
-  if (!response.data?.data) {
-    throw new Error('Failed to update category: No data returned by API.');
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to update category',
+      response.status
+    );
   }
 
-  return response.data.data as Category;
+  return data.data as Category;
 }
 
 /**
@@ -94,44 +106,51 @@ export async function updateCategory(
  * @param storeId - The ID of the store.
  * @param categoryId - The ID of the category to delete.
  * @returns A promise resolving to the deleted category's ID.
- * @throws {NetworkError | ApiError} - Throws on fetch/API errors.
+ * @throws {ApiError} - Throws on fetch/API errors.
  */
 export async function deleteCategory(
   storeId: string,
   categoryId: string
 ): Promise<{ id: string }> {
-  const response = await categoryControllerRemove({
-    path: {
-      storeId,
-      id: categoryId,
-    },
-  });
+  const { data, error, response } = await apiClient.DELETE(
+    '/stores/{storeId}/categories/{id}',
+    {
+      params: { path: { storeId, id: categoryId } },
+    }
+  );
 
-  if (!response.data?.data) {
-    throw new Error('Failed to delete category: No data returned by API.');
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to delete category',
+      response.status
+    );
   }
 
-  return response.data.data;
+  return data.data as { id: string };
 }
 
 /**
  * Updates the sort order of categories and their contained menu items for a store.
  * Requires OWNER/ADMIN permissions.
- * Maps to: PATCH /stores/{storeId}/categories/sort
  *
  * @param storeId - The ID of the store whose categories are being sorted.
  * @param payload - The sorting payload containing the ordered list of categories and items.
  * @returns A promise resolving to void upon successful reordering.
- * @throws {NetworkError | ApiError | UnauthorizedError | ForbiddenError} - Throws on fetch/API errors (e.g., invalid payload, permissions).
+ * @throws {ApiError} - Throws on fetch/API errors (e.g., invalid payload, permissions).
  */
 export async function sortCategories(
   storeId: string,
   payload: SortCategoriesPayloadDto
 ): Promise<void> {
-  await categoryControllerSortCategories({
-    path: {
-      storeId,
-    },
-    body: payload,
-  });
+  const { error, response } = await apiClient.PATCH(
+    '/stores/{storeId}/categories/sort',
+    {
+      params: { path: { storeId } },
+      body: payload,
+    }
+  );
+
+  if (error) {
+    throw new ApiError('Failed to sort categories', response.status);
+  }
 }

@@ -115,8 +115,11 @@ export function useSalesCart({
       customizations: params.customizations,
     };
 
-    // Add to cart
-    await addToCartMutation.mutateAsync({ sessionId, data: cartData });
+    // Add to cart (sessionId is guaranteed to be set at this point)
+    await addToCartMutation.mutateAsync({
+      sessionId: sessionId!,
+      data: cartData,
+    });
   };
 
   return {

@@ -1,4 +1,11 @@
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
+/**
+ * Order Service
+ *
+ * Service layer for order and cart-related API operations.
+ * Uses openapi-fetch for type-safe API calls.
+ */
+
+import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
   OrderResponseDto,
   UpdateOrderStatusDto,
@@ -10,19 +17,29 @@ import type {
 /**
  * Add item to cart
  * @param sessionId - Session ID
- * @param data - Cart item details
+ * @param cartData - Cart item details
  * @returns Updated cart
  */
 export async function addToCart(
   sessionId: string,
-  data: AddToCartDto
+  cartData: AddToCartDto
 ): Promise<CartResponseDto> {
-  const res = await apiFetch<CartResponseDto>(`/cart/${sessionId}/items`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  return unwrapData(res, 'Failed to add item to cart');
+  const { data, error, response } = await apiClient.POST(
+    '/cart/{sessionId}/items',
+    {
+      params: { path: { sessionId } },
+      body: cartData,
+    }
+  );
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to add item to cart',
+      response.status
+    );
+  }
+
+  return data.data as CartResponseDto;
 }
 
 /**
@@ -31,8 +48,18 @@ export async function addToCart(
  * @returns Cart with items
  */
 export async function getCart(sessionId: string): Promise<CartResponseDto> {
-  const res = await apiFetch<CartResponseDto>(`/cart/${sessionId}`);
-  return unwrapData(res, 'Failed to fetch cart');
+  const { data, error, response } = await apiClient.GET('/cart/{sessionId}', {
+    params: { path: { sessionId } },
+  });
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch cart',
+      response.status
+    );
+  }
+
+  return data.data as CartResponseDto;
 }
 
 /**
@@ -45,36 +72,51 @@ export async function removeFromCart(
   sessionId: string,
   cartItemId: string
 ): Promise<CartResponseDto> {
-  const res = await apiFetch<CartResponseDto>(
-    `/cart/${sessionId}/items/${cartItemId}`,
+  const { data, error, response } = await apiClient.DELETE(
+    '/cart/{sessionId}/items/{cartItemId}',
     {
-      method: 'DELETE',
+      params: { path: { sessionId, cartItemId } },
     }
   );
-  return unwrapData(res, 'Failed to remove item from cart');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to remove item from cart',
+      response.status
+    );
+  }
+
+  return data.data as CartResponseDto;
 }
 
 /**
  * Update cart item (quantity or notes)
  * @param sessionId - Session ID
  * @param cartItemId - Cart item ID
- * @param data - Update data
+ * @param cartData - Update data
  * @returns Updated cart
  */
 export async function updateCartItem(
   sessionId: string,
   cartItemId: string,
-  data: UpdateCartItemDto
+  cartData: UpdateCartItemDto
 ): Promise<CartResponseDto> {
-  const res = await apiFetch<CartResponseDto>(
-    `/cart/${sessionId}/items/${cartItemId}`,
+  const { data, error, response } = await apiClient.PATCH(
+    '/cart/{sessionId}/items/{cartItemId}',
     {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      params: { path: { sessionId, cartItemId } },
+      body: cartData,
     }
   );
-  return unwrapData(res, 'Failed to update cart item');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to update cart item',
+      response.status
+    );
+  }
+
+  return data.data as CartResponseDto;
 }
 
 /**
@@ -85,13 +127,21 @@ export async function updateCartItem(
 export async function checkoutCart(
   sessionId: string
 ): Promise<OrderResponseDto> {
-  const res = await apiFetch<OrderResponseDto>(
-    `/orders/${sessionId}/checkout`,
+  const { data, error, response } = await apiClient.POST(
+    '/orders/{sessionId}/checkout',
     {
-      method: 'POST',
+      params: { path: { sessionId } },
     }
   );
-  return unwrapData(res, 'Failed to checkout cart');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to checkout cart',
+      response.status
+    );
+  }
+
+  return data.data as OrderResponseDto;
 }
 
 /**
@@ -100,24 +150,41 @@ export async function checkoutCart(
  * @returns Order details
  */
 export async function getOrder(orderId: string): Promise<OrderResponseDto> {
-  const res = await apiFetch<OrderResponseDto>(`/orders/${orderId}`);
-  return unwrapData(res, 'Failed to fetch order');
+  const { data, error, response } = await apiClient.GET('/orders/{orderId}', {
+    params: { path: { orderId } },
+  });
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch order',
+      response.status
+    );
+  }
+
+  return data.data as OrderResponseDto;
 }
 
 /**
  * Update order status (e.g., to CANCELLED for void)
  * @param orderId - Order ID
- * @param data - Status update
+ * @param statusData - Status update
  * @returns Updated order
  */
 export async function updateOrderStatus(
   orderId: string,
-  data: UpdateOrderStatusDto
+  statusData: UpdateOrderStatusDto
 ): Promise<OrderResponseDto> {
-  const res = await apiFetch<OrderResponseDto>(`/orders/${orderId}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+  const { data, error, response } = await apiClient.PATCH('/orders/{orderId}', {
+    params: { path: { orderId } },
+    body: statusData,
   });
-  return unwrapData(res, 'Failed to update order status');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to update order status',
+      response.status
+    );
+  }
+
+  return data.data as OrderResponseDto;
 }

@@ -1,11 +1,15 @@
-import { apiFetch } from '@/utils/apiFetch';
+/**
+ * Table Service
+ *
+ * Service layer for table management API operations.
+ * Uses openapi-fetch for type-safe API calls.
+ */
 
+import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
   TableResponseDto,
   BatchUpsertTableDto,
 } from '../types/table.types';
-
-const STORE_ENDPOINT_BASE = '/stores';
 
 /**
  * Get all tables for a specific store. (Public)
@@ -13,22 +17,33 @@ const STORE_ENDPOINT_BASE = '/stores';
  *
  * @param storeId - The ID (UUID string) of the store whose tables are to be fetched.
  * @returns A promise resolving to an array of TableResponseDto objects.
- * @throws {NetworkError | ApiError} - Throws on fetch/API errors (e.g., 404 if store not found).
+ * @throws {ApiError} - Throws on fetch/API errors (e.g., 404 if store not found).
  */
 export async function getAllTables(
   storeId: string
 ): Promise<TableResponseDto[]> {
-  const res = await apiFetch<TableResponseDto[]>(
-    `${STORE_ENDPOINT_BASE}/${storeId}/tables`
+  const { data, error, response } = await apiClient.GET(
+    '/stores/{storeId}/tables',
+    {
+      params: { path: { storeId } },
+    }
   );
 
-  if (res.data == null) {
+  if (error) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch tables',
+      response.status
+    );
+  }
+
+  if (data?.data == null) {
     console.warn(
       `API Warning: getAllTables(storeId: ${storeId}) succeeded but returned null/undefined data. Returning [].`
     );
     return [];
   }
-  return res.data;
+
+  return data.data as TableResponseDto[];
 }
 
 /**
@@ -40,26 +55,29 @@ export async function getAllTables(
  * @param storeId - The ID (UUID string) of the store whose tables are being synchronized.
  * @param payload - The synchronization payload containing the list of tables to upsert.
  * @returns A promise resolving to the final list of tables (TableResponseDto[]) for the store after sync.
- * @throws {NetworkError | ApiError | UnauthorizedError | ForbiddenError} - Throws on fetch/API errors. Throws Error if data is null on success.
+ * @throws {ApiError} - Throws on fetch/API errors.
  */
 export async function syncTables(
   storeId: string,
   payload: BatchUpsertTableDto
 ): Promise<TableResponseDto[]> {
-  const res = await apiFetch<TableResponseDto[]>(
-    `${STORE_ENDPOINT_BASE}/${storeId}/tables/batch-sync`,
+  const { data, error, response } = await apiClient.PUT(
+    '/stores/{storeId}/tables/batch-sync',
     {
-      method: 'PUT',
-      body: JSON.stringify(payload),
+      params: { path: { storeId } },
+      body: payload,
     }
   );
 
-  if (res.data == null) {
+  if (error || data?.data == null) {
+    const errorMsg =
+      data?.message ||
+      'Failed to sync tables: No response data returned by API.';
     console.error(
-      `API Error: syncTables(storeId: ${storeId}) succeeded but returned null/undefined data.`
+      `API Error: syncTables(storeId: ${storeId}) failed - ${errorMsg}`
     );
-    throw new Error('Failed to sync tables: No response data returned by API.');
+    throw new ApiError(errorMsg, response.status);
   }
 
-  return res.data;
+  return data.data as TableResponseDto[];
 }

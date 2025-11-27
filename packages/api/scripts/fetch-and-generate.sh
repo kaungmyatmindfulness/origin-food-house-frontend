@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Script to fetch OpenAPI spec from backend and generate TypeScript types
+# Uses openapi-typescript for type generation
 # Usage: npm run generate (from packages/api or root with workspace flag)
 
 set -e
@@ -66,14 +67,12 @@ with open('$API_DIR/openapi-spec-fixed.json', 'w') as f:
 print('✅ OpenAPI spec fixed')
 EOF
 
-echo "⚡ Generating TypeScript types..."
+echo "⚡ Generating TypeScript types with openapi-typescript..."
 
-# Run openapi-ts
-openapi-ts
+# Create the generated directory if it doesn't exist
+mkdir -p "$API_DIR/src/generated"
 
-echo "🔧 Fixing import extensions for ESM compatibility..."
+# Run openapi-typescript to generate types
+npx openapi-typescript "$API_DIR/openapi-spec-fixed.json" -o "$API_DIR/src/generated/api.d.ts"
 
-# Fix imports to add .js extensions
-node "$SCRIPT_DIR/fix-imports.js"
-
-echo "🎉 Done! TypeScript types generated successfully"
+echo "🎉 Done! TypeScript types generated successfully at src/generated/api.d.ts"

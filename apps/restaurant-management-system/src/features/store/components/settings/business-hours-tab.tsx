@@ -26,8 +26,7 @@ import {
 import { Input } from '@repo/ui/components/input';
 import { Switch } from '@repo/ui/components/switch';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
-import type { ApiError } from '@/utils/apiFetch';
+import { apiClient, ApiError } from '@/utils/apiFetch';
 
 const dayHoursSchema = z.object({
   closed: z.boolean(),
@@ -95,12 +94,23 @@ export function BusinessHoursTab({
     ApiError | Error,
     BusinessHoursFormData
   >({
-    mutationFn: async (data: BusinessHoursFormData) => {
-      const res = await apiFetch(`/stores/${storeId}/settings/business-hours`, {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-      });
-      return unwrapData(res, 'Failed to update business hours');
+    mutationFn: async (formData: BusinessHoursFormData) => {
+      const { data, error, response } = await apiClient.PATCH(
+        '/stores/{id}/settings/business-hours',
+        {
+          params: { path: { id: storeId } },
+          body: formData,
+        }
+      );
+
+      if (error || !data?.data) {
+        throw new ApiError(
+          data?.message || 'Failed to update business hours',
+          response.status
+        );
+      }
+
+      return data.data;
     },
     onSuccess: () => {
       toast.success(t('updateSuccess'));

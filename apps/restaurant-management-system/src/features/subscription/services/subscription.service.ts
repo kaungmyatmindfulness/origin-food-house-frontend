@@ -1,4 +1,11 @@
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
+/**
+ * Subscription Service
+ *
+ * Service layer for subscription-related API operations.
+ * Uses openapi-fetch for type-safe API calls.
+ */
+
+import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
   Subscription,
   PaymentRequest,
@@ -11,39 +18,80 @@ import type {
 } from '../types/subscription.types';
 
 export async function getSubscription(storeId: string): Promise<Subscription> {
-  const res = await apiFetch<Subscription>(`/subscriptions/stores/${storeId}`);
-  return unwrapData(res, 'Failed to fetch subscription');
+  const { data, error, response } = await apiClient.GET(
+    '/subscriptions/stores/{storeId}',
+    {
+      params: { path: { storeId } },
+    }
+  );
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch subscription',
+      response.status
+    );
+  }
+
+  return data.data as Subscription;
 }
 
 export async function getTrialEligibility(
   userId: string
 ): Promise<TrialEligibility> {
-  const res = await apiFetch<TrialEligibility>({
-    path: '/subscriptions/trial-eligibility',
-    query: { userId },
-  });
-  return unwrapData(res, 'Failed to check trial eligibility');
+  const { data, error, response } = await apiClient.GET(
+    '/subscriptions/trial-eligibility',
+    {
+      params: { query: { userId } },
+    }
+  );
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to check trial eligibility',
+      response.status
+    );
+  }
+
+  return data.data as TrialEligibility;
 }
 
 export async function getTrialStatus(storeId: string): Promise<TrialStatus> {
-  const res = await apiFetch<TrialStatus>(
-    `/subscriptions/stores/${storeId}/trial`
+  const { data, error, response } = await apiClient.GET(
+    '/subscriptions/stores/{storeId}/trial',
+    {
+      params: { path: { storeId } },
+    }
   );
-  return unwrapData(res, 'Failed to fetch trial status');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch trial status',
+      response.status
+    );
+  }
+
+  return data.data as TrialStatus;
 }
 
-export async function createPaymentRequest(data: {
+export async function createPaymentRequest(paymentData: {
   storeId: string;
   requestedTier: SubscriptionTier;
 }): Promise<PaymentRequest> {
-  const res = await apiFetch<PaymentRequest>(
+  const { data, error, response } = await apiClient.POST(
     '/subscriptions/payment-requests',
     {
-      method: 'POST',
-      body: JSON.stringify(data),
+      body: paymentData,
     }
   );
-  return unwrapData(res, 'Failed to create payment request');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to create payment request',
+      response.status
+    );
+  }
+
+  return data.data as PaymentRequest;
 }
 
 export async function uploadPaymentProof(
@@ -64,91 +112,156 @@ export async function uploadPaymentProof(
   );
 
   if (!res.ok) {
-    throw new Error('Failed to upload payment proof');
+    throw new ApiError('Failed to upload payment proof', res.status);
   }
 
   return res.json();
 }
 
 export async function getPaymentRequest(id: string): Promise<PaymentRequest> {
-  const res = await apiFetch<PaymentRequest>(
-    `/subscriptions/payment-requests/${id}`
+  const { data, error, response } = await apiClient.GET(
+    '/subscriptions/payment-requests/{id}',
+    {
+      params: { path: { id } },
+    }
   );
-  return unwrapData(res, 'Failed to fetch payment request');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch payment request',
+      response.status
+    );
+  }
+
+  return data.data as PaymentRequest;
 }
 
 export async function getPaymentRequests(storeId: string): Promise<{
   data: PaymentRequest[];
   meta: { total: number; page: number; pageSize: number };
 }> {
-  const res = await apiFetch<{
+  const { data, error, response } = await apiClient.GET(
+    '/subscriptions/payment-requests',
+    {
+      params: { query: { storeId } },
+    }
+  );
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch payment requests',
+      response.status
+    );
+  }
+
+  return data.data as {
     data: PaymentRequest[];
     meta: { total: number; page: number; pageSize: number };
-  }>({
-    path: '/subscriptions/payment-requests',
-    query: { storeId },
-  });
-  return unwrapData(res, 'Failed to fetch payment requests');
+  };
 }
 
-export async function createRefundRequest(data: {
+export async function createRefundRequest(refundData: {
   storeId: string;
   reason: RefundReason;
   comments?: string;
 }): Promise<RefundRequest> {
-  const res = await apiFetch<RefundRequest>('/subscriptions/refund-requests', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
-  return unwrapData(res, 'Failed to create refund request');
+  const { data, error, response } = await apiClient.POST(
+    '/subscriptions/refund-requests',
+    {
+      body: refundData,
+    }
+  );
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to create refund request',
+      response.status
+    );
+  }
+
+  return data.data as RefundRequest;
 }
 
 export async function getRefundRequests(
   storeId: string
 ): Promise<{ data: RefundRequest[] }> {
-  const res = await apiFetch<{ data: RefundRequest[] }>({
-    path: '/subscriptions/refund-requests',
-    query: { storeId },
-  });
-  return unwrapData(res, 'Failed to fetch refund requests');
+  const { data, error, response } = await apiClient.GET(
+    '/subscriptions/refund-requests',
+    {
+      params: { query: { storeId } },
+    }
+  );
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch refund requests',
+      response.status
+    );
+  }
+
+  return data.data as { data: RefundRequest[] };
 }
 
 export async function initiateOwnershipTransfer(
   storeId: string,
   newOwnerEmail: string
 ): Promise<OwnershipTransfer> {
-  const res = await apiFetch<OwnershipTransfer>(
-    `/subscriptions/stores/${storeId}/transfer-ownership`,
+  const { data, error, response } = await apiClient.POST(
+    '/subscriptions/stores/{storeId}/transfer-ownership',
     {
-      method: 'POST',
-      body: JSON.stringify({ newOwnerEmail }),
+      params: { path: { storeId } },
+      body: { newOwnerEmail },
     }
   );
-  return unwrapData(res, 'Failed to initiate ownership transfer');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to initiate ownership transfer',
+      response.status
+    );
+  }
+
+  return data.data as OwnershipTransfer;
 }
 
 export async function verifyOwnershipTransferOTP(
   transferId: string,
   otpCode: string
 ): Promise<{ success: boolean; message: string }> {
-  const res = await apiFetch<{ success: boolean; message: string }>(
-    `/subscriptions/transfer/${transferId}/verify-otp`,
+  const { data, error, response } = await apiClient.POST(
+    '/subscriptions/transfer/{transferId}/verify-otp',
     {
-      method: 'POST',
-      body: JSON.stringify({ otpCode }),
+      params: { path: { transferId } },
+      body: { otpCode },
     }
   );
-  return unwrapData(res, 'Failed to verify OTP');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to verify OTP',
+      response.status
+    );
+  }
+
+  return data.data as { success: boolean; message: string };
 }
 
 export async function cancelOwnershipTransfer(
   transferId: string
 ): Promise<{ success: boolean; message: string }> {
-  const res = await apiFetch<{ success: boolean; message: string }>(
-    `/subscriptions/transfer/${transferId}`,
+  const { data, error, response } = await apiClient.DELETE(
+    '/subscriptions/transfer/{transferId}',
     {
-      method: 'DELETE',
+      params: { path: { transferId } },
     }
   );
-  return unwrapData(res, 'Failed to cancel transfer');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to cancel transfer',
+      response.status
+    );
+  }
+
+  return data.data as { success: boolean; message: string };
 }

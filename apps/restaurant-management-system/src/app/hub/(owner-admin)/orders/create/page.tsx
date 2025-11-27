@@ -23,7 +23,10 @@ import {
   removeFromCart,
   checkoutCart,
 } from '@/features/orders/services/order.service';
-import type { AddToCartDto } from '@repo/api/generated/types';
+import type {
+  AddToCartDto,
+  CartItemResponseDto,
+} from '@repo/api/generated/types';
 import { menuKeys } from '@/features/menu/queries/menu.keys';
 import { Button } from '@repo/ui/components/button';
 import { Card } from '@repo/ui/components/card';
@@ -348,7 +351,7 @@ function CreateOrderContent() {
             ) : (
               <>
                 <div className="mb-4 max-h-96 space-y-3 overflow-y-auto">
-                  {cartItems.map((item) => (
+                  {cartItems.map((item: CartItemResponseDto) => (
                     <div
                       key={item.id}
                       className="bg-muted flex items-start justify-between rounded-lg p-3"
@@ -433,7 +436,9 @@ function CreateOrderContent() {
               id: placedOrderId,
               orderNumber: '1',
               storeId: selectedStoreId || '',
-              sessionId: { id: sessionId || '' },
+              // Note: Backend OpenAPI spec incorrectly types sessionId as Record<string, never>
+              // TODO: Fix backend OpenAPI spec to correctly type sessionId as string | null
+              sessionId: (sessionId || '') as unknown as Record<string, never>,
               tableName: 'Manual Order',
               status: 'PENDING',
               orderType: sessionType === 'COUNTER' ? 'DINE_IN' : 'TAKEAWAY',
@@ -466,7 +471,9 @@ function CreateOrderContent() {
               id: placedOrderId,
               orderNumber: '1',
               storeId: selectedStoreId || '',
-              sessionId: { id: sessionId || '' },
+              // Note: Backend OpenAPI spec incorrectly types sessionId as Record<string, never>
+              // TODO: Fix backend OpenAPI spec to correctly type sessionId as string | null
+              sessionId: (sessionId || '') as unknown as Record<string, never>,
               tableName: 'Manual Order',
               status: 'PENDING',
               orderType: sessionType === 'COUNTER' ? 'DINE_IN' : 'TAKEAWAY',

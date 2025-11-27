@@ -1,6 +1,12 @@
-import { apiFetch } from '@/utils/apiFetch';
-import { StandardApiResponse } from '@/common/types/api.types';
-import {
+/**
+ * Store Service
+ *
+ * Service layer for store-related API operations.
+ * Uses openapi-fetch for type-safe API calls.
+ */
+
+import { apiClient, ApiError } from '@/utils/apiFetch';
+import type {
   CreateStoreDto,
   Store,
   StoreSettingResponseDto,
@@ -9,78 +15,110 @@ import {
   UpdateStoreInformationDto,
 } from '../types/store.types';
 
-const STORE_ENDPOINT_BASE = '/stores';
-
+/**
+ * Retrieves store details by ID.
+ *
+ * @param id - The store ID
+ * @returns Store details
+ * @throws {ApiError} If the request fails
+ */
 export async function getStoreDetails(
   id: string
 ): Promise<GetStoreDetailsResponseDto> {
-  const res = await apiFetch<GetStoreDetailsResponseDto>(
-    `${STORE_ENDPOINT_BASE}/${id}`
-  );
+  const { data, error, response } = await apiClient.GET('/stores/{id}', {
+    params: { path: { id } },
+  });
 
-  if (!res.data) {
-    console.error(
-      `API Error: getStoreDetails(id: ${id}) succeeded but returned null data.`
-    );
-    throw new Error(
-      'Failed to retrieve store details: No data returned by API.'
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to retrieve store details',
+      response.status
     );
   }
-  return res.data;
+
+  return data.data as GetStoreDetailsResponseDto;
 }
 
+/**
+ * Updates store information.
+ *
+ * @param id - The store ID
+ * @param storeIdQuery - The store ID for query param
+ * @param storeData - The updated store information
+ * @throws {ApiError} If the request fails
+ */
 export async function updateStoreInformation(
   id: string,
   storeIdQuery: string,
-  data: UpdateStoreInformationDto
+  storeData: UpdateStoreInformationDto
 ): Promise<void> {
-  await apiFetch<null>(
+  const { error, response } = await apiClient.PUT(
+    '/stores/{id}/information',
     {
-      path: `${STORE_ENDPOINT_BASE}/${id}/information`,
-      query: { storeId: storeIdQuery },
-    },
-    {
-      method: 'PUT',
-      body: JSON.stringify(data),
+      params: {
+        path: { id },
+        query: { storeId: storeIdQuery },
+      },
+      body: storeData,
     }
   );
+
+  if (error) {
+    throw new ApiError(
+      'Failed to update store information',
+      response.status
+    );
+  }
 }
 
+/**
+ * Updates store settings.
+ *
+ * @param id - The store ID
+ * @param storeData - The updated store settings
+ * @returns Updated store settings
+ * @throws {ApiError} If the request fails
+ */
 export async function updateStoreSettings(
   id: string,
-  data: UpdateStoreSettingDto
+  storeData: UpdateStoreSettingDto
 ): Promise<StoreSettingResponseDto> {
-  const res = await apiFetch<StoreSettingResponseDto>(
-    `${STORE_ENDPOINT_BASE}/${id}/settings`,
+  const { data, error, response } = await apiClient.PUT(
+    '/stores/{id}/settings',
     {
-      method: 'PUT',
-      body: JSON.stringify(data),
+      params: { path: { id } },
+      body: storeData,
     }
   );
 
-  if (!res.data) {
-    console.error(
-      `API Error: updateStoreSettings(id: ${id}) succeeded but returned null data.`
-    );
-    throw new Error(
-      'Failed to update store settings: No data returned by API.'
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to update store settings',
+      response.status
     );
   }
-  return res.data;
+
+  return data.data as StoreSettingResponseDto;
 }
 
-export async function createStore(data: CreateStoreDto): Promise<Store> {
-  const res: StandardApiResponse<Store> = await apiFetch<Store>(
-    STORE_ENDPOINT_BASE,
-    {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }
-  );
-  if (res.status === 'error' || !res.data) {
-    throw new Error(
-      res.errors?.[0]?.message || res.message || 'Failed to create store'
+/**
+ * Creates a new store.
+ *
+ * @param storeData - The store data to create
+ * @returns Created store
+ * @throws {ApiError} If the request fails
+ */
+export async function createStore(storeData: CreateStoreDto): Promise<Store> {
+  const { data, error, response } = await apiClient.POST('/stores', {
+    body: storeData,
+  });
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to create store',
+      response.status
     );
   }
-  return res.data;
+
+  return data.data as Store;
 }

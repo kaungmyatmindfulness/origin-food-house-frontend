@@ -1,4 +1,11 @@
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
+/**
+ * Session Service
+ *
+ * Service layer for session-related API operations.
+ * Uses openapi-fetch for type-safe API calls.
+ */
+
+import { apiClient, ApiError } from '@/utils/apiFetch';
 import type { SessionResponseDto } from '@repo/api/generated/types';
 
 export type SessionType = 'COUNTER' | 'PHONE' | 'TAKEOUT' | 'TABLE';
@@ -21,17 +28,22 @@ export async function createManualSession(
   storeId: string,
   data: CreateManualSessionDto
 ): Promise<SessionResponseDto> {
-  const res = await apiFetch<SessionResponseDto>(
+  const { data: res, error, response } = await apiClient.POST(
+    '/active-table-sessions/manual',
     {
-      path: '/active-table-sessions/manual',
-      query: { storeId },
-    },
-    {
-      method: 'POST',
-      body: JSON.stringify(data),
+      params: { query: { storeId } },
+      body: data,
     }
   );
-  return unwrapData(res, 'Failed to create manual session');
+
+  if (error || !res?.data) {
+    throw new ApiError(
+      res?.message || 'Failed to create manual session',
+      response.status
+    );
+  }
+
+  return res.data as SessionResponseDto;
 }
 
 /**
@@ -42,8 +54,19 @@ export async function createManualSession(
 export async function getSession(
   sessionId: string
 ): Promise<SessionResponseDto> {
-  const res = await apiFetch<SessionResponseDto>({
-    path: `/active-table-sessions/${sessionId}`,
-  });
-  return unwrapData(res, 'Failed to fetch session');
+  const { data, error, response } = await apiClient.GET(
+    '/active-table-sessions/{sessionId}',
+    {
+      params: { path: { sessionId } },
+    }
+  );
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch session',
+      response.status
+    );
+  }
+
+  return data.data as SessionResponseDto;
 }

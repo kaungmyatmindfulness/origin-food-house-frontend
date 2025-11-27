@@ -1,116 +1,149 @@
-import {
-  menuControllerGetStoreMenuItems,
-  menuControllerCreateMenuItem,
-  menuControllerGetMenuItemById,
-  menuControllerUpdateMenuItem,
-  menuControllerDeleteMenuItem,
-  menuControllerPatchMenuItem,
-} from '@repo/api/generated';
+/**
+ * Menu Item Service
+ *
+ * Service layer for menu item-related API operations.
+ * Uses openapi-fetch for type-safe API calls.
+ */
 
+import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
   CreateMenuItemDto,
   MenuItemDto,
   UpdateMenuItemDto,
 } from '../types/menu-item.types';
 
+/**
+ * Retrieves all menu items for a specific store.
+ */
 export async function getStoreMenuItems(
   storeId: string
 ): Promise<MenuItemDto[]> {
-  const response = await menuControllerGetStoreMenuItems({
-    path: {
-      storeId,
-    },
-  });
+  const { data, error, response } = await apiClient.GET(
+    '/stores/{storeId}/menu-items',
+    {
+      params: { path: { storeId } },
+    }
+  );
 
-  if (!response.data?.data) {
-    throw new Error('Failed to retrieve menu items: No data returned by API.');
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to retrieve menu items',
+      response.status
+    );
   }
 
-  return response.data.data as MenuItemDto[];
+  return data.data as MenuItemDto[];
 }
 
+/**
+ * Creates a new menu item for a specific store.
+ * Returns the created item's ID.
+ */
 export async function createMenuItem(
   storeId: string,
-  data: CreateMenuItemDto
+  itemData: CreateMenuItemDto
 ): Promise<string> {
-  const response = await menuControllerCreateMenuItem({
-    path: {
-      storeId,
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    body: data as any, // Type mismatch between frontend and backend - backend expects some fields differently
-  });
+  const { data, error, response } = await apiClient.POST(
+    '/stores/{storeId}/menu-items',
+    {
+      params: { path: { storeId } },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      body: itemData as any, // Type mismatch between frontend and backend
+    }
+  );
 
-  if (!response.data?.data) {
+  if (error || !data?.data) {
     console.error(
       'API Error: createMenuItem succeeded but returned null data.'
     );
-    throw new Error('Failed to create menu item: No data returned by API.');
+    throw new ApiError(
+      data?.message || 'Failed to create menu item',
+      response.status
+    );
   }
 
-  // API returns the created item's ID
-  return response.data.data;
+  return data.data as string;
 }
 
+/**
+ * Retrieves a specific menu item by ID.
+ */
 export async function getMenuItemById(
   storeId: string,
   id: string
 ): Promise<MenuItemDto> {
-  const response = await menuControllerGetMenuItemById({
-    path: {
-      storeId,
-      id,
-    },
-  });
+  const { data, error, response } = await apiClient.GET(
+    '/stores/{storeId}/menu-items/{id}',
+    {
+      params: { path: { storeId, id } },
+    }
+  );
 
-  if (!response.data?.data) {
+  if (error || !data?.data) {
     console.error(
       `API Error: getMenuItemById(${id}) succeeded but returned null data.`
     );
-    throw new Error(`Menu item ${id} not found or no data returned by API.`);
+    throw new ApiError(
+      data?.message || `Menu item ${id} not found`,
+      response.status
+    );
   }
 
-  return response.data.data as MenuItemDto;
+  return data.data as MenuItemDto;
 }
 
+/**
+ * Updates an existing menu item.
+ */
 export async function updateMenuItem(
   id: string,
   storeId: string,
-  data: UpdateMenuItemDto
+  itemData: UpdateMenuItemDto
 ): Promise<MenuItemDto> {
-  const response = await menuControllerUpdateMenuItem({
-    path: {
-      storeId,
-      id,
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    body: data as any, // Type mismatch: local type has basePrice as string, API expects number
-  });
+  const { data, error, response } = await apiClient.PUT(
+    '/stores/{storeId}/menu-items/{id}',
+    {
+      params: { path: { storeId, id } },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      body: itemData as any, // Type mismatch: local type has basePrice as string, API expects number
+    }
+  );
 
-  if (!response.data?.data) {
+  if (error || !data?.data) {
     console.error(
       `API Error: updateMenuItem(${id}) succeeded but returned null data.`
     );
-    throw new Error(
-      `Failed to update menu item ${id}: No data returned by API.`
+    throw new ApiError(
+      data?.message || `Failed to update menu item ${id}`,
+      response.status
     );
   }
 
-  return response.data.data as MenuItemDto;
+  return data.data as MenuItemDto;
 }
 
+/**
+ * Deletes a menu item.
+ */
 export async function deleteMenuItem(
   storeId: string,
   id: string
 ): Promise<unknown> {
-  const response = await menuControllerDeleteMenuItem({
-    path: {
-      storeId,
-      id,
-    },
-  });
+  const { data, error, response } = await apiClient.DELETE(
+    '/stores/{storeId}/menu-items/{id}',
+    {
+      params: { path: { storeId, id } },
+    }
+  );
 
-  return response.data?.data;
+  if (error) {
+    throw new ApiError(
+      data?.message || `Failed to delete menu item ${id}`,
+      response.status
+    );
+  }
+
+  return data?.data;
 }
 
 /**
@@ -121,19 +154,20 @@ export async function toggleMenuItemOutOfStock(
   storeId: string,
   isOutOfStock: boolean
 ): Promise<MenuItemDto> {
-  const response = await menuControllerPatchMenuItem({
-    path: {
-      storeId,
-      id,
-    },
-    body: { isOutOfStock },
-  });
+  const { data, error, response } = await apiClient.PATCH(
+    '/stores/{storeId}/menu-items/{id}',
+    {
+      params: { path: { storeId, id } },
+      body: { isOutOfStock },
+    }
+  );
 
-  if (!response.data?.data) {
-    throw new Error(
-      `Failed to toggle out-of-stock status for item ${id}: No data returned.`
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || `Failed to toggle out-of-stock status for item ${id}`,
+      response.status
     );
   }
 
-  return response.data.data as MenuItemDto;
+  return data.data as MenuItemDto;
 }

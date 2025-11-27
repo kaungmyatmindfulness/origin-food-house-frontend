@@ -1,16 +1,17 @@
 /**
- * Report service - API calls for reports
+ * Report Service
+ *
+ * Service layer for report-related API operations.
+ * Uses openapi-fetch for type-safe API calls.
  */
 
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
+import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
   SalesSummaryDto,
   PopularItemsDto,
   PaymentBreakdownDto,
   OrderStatusDistributionDto,
 } from '../types/report.types';
-
-const BASE_PATH = '/reports';
 
 /**
  * Get sales summary report
@@ -20,18 +21,27 @@ export async function getSalesSummary(
   startDate: Date,
   endDate: Date
 ): Promise<SalesSummaryDto> {
-  const res = await apiFetch<SalesSummaryDto>(
+  const { data, error, response } = await apiClient.GET(
+    '/reports/sales-summary',
     {
-      path: `${BASE_PATH}/sales-summary`,
-      query: {
-        storeId,
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
+      params: {
+        query: {
+          storeId,
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+        },
       },
-    },
-    { method: 'GET' }
+    }
   );
-  return unwrapData(res, 'Failed to fetch sales summary');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch sales summary',
+      response.status
+    );
+  }
+
+  return data.data as SalesSummaryDto;
 }
 
 /**
@@ -43,19 +53,28 @@ export async function getPopularItems(
   startDate: Date,
   endDate: Date
 ): Promise<PopularItemsDto> {
-  const res = await apiFetch<PopularItemsDto>(
+  const { data, error, response } = await apiClient.GET(
+    '/reports/popular-items',
     {
-      path: `${BASE_PATH}/popular-items`,
-      query: {
-        storeId,
-        limit: limit.toString(),
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
+      params: {
+        query: {
+          storeId,
+          limit: limit.toString(),
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+        },
       },
-    },
-    { method: 'GET' }
+    }
   );
-  return unwrapData(res, 'Failed to fetch popular items');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch popular items',
+      response.status
+    );
+  }
+
+  return data.data as PopularItemsDto;
 }
 
 /**
@@ -66,18 +85,27 @@ export async function getPaymentBreakdown(
   startDate: Date,
   endDate: Date
 ): Promise<PaymentBreakdownDto> {
-  const res = await apiFetch<PaymentBreakdownDto>(
+  const { data, error, response } = await apiClient.GET(
+    '/reports/payment-breakdown',
     {
-      path: `${BASE_PATH}/payment-breakdown`,
-      query: {
-        storeId,
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
+      params: {
+        query: {
+          storeId,
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+        },
       },
-    },
-    { method: 'GET' }
+    }
   );
-  return unwrapData(res, 'Failed to fetch payment breakdown');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch payment breakdown',
+      response.status
+    );
+  }
+
+  return data.data as PaymentBreakdownDto;
 }
 
 /**
@@ -88,16 +116,25 @@ export async function getOrderStatusReport(
   startDate: Date,
   endDate: Date
 ): Promise<OrderStatusDistributionDto[]> {
-  const res = await apiFetch<OrderStatusDistributionDto[]>(
+  const { data, error, response } = await apiClient.GET(
+    '/reports/order-status-distribution',
     {
-      path: `${BASE_PATH}/order-status-distribution`,
-      query: {
-        storeId,
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
+      params: {
+        query: {
+          storeId,
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+        },
       },
-    },
-    { method: 'GET' }
+    }
   );
-  return unwrapData(res, 'Failed to fetch order status distribution');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch order status distribution',
+      response.status
+    );
+  }
+
+  return data.data as OrderStatusDistributionDto[];
 }

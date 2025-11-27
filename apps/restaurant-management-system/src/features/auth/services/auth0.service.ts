@@ -1,6 +1,13 @@
+/**
+ * Auth0 Service
+ *
+ * Service layer for Auth0 authentication operations.
+ * Uses openapi-fetch for type-safe API calls.
+ */
+
 import type { User } from '@auth0/auth0-spa-js';
 import { getAuth0Client } from '@/lib/auth0';
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
+import { apiClient, ApiError } from '@/utils/apiFetch';
 import type { StandardApiResponse } from '@/common/types/api.types';
 import type { AccessTokenData, ChooseStoreDto } from '../types/auth.types';
 
@@ -50,14 +57,23 @@ export async function handleAuth0Callback(): Promise<
   const auth0Token = await auth0Client.getTokenSilently();
 
   // Validate Auth0 token with backend and get backend JWT (Step 1)
-  const res = await apiFetch<AccessTokenData>('/auth/auth0/validate', {
+  // Note: We need to use raw fetch here because we need to pass a custom Authorization header
+  // that is different from the cookie-based auth used by apiClient
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+  const response = await fetch(`${baseUrl}/auth/auth0/validate`, {
     method: 'POST',
+    credentials: 'include',
     headers: {
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${auth0Token}`,
     },
   });
 
-  return res;
+  if (!response.ok) {
+    throw new ApiError('Failed to validate Auth0 token', response.status);
+  }
+
+  return response.json() as Promise<StandardApiResponse<AccessTokenData>>;
 }
 
 /**
@@ -108,9 +124,7 @@ export async function logoutFromAuth0(returnToUrl?: string): Promise<void> {
     const auth0Client = await getAuth0Client();
 
     // Call backend logout endpoint to clear httpOnly cookie
-    await apiFetch('/auth/logout', {
-      method: 'POST',
-    });
+    await apiClient.POST('/auth/logout', {});
 
     // Logout from Auth0
     await auth0Client.logout({
@@ -129,19 +143,25 @@ export async function logoutFromAuth0(returnToUrl?: string): Promise<void> {
  * POST /auth/login/store (Step 2) - Store selection after Auth0 login
  * This is called after successful Auth0 authentication and token exchange
  *
- * @param data - Store selection data
+ * @param storeData - Store selection data
  * @returns {Promise<AccessTokenData>} Access token with store context
  * @throws {Error} If store login fails
  */
 export async function loginWithStoreAuth0(
-  data: ChooseStoreDto
+  storeData: ChooseStoreDto
 ): Promise<AccessTokenData> {
-  const res = await apiFetch<AccessTokenData>('/auth/login/store', {
-    method: 'POST',
-    body: JSON.stringify(data),
+  const { data, error, response } = await apiClient.POST('/auth/login/store', {
+    body: storeData,
   });
 
-  return unwrapData(res, 'Failed to select store');
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to select store',
+      response.status
+    );
+  }
+
+  return data.data as AccessTokenData;
 }
 
 /**

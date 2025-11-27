@@ -1,47 +1,53 @@
-import type { StandardApiResponse } from '../types/api.types.js';
-import type { UploadImageResponseData } from '../types/upload.types.js';
+/**
+ * Upload Service
+ *
+ * Service functions for file upload operations.
+ * Note: FormData uploads use raw fetch since openapi-fetch doesn't handle multipart well.
+ */
+
+import type { UploadImageResponseData } from '../types/upload.types';
+import { ApiError } from '../utils/apiFetch';
 
 const UPLOAD_IMAGE_ENDPOINT = '/upload/image';
 
 /**
- * Creates upload service functions that use the provided apiFetch implementation.
+ * Creates upload service functions that use the provided base URL.
  *
- * @param apiFetch - The configured apiFetch function from the app
+ * @param baseUrl - The API base URL
  * @returns Upload service functions
  *
  * @example
  * ```typescript
  * // In your app
  * import { createUploadService } from '@repo/api/services/upload.service';
- * import { apiFetch } from '@/utils/apiFetch';
  *
- * const { uploadImage } = createUploadService(apiFetch);
+ * const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+ * const { uploadImage } = createUploadService(baseUrl);
  * ```
  */
-export function createUploadService(
-  apiFetch: <T>(
-    path: string | { path: string; query?: Record<string, unknown> },
-    options?: RequestInit
-  ) => Promise<StandardApiResponse<T>>
-) {
+export function createUploadService(baseUrl: string) {
   return {
     uploadImage: async (file: File): Promise<UploadImageResponseData> => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await apiFetch<UploadImageResponseData>(
-        UPLOAD_IMAGE_ENDPOINT,
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
+      const response = await fetch(`${baseUrl}${UPLOAD_IMAGE_ENDPOINT}`, {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
 
-      if (!res.data?.basePath) {
+      if (!response.ok) {
+        throw new ApiError('Failed to upload image', response.status);
+      }
+
+      const json = await response.json();
+
+      if (!json.data?.basePath) {
         throw new Error('Base path is missing in the response');
       }
 
-      return res.data;
+      return json.data as UploadImageResponseData;
     },
   };
 }

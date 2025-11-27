@@ -24,6 +24,7 @@ import {
   updateCartItem,
 } from '@/features/orders/services/order.service';
 import { salesKeys } from '@/features/sales/queries/sales.keys';
+import type { CartItemResponseDto } from '@repo/api/generated/types';
 
 interface CartPanelProps {
   sessionId: string | null;
@@ -186,7 +187,7 @@ export function CartPanel({ sessionId, onCheckout }: CartPanelProps) {
         ) : (
           <ScrollArea className="flex-1 px-6">
             <div className="py-2">
-              {cart?.items.map((item) => (
+              {cart?.items.map((item: CartItemResponseDto) => (
                 <CartItem
                   key={item.id}
                   item={item}

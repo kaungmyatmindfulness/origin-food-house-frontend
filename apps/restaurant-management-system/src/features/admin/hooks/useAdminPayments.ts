@@ -1,5 +1,12 @@
+/**
+ * Admin Payment Hooks
+ *
+ * React Query hooks for admin payment management.
+ * Uses openapi-fetch for type-safe API calls.
+ */
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
+import { apiClient, ApiError } from '@/utils/apiFetch';
 
 interface PaymentQueueParams {
   status?: 'PENDING_VERIFICATION' | 'VERIFIED' | 'REJECTED';
@@ -93,16 +100,26 @@ export function usePaymentQueue(params: PaymentQueueParams) {
   return useQuery({
     queryKey: adminPaymentKeys.queue(params),
     queryFn: async () => {
-      const searchParams = new URLSearchParams();
-      if (params.status) searchParams.set('status', params.status);
-      if (params.page) searchParams.set('page', params.page.toString());
-      if (params.pageSize)
-        searchParams.set('pageSize', params.pageSize.toString());
+      const queryParams: Record<string, string> = {};
+      if (params.status) queryParams.status = params.status;
+      if (params.page) queryParams.page = params.page.toString();
+      if (params.pageSize) queryParams.pageSize = params.pageSize.toString();
 
-      const res = await apiFetch<PaymentQueueResponse>(
-        `/admin/payment-requests?${searchParams.toString()}`
+      const { data, error, response } = await apiClient.GET(
+        '/admin/payment-requests',
+        {
+          params: { query: queryParams },
+        }
       );
-      return unwrapData(res, 'Failed to fetch payment queue');
+
+      if (error || !data?.data) {
+        throw new ApiError(
+          data?.message || 'Failed to fetch payment queue',
+          response.status
+        );
+      }
+
+      return data.data as PaymentQueueResponse;
     },
   });
 }
@@ -115,10 +132,22 @@ export function usePaymentRequestDetail(paymentRequestId: string | null) {
     queryKey: adminPaymentKeys.detail(paymentRequestId || ''),
     queryFn: async () => {
       if (!paymentRequestId) return null;
-      const res = await apiFetch<PaymentRequestDetail>(
-        `/admin/payment-requests/${paymentRequestId}`
+
+      const { data, error, response } = await apiClient.GET(
+        '/admin/payment-requests/{paymentRequestId}',
+        {
+          params: { path: { paymentRequestId } },
+        }
       );
-      return unwrapData(res, 'Failed to fetch payment request detail');
+
+      if (error || !data?.data) {
+        throw new ApiError(
+          data?.message || 'Failed to fetch payment request detail',
+          response.status
+        );
+      }
+
+      return data.data as PaymentRequestDetail;
     },
     enabled: !!paymentRequestId,
   });
@@ -132,10 +161,22 @@ export function usePaymentProof(paymentRequestId: string | null) {
     queryKey: [...adminPaymentKeys.detail(paymentRequestId || ''), 'proof'],
     queryFn: async () => {
       if (!paymentRequestId) return null;
-      const res = await apiFetch<PresignedUrlResponse>(
-        `/admin/payment-requests/${paymentRequestId}/payment-proof`
+
+      const { data, error, response } = await apiClient.GET(
+        '/admin/payment-requests/{paymentRequestId}/payment-proof',
+        {
+          params: { path: { paymentRequestId } },
+        }
       );
-      return unwrapData(res, 'Failed to fetch payment proof');
+
+      if (error || !data?.data) {
+        throw new ApiError(
+          data?.message || 'Failed to fetch payment proof',
+          response.status
+        );
+      }
+
+      return data.data as PresignedUrlResponse;
     },
     enabled: !!paymentRequestId,
     staleTime: 10 * 60 * 1000,
@@ -149,8 +190,16 @@ export function useAdminMetrics() {
   return useQuery({
     queryKey: adminPaymentKeys.metrics(),
     queryFn: async () => {
-      const res = await apiFetch<AdminMetrics>('/admin/metrics');
-      return unwrapData(res, 'Failed to fetch admin metrics');
+      const { data, error, response } = await apiClient.GET('/admin/metrics', {});
+
+      if (error || !data?.data) {
+        throw new ApiError(
+          data?.message || 'Failed to fetch admin metrics',
+          response.status
+        );
+      }
+
+      return data.data as AdminMetrics;
     },
     refetchInterval: 60 * 1000,
   });
@@ -170,15 +219,22 @@ export function useVerifyPayment() {
       paymentRequestId: string;
       notes?: string;
     }) => {
-      const res = await apiFetch<{ success: boolean; message: string }>(
-        `/admin/payment-requests/${paymentRequestId}/verify`,
+      const { data, error, response } = await apiClient.POST(
+        '/admin/payment-requests/{paymentRequestId}/verify',
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ notes }),
+          params: { path: { paymentRequestId } },
+          body: { notes },
         }
       );
-      return unwrapData(res, 'Failed to verify payment');
+
+      if (error || !data?.data) {
+        throw new ApiError(
+          data?.message || 'Failed to verify payment',
+          response.status
+        );
+      }
+
+      return data.data as { success: boolean; message: string };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminPaymentKeys.all });
@@ -201,15 +257,22 @@ export function useRejectPayment() {
       paymentRequestId: string;
       reason: string;
     }) => {
-      const res = await apiFetch<{ success: boolean; message: string }>(
-        `/admin/payment-requests/${paymentRequestId}/reject`,
+      const { data, error, response } = await apiClient.POST(
+        '/admin/payment-requests/{paymentRequestId}/reject',
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ reason }),
+          params: { path: { paymentRequestId } },
+          body: { reason },
         }
       );
-      return unwrapData(res, 'Failed to reject payment');
+
+      if (error || !data?.data) {
+        throw new ApiError(
+          data?.message || 'Failed to reject payment',
+          response.status
+        );
+      }
+
+      return data.data as { success: boolean; message: string };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminPaymentKeys.all });
@@ -230,16 +293,25 @@ export function useBulkVerifyPayments() {
     }: {
       paymentRequestIds: string[];
     }) => {
-      const res = await apiFetch<{
+      const { data, error, response } = await apiClient.POST(
+        '/admin/payment-requests/bulk-verify',
+        {
+          body: { paymentRequestIds },
+        }
+      );
+
+      if (error || !data?.data) {
+        throw new ApiError(
+          data?.message || 'Failed to bulk verify payments',
+          response.status
+        );
+      }
+
+      return data.data as {
         success: boolean;
         verified: number;
         failed: number;
-      }>('/admin/payment-requests/bulk-verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ paymentRequestIds }),
-      });
-      return unwrapData(res, 'Failed to bulk verify payments');
+      };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminPaymentKeys.all });

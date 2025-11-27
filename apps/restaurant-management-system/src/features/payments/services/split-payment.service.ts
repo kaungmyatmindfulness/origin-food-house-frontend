@@ -1,4 +1,11 @@
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
+/**
+ * Split Payment Service
+ *
+ * Service layer for bill splitting API operations.
+ * Uses openapi-fetch for type-safe API calls.
+ */
+
+import { apiClient, ApiError } from '@/utils/apiFetch';
 
 /**
  * DTO for calculating bill split
@@ -69,15 +76,22 @@ export async function calculateSplit(
   orderId: string,
   data: CalculateSplitDto
 ): Promise<SplitCalculationResponseDto> {
-  const res = await apiFetch<SplitCalculationResponseDto>(
-    `/payments/orders/${orderId}/calculate-split`,
+  const { data: res, error, response } = await apiClient.POST(
+    '/payments/orders/{orderId}/calculate-split',
     {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      params: { path: { orderId } },
+      body: data,
     }
   );
-  return unwrapData(res, 'Failed to calculate split');
+
+  if (error || !res?.data) {
+    throw new ApiError(
+      res?.message || 'Failed to calculate split',
+      response.status
+    );
+  }
+
+  return res.data as SplitCalculationResponseDto;
 }
 
 /**
@@ -90,15 +104,22 @@ export async function recordSplitPayment(
   orderId: string,
   data: RecordSplitPaymentDto
 ): Promise<SplitPaymentResponseDto> {
-  const res = await apiFetch<SplitPaymentResponseDto>(
-    `/payments/orders/${orderId}/split-payments`,
+  const { data: res, error, response } = await apiClient.POST(
+    '/payments/orders/{orderId}/split-payments',
     {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      params: { path: { orderId } },
+      body: data,
     }
   );
-  return unwrapData(res, 'Failed to record split payment');
+
+  if (error || !res?.data) {
+    throw new ApiError(
+      res?.message || 'Failed to record split payment',
+      response.status
+    );
+  }
+
+  return res.data as SplitPaymentResponseDto;
 }
 
 /**
@@ -109,8 +130,19 @@ export async function recordSplitPayment(
 export async function getOrderSplitPayments(
   orderId: string
 ): Promise<SplitPaymentResponseDto[]> {
-  const res = await apiFetch<SplitPaymentResponseDto[]>(
-    `/payments/orders/${orderId}/split-payments`
+  const { data, error, response } = await apiClient.GET(
+    '/payments/orders/{orderId}/split-payments',
+    {
+      params: { path: { orderId } },
+    }
   );
-  return unwrapData(res, 'Failed to fetch split payments');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch split payments',
+      response.status
+    );
+  }
+
+  return data.data as SplitPaymentResponseDto[];
 }

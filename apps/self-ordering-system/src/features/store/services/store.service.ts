@@ -1,18 +1,29 @@
-import { apiFetch } from '@/utils/apiFetch';
-import { GetStoreDetailsResponseDto } from '../types/store.types';
+/**
+ * Store Service
+ *
+ * Service layer for store-related API operations in SOS.
+ * Uses openapi-fetch for type-safe API calls.
+ */
 
-const STORE_ENDPOINT_BASE = '/stores';
+import { apiClient, ApiError } from '@/utils/apiFetch';
+import type { GetStoreDetailsResponseDto } from '../types/store.types';
 
+/**
+ * Retrieves store details by ID.
+ */
 export async function getStoreDetails(
   id: string
 ): Promise<GetStoreDetailsResponseDto> {
-  const res = await apiFetch<GetStoreDetailsResponseDto>(
-    `${STORE_ENDPOINT_BASE}/${id}`
-  );
-  if (!res.data) {
-    throw new Error(
-      'Failed to retrieve store details: No data returned by API.'
+  const { data, error, response } = await apiClient.GET('/stores/{id}', {
+    params: { path: { id } },
+  });
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to retrieve store details',
+      response.status
     );
   }
-  return res.data;
+
+  return data.data as GetStoreDetailsResponseDto;
 }

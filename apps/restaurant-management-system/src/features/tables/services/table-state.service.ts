@@ -1,8 +1,11 @@
 /**
- * Table state service - API calls for table status management
+ * Table State Service
+ *
+ * Service layer for table status management API operations.
+ * Uses openapi-fetch for type-safe API calls.
  */
 
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
+import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
   TableWithStatusDto,
   UpdateTableStatusDto,
@@ -14,11 +17,21 @@ import type {
 export async function getTablesWithStatus(
   storeId: string
 ): Promise<TableWithStatusDto[]> {
-  const res = await apiFetch<TableWithStatusDto[]>(
-    `/stores/${storeId}/tables`,
-    { method: 'GET' }
+  const { data, error, response } = await apiClient.GET(
+    '/stores/{storeId}/tables',
+    {
+      params: { path: { storeId } },
+    }
   );
-  return unwrapData(res, 'Failed to fetch tables');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch tables',
+      response.status
+    );
+  }
+
+  return data.data as TableWithStatusDto[];
 }
 
 /**
@@ -29,12 +42,20 @@ export async function updateTableStatus(
   tableId: string,
   dto: UpdateTableStatusDto
 ): Promise<TableWithStatusDto> {
-  const res = await apiFetch<TableWithStatusDto>(
-    `/stores/${storeId}/tables/${tableId}`,
+  const { data, error, response } = await apiClient.PATCH(
+    '/stores/{storeId}/tables/{tableId}',
     {
-      method: 'PATCH',
-      body: JSON.stringify(dto),
+      params: { path: { storeId, tableId } },
+      body: dto,
     }
   );
-  return unwrapData(res, 'Failed to update table status');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to update table status',
+      response.status
+    );
+  }
+
+  return data.data as TableWithStatusDto;
 }

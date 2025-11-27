@@ -1,4 +1,12 @@
-import {
+/**
+ * User Service
+ *
+ * Service layer for user-related API operations.
+ * Uses openapi-fetch for type-safe API calls.
+ */
+
+import { apiClient, ApiError } from '@/utils/apiFetch';
+import type {
   CreateUserDto,
   AddUserToStoreDto,
   RegisterUserData,
@@ -6,52 +14,53 @@ import {
   UserStoreRole,
   CurrentUserData,
 } from '@/features/user/types/user.types';
-import { apiFetch } from '@/utils/apiFetch';
 
 /**
  * Register a new user.
  * Maps to: POST /users/register
- * @param data - User registration details.
+ * @param userData - User registration details.
  * @returns A promise resolving to RegisterUserData (likely confirmation/basic user info).
- * @throws {NetworkError | ApiError} - Throws on fetch/API errors. Throws Error if data is null on success.
+ * @throws {ApiError} - Throws on fetch/API errors.
  */
 export async function registerUser(
-  data: CreateUserDto
+  userData: CreateUserDto
 ): Promise<RegisterUserData> {
-  const res = await apiFetch<RegisterUserData>('/users/register', {
-    method: 'POST',
-    body: JSON.stringify(data),
+  const { data, error, response } = await apiClient.POST('/users/register', {
+    body: userData,
   });
 
-  if (!res.data) {
-    console.error('API Error: registerUser succeeded but returned null data.');
-    throw new Error('Registration failed: No data returned by API.');
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Registration failed',
+      response.status
+    );
   }
-  return res.data;
+
+  return data.data as RegisterUserData;
 }
 
 /**
  * Assigns a user to a store with a specific role.
  * Maps to: POST /users/add-to-store
- * @param data - Details of the user, store, and role assignment.
+ * @param userData - Details of the user, store, and role assignment.
  * @returns A promise resolving to AddUserToStoreData (likely confirmation).
- * @throws {NetworkError | ApiError | UnauthorizedError} - Throws on fetch/API errors. Throws Error if data is null on success.
+ * @throws {ApiError} - Throws on fetch/API errors.
  */
 export async function addUserToStore(
-  data: AddUserToStoreDto
+  userData: AddUserToStoreDto
 ): Promise<AddUserToStoreData> {
-  const res = await apiFetch<AddUserToStoreData>('/users/add-to-store', {
-    method: 'POST',
-    body: JSON.stringify(data),
+  const { data, error, response } = await apiClient.POST('/users/add-to-store', {
+    body: userData,
   });
 
-  if (!res.data) {
-    console.error(
-      'API Error: addUserToStore succeeded but returned null data.'
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Add user to store failed',
+      response.status
     );
-    throw new Error('Add user to store failed: No data returned by API.');
   }
-  return res.data;
+
+  return data.data as AddUserToStoreData;
 }
 
 /**
@@ -59,36 +68,43 @@ export async function addUserToStore(
  * Maps to: GET /users/{id}/stores
  * @param userId - The ID of the user whose store memberships are requested.
  * @returns A promise resolving to an array of UserStoreRole objects.
- * @throws {NetworkError | ApiError | UnauthorizedError} - Throws on fetch/API errors. Throws Error if data is null on success.
+ * @throws {ApiError} - Throws on fetch/API errors.
  */
 export async function getUserStores(userId: string): Promise<UserStoreRole[]> {
-  const res = await apiFetch<UserStoreRole[]>(`/users/${userId}/stores`);
+  const { data, error, response } = await apiClient.GET('/users/{id}/stores', {
+    params: { path: { id: userId } },
+  });
 
-  if (res.data == null) {
-    console.error(
-      `API Error: getUserStores(${userId}) succeeded but returned null/undefined data.`
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to get user stores',
+      response.status
     );
-    throw new Error('Failed to get user stores: No data returned by API.');
   }
-  return res.data;
+
+  return data.data as UserStoreRole[];
 }
 
 /**
  * Retrieves the profile of the currently authenticated user.
  * Maps to: GET /users/me
+ * @param storeId - Optional store ID to scope the user data
  * @returns A promise resolving to the CurrentUserData object.
- * @throws {NetworkError | ApiError | UnauthorizedError} - Throws on fetch/API errors. Throws Error if data is null on success.
+ * @throws {ApiError} - Throws on fetch/API errors.
  */
 export async function getCurrentUser(
   storeId?: string
 ): Promise<CurrentUserData> {
-  const res = await apiFetch<CurrentUserData>({
-    path: '/users/me',
-    query: { storeId },
+  const { data, error, response } = await apiClient.GET('/users/me', {
+    params: { query: { storeId } },
   });
 
-  if (!res.data) {
-    throw new Error('Failed to get current user: No data returned by API.');
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to get current user',
+      response.status
+    );
   }
-  return res.data;
+
+  return data.data as CurrentUserData;
 }

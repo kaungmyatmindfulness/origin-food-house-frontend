@@ -1,4 +1,11 @@
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
+/**
+ * Discount Service
+ *
+ * Service layer for discount-related API operations.
+ * Uses openapi-fetch for type-safe API calls.
+ */
+
+import { apiClient, ApiError } from '@/utils/apiFetch';
 
 /**
  * DTO for applying discount to an order
@@ -38,15 +45,22 @@ export async function applyDiscount(
   orderId: string,
   data: ApplyDiscountDto
 ): Promise<DiscountResponseDto> {
-  const res = await apiFetch<DiscountResponseDto>(
-    `/discounts/orders/${orderId}/discounts`,
+  const { data: res, error, response } = await apiClient.POST(
+    '/discounts/orders/{orderId}/discounts',
     {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      params: { path: { orderId } },
+      body: data,
     }
   );
-  return unwrapData(res, 'Failed to apply discount');
+
+  if (error || !res?.data) {
+    throw new ApiError(
+      res?.message || 'Failed to apply discount',
+      response.status
+    );
+  }
+
+  return res.data as DiscountResponseDto;
 }
 
 /**
@@ -57,10 +71,21 @@ export async function applyDiscount(
 export async function getOrderDiscounts(
   orderId: string
 ): Promise<DiscountResponseDto[]> {
-  const res = await apiFetch<DiscountResponseDto[]>(
-    `/discounts/orders/${orderId}/discounts`
+  const { data, error, response } = await apiClient.GET(
+    '/discounts/orders/{orderId}/discounts',
+    {
+      params: { path: { orderId } },
+    }
   );
-  return unwrapData(res, 'Failed to fetch discounts');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to fetch discounts',
+      response.status
+    );
+  }
+
+  return data.data as DiscountResponseDto[];
 }
 
 /**
@@ -71,13 +96,21 @@ export async function getOrderDiscounts(
 export async function approveDiscount(
   discountId: string
 ): Promise<DiscountResponseDto> {
-  const res = await apiFetch<DiscountResponseDto>(
-    `/discounts/${discountId}/approve`,
+  const { data, error, response } = await apiClient.POST(
+    '/discounts/{discountId}/approve',
     {
-      method: 'POST',
+      params: { path: { discountId } },
     }
   );
-  return unwrapData(res, 'Failed to approve discount');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to approve discount',
+      response.status
+    );
+  }
+
+  return data.data as DiscountResponseDto;
 }
 
 /**
@@ -90,13 +123,20 @@ export async function rejectDiscount(
   discountId: string,
   reason: string
 ): Promise<DiscountResponseDto> {
-  const res = await apiFetch<DiscountResponseDto>(
-    `/discounts/${discountId}/reject`,
+  const { data, error, response } = await apiClient.POST(
+    '/discounts/{discountId}/reject',
     {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reason }),
+      params: { path: { discountId } },
+      body: { reason },
     }
   );
-  return unwrapData(res, 'Failed to reject discount');
+
+  if (error || !data?.data) {
+    throw new ApiError(
+      data?.message || 'Failed to reject discount',
+      response.status
+    );
+  }
+
+  return data.data as DiscountResponseDto;
 }
