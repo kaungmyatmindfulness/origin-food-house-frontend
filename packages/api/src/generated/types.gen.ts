@@ -309,6 +309,76 @@ export type SuspendUserDto = {
   reason: string;
 };
 
+export type CartItemCustomizationResponseDto = {
+  id: string;
+  customizationOptionId: string;
+  optionName: string;
+  additionalPrice: string;
+};
+
+export type CartItemResponseDto = {
+  id: string;
+  menuItemId: {
+    [key: string]: unknown;
+  };
+  menuItemName: string;
+  basePrice: string;
+  quantity: number;
+  notes: {
+    [key: string]: unknown;
+  };
+  customizations: Array<CartItemCustomizationResponseDto>;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CartResponseDto = {
+  id: string;
+  sessionId: string;
+  storeId: string;
+  subTotal: string;
+  items: Array<CartItemResponseDto>;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CartItemCustomizationDto = {
+  /**
+   * Customization option ID
+   */
+  customizationOptionId: string;
+};
+
+export type AddToCartDto = {
+  /**
+   * Menu item ID to add to cart
+   */
+  menuItemId: string;
+  /**
+   * Quantity of the item
+   */
+  quantity: number;
+  /**
+   * Special instructions or notes
+   */
+  notes?: string;
+  /**
+   * Selected customization options
+   */
+  customizations?: Array<CartItemCustomizationDto>;
+};
+
+export type UpdateCartItemDto = {
+  /**
+   * Updated quantity
+   */
+  quantity?: number;
+  /**
+   * Updated notes
+   */
+  notes?: string;
+};
+
 export type CheckoutCartDto = {
   /**
    * Order type
@@ -318,6 +388,56 @@ export type CheckoutCartDto = {
    * Table name (from session)
    */
   tableName?: string;
+};
+
+export type QuickSaleItemDto = {
+  /**
+   * Menu item ID
+   */
+  menuItemId: string;
+  /**
+   * Quantity of the item
+   */
+  quantity: number;
+  /**
+   * Array of customization option IDs
+   */
+  customizationOptionIds?: Array<string>;
+  /**
+   * Notes for the item
+   */
+  notes?: string;
+};
+
+export type QuickSaleCheckoutDto = {
+  /**
+   * Store ID
+   */
+  storeId: string;
+  /**
+   * Session type (COUNTER, PHONE, or TAKEOUT - not TABLE)
+   */
+  sessionType: 'COUNTER' | 'PHONE' | 'TAKEOUT';
+  /**
+   * Order type
+   */
+  orderType: 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
+  /**
+   * Array of items to checkout
+   */
+  items: Array<QuickSaleItemDto>;
+  /**
+   * Customer name (optional, useful for phone/takeout orders)
+   */
+  customerName?: string;
+  /**
+   * Customer phone number (optional, useful for phone orders)
+   */
+  customerPhone?: string;
+  /**
+   * Notes for the entire order
+   */
+  orderNotes?: string;
 };
 
 export type PaginationMeta = {
@@ -626,76 +746,6 @@ export type UploadImageResponseDto = {
    * Metadata about the uploaded image including dimensions, file sizes, and format details for all generated versions.
    */
   metadata: ImageMetadataDto;
-};
-
-export type CartItemCustomizationResponseDto = {
-  id: string;
-  customizationOptionId: string;
-  optionName: string;
-  additionalPrice: string;
-};
-
-export type CartItemResponseDto = {
-  id: string;
-  menuItemId: {
-    [key: string]: unknown;
-  };
-  menuItemName: string;
-  basePrice: string;
-  quantity: number;
-  notes: {
-    [key: string]: unknown;
-  };
-  customizations: Array<CartItemCustomizationResponseDto>;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type CartResponseDto = {
-  id: string;
-  sessionId: string;
-  storeId: string;
-  subTotal: string;
-  items: Array<CartItemResponseDto>;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type CartItemCustomizationDto = {
-  /**
-   * Customization option ID
-   */
-  customizationOptionId: string;
-};
-
-export type AddToCartDto = {
-  /**
-   * Menu item ID to add to cart
-   */
-  menuItemId: string;
-  /**
-   * Quantity of the item
-   */
-  quantity: number;
-  /**
-   * Special instructions or notes
-   */
-  notes?: string;
-  /**
-   * Selected customization options
-   */
-  customizations?: Array<CartItemCustomizationDto>;
-};
-
-export type UpdateCartItemDto = {
-  /**
-   * Updated quantity
-   */
-  quantity?: number;
-  /**
-   * Updated notes
-   */
-  notes?: string;
 };
 
 export type MenuItemNestedResponseDto = {
@@ -2408,6 +2458,239 @@ export type AuditLogControllerExportAuditLogsResponses = {
   200: unknown;
 };
 
+export type CartControllerClearCartData = {
+  body?: never;
+  headers?: {
+    /**
+     * Session token for customer access (SOS app)
+     */
+    'x-session-token'?: string;
+  };
+  path?: never;
+  query: {
+    /**
+     * Active table session ID
+     */
+    sessionId: string;
+  };
+  url: '/cart';
+};
+
+export type CartControllerClearCartErrors = {
+  /**
+   * Authentication required
+   */
+  401: unknown;
+  /**
+   * Access denied
+   */
+  403: unknown;
+  /**
+   * Cart not found
+   */
+  404: unknown;
+};
+
+export type CartControllerClearCartResponses = {
+  /**
+   * Cart cleared successfully
+   */
+  200: CartResponseDto;
+};
+
+export type CartControllerClearCartResponse =
+  CartControllerClearCartResponses[keyof CartControllerClearCartResponses];
+
+export type CartControllerGetCartData = {
+  body?: never;
+  headers?: {
+    /**
+     * Session token for customer access (SOS app)
+     */
+    'x-session-token'?: string;
+  };
+  path?: never;
+  query: {
+    /**
+     * Active table session ID
+     */
+    sessionId: string;
+  };
+  url: '/cart';
+};
+
+export type CartControllerGetCartErrors = {
+  /**
+   * Authentication required
+   */
+  401: unknown;
+  /**
+   * Access denied
+   */
+  403: unknown;
+  /**
+   * Session not found
+   */
+  404: unknown;
+};
+
+export type CartControllerGetCartResponses = {
+  /**
+   * Cart retrieved successfully
+   */
+  200: CartResponseDto;
+};
+
+export type CartControllerGetCartResponse =
+  CartControllerGetCartResponses[keyof CartControllerGetCartResponses];
+
+export type CartControllerAddItemData = {
+  body: AddToCartDto;
+  headers?: {
+    /**
+     * Session token for customer access (SOS app)
+     */
+    'x-session-token'?: string;
+  };
+  path?: never;
+  query: {
+    /**
+     * Active table session ID
+     */
+    sessionId: string;
+  };
+  url: '/cart/items';
+};
+
+export type CartControllerAddItemErrors = {
+  /**
+   * Invalid input
+   */
+  400: unknown;
+  /**
+   * Authentication required
+   */
+  401: unknown;
+  /**
+   * Access denied
+   */
+  403: unknown;
+  /**
+   * Menu item or session not found
+   */
+  404: unknown;
+};
+
+export type CartControllerAddItemResponses = {
+  /**
+   * Item added to cart successfully
+   */
+  201: CartResponseDto;
+};
+
+export type CartControllerAddItemResponse =
+  CartControllerAddItemResponses[keyof CartControllerAddItemResponses];
+
+export type CartControllerRemoveItemData = {
+  body?: never;
+  headers?: {
+    /**
+     * Session token for customer access (SOS app)
+     */
+    'x-session-token'?: string;
+  };
+  path: {
+    /**
+     * Cart item ID
+     */
+    cartItemId: string;
+  };
+  query: {
+    /**
+     * Active table session ID
+     */
+    sessionId: string;
+  };
+  url: '/cart/items/{cartItemId}';
+};
+
+export type CartControllerRemoveItemErrors = {
+  /**
+   * Authentication required
+   */
+  401: unknown;
+  /**
+   * Access denied
+   */
+  403: unknown;
+  /**
+   * Cart item not found
+   */
+  404: unknown;
+};
+
+export type CartControllerRemoveItemResponses = {
+  /**
+   * Item removed from cart successfully
+   */
+  200: CartResponseDto;
+};
+
+export type CartControllerRemoveItemResponse =
+  CartControllerRemoveItemResponses[keyof CartControllerRemoveItemResponses];
+
+export type CartControllerUpdateItemData = {
+  body: UpdateCartItemDto;
+  headers?: {
+    /**
+     * Session token for customer access (SOS app)
+     */
+    'x-session-token'?: string;
+  };
+  path: {
+    /**
+     * Cart item ID
+     */
+    cartItemId: string;
+  };
+  query: {
+    /**
+     * Active table session ID
+     */
+    sessionId: string;
+  };
+  url: '/cart/items/{cartItemId}';
+};
+
+export type CartControllerUpdateItemErrors = {
+  /**
+   * Invalid input
+   */
+  400: unknown;
+  /**
+   * Authentication required
+   */
+  401: unknown;
+  /**
+   * Access denied
+   */
+  403: unknown;
+  /**
+   * Cart item not found
+   */
+  404: unknown;
+};
+
+export type CartControllerUpdateItemResponses = {
+  /**
+   * Cart item updated successfully
+   */
+  200: CartResponseDto;
+};
+
+export type CartControllerUpdateItemResponse =
+  CartControllerUpdateItemResponses[keyof CartControllerUpdateItemResponses];
+
 export type OrderControllerCheckoutData = {
   body: CheckoutCartDto;
   headers?: {
@@ -2454,6 +2737,42 @@ export type OrderControllerCheckoutResponses = {
 
 export type OrderControllerCheckoutResponse =
   OrderControllerCheckoutResponses[keyof OrderControllerCheckoutResponses];
+
+export type OrderControllerQuickCheckoutData = {
+  body: QuickSaleCheckoutDto;
+  path?: never;
+  query?: never;
+  url: '/orders/quick-checkout';
+};
+
+export type OrderControllerQuickCheckoutErrors = {
+  /**
+   * Invalid session type or empty items array
+   */
+  400: unknown;
+  /**
+   * Authentication required
+   */
+  401: unknown;
+  /**
+   * Insufficient permissions for this store
+   */
+  403: unknown;
+  /**
+   * Menu item not found
+   */
+  404: unknown;
+};
+
+export type OrderControllerQuickCheckoutResponses = {
+  /**
+   * Order created successfully
+   */
+  201: OrderResponseDto;
+};
+
+export type OrderControllerQuickCheckoutResponse =
+  OrderControllerQuickCheckoutResponses[keyof OrderControllerQuickCheckoutResponses];
 
 export type OrderControllerFindOneData = {
   body?: never;
@@ -3872,239 +4191,6 @@ export type HealthControllerHealthCheckData = {
 export type HealthControllerHealthCheckResponses = {
   200: unknown;
 };
-
-export type CartControllerClearCartData = {
-  body?: never;
-  headers?: {
-    /**
-     * Session token for customer access (SOS app)
-     */
-    'x-session-token'?: string;
-  };
-  path?: never;
-  query: {
-    /**
-     * Active table session ID
-     */
-    sessionId: string;
-  };
-  url: '/cart';
-};
-
-export type CartControllerClearCartErrors = {
-  /**
-   * Authentication required
-   */
-  401: unknown;
-  /**
-   * Access denied
-   */
-  403: unknown;
-  /**
-   * Cart not found
-   */
-  404: unknown;
-};
-
-export type CartControllerClearCartResponses = {
-  /**
-   * Cart cleared successfully
-   */
-  200: CartResponseDto;
-};
-
-export type CartControllerClearCartResponse =
-  CartControllerClearCartResponses[keyof CartControllerClearCartResponses];
-
-export type CartControllerGetCartData = {
-  body?: never;
-  headers?: {
-    /**
-     * Session token for customer access (SOS app)
-     */
-    'x-session-token'?: string;
-  };
-  path?: never;
-  query: {
-    /**
-     * Active table session ID
-     */
-    sessionId: string;
-  };
-  url: '/cart';
-};
-
-export type CartControllerGetCartErrors = {
-  /**
-   * Authentication required
-   */
-  401: unknown;
-  /**
-   * Access denied
-   */
-  403: unknown;
-  /**
-   * Session not found
-   */
-  404: unknown;
-};
-
-export type CartControllerGetCartResponses = {
-  /**
-   * Cart retrieved successfully
-   */
-  200: CartResponseDto;
-};
-
-export type CartControllerGetCartResponse =
-  CartControllerGetCartResponses[keyof CartControllerGetCartResponses];
-
-export type CartControllerAddItemData = {
-  body: AddToCartDto;
-  headers?: {
-    /**
-     * Session token for customer access (SOS app)
-     */
-    'x-session-token'?: string;
-  };
-  path?: never;
-  query: {
-    /**
-     * Active table session ID
-     */
-    sessionId: string;
-  };
-  url: '/cart/items';
-};
-
-export type CartControllerAddItemErrors = {
-  /**
-   * Invalid input
-   */
-  400: unknown;
-  /**
-   * Authentication required
-   */
-  401: unknown;
-  /**
-   * Access denied
-   */
-  403: unknown;
-  /**
-   * Menu item or session not found
-   */
-  404: unknown;
-};
-
-export type CartControllerAddItemResponses = {
-  /**
-   * Item added to cart successfully
-   */
-  201: CartResponseDto;
-};
-
-export type CartControllerAddItemResponse =
-  CartControllerAddItemResponses[keyof CartControllerAddItemResponses];
-
-export type CartControllerRemoveItemData = {
-  body?: never;
-  headers?: {
-    /**
-     * Session token for customer access (SOS app)
-     */
-    'x-session-token'?: string;
-  };
-  path: {
-    /**
-     * Cart item ID
-     */
-    cartItemId: string;
-  };
-  query: {
-    /**
-     * Active table session ID
-     */
-    sessionId: string;
-  };
-  url: '/cart/items/{cartItemId}';
-};
-
-export type CartControllerRemoveItemErrors = {
-  /**
-   * Authentication required
-   */
-  401: unknown;
-  /**
-   * Access denied
-   */
-  403: unknown;
-  /**
-   * Cart item not found
-   */
-  404: unknown;
-};
-
-export type CartControllerRemoveItemResponses = {
-  /**
-   * Item removed from cart successfully
-   */
-  200: CartResponseDto;
-};
-
-export type CartControllerRemoveItemResponse =
-  CartControllerRemoveItemResponses[keyof CartControllerRemoveItemResponses];
-
-export type CartControllerUpdateItemData = {
-  body: UpdateCartItemDto;
-  headers?: {
-    /**
-     * Session token for customer access (SOS app)
-     */
-    'x-session-token'?: string;
-  };
-  path: {
-    /**
-     * Cart item ID
-     */
-    cartItemId: string;
-  };
-  query: {
-    /**
-     * Active table session ID
-     */
-    sessionId: string;
-  };
-  url: '/cart/items/{cartItemId}';
-};
-
-export type CartControllerUpdateItemErrors = {
-  /**
-   * Invalid input
-   */
-  400: unknown;
-  /**
-   * Authentication required
-   */
-  401: unknown;
-  /**
-   * Access denied
-   */
-  403: unknown;
-  /**
-   * Cart item not found
-   */
-  404: unknown;
-};
-
-export type CartControllerUpdateItemResponses = {
-  /**
-   * Cart item updated successfully
-   */
-  200: CartResponseDto;
-};
-
-export type CartControllerUpdateItemResponse =
-  CartControllerUpdateItemResponses[keyof CartControllerUpdateItemResponses];
 
 export type CategoryControllerFindAllData = {
   body?: never;

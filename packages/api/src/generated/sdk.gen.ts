@@ -191,6 +191,9 @@ import type {
   OrderControllerFindOneData,
   OrderControllerFindOneErrors,
   OrderControllerFindOneResponses,
+  OrderControllerQuickCheckoutData,
+  OrderControllerQuickCheckoutErrors,
+  OrderControllerQuickCheckoutResponses,
   OrderControllerRemoveDiscountData,
   OrderControllerRemoveDiscountErrors,
   OrderControllerRemoveDiscountResponses,
@@ -914,6 +917,94 @@ export const auditLogControllerExportAuditLogs = <
 };
 
 /**
+ * Clear all items from cart
+ */
+export const cartControllerClearCart = <ThrowOnError extends boolean = false>(
+  options: Options<CartControllerClearCartData, ThrowOnError>
+) => {
+  return (options.client ?? client).delete<
+    CartControllerClearCartResponses,
+    CartControllerClearCartErrors,
+    ThrowOnError
+  >({
+    url: '/cart',
+    ...options,
+  });
+};
+
+/**
+ * Get current cart for session
+ */
+export const cartControllerGetCart = <ThrowOnError extends boolean = false>(
+  options: Options<CartControllerGetCartData, ThrowOnError>
+) => {
+  return (options.client ?? client).get<
+    CartControllerGetCartResponses,
+    CartControllerGetCartErrors,
+    ThrowOnError
+  >({
+    url: '/cart',
+    ...options,
+  });
+};
+
+/**
+ * Add item to cart
+ */
+export const cartControllerAddItem = <ThrowOnError extends boolean = false>(
+  options: Options<CartControllerAddItemData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    CartControllerAddItemResponses,
+    CartControllerAddItemErrors,
+    ThrowOnError
+  >({
+    url: '/cart/items',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Remove item from cart
+ */
+export const cartControllerRemoveItem = <ThrowOnError extends boolean = false>(
+  options: Options<CartControllerRemoveItemData, ThrowOnError>
+) => {
+  return (options.client ?? client).delete<
+    CartControllerRemoveItemResponses,
+    CartControllerRemoveItemErrors,
+    ThrowOnError
+  >({
+    url: '/cart/items/{cartItemId}',
+    ...options,
+  });
+};
+
+/**
+ * Update cart item
+ */
+export const cartControllerUpdateItem = <ThrowOnError extends boolean = false>(
+  options: Options<CartControllerUpdateItemData, ThrowOnError>
+) => {
+  return (options.client ?? client).patch<
+    CartControllerUpdateItemResponses,
+    CartControllerUpdateItemErrors,
+    ThrowOnError
+  >({
+    url: '/cart/items/{cartItemId}',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
  * Checkout cart and create order
  * Converts cart to order and clears the cart. SECURITY FIX: Requires session token (customers) or JWT (staff)
  */
@@ -926,6 +1017,35 @@ export const orderControllerCheckout = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({
     url: '/orders/checkout',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Quick sale checkout (POS)
+ * Creates session, cart items, and order in a single atomic operation. Optimized for quick sale (counter/phone/takeout) orders where speed is critical. Bypasses the normal flow of creating session → adding items → checkout.
+ */
+export const orderControllerQuickCheckout = <
+  ThrowOnError extends boolean = false,
+>(
+  options: Options<OrderControllerQuickCheckoutData, ThrowOnError>
+) => {
+  return (options.client ?? client).post<
+    OrderControllerQuickCheckoutResponses,
+    OrderControllerQuickCheckoutErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        scheme: 'bearer',
+        type: 'http',
+      },
+    ],
+    url: '/orders/quick-checkout',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -2201,94 +2321,6 @@ export const healthControllerHealthCheck = <
   >({
     url: '/health',
     ...options,
-  });
-};
-
-/**
- * Clear all items from cart
- */
-export const cartControllerClearCart = <ThrowOnError extends boolean = false>(
-  options: Options<CartControllerClearCartData, ThrowOnError>
-) => {
-  return (options.client ?? client).delete<
-    CartControllerClearCartResponses,
-    CartControllerClearCartErrors,
-    ThrowOnError
-  >({
-    url: '/cart',
-    ...options,
-  });
-};
-
-/**
- * Get current cart for session
- */
-export const cartControllerGetCart = <ThrowOnError extends boolean = false>(
-  options: Options<CartControllerGetCartData, ThrowOnError>
-) => {
-  return (options.client ?? client).get<
-    CartControllerGetCartResponses,
-    CartControllerGetCartErrors,
-    ThrowOnError
-  >({
-    url: '/cart',
-    ...options,
-  });
-};
-
-/**
- * Add item to cart
- */
-export const cartControllerAddItem = <ThrowOnError extends boolean = false>(
-  options: Options<CartControllerAddItemData, ThrowOnError>
-) => {
-  return (options.client ?? client).post<
-    CartControllerAddItemResponses,
-    CartControllerAddItemErrors,
-    ThrowOnError
-  >({
-    url: '/cart/items',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-};
-
-/**
- * Remove item from cart
- */
-export const cartControllerRemoveItem = <ThrowOnError extends boolean = false>(
-  options: Options<CartControllerRemoveItemData, ThrowOnError>
-) => {
-  return (options.client ?? client).delete<
-    CartControllerRemoveItemResponses,
-    CartControllerRemoveItemErrors,
-    ThrowOnError
-  >({
-    url: '/cart/items/{cartItemId}',
-    ...options,
-  });
-};
-
-/**
- * Update cart item
- */
-export const cartControllerUpdateItem = <ThrowOnError extends boolean = false>(
-  options: Options<CartControllerUpdateItemData, ThrowOnError>
-) => {
-  return (options.client ?? client).patch<
-    CartControllerUpdateItemResponses,
-    CartControllerUpdateItemErrors,
-    ThrowOnError
-  >({
-    url: '/cart/items/{cartItemId}',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
   });
 };
 

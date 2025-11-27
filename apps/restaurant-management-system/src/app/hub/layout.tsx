@@ -46,7 +46,7 @@ export default function DashboardLayout({
           className="relative flex-1 overflow-auto bg-gray-50 p-4 sm:p-6"
         >
           {/* Center content */}
-          <div className="mx-auto w-full max-w-7xl">{children}</div>
+          <div className="mx-auto h-full w-full max-w-7xl">{children}</div>
         </motion.main>
       </div>
 

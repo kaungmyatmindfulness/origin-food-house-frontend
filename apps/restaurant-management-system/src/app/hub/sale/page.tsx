@@ -329,7 +329,7 @@ export default function SalesPage() {
   };
 
   return (
-    <div className="bg-background flex min-h-screen flex-col">
+    <div className="bg-background flex h-full flex-col">
       {/* Header with view toggle */}
       <header className="border-border bg-background sticky top-0 z-10 border-b px-4 py-3">
         <div className="flex items-center justify-between gap-4">
