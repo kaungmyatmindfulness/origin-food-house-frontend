@@ -13,7 +13,7 @@ import type { ChooseStoreDto } from '@repo/api/generated/types';
 
 /** Access token data from backend after Auth0 validation */
 interface AccessTokenData {
-  accessToken: string;
+  access_token: string;
   userId: string;
   email: string;
 }
@@ -23,6 +23,41 @@ interface StandardApiResponse<T> {
   data: T;
   message?: string;
   status: 'success' | 'error';
+}
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
+
+/**
+ * Makes an unauthenticated API request.
+ * Used for auth endpoints that don't require an existing session.
+ *
+ * @param path - API endpoint path (e.g., '/auth/auth0/validate')
+ * @param options - Fetch options (method, headers, body)
+ * @returns Parsed JSON response
+ * @throws {ApiError} If the request fails
+ */
+async function fetchUnauthenticated<T>(
+  path: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+    ...options,
+  });
+
+  if (!response.ok) {
+    const errorMessage =
+      response.status === 401
+        ? 'Authentication failed'
+        : `Request failed with status ${response.status}`;
+    throw new ApiError(errorMessage, response.status);
+  }
+
+  return response.json() as Promise<T>;
 }
 
 /**
@@ -43,6 +78,11 @@ export async function loginWithAuth0(): Promise<void> {
   });
 }
 
+/** Response shape from Auth0 validation endpoint */
+type Auth0ValidateResponse =
+  | StandardApiResponse<AccessTokenData>
+  | (AccessTokenData & { accessToken: string });
+
 /**
  * Handles Auth0 callback after successful authentication.
  * Validates Auth0 token with backend and gets JWT.
@@ -57,30 +97,22 @@ export async function handleAuth0Callback(): Promise<AccessTokenData> {
 
   const auth0Token = await auth0Client.getTokenSilently();
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-  const response = await fetch(`${baseUrl}/auth/auth0/validate`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${auth0Token}`,
-    },
-  });
+  const response = await fetchUnauthenticated<Auth0ValidateResponse>(
+    '/auth/auth0/validate',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${auth0Token}`,
+      },
+    }
+  );
 
-  if (!response.ok) {
-    throw new ApiError('Failed to validate Auth0 token', response.status);
+  if ('status' in response && response.status === 'success' && response.data) {
+    return response.data;
   }
 
-  const json = await response.json();
-
-  // Handle both wrapped ({ status, data }) and unwrapped response formats
-  if (json.status === 'success' && json.data) {
-    return json.data as AccessTokenData;
-  }
-
-  // Backend returns data directly (accessToken at root level)
-  if (json.accessToken) {
-    return json as AccessTokenData;
+  if ('access_token' in response) {
+    return response as AccessTokenData;
   }
 
   throw new ApiError('Invalid response from authentication server', 500);
@@ -130,19 +162,17 @@ export async function isAuth0Authenticated(): Promise<boolean> {
  * @param returnToUrl - Optional URL to redirect after logout
  */
 export async function logoutFromAuth0(returnToUrl?: string): Promise<void> {
+  const redirectUrl = returnToUrl || `${window.location.origin}/`;
+
   try {
     const auth0Client = await getAuth0Client();
 
-    // Use raw fetch since /auth/logout is not in OpenAPI spec
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-    await fetch(`${baseUrl}/auth/logout`, {
-      method: 'POST',
-      credentials: 'include',
-    });
+    // Clear backend session (endpoint not in OpenAPI spec)
+    await fetchUnauthenticated('/auth/logout', { method: 'POST' });
 
     await auth0Client.logout({
       logoutParams: {
-        returnTo: returnToUrl || `${window.location.origin}/`,
+        returnTo: redirectUrl,
       },
     });
   } catch (error) {

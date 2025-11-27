@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from '@repo/ui/lib/toast';
 import { useQueryClient } from '@tanstack/react-query';
@@ -21,24 +21,39 @@ export default function Auth0CallbackPage() {
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(true);
 
+  // Guard against React StrictMode double-invocation
+  const isProcessingRef = useRef(false);
+
   useEffect(() => {
     const processCallback = async () => {
+      // Prevent double-processing (React StrictMode calls useEffect twice)
+      if (isProcessingRef.current) {
+        return;
+      }
+      isProcessingRef.current = true;
+
+      // Verify we have the required callback parameters
+      const hasCallbackParams =
+        window.location.search.includes('code=') ||
+        window.location.search.includes('error=');
+
+      if (!hasCallbackParams) {
+        setError('Invalid callback - missing authentication parameters');
+        setIsProcessing(false);
+        setTimeout(() => router.replace(ROUTES.LOGIN), 2000);
+        return;
+      }
+
       try {
-        // Handle Auth0 callback and exchange token with backend
-        // Returns AccessTokenData directly (accessToken, userId, email)
         const tokenData = await handleAuth0Callback();
 
-        if (tokenData.accessToken) {
-          // Mark as authenticated in the store
+        if (tokenData.access_token) {
           useAuthStore.getState().setAuthenticated(true);
 
-          // Clear any stale query cache
           queryClient.clear();
 
-          // Show success message
           toast.success('Successfully authenticated! Redirecting...');
 
-          // Redirect to store selection page
           setTimeout(() => {
             router.replace(ROUTES.STORE_CHOOSE);
           }, 500);
@@ -55,10 +70,8 @@ export default function Auth0CallbackPage() {
         setError(errorMessage);
         toast.error(errorMessage);
 
-        // Clear any partial auth state
         useAuthStore.getState().clearAuth();
 
-        // Redirect to login after a delay
         setTimeout(() => {
           router.replace(ROUTES.LOGIN);
         }, 2000);
