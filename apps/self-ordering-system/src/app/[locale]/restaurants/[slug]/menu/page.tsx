@@ -54,10 +54,7 @@ export default function RestaurantMenuPage() {
   const showStickyHeader = useStickyHeader();
 
   // --- Derived Cart State ---
-  const cartItems = useMemo<CartItemDto[]>(
-    () => cart?.items ?? [],
-    [cart]
-  );
+  const cartItems = useMemo<CartItemDto[]>(() => cart?.items ?? [], [cart]);
 
   const cartItemCount = useMemo(() => {
     return cartItems.reduce((total, item) => total + item.quantity, 0);

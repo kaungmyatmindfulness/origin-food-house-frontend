@@ -78,7 +78,10 @@ export async function updateStoreInformation(
   });
 
   if (error) {
-    throw new ApiError('Failed to update store information', response?.status ?? 500);
+    throw new ApiError(
+      'Failed to update store information',
+      response?.status ?? 500
+    );
   }
 }
 

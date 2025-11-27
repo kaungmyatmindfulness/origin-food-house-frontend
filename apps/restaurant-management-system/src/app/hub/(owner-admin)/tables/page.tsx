@@ -50,12 +50,12 @@ import {
 } from '@repo/ui/components/dialog';
 
 const STATUS_COLORS: Record<TableStatus, string> = {
-  [TableStatus.VACANT]: 'bg-gray-500',
-  [TableStatus.SEATED]: 'bg-blue-500',
-  [TableStatus.ORDERING]: 'bg-yellow-500',
-  [TableStatus.SERVED]: 'bg-green-500',
-  [TableStatus.READY_TO_PAY]: 'bg-orange-500',
-  [TableStatus.CLEANING]: 'bg-red-500',
+  [TableStatus.VACANT]: 'bg-muted text-muted-foreground',
+  [TableStatus.SEATED]: 'bg-chart-1 text-white',
+  [TableStatus.ORDERING]: 'bg-chart-3 text-white',
+  [TableStatus.SERVED]: 'bg-chart-4 text-white',
+  [TableStatus.READY_TO_PAY]: 'bg-chart-5 text-white',
+  [TableStatus.CLEANING]: 'bg-destructive text-destructive-foreground',
 };
 
 function TableStateContent() {
@@ -357,7 +357,6 @@ function TableStateContent() {
                       <p className="font-medium">{table.name}</p>
                       <Badge
                         className={`${STATUS_COLORS[table.currentStatus]} mt-1`}
-                        variant="outline"
                       >
                         {t(`statuses.${table.currentStatus.toLowerCase()}`)}
                       </Badge>

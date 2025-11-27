@@ -51,5 +51,6 @@ export const useSessionInfoStore = create<
 export const selectSessionId = (state: SessionInfoState) => state.sessionId;
 export const selectTableId = (state: SessionInfoState) => state.tableId;
 export const selectStoreId = (state: SessionInfoState) => state.storeId;
-export const selectSessionToken = (state: SessionInfoState) => state.sessionToken;
+export const selectSessionToken = (state: SessionInfoState) =>
+  state.sessionToken;
 export const selectStoreSlug = (state: SessionInfoState) => state.storeSlug;

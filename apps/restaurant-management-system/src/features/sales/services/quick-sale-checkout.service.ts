@@ -6,7 +6,10 @@
  */
 
 import { apiClient, ApiError } from '@/utils/apiFetch';
-import type { OrderResponseDto, QuickSaleItemDto } from '@repo/api/generated/schemas';
+import type {
+  OrderResponseDto,
+  QuickSaleItemDto,
+} from '@repo/api/generated/schemas';
 
 /** Session type for quick sale */
 type SessionType = 'COUNTER' | 'PHONE' | 'TAKEOUT' | 'TABLE';
@@ -98,10 +101,7 @@ export async function quickSaleCheckout(
   );
 
   if (error || !data?.data) {
-    throw new ApiError(
-      data?.message || 'Failed to checkout',
-      response.status
-    );
+    throw new ApiError(data?.message || 'Failed to checkout', response.status);
   }
 
   const order = data.data as OrderResponseDto;

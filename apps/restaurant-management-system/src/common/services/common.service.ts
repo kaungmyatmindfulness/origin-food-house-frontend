@@ -22,7 +22,9 @@ interface UploadImageResponseData {
  * @throws {ApiError} If the request fails
  * @throws {Error} If base path is missing in response
  */
-export async function uploadImage(file: File): Promise<UploadImageResponseData> {
+export async function uploadImage(
+  file: File
+): Promise<UploadImageResponseData> {
   const formData = new FormData();
   formData.append('file', file);
 

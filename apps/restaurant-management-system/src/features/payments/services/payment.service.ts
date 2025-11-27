@@ -48,10 +48,14 @@ export async function recordPayment(
     throw new ApiError('Failed to record payment', response.status);
   }
 
-  const json = (await response.json()) as StandardApiResponse<PaymentResponseDto>;
+  const json =
+    (await response.json()) as StandardApiResponse<PaymentResponseDto>;
 
   if (!json.data) {
-    throw new ApiError(json.message || 'Failed to record payment', response.status);
+    throw new ApiError(
+      json.message || 'Failed to record payment',
+      response.status
+    );
   }
 
   return json.data;
@@ -79,10 +83,15 @@ export async function getOrderPayments(
     throw new ApiError('Failed to fetch payments', response.status);
   }
 
-  const json = (await response.json()) as StandardApiResponse<PaymentResponseDto[]>;
+  const json = (await response.json()) as StandardApiResponse<
+    PaymentResponseDto[]
+  >;
 
   if (!json.data) {
-    throw new ApiError(json.message || 'Failed to fetch payments', response.status);
+    throw new ApiError(
+      json.message || 'Failed to fetch payments',
+      response.status
+    );
   }
 
   return json.data;
@@ -114,10 +123,14 @@ export async function createRefund(
     throw new ApiError('Failed to create refund', response.status);
   }
 
-  const json = (await response.json()) as StandardApiResponse<RefundResponseDto>;
+  const json =
+    (await response.json()) as StandardApiResponse<RefundResponseDto>;
 
   if (!json.data) {
-    throw new ApiError(json.message || 'Failed to create refund', response.status);
+    throw new ApiError(
+      json.message || 'Failed to create refund',
+      response.status
+    );
   }
 
   return json.data;

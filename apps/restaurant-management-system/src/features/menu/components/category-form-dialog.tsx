@@ -2,13 +2,15 @@
 
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from '@repo/ui/lib/toast';
 
 import {
   selectSelectedStoreId,
   useAuthStore,
 } from '@/features/auth/store/auth.store';
-import { createCategory } from '@/features/menu/services/category.service';
+import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 import { Button } from '@repo/ui/components/button';
 import {
   Dialog,
@@ -25,7 +27,6 @@ import {
   FormLabel,
 } from '@repo/ui/components/form';
 import { Input } from '@repo/ui/components/input';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface CategoryFormFormData {
   name: string;
@@ -44,16 +45,17 @@ export function CategoryFormDialog({
 
   const form = useForm<CategoryFormFormData>({ defaultValues: { name: '' } });
 
-  const mutateCreateCategory = useMutation({
-    mutationFn: (data: CategoryFormFormData) =>
-      createCategory(selectedStoreId!, data),
-  });
+  // Use $api.useMutation for type-safe mutations
+  const createCategoryMutation = $api.useMutation('post', API_PATHS.categories);
 
   const handleSubmit = async (values: CategoryFormFormData) => {
-    await mutateCreateCategory.mutateAsync(values);
+    await createCategoryMutation.mutateAsync({
+      params: { path: { storeId: selectedStoreId! } },
+      body: values,
+    });
     toast.success(`Category "${values.name}" created successfully!`);
     queryClient.invalidateQueries({
-      queryKey: ['categories'],
+      queryKey: ['get', API_PATHS.categories],
     });
     onOpenChange(false);
   };

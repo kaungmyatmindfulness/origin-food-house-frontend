@@ -8,7 +8,10 @@ import {
   type OptimisticAddCartItem,
   useCartStore,
 } from '@/features/cart/store/cart.store';
-import type { MenuItem, SupportedLocale } from '@/features/menu/types/menu.types';
+import type {
+  MenuItem,
+  SupportedLocale,
+} from '@/features/menu/types/menu.types';
 import {
   getTranslatedName,
   getTranslatedDescription,
@@ -58,9 +61,7 @@ export function MenuItemCard({
   const cartItem = React.useMemo<CartItemDto | undefined>(() => {
     if (!cart || !item.id) return undefined;
     // Match cart item by menuItemId (comparing string representations)
-    return cart.items.find(
-      (ci) => String(ci.menuItemId) === item.id
-    );
+    return cart.items.find((ci) => String(ci.menuItemId) === item.id);
   }, [cart, item.id]);
 
   const cartQuantity = cartItem?.quantity ?? 0;

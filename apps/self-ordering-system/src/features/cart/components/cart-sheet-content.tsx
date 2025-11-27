@@ -11,7 +11,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@repo/ui/components/sheet';
-import { useCartStore, type CartItemDto } from '@/features/cart/store/cart.store';
+import {
+  useCartStore,
+  type CartItemDto,
+} from '@/features/cart/store/cart.store';
 
 interface CartSheetContentProps {
   currency: string;

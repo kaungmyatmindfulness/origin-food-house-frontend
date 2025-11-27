@@ -11,16 +11,9 @@ import {
   selectSelectedStoreId,
   useAuthStore,
 } from '@/features/auth/store/auth.store';
-import { getCategories } from '@/features/menu/services/category.service';
-import {
-  createMenuItem,
-  getMenuItemById,
-  updateMenuItem,
-} from '@/features/menu/services/menu-item.service';
-import {
-  CreateMenuItemDto,
-  UpdateMenuItemDto,
-} from '@/features/menu/types/menu-item.types';
+import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
+import type { Category } from '@/features/menu/types/category.types';
 import { CustomizationGroupField } from '@/features/menu/components/customization-group-field';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Alert, AlertDescription, AlertTitle } from '@repo/ui/components/alert';
@@ -187,34 +180,36 @@ export function MenuItemFormDialog({
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
   const queryClient = useQueryClient();
 
+  // Fetch menu item for editing using $api.useQuery
   const {
-    data: itemToEdit,
+    data: itemToEditResponse,
     isLoading: isItemLoading,
     isError: isItemError,
     error: itemError,
-  } = useQuery({
-    queryKey: ['menuItem', editItemId],
-    queryFn: async () => {
-      if (!editItemId || !selectedStoreId) return null;
+  } = $api.useQuery(
+    'get',
+    API_PATHS.menuItem,
+    { params: { path: { storeId: selectedStoreId!, id: editItemId! } } },
+    {
+      enabled:
+        mode === 'edit' && typeof editItemId === 'string' && !!selectedStoreId,
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000,
+    }
+  );
+  const itemToEdit = itemToEditResponse?.data;
 
-      return getMenuItemById(selectedStoreId, editItemId);
-    },
-
-    enabled:
-      mode === 'edit' && typeof editItemId === 'string' && !!selectedStoreId,
-    refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000,
-  });
-
-  const { data: categories = [] } = useQuery({
-    queryKey: ['categories'],
-    queryFn: async () => {
-      if (!selectedStoreId) return [];
-      return getCategories(selectedStoreId);
-    },
-    enabled: !!selectedStoreId && open,
-    staleTime: 10 * 60 * 1000,
-  });
+  // Fetch categories for dropdown using $api.useQuery
+  const { data: categoriesResponse } = $api.useQuery(
+    'get',
+    API_PATHS.categories,
+    { params: { path: { storeId: selectedStoreId! } } },
+    {
+      enabled: !!selectedStoreId && open,
+      staleTime: 10 * 60 * 1000,
+    }
+  );
+  const categories = (categoriesResponse?.data ?? []) as Category[];
 
   const form = useForm<MenuItemFormData>({
     resolver: zodResolver(menuItemSchema),
@@ -301,51 +296,104 @@ export function MenuItemFormDialog({
 
   useEffect(() => {}, [watchedGroups, form.setValue, form]);
 
+  // Use $api.useMutation for type-safe API calls
+  const createMenuItemApiMutation = $api.useMutation(
+    'post',
+    API_PATHS.menuItems
+  );
+  const updateMenuItemApiMutation = $api.useMutation('put', API_PATHS.menuItem);
+
   const createMenuItemMutation = useMutation({
-    mutationFn: (dto: CreateMenuItemDto) => {
+    mutationFn: async (
+      dto: MenuItemFormData & { category: { id?: string; name: string } }
+    ) => {
       if (!selectedStoreId) throw new Error('Store ID required for creation.');
 
-      return createMenuItem(selectedStoreId, dto);
+      await createMenuItemApiMutation.mutateAsync({
+        params: { path: { storeId: selectedStoreId } },
+        body: {
+          name: dto.name,
+          description: dto.description || undefined,
+          basePrice: String(dto.basePrice),
+          imagePath: dto.imagePath || undefined,
+          category: dto.category,
+          routingArea: dto.routingArea || undefined,
+          preparationTimeMinutes: dto.preparationTimeMinutes || undefined,
+          customizationGroups:
+            dto.customizationGroups?.map((group) => ({
+              name: group.name,
+              minSelectable: group.minSelectable,
+              maxSelectable: group.maxSelectable,
+              options: group.options.map((opt) => ({
+                name: opt.name,
+                additionalPrice: String(opt.additionalPrice),
+              })),
+            })) ?? [],
+          isHidden: dto.isHidden ?? false,
+        },
+      });
     },
     onSuccess: () => {
       toast.success('Menu item created!');
       queryClient.invalidateQueries({
-        queryKey: ['categories'],
+        queryKey: ['get', API_PATHS.categories],
       });
-      queryClient.invalidateQueries({
-        queryKey: ['menuItems'],
-      });
+      queryClient.invalidateQueries({ queryKey: ['get', API_PATHS.menuItems] });
       onOpenChange(false);
     },
     onError: (error) => {
       console.error('Create item failed:', error);
+      const apiError = error as unknown as { message?: string } | null;
       toast.error('Failed to create menu item', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+        description: apiError?.message ?? 'Unknown error',
       });
     },
   });
 
   const updateMenuItemMutation = useMutation({
-    mutationFn: (dto: UpdateMenuItemDto) => {
+    mutationFn: async (
+      dto: MenuItemFormData & { category: { id?: string; name: string } }
+    ) => {
       if (!editItemId) throw new Error('Item ID required for update.');
       if (!selectedStoreId) throw new Error('Store ID required for update.');
 
-      return updateMenuItem(editItemId, selectedStoreId, dto);
+      await updateMenuItemApiMutation.mutateAsync({
+        params: { path: { storeId: selectedStoreId, id: editItemId } },
+        body: {
+          name: dto.name,
+          description: dto.description || undefined,
+          basePrice: Number(dto.basePrice),
+          imagePath: dto.imagePath || undefined,
+          category: dto.category,
+          routingArea: dto.routingArea || undefined,
+          preparationTimeMinutes: dto.preparationTimeMinutes || undefined,
+          customizationGroups:
+            dto.customizationGroups?.map((group) => ({
+              name: group.name,
+              minSelectable: group.minSelectable,
+              maxSelectable: group.maxSelectable,
+              options: group.options.map((opt) => ({
+                name: opt.name,
+                additionalPrice: String(opt.additionalPrice),
+              })),
+            })) ?? [],
+          isHidden: dto.isHidden ?? false,
+        },
+      });
     },
     onSuccess: () => {
       toast.success('Menu item updated!');
       queryClient.invalidateQueries({
-        queryKey: ['categories'],
+        queryKey: ['get', API_PATHS.categories],
       });
-      queryClient.invalidateQueries({
-        queryKey: ['menuItems'],
-      });
+      queryClient.invalidateQueries({ queryKey: ['get', API_PATHS.menuItems] });
       onOpenChange(false);
     },
     onError: (error) => {
       console.error('Update item failed:', error);
+      const apiError = error as unknown as { message?: string } | null;
       toast.error('Failed to update menu item', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+        description: apiError?.message ?? 'Unknown error',
       });
     },
   });
@@ -356,6 +404,7 @@ export function MenuItemFormDialog({
       return;
     }
 
+    // Build category object for submission
     let submitCategory: { id?: string; name: string };
     if (values.isNewCategory && values.newCategoryName) {
       submitCategory = { name: values.newCategoryName.trim() };
@@ -375,32 +424,14 @@ export function MenuItemFormDialog({
       return;
     }
 
-    const baseSubmitData = {
-      name: values.name,
-      description: values.description || undefined,
-      basePrice: String(values.basePrice),
-      imagePath: values.imagePath || undefined,
-      category: submitCategory,
-      routingArea: values.routingArea || undefined,
-      preparationTimeMinutes: values.preparationTimeMinutes || undefined,
-      customizationGroups:
-        values.customizationGroups?.map((group) => ({
-          name: group.name,
-          minSelectable: group.minSelectable,
-          maxSelectable: group.maxSelectable,
-          options: group.options.map((opt) => ({
-            name: opt.name,
-            additionalPrice: String(opt.additionalPrice),
-          })),
-        })) ?? [],
-      isHidden: values.isHidden ?? false,
-    };
+    // Pass form values + category to mutations (mutations handle API body transformation)
+    const submitData = { ...values, category: submitCategory };
 
     try {
       if (mode === 'create') {
-        await createMenuItemMutation.mutateAsync(baseSubmitData);
+        await createMenuItemMutation.mutateAsync(submitData);
       } else if (mode === 'edit' && editItemId) {
-        await updateMenuItemMutation.mutateAsync(baseSubmitData);
+        await updateMenuItemMutation.mutateAsync(submitData);
       }
     } catch (error) {
       console.error('Form submission failed:', error);

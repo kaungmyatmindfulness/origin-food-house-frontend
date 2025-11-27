@@ -98,7 +98,10 @@ export async function updateMenuItemTranslations(
   );
 
   if (!response.ok) {
-    throw new ApiError('Failed to update menu item translations', response.status);
+    throw new ApiError(
+      'Failed to update menu item translations',
+      response.status
+    );
   }
 }
 
@@ -124,7 +127,10 @@ export async function deleteMenuItemTranslation(
   );
 
   if (!response.ok) {
-    throw new ApiError('Failed to delete menu item translation', response.status);
+    throw new ApiError(
+      'Failed to delete menu item translation',
+      response.status
+    );
   }
 }
 
@@ -156,7 +162,10 @@ export async function updateCategoryTranslations(
   );
 
   if (!response.ok) {
-    throw new ApiError('Failed to update category translations', response.status);
+    throw new ApiError(
+      'Failed to update category translations',
+      response.status
+    );
   }
 }
 
@@ -182,7 +191,10 @@ export async function deleteCategoryTranslation(
   );
 
   if (!response.ok) {
-    throw new ApiError('Failed to delete category translation', response.status);
+    throw new ApiError(
+      'Failed to delete category translation',
+      response.status
+    );
   }
 }
 
@@ -214,7 +226,10 @@ export async function updateCustomizationGroupTranslations(
   );
 
   if (!response.ok) {
-    throw new ApiError('Failed to update customization group translations', response.status);
+    throw new ApiError(
+      'Failed to update customization group translations',
+      response.status
+    );
   }
 }
 
@@ -246,6 +261,9 @@ export async function updateCustomizationOptionTranslations(
   );
 
   if (!response.ok) {
-    throw new ApiError('Failed to update customization option translations', response.status);
+    throw new ApiError(
+      'Failed to update customization option translations',
+      response.status
+    );
   }
 }

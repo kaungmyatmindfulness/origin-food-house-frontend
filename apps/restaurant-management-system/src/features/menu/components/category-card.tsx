@@ -23,11 +23,8 @@ import {
   selectSelectedStoreId,
   useAuthStore,
 } from '@/features/auth/store/auth.store';
-import {
-  deleteCategory,
-  updateCategory,
-} from '@/features/menu/services/category.service';
-import { menuKeys } from '@/features/menu/queries/menu.keys';
+import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 import { ItemCard } from '@/features/menu/components/item-card';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -65,8 +62,6 @@ import type {
 } from '@/features/menu/types/category.types';
 import type { MenuItem } from '@/features/menu/types/menu-item.types';
 
-import type { ApiError } from '@/utils/apiFetch';
-
 interface CategoryCardProps {
   category: Category;
   onSelectItem: (item: MenuItem) => void;
@@ -103,53 +98,65 @@ export function CategoryCard({
     defaultValues: { name: category.name },
   });
 
-  const renameCategoryMutation = useMutation<
-    void,
-    ApiError | Error,
-    UpdateCategoryDto
-  >({
+  // Use $api.useMutation for type-safe API calls
+  const updateCategoryMutation = $api.useMutation('patch', API_PATHS.category);
+  const deleteCategoryApiMutation = $api.useMutation(
+    'delete',
+    API_PATHS.category
+  );
+
+  // Wrapper mutation with callbacks for rename
+  const renameCategoryMutation = useMutation({
     mutationFn: async (data: UpdateCategoryDto) => {
       if (!selectedStoreId) throw new Error('Store not selected');
-      await updateCategory(selectedStoreId, category.id, data);
+      await updateCategoryMutation.mutateAsync({
+        params: { path: { storeId: selectedStoreId, id: category.id } },
+        body: data,
+      });
     },
     onSuccess: () => {
       toast.success(
         t('categoryRenamed', { name: renameForm.getValues('name') })
       );
       queryClient.invalidateQueries({
-        queryKey: menuKeys.all,
+        queryKey: ['get', API_PATHS.categories],
       });
       renameForm.reset({ name: category.name });
       setIsEditingName(false);
     },
     onError: (error) => {
+      const apiError = error as unknown as { message?: string } | null;
       toast.error(t('failedToRename'), {
-        description: error instanceof Error ? error.message : tCommon('error'),
+        description: apiError?.message ?? tCommon('error'),
       });
       renameForm.reset({ name: category.name });
       setIsEditingName(false);
     },
   });
 
-  const deleteCategoryMutation = useMutation<void, ApiError | Error, void>({
+  // Wrapper mutation with callbacks for delete
+  const deleteCategoryMutation = useMutation({
     mutationFn: async () => {
       if (!selectedStoreId) throw new Error('Store not selected');
 
       if (!isEmpty(category.menuItems)) {
         throw new Error('Category not empty');
       }
-      await deleteCategory(selectedStoreId, category.id);
+      await deleteCategoryApiMutation.mutateAsync({
+        params: { path: { storeId: selectedStoreId, id: category.id } },
+      });
     },
     onSuccess: () => {
       toast.success(t('categoryDeleted', { name: category.name }));
       queryClient.invalidateQueries({
-        queryKey: menuKeys.all,
+        queryKey: ['get', API_PATHS.categories],
       });
       setIsConfirmDeleteDialogOpen(false);
     },
     onError: (error) => {
+      const apiError = error as unknown as { message?: string } | null;
       toast.error(t('failedToDelete'), {
-        description: error instanceof Error ? error.message : tCommon('error'),
+        description: apiError?.message ?? tCommon('error'),
       });
       setIsConfirmDeleteDialogOpen(false);
     },

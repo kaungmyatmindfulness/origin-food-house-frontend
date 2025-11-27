@@ -29,10 +29,7 @@ export async function getTablesWithStatus(
   );
 
   if (error || !data?.data) {
-    throw new ApiError(
-      'Failed to fetch tables',
-      response?.status ?? 500
-    );
+    throw new ApiError('Failed to fetch tables', response?.status ?? 500);
   }
 
   return data.data;

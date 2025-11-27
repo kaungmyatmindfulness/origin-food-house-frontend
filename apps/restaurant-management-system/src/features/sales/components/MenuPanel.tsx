@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { useQuery } from '@tanstack/react-query';
 import { Search } from 'lucide-react';
 
 import { Input } from '@repo/ui/components/input';
@@ -11,11 +10,11 @@ import { Skeleton } from '@repo/ui/components/skeleton';
 import { CategoryBar } from './CategoryBar';
 import { SalesMenuItemCard } from './SalesMenuItemCard';
 
-import { getCategories } from '@/features/menu/services/category.service';
-import { getStoreMenuItems } from '@/features/menu/services/menu-item.service';
-import { menuKeys } from '@/features/menu/queries/menu.keys';
+import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 import { useSalesStore } from '@/features/sales/store/sales.store';
-
+import type { Category } from '@/features/menu/types/category.types';
+import type { MenuItemDto } from '@/features/menu/types/menu-item.types';
 import type { SalesMenuItem } from '@/features/sales/types/sales.types';
 
 interface MenuPanelProps {
@@ -48,19 +47,25 @@ export function MenuPanel({ storeId, onAddToCart }: MenuPanelProps) {
   const searchQuery = useSalesStore((state) => state.searchQuery);
   const setSearchQuery = useSalesStore((state) => state.setSearchQuery);
 
-  // Fetch categories
-  const { data: categories, isLoading: categoriesLoading } = useQuery({
-    queryKey: menuKeys.categories(storeId),
-    queryFn: () => getCategories(storeId),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
+  // Fetch categories using $api.useQuery
+  const { data: categoriesResponse, isLoading: categoriesLoading } =
+    $api.useQuery(
+      'get',
+      API_PATHS.categories,
+      { params: { path: { storeId } } },
+      { staleTime: 5 * 60 * 1000 } // 5 minutes
+    );
+  const categories = (categoriesResponse?.data ?? []) as Category[];
 
-  // Fetch menu items
-  const { data: menuItems, isLoading: itemsLoading } = useQuery({
-    queryKey: menuKeys.items(storeId),
-    queryFn: () => getStoreMenuItems(storeId),
-    staleTime: 2 * 60 * 1000, // 2 minutes
-  });
+  // Fetch menu items using $api.useQuery
+  // Cast to MenuItemDto[] because generated types have incorrect nullable typing
+  const { data: menuItemsResponse, isLoading: itemsLoading } = $api.useQuery(
+    'get',
+    API_PATHS.menuItems,
+    { params: { path: { storeId } } },
+    { staleTime: 2 * 60 * 1000 } // 2 minutes
+  );
+  const menuItems = (menuItemsResponse?.data ?? []) as MenuItemDto[];
 
   // Filter items by category and search
   const filteredItems = useMemo(() => {
@@ -132,7 +137,7 @@ export function MenuPanel({ storeId, onAddToCart }: MenuPanelProps) {
             {filteredItems.map((item) => (
               <SalesMenuItemCard
                 key={item.id}
-                item={item}
+                item={item as SalesMenuItem}
                 onAddToCart={onAddToCart}
               />
             ))}

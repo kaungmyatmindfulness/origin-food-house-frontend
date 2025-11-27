@@ -42,12 +42,9 @@ import {
   useAuthStore,
   selectSelectedStoreId,
 } from '@/features/auth/store/auth.store';
-import {
-  getCategories,
-  sortCategories,
-} from '@/features/menu/services/category.service';
-import type { ApiError } from '@/utils/apiFetch';
-import {
+import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
+import type {
   Category,
   SortCategoriesPayloadDto,
 } from '@/features/menu/types/category.types';
@@ -136,21 +133,22 @@ export function ReorderMenuDialog({
     OrderableCategory[]
   >([]);
 
+  // Fetch categories using $api.useQuery
   const {
-    data: initialCategories,
+    data: categoriesResponse,
     isLoading: isLoadingCategories,
     isError,
     error,
-  } = useQuery({
-    queryKey: ['categories', { selectedStoreId }],
-    queryFn: async () => {
-      if (!selectedStoreId) return [];
-
-      return getCategories(selectedStoreId);
-    },
-    enabled: !!selectedStoreId && open,
-    refetchOnWindowFocus: false,
-  });
+  } = $api.useQuery(
+    'get',
+    API_PATHS.categories,
+    { params: { path: { storeId: selectedStoreId! } } },
+    {
+      enabled: !!selectedStoreId && open,
+      refetchOnWindowFocus: false,
+    }
+  );
+  const initialCategories = (categoriesResponse?.data ?? []) as Category[];
 
   useEffect(() => {
     if (initialCategories) {
@@ -249,27 +247,32 @@ export function ReorderMenuDialog({
     });
   };
 
-  const sortMutation = useMutation<
-    string | unknown,
-    ApiError | Error,
-    SortCategoriesPayloadDto
-  >({
+  // Use $api.useMutation for type-safe API calls
+  const sortCategoriesApiMutation = $api.useMutation(
+    'put',
+    API_PATHS.categoriesSort
+  );
+
+  const sortMutation = useMutation({
     mutationFn: async (payload: SortCategoriesPayloadDto) => {
       if (!selectedStoreId) throw new Error('Store not selected');
-      return sortCategories(selectedStoreId, payload);
+      await sortCategoriesApiMutation.mutateAsync({
+        params: { path: { storeId: selectedStoreId } },
+        body: payload,
+      });
     },
     onSuccess: () => {
       toast.success('Menu order saved successfully!');
-
       queryClient.invalidateQueries({
-        queryKey: ['categories'],
+        queryKey: ['get', API_PATHS.categories],
       });
       onOpenChange(false);
     },
     onError: (error) => {
       console.error('Failed to save menu order:', error);
+      const apiError = error as unknown as { message?: string } | null;
       toast.error('Failed to save menu order', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+        description: apiError?.message ?? 'Unknown error',
       });
     },
   });
@@ -312,7 +315,9 @@ export function ReorderMenuDialog({
             </div>
           ) : isError ? (
             <div className="text-destructive py-10 text-center">
-              Error loading categories: {error?.message || 'Unknown error'}
+              Error loading categories:{' '}
+              {(error as unknown as { message?: string })?.message ??
+                'Unknown error'}
             </div>
           ) : orderedCategories.length === 0 ? (
             <div className="text-muted-foreground py-10 text-center">

@@ -48,7 +48,10 @@ interface CartActions {
   optimisticAddItem: (cartItem: OptimisticAddCartItem) => Promise<void>;
 
   /** Updates an item optimistically, then calls the API. Final state update via WebSocket -> setCart. */
-  optimisticUpdateItem: (cartItemId: string, updates: { quantity?: number; notes?: string | null }) => Promise<void>;
+  optimisticUpdateItem: (
+    cartItemId: string,
+    updates: { quantity?: number; notes?: string | null }
+  ) => Promise<void>;
 
   /** Removes an item optimistically, then calls the API. Final state update via WebSocket -> setCart. */
   optimisticRemoveItem: (cartItemId: string) => Promise<void>;
@@ -64,7 +67,9 @@ interface CartActions {
 function getSessionIdOrThrow(): string {
   const sessionId = useSessionInfoStore.getState().sessionId;
   if (!sessionId) {
-    throw new Error('No active session. Please scan a QR code to start ordering.');
+    throw new Error(
+      'No active session. Please scan a QR code to start ordering.'
+    );
   }
   return sessionId;
 }
@@ -133,7 +138,7 @@ export const useCartStore = create<CartState & CartActions>()(
           menuItemId: cartItem.menuItemId,
           quantity: cartItem.quantity,
           notes: cartItem.notes ?? undefined,
-          customizations: cartItem.customizations.map(opt => ({
+          customizations: cartItem.customizations.map((opt) => ({
             customizationOptionId: opt.customizationOptionId,
           })),
         };
@@ -174,7 +179,10 @@ export const useCartStore = create<CartState & CartActions>()(
             item.quantity = updates.quantity;
           }
           if (updates.notes !== undefined) {
-            item.notes = (updates.notes ?? null) as Record<string, never> | null;
+            item.notes = (updates.notes ?? null) as Record<
+              string,
+              never
+            > | null;
           }
           item.updatedAt = new Date().toISOString();
           debug.log('Optimistically updated item:', item);

@@ -3,7 +3,6 @@
 import React from 'react';
 import { Loader2, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
-import { useQuery } from '@tanstack/react-query';
 
 import {
   Dialog,
@@ -15,7 +14,8 @@ import {
 import { Button } from '@repo/ui/components/button';
 import { ScrollArea } from '@repo/ui/components/scroll-area';
 
-import { getMenuItemById } from '@/features/menu/services/menu-item.service';
+import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 import { formatCurrency } from '@/utils/formatting';
 import { getImageUrl } from '@repo/api/utils/s3-url';
 import {
@@ -34,24 +34,25 @@ interface ItemModalProps {
 export function ItemModal({ id, open, onClose }: ItemModalProps) {
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
 
+  // Fetch menu item using $api.useQuery
   const {
-    data: item,
+    data: itemResponse,
     isLoading,
     isError,
     error,
     isSuccess,
-  } = useQuery({
-    queryKey: ['menuItem', id],
-    queryFn: async () => {
-      if (!selectedStoreId) return null;
-      return getMenuItemById(selectedStoreId, id!);
-    },
-
-    enabled: open && typeof id === 'string' && !!selectedStoreId,
-    refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 15 * 60 * 1000,
-  });
+  } = $api.useQuery(
+    'get',
+    API_PATHS.menuItem,
+    { params: { path: { storeId: selectedStoreId!, id: id! } } },
+    {
+      enabled: open && typeof id === 'string' && !!selectedStoreId,
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000,
+      gcTime: 15 * 60 * 1000,
+    }
+  );
+  const item = itemResponse?.data;
 
   const renderModalContent = () => {
     if (isLoading) {
@@ -64,12 +65,14 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
     }
 
     if (isError) {
+      const apiError = error as unknown as { message?: string } | null;
       return (
         <div className="flex min-h-[200px] flex-col items-center justify-center px-4 text-center text-red-600">
           <AlertCircle className="mb-2 h-8 w-8" />
           <p className="font-semibold">Error Loading Item</p>
           <p className="text-sm">
-            {error?.message || 'Could not load item details. Please try again.'}
+            {apiError?.message ??
+              'Could not load item details. Please try again.'}
           </p>
           <Button
             variant="outline"

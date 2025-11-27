@@ -9,14 +9,13 @@ import {
   UtensilsCrossed,
 } from 'lucide-react';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 
 import {
   selectSelectedStoreId,
   useAuthStore,
 } from '@/features/auth/store/auth.store';
-import { getCategories } from '@/features/menu/services/category.service';
 import {
   selectCategoryFilter,
   selectEditMenuItemId,
@@ -25,7 +24,8 @@ import {
   useMenuStore,
   type StockFilter,
 } from '@/features/menu/store/menu.store';
-import { menuKeys } from '@/features/menu/queries/menu.keys';
+import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 import { CategoryCard } from '@/features/menu/components/category-card';
 import { CategoryFormDialog } from '@/features/menu/components/category-form-dialog';
 import { ItemModal } from '@/features/menu/components/item-modal';
@@ -38,8 +38,13 @@ import { useDialog } from '@/common/hooks/useDialogState';
 import { Badge } from '@repo/ui/components/badge';
 import { Button } from '@repo/ui/components/button';
 import { ScrollArea } from '@repo/ui/components/scroll-area';
-import type { MenuItem } from '@/features/menu/types/menu-item.types';
 import type { Category } from '@/features/menu/types/category.types';
+import type { MenuItem } from '@/features/menu/types/menu-item.types';
+
+// Note: Using local Category/MenuItem types instead of generated DTOs because:
+// - Generated CategoryResponseDto doesn't include nested menuItems
+// - Generated types may not match actual API response structure
+// TODO: Update OpenAPI spec on backend to properly reflect nested responses
 
 export default function MenuPage() {
   const t = useTranslations('menu');
@@ -65,20 +70,28 @@ export default function MenuPage() {
   const [viewItemId, setViewItemId] = useState<string | null>(null);
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // Fetch categories with query key factory
+  // Fetch categories using $api directly (openapi-react-query)
   const {
-    data: categories = [],
+    data: categoriesResponse,
     isLoading,
     error,
-  } = useQuery({
-    queryKey: menuKeys.categories(selectedStoreId!),
-    queryFn: () => getCategories(selectedStoreId!),
-    enabled: !!selectedStoreId,
-  });
+  } = $api.useQuery(
+    'get',
+    API_PATHS.categories,
+    { params: { path: { storeId: selectedStoreId! } } },
+    { enabled: !!selectedStoreId }
+  );
+
+  // Unwrap the response data (API returns { data, message, success })
+  // Cast to Category[] since the actual API response includes nested menuItems
+  const categories = useMemo(
+    () => categoriesResponse?.data ?? [],
+    [categoriesResponse?.data]
+  );
 
   // Filtered categories based on search and filters
   const filteredCategories = useMemo(() => {
-    let filtered: Category[] = categories;
+    let filtered = [...categories];
 
     // Filter by category
     if (categoryFilter) {
@@ -149,20 +162,23 @@ export default function MenuPage() {
   }
 
   if (error) {
+    // Error from openapi-react-query - cast to unknown for safe access
+    const apiError = error as unknown as { message?: string } | null;
+    const errorMessage =
+      apiError?.message ?? 'An error occurred while loading menu items.';
+
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center space-y-4">
         <AlertCircle className="text-destructive h-12 w-12" />
         <div className="space-y-2 text-center">
           <h2 className="text-xl font-semibold">Failed to Load Menu</h2>
-          <p className="text-muted-foreground">
-            {error instanceof Error
-              ? error.message
-              : 'An error occurred while loading menu items.'}
-          </p>
+          <p className="text-muted-foreground">{errorMessage}</p>
         </div>
         <Button
           onClick={() =>
-            queryClient.invalidateQueries({ queryKey: menuKeys.all })
+            queryClient.invalidateQueries({
+              queryKey: ['get', API_PATHS.categories],
+            })
           }
         >
           Try Again

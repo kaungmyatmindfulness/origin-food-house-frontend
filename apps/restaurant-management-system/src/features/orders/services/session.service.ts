@@ -53,10 +53,14 @@ export async function createManualSession(
     throw new ApiError('Failed to create manual session', response.status);
   }
 
-  const json = (await response.json()) as StandardApiResponse<SessionResponseDto>;
+  const json =
+    (await response.json()) as StandardApiResponse<SessionResponseDto>;
 
   if (!json.data) {
-    throw new ApiError(json.message || 'Failed to create manual session', response.status);
+    throw new ApiError(
+      json.message || 'Failed to create manual session',
+      response.status
+    );
   }
 
   return json.data;
@@ -84,10 +88,14 @@ export async function getSession(
     throw new ApiError('Failed to fetch session', response.status);
   }
 
-  const json = (await response.json()) as StandardApiResponse<SessionResponseDto>;
+  const json =
+    (await response.json()) as StandardApiResponse<SessionResponseDto>;
 
   if (!json.data) {
-    throw new ApiError(json.message || 'Failed to fetch session', response.status);
+    throw new ApiError(
+      json.message || 'Failed to fetch session',
+      response.status
+    );
   }
 
   return json.data;

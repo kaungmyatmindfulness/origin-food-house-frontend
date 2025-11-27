@@ -70,10 +70,14 @@ export async function calculateSplit(
     throw new ApiError('Failed to calculate split', response.status);
   }
 
-  const json = (await response.json()) as StandardApiResponse<SplitCalculationResponseDto>;
+  const json =
+    (await response.json()) as StandardApiResponse<SplitCalculationResponseDto>;
 
   if (!json.data) {
-    throw new ApiError(json.message || 'Failed to calculate split', response.status);
+    throw new ApiError(
+      json.message || 'Failed to calculate split',
+      response.status
+    );
   }
 
   return json.data;
@@ -105,10 +109,14 @@ export async function recordSplitPayment(
     throw new ApiError('Failed to record split payment', response.status);
   }
 
-  const json = (await response.json()) as StandardApiResponse<SplitPaymentResponseDto>;
+  const json =
+    (await response.json()) as StandardApiResponse<SplitPaymentResponseDto>;
 
   if (!json.data) {
-    throw new ApiError(json.message || 'Failed to record split payment', response.status);
+    throw new ApiError(
+      json.message || 'Failed to record split payment',
+      response.status
+    );
   }
 
   return json.data;
@@ -136,10 +144,15 @@ export async function getOrderSplitPayments(
     throw new ApiError('Failed to fetch split payments', response.status);
   }
 
-  const json = (await response.json()) as StandardApiResponse<SplitPaymentResponseDto[]>;
+  const json = (await response.json()) as StandardApiResponse<
+    SplitPaymentResponseDto[]
+  >;
 
   if (!json.data) {
-    throw new ApiError(json.message || 'Failed to fetch split payments', response.status);
+    throw new ApiError(
+      json.message || 'Failed to fetch split payments',
+      response.status
+    );
   }
 
   return json.data;

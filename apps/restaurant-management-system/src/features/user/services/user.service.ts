@@ -11,10 +11,7 @@ import type {
   AddUserToStoreDto,
   UserProfileResponseDto,
 } from '@repo/api/generated/types';
-import type {
-  CurrentUserData,
-  UserStoreRole,
-} from '../types/user.types';
+import type { CurrentUserData, UserStoreRole } from '../types/user.types';
 
 /** Standard API response wrapper */
 interface StandardApiResponse<T> {

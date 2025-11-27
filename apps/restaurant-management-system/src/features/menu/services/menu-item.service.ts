@@ -152,7 +152,10 @@ export async function deleteMenuItem(
   );
 
   if (error) {
-    throw new ApiError(`Failed to delete menu item ${id}`, response?.status ?? 500);
+    throw new ApiError(
+      `Failed to delete menu item ${id}`,
+      response?.status ?? 500
+    );
   }
 
   return data?.data as MenuItemDeletedResponseDto;

@@ -12,11 +12,8 @@ import {
   selectSelectedStoreId,
   useAuthStore,
 } from '@/features/auth/store/auth.store';
-import {
-  deleteMenuItem,
-  toggleMenuItemOutOfStock,
-} from '@/features/menu/services/menu-item.service';
-import { menuKeys } from '@/features/menu/queries/menu.keys';
+import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 import { MenuItem } from '@/features/menu/types/menu-item.types';
 import type { Category } from '@/features/menu/types/category.types';
 import { formatCurrency } from '@/utils/formatting';
@@ -36,7 +33,6 @@ import {
 import { Switch } from '@repo/ui/components/switch';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import type { ApiError } from '@/utils/apiFetch';
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { getImageUrl } from '@repo/api/utils/s3-url';
 
@@ -57,23 +53,37 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
   const queryClient = useQueryClient();
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
 
-  const deleteItemMutation = useMutation<void, ApiError | Error, void>({
+  // Use $api.useMutation for type-safe API calls
+  const deleteMenuItemApiMutation = $api.useMutation(
+    'delete',
+    API_PATHS.menuItem
+  );
+  const patchMenuItemApiMutation = $api.useMutation(
+    'patch',
+    API_PATHS.menuItem
+  );
+
+  // Query key for cache operations
+  const categoriesQueryKey = ['get', API_PATHS.categories] as const;
+
+  const deleteItemMutation = useMutation({
     mutationFn: async () => {
       if (!selectedStoreId) {
         throw new Error('Store is not selected.');
       }
-      await deleteMenuItem(selectedStoreId, item.id);
+      await deleteMenuItemApiMutation.mutateAsync({
+        params: { path: { storeId: selectedStoreId, id: item.id } },
+      });
     },
     onSuccess: () => {
       toast.success(`Item "${item.name}" deleted successfully.`);
-      queryClient.invalidateQueries({
-        queryKey: menuKeys.all,
-      });
+      queryClient.invalidateQueries({ queryKey: categoriesQueryKey });
       setIsConfirmDeleteDialogOpen(false);
     },
     onError: (error) => {
+      const apiError = error as unknown as { message?: string } | null;
       toast.error('Failed to delete item', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+        description: apiError?.message ?? 'Unknown error',
       });
       setIsConfirmDeleteDialogOpen(false);
     },
@@ -81,7 +91,7 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
 
   const toggleOutOfStockMutation = useMutation<
     void,
-    ApiError | Error,
+    Error,
     boolean,
     { previousData?: unknown }
   >({
@@ -89,28 +99,37 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
       if (!selectedStoreId) {
         throw new Error('Store is not selected.');
       }
-      await toggleMenuItemOutOfStock(item.id, selectedStoreId, isOutOfStock);
+      await patchMenuItemApiMutation.mutateAsync({
+        params: { path: { storeId: selectedStoreId, id: item.id } },
+        body: { isOutOfStock },
+      });
     },
     onMutate: async (isOutOfStock) => {
       // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: menuKeys.all });
+      await queryClient.cancelQueries({ queryKey: categoriesQueryKey });
 
-      // Snapshot previous value
-      const previousData = queryClient.getQueryData(
-        menuKeys.categories(selectedStoreId!)
-      );
+      // Snapshot previous value - use full query key with params
+      const fullQueryKey = [
+        'get',
+        API_PATHS.categories,
+        { params: { path: { storeId: selectedStoreId } } },
+      ];
+      const previousData = queryClient.getQueryData(fullQueryKey);
 
       // Optimistically update
       queryClient.setQueryData(
-        menuKeys.categories(selectedStoreId!),
-        (old: Category[] | undefined) => {
-          if (!old) return old;
-          return old.map((cat) => ({
-            ...cat,
-            menuItems: (cat.menuItems ?? []).map((i) =>
-              i.id === item.id ? { ...i, isOutOfStock } : i
-            ),
-          }));
+        fullQueryKey,
+        (old: { data?: Category[] } | undefined) => {
+          if (!old?.data) return old;
+          return {
+            ...old,
+            data: old.data.map((cat) => ({
+              ...cat,
+              menuItems: (cat.menuItems ?? []).map((i) =>
+                i.id === item.id ? { ...i, isOutOfStock } : i
+              ),
+            })),
+          };
         }
       );
 
@@ -126,18 +145,21 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
     onError: (error, _variables, context) => {
       // Rollback on error
       if (context?.previousData) {
-        queryClient.setQueryData(
-          menuKeys.categories(selectedStoreId!),
-          context.previousData
-        );
+        const fullQueryKey = [
+          'get',
+          API_PATHS.categories,
+          { params: { path: { storeId: selectedStoreId } } },
+        ];
+        queryClient.setQueryData(fullQueryKey, context.previousData);
       }
+      const apiError = error as unknown as { message?: string } | null;
       toast.error('Failed to update stock status', {
-        description: error instanceof Error ? error.message : 'Unknown error',
+        description: apiError?.message ?? 'Unknown error',
       });
     },
     onSettled: () => {
       // Refetch to ensure consistency
-      queryClient.invalidateQueries({ queryKey: menuKeys.all });
+      queryClient.invalidateQueries({ queryKey: categoriesQueryKey });
     },
   });
 
