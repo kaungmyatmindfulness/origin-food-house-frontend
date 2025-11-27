@@ -2,21 +2,25 @@
  * Table State Service
  *
  * Service layer for table status management API operations.
- * Uses openapi-fetch for type-safe API calls.
+ * Uses openapi-fetch for type-safe API calls with auto-generated types.
  */
 
 import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
-  TableWithStatusDto,
+  TableResponseDto,
   UpdateTableStatusDto,
-} from '../types/table-state.types';
+} from '@repo/api/generated/types';
 
 /**
- * Get all tables with status for a store
+ * Gets all tables with status for a store.
+ *
+ * @param storeId - The ID of the store
+ * @returns Array of tables with status information
+ * @throws {ApiError} If the request fails
  */
 export async function getTablesWithStatus(
   storeId: string
-): Promise<TableWithStatusDto[]> {
+): Promise<TableResponseDto[]> {
   const { data, error, response } = await apiClient.GET(
     '/stores/{storeId}/tables',
     {
@@ -26,22 +30,28 @@ export async function getTablesWithStatus(
 
   if (error || !data?.data) {
     throw new ApiError(
-      data?.message || 'Failed to fetch tables',
-      response.status
+      'Failed to fetch tables',
+      response?.status ?? 500
     );
   }
 
-  return data.data as TableWithStatusDto[];
+  return data.data;
 }
 
 /**
- * Update table status
+ * Updates a table's status.
+ *
+ * @param storeId - The ID of the store
+ * @param tableId - The ID of the table to update
+ * @param dto - The status update payload
+ * @returns Updated table with status
+ * @throws {ApiError} If the request fails
  */
 export async function updateTableStatus(
   storeId: string,
   tableId: string,
   dto: UpdateTableStatusDto
-): Promise<TableWithStatusDto> {
+): Promise<TableResponseDto> {
   const { data, error, response } = await apiClient.PATCH(
     '/stores/{storeId}/tables/{tableId}',
     {
@@ -52,10 +62,10 @@ export async function updateTableStatus(
 
   if (error || !data?.data) {
     throw new ApiError(
-      data?.message || 'Failed to update table status',
-      response.status
+      'Failed to update table status',
+      response?.status ?? 500
     );
   }
 
-  return data.data as TableWithStatusDto;
+  return data.data;
 }

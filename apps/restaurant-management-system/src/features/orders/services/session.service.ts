@@ -2,71 +2,93 @@
  * Session Service
  *
  * Service layer for session-related API operations.
- * Uses openapi-fetch for type-safe API calls.
+ * Note: Uses raw fetch for endpoints with response structure mismatch.
  */
 
-import { apiClient, ApiError } from '@/utils/apiFetch';
-import type { SessionResponseDto } from '@repo/api/generated/types';
+import { ApiError } from '@/utils/apiFetch';
+import type {
+  SessionResponseDto,
+  CreateManualSessionDto,
+} from '@repo/api/generated/types';
 
-export type SessionType = 'COUNTER' | 'PHONE' | 'TAKEOUT' | 'TABLE';
+// Re-export types for components
+export type { CreateManualSessionDto };
 
-export interface CreateManualSessionDto {
-  sessionType: SessionType;
-  customerName?: string;
-  customerPhone?: string;
-  guestCount?: number;
+/** Session type for RMS manual sessions */
+export type SessionType = 'TABLE' | 'COUNTER' | 'PHONE' | 'TAKEOUT';
+
+/** Standard API response wrapper */
+interface StandardApiResponse<T> {
+  data: T;
+  message?: string;
+  status: 'success' | 'error';
 }
 
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
 /**
- * Create a manual session (counter, phone, or takeout order)
- * Staff-initiated orders without table association
- * @param storeId - Store ID
- * @param data - Session details
+ * Creates a manual session (counter, phone, or takeout order).
+ * Staff-initiated orders without table association.
+ *
+ * @param storeId - The store ID
+ * @param data - Session creation details
  * @returns Created session with cart
+ * @throws {ApiError} If the request fails
  */
 export async function createManualSession(
   storeId: string,
   data: CreateManualSessionDto
 ): Promise<SessionResponseDto> {
-  const { data: res, error, response } = await apiClient.POST(
-    '/active-table-sessions/manual',
+  const response = await fetch(
+    `${baseUrl}/active-table-sessions/manual?storeId=${storeId}`,
     {
-      params: { query: { storeId } },
-      body: data,
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
     }
   );
 
-  if (error || !res?.data) {
-    throw new ApiError(
-      res?.message || 'Failed to create manual session',
-      response.status
-    );
+  if (!response.ok) {
+    throw new ApiError('Failed to create manual session', response.status);
   }
 
-  return res.data as SessionResponseDto;
+  const json = (await response.json()) as StandardApiResponse<SessionResponseDto>;
+
+  if (!json.data) {
+    throw new ApiError(json.message || 'Failed to create manual session', response.status);
+  }
+
+  return json.data;
 }
 
 /**
- * Get session by ID
- * @param sessionId - Session ID
+ * Gets a session by ID.
+ *
+ * @param sessionId - The session ID
  * @returns Session details
+ * @throws {ApiError} If the request fails
  */
 export async function getSession(
   sessionId: string
 ): Promise<SessionResponseDto> {
-  const { data, error, response } = await apiClient.GET(
-    '/active-table-sessions/{sessionId}',
+  const response = await fetch(
+    `${baseUrl}/active-table-sessions/${sessionId}`,
     {
-      params: { path: { sessionId } },
+      method: 'GET',
+      credentials: 'include',
     }
   );
 
-  if (error || !data?.data) {
-    throw new ApiError(
-      data?.message || 'Failed to fetch session',
-      response.status
-    );
+  if (!response.ok) {
+    throw new ApiError('Failed to fetch session', response.status);
   }
 
-  return data.data as SessionResponseDto;
+  const json = (await response.json()) as StandardApiResponse<SessionResponseDto>;
+
+  if (!json.data) {
+    throw new ApiError(json.message || 'Failed to fetch session', response.status);
+  }
+
+  return json.data;
 }

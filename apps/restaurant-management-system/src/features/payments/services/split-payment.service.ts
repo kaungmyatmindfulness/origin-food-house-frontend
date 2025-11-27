@@ -2,25 +2,16 @@
  * Split Payment Service
  *
  * Service layer for bill splitting API operations.
- * Uses openapi-fetch for type-safe API calls.
+ * Note: Uses raw fetch for endpoints not in OpenAPI spec.
  */
 
-import { apiClient, ApiError } from '@/utils/apiFetch';
+import { ApiError } from '@/utils/apiFetch';
+import type {
+  CalculateSplitDto,
+  RecordSplitPaymentDto,
+} from '@repo/api/generated/types';
 
-/**
- * DTO for calculating bill split
- * Temporary type until backend types are generated
- */
-interface CalculateSplitDto {
-  splitType: 'EVEN' | 'BY_ITEM' | 'CUSTOM';
-  guestCount?: number;
-  customSplits?: Array<{ guest: number; amount: string }>;
-}
-
-/**
- * Response for split calculation
- * Temporary type until backend types are generated
- */
+/** Response for split calculation */
 interface SplitCalculationResponseDto {
   orderId: string;
   grandTotal: string;
@@ -30,29 +21,7 @@ interface SplitCalculationResponseDto {
   }>;
 }
 
-/**
- * DTO for recording a split payment
- * Temporary type until backend types are generated
- */
-interface RecordSplitPaymentDto {
-  paymentMethod:
-    | 'CASH'
-    | 'CREDIT_CARD'
-    | 'DEBIT_CARD'
-    | 'MOBILE_PAYMENT'
-    | 'OTHER';
-  amount: string;
-  splitType: 'EVEN' | 'BY_ITEM' | 'CUSTOM';
-  guestNumber: number;
-  splitMetadata?: Record<string, unknown>;
-  transactionId?: string;
-  notes?: string;
-}
-
-/**
- * Response for split payment
- * Temporary type until backend types are generated
- */
+/** Response for split payment */
 interface SplitPaymentResponseDto {
   id: string;
   orderId: string;
@@ -66,83 +35,112 @@ interface SplitPaymentResponseDto {
   createdAt: string;
 }
 
+/** Standard API response wrapper */
+interface StandardApiResponse<T> {
+  data: T;
+  message?: string;
+  status: 'success' | 'error';
+}
+
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
 /**
- * Calculate bill split based on split type
- * @param orderId - Order ID
+ * Calculates bill split based on split type.
+ *
+ * @param orderId - The order ID
  * @param data - Split calculation parameters
  * @returns Split calculation result
+ * @throws {ApiError} If the request fails
  */
 export async function calculateSplit(
   orderId: string,
   data: CalculateSplitDto
 ): Promise<SplitCalculationResponseDto> {
-  const { data: res, error, response } = await apiClient.POST(
-    '/payments/orders/{orderId}/calculate-split',
+  const response = await fetch(
+    `${baseUrl}/payments/orders/${orderId}/calculate-split`,
     {
-      params: { path: { orderId } },
-      body: data,
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
     }
   );
 
-  if (error || !res?.data) {
-    throw new ApiError(
-      res?.message || 'Failed to calculate split',
-      response.status
-    );
+  if (!response.ok) {
+    throw new ApiError('Failed to calculate split', response.status);
   }
 
-  return res.data as SplitCalculationResponseDto;
+  const json = (await response.json()) as StandardApiResponse<SplitCalculationResponseDto>;
+
+  if (!json.data) {
+    throw new ApiError(json.message || 'Failed to calculate split', response.status);
+  }
+
+  return json.data;
 }
 
 /**
- * Record a split payment for a specific guest
- * @param orderId - Order ID
+ * Records a split payment for a specific guest.
+ *
+ * @param orderId - The order ID
  * @param data - Split payment details
  * @returns Payment response
+ * @throws {ApiError} If the request fails
  */
 export async function recordSplitPayment(
   orderId: string,
   data: RecordSplitPaymentDto
 ): Promise<SplitPaymentResponseDto> {
-  const { data: res, error, response } = await apiClient.POST(
-    '/payments/orders/{orderId}/split-payments',
+  const response = await fetch(
+    `${baseUrl}/payments/orders/${orderId}/split-payments`,
     {
-      params: { path: { orderId } },
-      body: data,
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
     }
   );
 
-  if (error || !res?.data) {
-    throw new ApiError(
-      res?.message || 'Failed to record split payment',
-      response.status
-    );
+  if (!response.ok) {
+    throw new ApiError('Failed to record split payment', response.status);
   }
 
-  return res.data as SplitPaymentResponseDto;
+  const json = (await response.json()) as StandardApiResponse<SplitPaymentResponseDto>;
+
+  if (!json.data) {
+    throw new ApiError(json.message || 'Failed to record split payment', response.status);
+  }
+
+  return json.data;
 }
 
 /**
- * Get all split payments for an order
- * @param orderId - Order ID
+ * Gets all split payments for an order.
+ *
+ * @param orderId - The order ID
  * @returns Array of split payments
+ * @throws {ApiError} If the request fails
  */
 export async function getOrderSplitPayments(
   orderId: string
 ): Promise<SplitPaymentResponseDto[]> {
-  const { data, error, response } = await apiClient.GET(
-    '/payments/orders/{orderId}/split-payments',
+  const response = await fetch(
+    `${baseUrl}/payments/orders/${orderId}/split-payments`,
     {
-      params: { path: { orderId } },
+      method: 'GET',
+      credentials: 'include',
     }
   );
 
-  if (error || !data?.data) {
-    throw new ApiError(
-      data?.message || 'Failed to fetch split payments',
-      response.status
-    );
+  if (!response.ok) {
+    throw new ApiError('Failed to fetch split payments', response.status);
   }
 
-  return data.data as SplitPaymentResponseDto[];
+  const json = (await response.json()) as StandardApiResponse<SplitPaymentResponseDto[]>;
+
+  if (!json.data) {
+    throw new ApiError(json.message || 'Failed to fetch split payments', response.status);
+  }
+
+  return json.data;
 }

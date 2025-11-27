@@ -2,95 +2,113 @@
  * User Service
  *
  * Service layer for user-related API operations.
- * Uses openapi-fetch for type-safe API calls.
+ * Uses openapi-fetch for type-safe API calls with auto-generated types.
  */
 
 import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
   CreateUserDto,
   AddUserToStoreDto,
-  RegisterUserData,
-  AddUserToStoreData,
-  UserStoreRole,
+  UserProfileResponseDto,
+} from '@repo/api/generated/types';
+import type {
   CurrentUserData,
-} from '@/features/user/types/user.types';
+  UserStoreRole,
+} from '../types/user.types';
+
+/** Standard API response wrapper */
+interface StandardApiResponse<T> {
+  data: T;
+  message?: string;
+  success: boolean;
+}
 
 /**
- * Register a new user.
- * Maps to: POST /users/register
- * @param userData - User registration details.
- * @returns A promise resolving to RegisterUserData (likely confirmation/basic user info).
- * @throws {ApiError} - Throws on fetch/API errors.
+ * Registers a new user.
+ *
+ * @param userData - User registration details
+ * @returns Registration response
+ * @throws {ApiError} If the request fails
  */
 export async function registerUser(
   userData: CreateUserDto
-): Promise<RegisterUserData> {
+): Promise<UserProfileResponseDto> {
   const { data, error, response } = await apiClient.POST('/users/register', {
     body: userData,
   });
 
-  if (error || !data?.data) {
-    throw new ApiError(
-      data?.message || 'Registration failed',
-      response.status
-    );
+  const res = data as unknown as
+    | StandardApiResponse<UserProfileResponseDto>
+    | undefined;
+
+  if (error || !res?.data) {
+    throw new ApiError(res?.message || 'Registration failed', response.status);
   }
 
-  return data.data as RegisterUserData;
+  return res.data;
 }
 
 /**
  * Assigns a user to a store with a specific role.
- * Maps to: POST /users/add-to-store
- * @param userData - Details of the user, store, and role assignment.
- * @returns A promise resolving to AddUserToStoreData (likely confirmation).
- * @throws {ApiError} - Throws on fetch/API errors.
+ *
+ * @param userData - User, store, and role assignment details
+ * @returns Assignment response
+ * @throws {ApiError} If the request fails
  */
 export async function addUserToStore(
   userData: AddUserToStoreDto
-): Promise<AddUserToStoreData> {
-  const { data, error, response } = await apiClient.POST('/users/add-to-store', {
-    body: userData,
-  });
+): Promise<unknown> {
+  const { data, error, response } = await apiClient.POST(
+    '/users/add-to-store',
+    {
+      body: userData,
+    }
+  );
 
-  if (error || !data?.data) {
+  const res = data as unknown as StandardApiResponse<unknown> | undefined;
+
+  if (error || !res?.data) {
     throw new ApiError(
-      data?.message || 'Add user to store failed',
+      res?.message || 'Add user to store failed',
       response.status
     );
   }
 
-  return data.data as AddUserToStoreData;
+  return res.data;
 }
 
 /**
- * Retrieves the list of stores and roles for a specific user.
- * Maps to: GET /users/{id}/stores
- * @param userId - The ID of the user whose store memberships are requested.
- * @returns A promise resolving to an array of UserStoreRole objects.
- * @throws {ApiError} - Throws on fetch/API errors.
+ * Retrieves the stores and roles for a specific user.
+ *
+ * @param userId - The user ID
+ * @returns Array of user store role associations
+ * @throws {ApiError} If the request fails
  */
 export async function getUserStores(userId: string): Promise<UserStoreRole[]> {
   const { data, error, response } = await apiClient.GET('/users/{id}/stores', {
     params: { path: { id: userId } },
   });
 
-  if (error || !data?.data) {
+  const res = data as unknown as
+    | StandardApiResponse<UserStoreRole[]>
+    | undefined;
+
+  if (error || !res?.data) {
     throw new ApiError(
-      data?.message || 'Failed to get user stores',
+      res?.message || 'Failed to get user stores',
       response.status
     );
   }
 
-  return data.data as UserStoreRole[];
+  return res.data;
 }
 
 /**
  * Retrieves the profile of the currently authenticated user.
- * Maps to: GET /users/me
+ *
  * @param storeId - Optional store ID to scope the user data
- * @returns A promise resolving to the CurrentUserData object.
- * @throws {ApiError} - Throws on fetch/API errors.
+ * @returns Current user data
+ * @throws {ApiError} If the request fails
  */
 export async function getCurrentUser(
   storeId?: string
@@ -99,12 +117,16 @@ export async function getCurrentUser(
     params: { query: { storeId } },
   });
 
-  if (error || !data?.data) {
+  const res = data as unknown as
+    | StandardApiResponse<CurrentUserData>
+    | undefined;
+
+  if (error || !res?.data) {
     throw new ApiError(
-      data?.message || 'Failed to get current user',
+      res?.message || 'Failed to get current user',
       response.status
     );
   }
 
-  return data.data as CurrentUserData;
+  return res.data;
 }

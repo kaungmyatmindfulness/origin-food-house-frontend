@@ -18,7 +18,6 @@ const UPLOAD_IMAGE_ENDPOINT = '/upload/image';
  *
  * @example
  * ```typescript
- * // In your app
  * import { createUploadService } from '@repo/api/services/upload.service';
  *
  * const baseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -27,6 +26,14 @@ const UPLOAD_IMAGE_ENDPOINT = '/upload/image';
  */
 export function createUploadService(baseUrl: string) {
   return {
+    /**
+     * Uploads an image file.
+     *
+     * @param file - Image file to upload
+     * @returns Upload response with image paths
+     * @throws {ApiError} If the request fails
+     * @throws {Error} If base path is missing in response
+     */
     uploadImage: async (file: File): Promise<UploadImageResponseData> => {
       const formData = new FormData();
       formData.append('file', file);

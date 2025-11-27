@@ -44,20 +44,13 @@ export interface ApiClientConfig {
 }
 
 /**
- * Permissive paths type for development before types are generated.
- * This allows any path string with standard HTTP method structure.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type PermissivePaths = any;
-
-/**
  * Creates a type-safe fetch client for the API.
  *
- * Note: Until you run `npm run generate:api` with the backend running,
- * paths will be loosely typed. After generation, they become strictly typed.
+ * The client is strictly typed using the generated `paths` type from OpenAPI spec.
+ * Run `npm run generate:api` to regenerate types when the backend API changes.
  *
  * @param config - Configuration options
- * @returns A configured openapi-fetch client
+ * @returns A configured openapi-fetch client with full type safety
  *
  * @example
  * ```ts
@@ -71,8 +64,7 @@ type PermissivePaths = any;
  * ```
  */
 export function createApiClient(config: ApiClientConfig) {
-  // Use PermissivePaths during development, will be strictly typed after generation
-  const client = createFetchClient<PermissivePaths>({
+  const client = createFetchClient<paths>({
     baseUrl: config.baseUrl,
     credentials: 'include', // Always send cookies for auth
     headers: {

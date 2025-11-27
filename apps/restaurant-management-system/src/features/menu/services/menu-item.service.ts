@@ -2,22 +2,28 @@
  * Menu Item Service
  *
  * Service layer for menu item-related API operations.
- * Uses openapi-fetch for type-safe API calls.
+ * Uses openapi-fetch for type-safe API calls with auto-generated types.
  */
 
 import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
+  MenuItemResponseDto,
   CreateMenuItemDto,
-  MenuItemDto,
   UpdateMenuItemDto,
-} from '../types/menu-item.types';
+  PatchMenuItemDto,
+  MenuItemDeletedResponseDto,
+} from '@repo/api/generated/types';
 
 /**
  * Retrieves all menu items for a specific store.
+ *
+ * @param storeId - The ID of the store
+ * @returns Array of menu items
+ * @throws {ApiError} If the request fails
  */
 export async function getStoreMenuItems(
   storeId: string
-): Promise<MenuItemDto[]> {
+): Promise<MenuItemResponseDto[]> {
   const { data, error, response } = await apiClient.GET(
     '/stores/{storeId}/menu-items',
     {
@@ -32,12 +38,16 @@ export async function getStoreMenuItems(
     );
   }
 
-  return data.data as MenuItemDto[];
+  return data.data;
 }
 
 /**
  * Creates a new menu item for a specific store.
- * Returns the created item's ID.
+ *
+ * @param storeId - The ID of the store
+ * @param itemData - The menu item data to create
+ * @returns The created menu item ID
+ * @throws {ApiError} If the request fails
  */
 export async function createMenuItem(
   storeId: string,
@@ -47,15 +57,11 @@ export async function createMenuItem(
     '/stores/{storeId}/menu-items',
     {
       params: { path: { storeId } },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      body: itemData as any, // Type mismatch between frontend and backend
+      body: itemData,
     }
   );
 
   if (error || !data?.data) {
-    console.error(
-      'API Error: createMenuItem succeeded but returned null data.'
-    );
     throw new ApiError(
       data?.message || 'Failed to create menu item',
       response.status
@@ -67,11 +73,16 @@ export async function createMenuItem(
 
 /**
  * Retrieves a specific menu item by ID.
+ *
+ * @param storeId - The ID of the store
+ * @param id - The ID of the menu item
+ * @returns The menu item details
+ * @throws {ApiError} If the request fails
  */
 export async function getMenuItemById(
   storeId: string,
   id: string
-): Promise<MenuItemDto> {
+): Promise<MenuItemResponseDto> {
   const { data, error, response } = await apiClient.GET(
     '/stores/{storeId}/menu-items/{id}',
     {
@@ -80,55 +91,59 @@ export async function getMenuItemById(
   );
 
   if (error || !data?.data) {
-    console.error(
-      `API Error: getMenuItemById(${id}) succeeded but returned null data.`
-    );
     throw new ApiError(
       data?.message || `Menu item ${id} not found`,
       response.status
     );
   }
 
-  return data.data as MenuItemDto;
+  return data.data;
 }
 
 /**
  * Updates an existing menu item.
+ *
+ * @param storeId - The ID of the store
+ * @param id - The ID of the menu item to update
+ * @param itemData - The updated menu item data
+ * @returns The updated menu item
+ * @throws {ApiError} If the request fails
  */
 export async function updateMenuItem(
-  id: string,
   storeId: string,
+  id: string,
   itemData: UpdateMenuItemDto
-): Promise<MenuItemDto> {
+): Promise<MenuItemResponseDto> {
   const { data, error, response } = await apiClient.PUT(
     '/stores/{storeId}/menu-items/{id}',
     {
       params: { path: { storeId, id } },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      body: itemData as any, // Type mismatch: local type has basePrice as string, API expects number
+      body: itemData,
     }
   );
 
   if (error || !data?.data) {
-    console.error(
-      `API Error: updateMenuItem(${id}) succeeded but returned null data.`
-    );
     throw new ApiError(
       data?.message || `Failed to update menu item ${id}`,
       response.status
     );
   }
 
-  return data.data as MenuItemDto;
+  return data.data;
 }
 
 /**
  * Deletes a menu item.
+ *
+ * @param storeId - The ID of the store
+ * @param id - The ID of the menu item to delete
+ * @returns The deleted menu item response
+ * @throws {ApiError} If the request fails
  */
 export async function deleteMenuItem(
   storeId: string,
   id: string
-): Promise<unknown> {
+): Promise<MenuItemDeletedResponseDto> {
   const { data, error, response } = await apiClient.DELETE(
     '/stores/{storeId}/menu-items/{id}',
     {
@@ -137,28 +152,33 @@ export async function deleteMenuItem(
   );
 
   if (error) {
-    throw new ApiError(
-      data?.message || `Failed to delete menu item ${id}`,
-      response.status
-    );
+    throw new ApiError(`Failed to delete menu item ${id}`, response?.status ?? 500);
   }
 
-  return data?.data;
+  return data?.data as MenuItemDeletedResponseDto;
 }
 
 /**
- * Toggle the isOutOfStock status of a menu item (quick "86" action)
+ * Toggles the out-of-stock status of a menu item.
+ *
+ * @param storeId - The ID of the store
+ * @param id - The ID of the menu item
+ * @param isOutOfStock - The new out-of-stock status
+ * @returns The updated menu item
+ * @throws {ApiError} If the request fails
  */
 export async function toggleMenuItemOutOfStock(
-  id: string,
   storeId: string,
+  id: string,
   isOutOfStock: boolean
-): Promise<MenuItemDto> {
+): Promise<MenuItemResponseDto> {
+  const patchData: PatchMenuItemDto = { isOutOfStock };
+
   const { data, error, response } = await apiClient.PATCH(
     '/stores/{storeId}/menu-items/{id}',
     {
       params: { path: { storeId, id } },
-      body: { isOutOfStock },
+      body: patchData,
     }
   );
 
@@ -169,5 +189,5 @@ export async function toggleMenuItemOutOfStock(
     );
   }
 
-  return data.data as MenuItemDto;
+  return data.data;
 }

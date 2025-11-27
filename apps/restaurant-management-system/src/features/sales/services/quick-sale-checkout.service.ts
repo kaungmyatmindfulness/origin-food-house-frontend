@@ -2,31 +2,27 @@
  * Quick Sale Checkout Service
  *
  * Service layer for quick sale checkout API operations.
- * Uses openapi-fetch for type-safe API calls.
+ * Uses openapi-fetch for type-safe API calls with auto-generated types.
  */
 
 import { apiClient, ApiError } from '@/utils/apiFetch';
-import type { OrderResponseDto } from '@repo/api/generated/types';
+import type { OrderResponseDto, QuickSaleItemDto } from '@repo/api/generated/schemas';
 
-import type { DraftCartItem } from '../store/quick-sale-cart.store';
-import type { SessionType } from '../types/sales.types';
+/** Session type for quick sale */
+type SessionType = 'COUNTER' | 'PHONE' | 'TAKEOUT' | 'TABLE';
 
-/**
- * Parameters for quick sale checkout
- */
-export interface QuickSaleCheckoutParams {
+/** Parameters for quick sale checkout */
+interface QuickSaleCheckoutParams {
   storeId: string;
   sessionType: Exclude<SessionType, 'TABLE'>;
-  items: DraftCartItem[];
+  items: QuickSaleItemDto[];
   customerName?: string;
   customerPhone?: string;
   orderNotes?: string;
 }
 
-/**
- * Result of quick sale checkout
- */
-export interface QuickSaleCheckoutResult {
+/** Result of quick sale checkout */
+interface QuickSaleCheckoutResult {
   orderId: string;
   orderNumber: string;
   sessionId: string;
@@ -34,15 +30,34 @@ export interface QuickSaleCheckoutResult {
 }
 
 /**
- * Complete quick sale checkout process using the optimized single-call API
+ * Gets order type based on session type.
  *
- * This function uses the /orders/quick-checkout endpoint which:
- * - Creates session, cart, and order in a single atomic transaction
- * - Significantly faster than the multi-step approach
- * - Reduces network round trips from 3+ to 1
+ * @param sessionType - The session type
+ * @returns Order type
+ */
+export function getOrderTypeFromSessionType(
+  sessionType: SessionType
+): 'DINE_IN' | 'TAKEAWAY' {
+  switch (sessionType) {
+    case 'COUNTER':
+    case 'TABLE':
+      return 'DINE_IN';
+    case 'PHONE':
+    case 'TAKEOUT':
+      return 'TAKEAWAY';
+    default:
+      return 'DINE_IN';
+  }
+}
+
+/**
+ * Completes quick sale checkout using optimized single-call API.
+ * Creates session, cart, and order in a single atomic transaction.
  *
- * @param params - Checkout parameters including items, session type, and customer info
+ * @param params - Checkout parameters
  * @returns Checkout result with order details
+ * @throws {ApiError} If the request fails
+ * @throws {Error} If cart is empty or session ID is missing
  */
 export async function quickSaleCheckout(
   params: QuickSaleCheckoutParams
@@ -60,10 +75,8 @@ export async function quickSaleCheckout(
     throw new Error('Cart is empty');
   }
 
-  // Determine order type based on session type
   const orderType = getOrderTypeFromSessionType(sessionType);
 
-  // Single API call for quick checkout
   const { data, error, response } = await apiClient.POST(
     '/orders/quick-checkout',
     {
@@ -74,7 +87,7 @@ export async function quickSaleCheckout(
         items: items.map((item) => ({
           menuItemId: item.menuItemId,
           quantity: item.quantity,
-          customizationOptionIds: item.customizations.map((c) => c.optionId),
+          customizationOptionIds: item.customizationOptionIds,
           notes: item.notes,
         })),
         customerName,
@@ -92,12 +105,8 @@ export async function quickSaleCheckout(
   }
 
   const order = data.data as OrderResponseDto;
-
-  // sessionId should always be present for quick checkout orders
-  // since we create the session as part of the checkout
-  // Note: sessionId is typed as { [key: string]: unknown } in auto-generated types
-  // but at runtime it's a string UUID
   const sessionId = order.sessionId as unknown as string | null;
+
   if (!sessionId) {
     throw new Error('Session ID missing in checkout response');
   }
@@ -108,22 +117,4 @@ export async function quickSaleCheckout(
     sessionId,
     grandTotal: order.grandTotal,
   };
-}
-
-/**
- * Get order type based on session type
- */
-export function getOrderTypeFromSessionType(
-  sessionType: SessionType
-): 'DINE_IN' | 'TAKEAWAY' {
-  switch (sessionType) {
-    case 'COUNTER':
-    case 'TABLE':
-      return 'DINE_IN';
-    case 'PHONE':
-    case 'TAKEOUT':
-      return 'TAKEAWAY';
-    default:
-      return 'DINE_IN';
-  }
 }

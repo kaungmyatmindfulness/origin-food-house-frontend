@@ -3,18 +3,18 @@ import Image from 'next/image';
 import React from 'react';
 import { useParams } from 'next/navigation';
 
-import { CartItem } from '@/features/cart/types/cart.types';
-import { MenuItem, SupportedLocale } from '@/features/menu/types/menu.types';
+import {
+  type CartItemDto,
+  type OptimisticAddCartItem,
+  useCartStore,
+} from '@/features/cart/store/cart.store';
+import type { MenuItem, SupportedLocale } from '@/features/menu/types/menu.types';
 import {
   getTranslatedName,
   getTranslatedDescription,
 } from '@/features/menu/utils/translation.util';
 import { formatCurrency } from '@/utils/formatting';
 import { Button } from '@repo/ui/components/button';
-import {
-  OptimisticAddCartItem,
-  useCartStore,
-} from '@/features/cart/store/cart.store';
 import { toast } from '@repo/ui/lib/toast';
 import { getImageUrl } from '@repo/api/utils/s3-url';
 
@@ -55,10 +55,12 @@ export function MenuItemCard({
     locale
   );
 
-  const cartItem = React.useMemo(() => {
+  const cartItem = React.useMemo<CartItemDto | undefined>(() => {
     if (!cart || !item.id) return undefined;
-
-    return cart.items.find((ci) => ci.menuItem.id === item.id);
+    // Match cart item by menuItemId (comparing string representations)
+    return cart.items.find(
+      (ci) => String(ci.menuItemId) === item.id
+    );
   }, [cart, item.id]);
 
   const cartQuantity = cartItem?.quantity ?? 0;
@@ -75,10 +77,12 @@ export function MenuItemCard({
       onCustomize(item);
     } else {
       const cartItemPayload: OptimisticAddCartItem = {
+        menuItemId: item.id,
+        menuItemName: item.name,
+        basePrice: item.basePrice,
         quantity: 1,
-        notes: '',
-        menuItem: item,
-        selectedOptions: [],
+        notes: null,
+        customizations: [],
       };
 
       optimisticAddItem(cartItemPayload).catch((err) =>
@@ -97,14 +101,9 @@ export function MenuItemCard({
       return;
     }
 
-    const updatedItemPayload: CartItem = {
-      ...cartItem,
+    optimisticUpdateItem(cartItem.id, {
       quantity: cartItem.quantity + 1,
-    };
-
-    optimisticUpdateItem(updatedItemPayload).catch((err) =>
-      handleApiError('increase quantity', err)
-    );
+    }).catch((err) => handleApiError('increase quantity', err));
   };
 
   /** Handles decreasing the quantity or removing the item */
@@ -118,14 +117,9 @@ export function MenuItemCard({
     }
 
     if (cartItem.quantity > 1) {
-      const updatedItemPayload: CartItem = {
-        ...cartItem,
+      optimisticUpdateItem(cartItem.id, {
         quantity: cartItem.quantity - 1,
-      };
-
-      optimisticUpdateItem(updatedItemPayload).catch((err) =>
-        handleApiError('decrease quantity', err)
-      );
+      }).catch((err) => handleApiError('decrease quantity', err));
     } else {
       optimisticRemoveItem(cartItem.id).catch((err) =>
         handleApiError('remove item', err)

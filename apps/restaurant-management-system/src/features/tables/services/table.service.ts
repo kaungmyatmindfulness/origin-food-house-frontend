@@ -2,22 +2,21 @@
  * Table Service
  *
  * Service layer for table management API operations.
- * Uses openapi-fetch for type-safe API calls.
+ * Uses openapi-fetch for type-safe API calls with auto-generated types.
  */
 
 import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
   TableResponseDto,
   BatchUpsertTableDto,
-} from '../types/table.types';
+} from '@repo/api/generated/types';
 
 /**
- * Get all tables for a specific store. (Public)
- * Maps to: GET /stores/{storeId}/tables
+ * Gets all tables for a specific store.
  *
- * @param storeId - The ID (UUID string) of the store whose tables are to be fetched.
- * @returns A promise resolving to an array of TableResponseDto objects.
- * @throws {ApiError} - Throws on fetch/API errors (e.g., 404 if store not found).
+ * @param storeId - The ID of the store
+ * @returns Array of tables
+ * @throws {ApiError} If the request fails
  */
 export async function getAllTables(
   storeId: string
@@ -30,32 +29,28 @@ export async function getAllTables(
   );
 
   if (error) {
-    throw new ApiError(
-      data?.message || 'Failed to fetch tables',
-      response.status
-    );
+    throw new ApiError('Failed to fetch tables', response?.status ?? 500);
   }
 
   if (data?.data == null) {
     console.warn(
-      `API Warning: getAllTables(storeId: ${storeId}) succeeded but returned null/undefined data. Returning [].`
+      `API Warning: getAllTables(storeId: ${storeId}) returned null data. Returning [].`
     );
     return [];
   }
 
-  return data.data as TableResponseDto[];
+  return data.data;
 }
 
 /**
- * Synchronizes tables for a store. Creates/Updates tables based on the input list.
- * Deletes any existing tables for the store that are NOT included in the input list (by ID).
- * Requires OWNER/ADMIN permissions.
- * Maps to: PUT /stores/{storeId}/tables/batch-sync
+ * Synchronizes tables for a store.
+ * Creates/Updates tables based on the input list.
+ * Deletes any existing tables not included in the input list.
  *
- * @param storeId - The ID (UUID string) of the store whose tables are being synchronized.
- * @param payload - The synchronization payload containing the list of tables to upsert.
- * @returns A promise resolving to the final list of tables (TableResponseDto[]) for the store after sync.
- * @throws {ApiError} - Throws on fetch/API errors.
+ * @param storeId - The ID of the store
+ * @param payload - The synchronization payload containing tables to upsert
+ * @returns Final list of tables after sync
+ * @throws {ApiError} If the request fails
  */
 export async function syncTables(
   storeId: string,
@@ -70,14 +65,11 @@ export async function syncTables(
   );
 
   if (error || data?.data == null) {
-    const errorMsg =
-      data?.message ||
-      'Failed to sync tables: No response data returned by API.';
-    console.error(
-      `API Error: syncTables(storeId: ${storeId}) failed - ${errorMsg}`
+    throw new ApiError(
+      'Failed to sync tables: No response data returned.',
+      response?.status ?? 500
     );
-    throw new ApiError(errorMsg, response.status);
   }
 
-  return data.data as TableResponseDto[];
+  return data.data;
 }

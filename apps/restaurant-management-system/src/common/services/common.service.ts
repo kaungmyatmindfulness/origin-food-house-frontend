@@ -2,18 +2,27 @@
  * Common Service
  *
  * Re-exports common utilities for RMS app.
+ * Uses openapi-fetch for type-safe API calls.
  */
 
 import { ApiError } from '@/utils/apiFetch';
-import type { UploadImageResponseData } from '@repo/api/types/upload.types';
+
+/** Image upload response data */
+interface UploadImageResponseData {
+  basePath: string;
+  variants?: Record<string, string>;
+}
 
 /**
  * Uploads an image file to S3.
- * Note: This uses raw fetch since FormData uploads need special handling.
+ * Note: Uses raw fetch since FormData uploads need special handling.
+ *
+ * @param file - Image file to upload
+ * @returns Upload response with image paths
+ * @throws {ApiError} If the request fails
+ * @throws {Error} If base path is missing in response
  */
-export async function uploadImage(
-  file: File
-): Promise<UploadImageResponseData> {
+export async function uploadImage(file: File): Promise<UploadImageResponseData> {
   const formData = new FormData();
   formData.append('file', file);
 

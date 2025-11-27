@@ -2,18 +2,31 @@
  * Store Service
  *
  * Service layer for store-related API operations.
- * Uses openapi-fetch for type-safe API calls.
+ * Uses openapi-fetch for type-safe API calls with auto-generated types.
  */
 
 import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
   CreateStoreDto,
-  Store,
-  StoreSettingResponseDto,
-  UpdateStoreSettingDto,
   GetStoreDetailsResponseDto,
+  StoreSettingResponseDto,
   UpdateStoreInformationDto,
-} from '../types/store.types';
+  UpdateStoreSettingDto,
+} from '@repo/api/generated/types';
+
+/** Store creation response */
+interface StoreCreatedResponse {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+/** Standard API response wrapper */
+interface StandardApiResponse<T> {
+  data: T;
+  message?: string;
+  success: boolean;
+}
 
 /**
  * Retrieves store details by ID.
@@ -29,21 +42,25 @@ export async function getStoreDetails(
     params: { path: { id } },
   });
 
-  if (error || !data?.data) {
+  const res = data as unknown as
+    | StandardApiResponse<GetStoreDetailsResponseDto>
+    | undefined;
+
+  if (error || !res?.data) {
     throw new ApiError(
-      data?.message || 'Failed to retrieve store details',
-      response.status
+      res?.message || 'Failed to retrieve store details',
+      response?.status ?? 500
     );
   }
 
-  return data.data as GetStoreDetailsResponseDto;
+  return res.data;
 }
 
 /**
  * Updates store information.
  *
- * @param id - The store ID
- * @param storeIdQuery - The store ID for query param
+ * @param id - The store ID (path param)
+ * @param storeIdQuery - The store ID (query param)
  * @param storeData - The updated store information
  * @throws {ApiError} If the request fails
  */
@@ -52,22 +69,16 @@ export async function updateStoreInformation(
   storeIdQuery: string,
   storeData: UpdateStoreInformationDto
 ): Promise<void> {
-  const { error, response } = await apiClient.PUT(
-    '/stores/{id}/information',
-    {
-      params: {
-        path: { id },
-        query: { storeId: storeIdQuery },
-      },
-      body: storeData,
-    }
-  );
+  const { error, response } = await apiClient.PUT('/stores/{id}/information', {
+    params: {
+      path: { id },
+      query: { storeId: storeIdQuery },
+    },
+    body: storeData,
+  });
 
   if (error) {
-    throw new ApiError(
-      'Failed to update store information',
-      response.status
-    );
+    throw new ApiError('Failed to update store information', response?.status ?? 500);
   }
 }
 
@@ -91,14 +102,18 @@ export async function updateStoreSettings(
     }
   );
 
-  if (error || !data?.data) {
+  const res = data as unknown as
+    | StandardApiResponse<StoreSettingResponseDto>
+    | undefined;
+
+  if (error || !res?.data) {
     throw new ApiError(
-      data?.message || 'Failed to update store settings',
-      response.status
+      res?.message || 'Failed to update store settings',
+      response?.status ?? 500
     );
   }
 
-  return data.data as StoreSettingResponseDto;
+  return res.data;
 }
 
 /**
@@ -108,17 +123,23 @@ export async function updateStoreSettings(
  * @returns Created store
  * @throws {ApiError} If the request fails
  */
-export async function createStore(storeData: CreateStoreDto): Promise<Store> {
+export async function createStore(
+  storeData: CreateStoreDto
+): Promise<StoreCreatedResponse> {
   const { data, error, response } = await apiClient.POST('/stores', {
     body: storeData,
   });
 
-  if (error || !data?.data) {
+  const res = data as unknown as
+    | StandardApiResponse<StoreCreatedResponse>
+    | undefined;
+
+  if (error || !res?.data) {
     throw new ApiError(
-      data?.message || 'Failed to create store',
-      response.status
+      res?.message || 'Failed to create store',
+      response?.status ?? 500
     );
   }
 
-  return data.data as Store;
+  return res.data;
 }

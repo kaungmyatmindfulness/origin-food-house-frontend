@@ -2,13 +2,25 @@
  * Translation Service
  *
  * Service layer for translation-related API operations.
- * Uses openapi-fetch for type-safe API calls.
+ * Note: Uses raw fetch for translation endpoints not in OpenAPI spec.
  */
 
 import { z } from 'zod';
 
-import { apiClient, ApiError } from '@/utils/apiFetch';
-import type { SupportedLocale } from '../types/menu-item.types';
+import { ApiError } from '@/utils/apiFetch';
+import type {
+  UpdateMenuItemTranslationsDto,
+  UpdateCategoryTranslationsDto,
+  UpdateCustomizationGroupTranslationsDto,
+  UpdateCustomizationOptionTranslationsDto,
+  BaseTranslationDto,
+  TranslationWithDescriptionDto,
+} from '@repo/api/generated/types';
+
+/** Supported locale codes */
+type SupportedLocale = 'en' | 'zh' | 'my' | 'th';
+
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 /**
  * Zod schema for menu item translation validation
@@ -41,208 +53,199 @@ const baseTranslationSchema = z.object({
 });
 
 /**
- * Translation data for menu items
- */
-export interface MenuItemTranslation {
-  locale: SupportedLocale;
-  name: string;
-  description?: string | null;
-}
-
-/**
- * Translation data for categories, groups, and options (name only)
- */
-export interface BaseTranslationData {
-  locale: SupportedLocale;
-  name: string;
-}
-
-/**
- * Validate menu item translations
+ * Validates menu item translations before API call.
  */
 function validateMenuItemTranslations(
-  translations: MenuItemTranslation[]
+  translations: TranslationWithDescriptionDto[]
 ): void {
   const schema = z.array(menuItemTranslationSchema).min(1);
   schema.parse(translations);
 }
 
 /**
- * Validate base translations
+ * Validates base translations before API call.
  */
-function validateBaseTranslations(translations: BaseTranslationData[]): void {
+function validateBaseTranslations(translations: BaseTranslationDto[]): void {
   const schema = z.array(baseTranslationSchema).min(1);
   schema.parse(translations);
 }
 
 /**
- * Update menu item translations
+ * Updates menu item translations.
+ *
+ * @param itemId - The ID of the menu item
+ * @param storeId - The ID of the store
+ * @param translations - Array of translation objects
+ * @throws {ApiError} If the request fails
  */
 export async function updateMenuItemTranslations(
   itemId: string,
   storeId: string,
-  translations: MenuItemTranslation[]
+  translations: TranslationWithDescriptionDto[]
 ): Promise<void> {
-  // Validate translations before sending to API
   validateMenuItemTranslations(translations);
 
-  const { error, response } = await apiClient.PUT(
-    '/menu-items/{itemId}/translations',
+  const body: UpdateMenuItemTranslationsDto = { translations };
+
+  const response = await fetch(
+    `${baseUrl}/menu-items/${itemId}/translations?storeId=${storeId}`,
     {
-      params: {
-        path: { itemId },
-        query: { storeId },
-      },
-      body: { translations },
+      method: 'PUT',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
     }
   );
 
-  if (error) {
-    throw new ApiError(
-      'Failed to update menu item translations',
-      response.status
-    );
+  if (!response.ok) {
+    throw new ApiError('Failed to update menu item translations', response.status);
   }
 }
 
 /**
- * Delete a specific menu item translation
+ * Deletes a specific menu item translation.
+ *
+ * @param itemId - The ID of the menu item
+ * @param storeId - The ID of the store
+ * @param locale - The locale to delete
+ * @throws {ApiError} If the request fails
  */
 export async function deleteMenuItemTranslation(
   itemId: string,
   storeId: string,
   locale: SupportedLocale
 ): Promise<void> {
-  const { error, response } = await apiClient.DELETE(
-    '/menu-items/{itemId}/translations/{locale}',
+  const response = await fetch(
+    `${baseUrl}/menu-items/${itemId}/translations/${locale}?storeId=${storeId}`,
     {
-      params: {
-        path: { itemId, locale },
-        query: { storeId },
-      },
+      method: 'DELETE',
+      credentials: 'include',
     }
   );
 
-  if (error) {
-    throw new ApiError(
-      'Failed to delete menu item translation',
-      response.status
-    );
+  if (!response.ok) {
+    throw new ApiError('Failed to delete menu item translation', response.status);
   }
 }
 
 /**
- * Update category translations
+ * Updates category translations.
+ *
+ * @param categoryId - The ID of the category
+ * @param storeId - The ID of the store
+ * @param translations - Array of translation objects
+ * @throws {ApiError} If the request fails
  */
 export async function updateCategoryTranslations(
   categoryId: string,
   storeId: string,
-  translations: BaseTranslationData[]
+  translations: BaseTranslationDto[]
 ): Promise<void> {
-  // Validate translations before sending to API
   validateBaseTranslations(translations);
 
-  const { error, response } = await apiClient.PATCH(
-    '/categories/{categoryId}/translations',
+  const body: UpdateCategoryTranslationsDto = { translations };
+
+  const response = await fetch(
+    `${baseUrl}/categories/${categoryId}/translations?storeId=${storeId}`,
     {
-      params: {
-        path: { categoryId },
-        query: { storeId },
-      },
-      body: { translations },
+      method: 'PATCH',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
     }
   );
 
-  if (error) {
-    throw new ApiError(
-      'Failed to update category translations',
-      response.status
-    );
+  if (!response.ok) {
+    throw new ApiError('Failed to update category translations', response.status);
   }
 }
 
 /**
- * Delete a specific category translation
+ * Deletes a specific category translation.
+ *
+ * @param categoryId - The ID of the category
+ * @param storeId - The ID of the store
+ * @param locale - The locale to delete
+ * @throws {ApiError} If the request fails
  */
 export async function deleteCategoryTranslation(
   categoryId: string,
   storeId: string,
   locale: SupportedLocale
 ): Promise<void> {
-  const { error, response } = await apiClient.DELETE(
-    '/categories/{categoryId}/translations/{locale}',
+  const response = await fetch(
+    `${baseUrl}/categories/${categoryId}/translations/${locale}?storeId=${storeId}`,
     {
-      params: {
-        path: { categoryId, locale },
-        query: { storeId },
-      },
+      method: 'DELETE',
+      credentials: 'include',
     }
   );
 
-  if (error) {
-    throw new ApiError(
-      'Failed to delete category translation',
-      response.status
-    );
+  if (!response.ok) {
+    throw new ApiError('Failed to delete category translation', response.status);
   }
 }
 
 /**
- * Update customization group translations
+ * Updates customization group translations.
+ *
+ * @param groupId - The ID of the customization group
+ * @param storeId - The ID of the store
+ * @param translations - Array of translation objects
+ * @throws {ApiError} If the request fails
  */
 export async function updateCustomizationGroupTranslations(
   groupId: string,
   storeId: string,
-  translations: BaseTranslationData[]
+  translations: BaseTranslationDto[]
 ): Promise<void> {
-  // Validate translations before sending to API
   validateBaseTranslations(translations);
 
-  const { error, response } = await apiClient.PUT(
-    '/customizations/groups/{groupId}/translations',
+  const body: UpdateCustomizationGroupTranslationsDto = { translations };
+
+  const response = await fetch(
+    `${baseUrl}/customizations/groups/${groupId}/translations?storeId=${storeId}`,
     {
-      params: {
-        path: { groupId },
-        query: { storeId },
-      },
-      body: { translations },
+      method: 'PUT',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
     }
   );
 
-  if (error) {
-    throw new ApiError(
-      'Failed to update customization group translations',
-      response.status
-    );
+  if (!response.ok) {
+    throw new ApiError('Failed to update customization group translations', response.status);
   }
 }
 
 /**
- * Update customization option translations
+ * Updates customization option translations.
+ *
+ * @param optionId - The ID of the customization option
+ * @param storeId - The ID of the store
+ * @param translations - Array of translation objects
+ * @throws {ApiError} If the request fails
  */
 export async function updateCustomizationOptionTranslations(
   optionId: string,
   storeId: string,
-  translations: BaseTranslationData[]
+  translations: BaseTranslationDto[]
 ): Promise<void> {
-  // Validate translations before sending to API
   validateBaseTranslations(translations);
 
-  const { error, response } = await apiClient.PUT(
-    '/customizations/options/{optionId}/translations',
+  const body: UpdateCustomizationOptionTranslationsDto = { translations };
+
+  const response = await fetch(
+    `${baseUrl}/customizations/options/${optionId}/translations?storeId=${storeId}`,
     {
-      params: {
-        path: { optionId },
-        query: { storeId },
-      },
-      body: { translations },
+      method: 'PUT',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
     }
   );
 
-  if (error) {
-    throw new ApiError(
-      'Failed to update customization option translations',
-      response.status
-    );
+  if (!response.ok) {
+    throw new ApiError('Failed to update customization option translations', response.status);
   }
 }

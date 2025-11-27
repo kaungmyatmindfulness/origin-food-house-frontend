@@ -25,9 +25,10 @@ export default function Auth0CallbackPage() {
     const processCallback = async () => {
       try {
         // Handle Auth0 callback and exchange token with backend
-        const response = await handleAuth0Callback();
+        // Returns AccessTokenData directly (accessToken, userId, email)
+        const tokenData = await handleAuth0Callback();
 
-        if (response.status === 'success' && response.data) {
+        if (tokenData.accessToken) {
           // Mark as authenticated in the store
           useAuthStore.getState().setAuthenticated(true);
 
@@ -42,7 +43,7 @@ export default function Auth0CallbackPage() {
             router.replace(ROUTES.STORE_CHOOSE);
           }, 500);
         } else {
-          throw new Error(response.message || 'Authentication failed');
+          throw new Error('Authentication failed - no access token received');
         }
       } catch (err) {
         console.error('Auth0 callback error:', err);

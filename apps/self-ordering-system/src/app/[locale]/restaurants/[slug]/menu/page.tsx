@@ -6,21 +6,22 @@ import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { scroller } from 'react-scroll';
 
-import { CartSheetContent } from '@/features/cart/components/cart-sheet-content'; // Adjust path if needed
-
-import { CartItem } from '@/features/cart/types/cart.types'; // Adjust path
+import { CartSheetContent } from '@/features/cart/components/cart-sheet-content';
+import {
+  type CartItemDto,
+  useCartStore,
+} from '@/features/cart/store/cart.store';
 import { CustomizationDialog } from '@/features/menu/components/customization-dialog';
 import { MenuCategorySection } from '@/features/menu/components/menu-category-section';
 import { MenuControls } from '@/features/menu/components/menu-controls';
 import { MenuHeader } from '@/features/menu/components/menu-header';
 import { MenuSkeleton } from '@/features/menu/components/menu-skeleton';
 import { useStickyHeader } from '@/features/menu/hooks/useStickyHeader';
-import { MOCK_CATEGORIES, MOCK_STORE_DETAILS } from '@/features/menu/mocks'; // Keep mocks for now
-import { Category, MenuItem } from '@/features/menu/types/menu.types'; // Adjust path
-import { formatCurrency } from '@/utils/formatting'; // Adjust path
-import { Button } from '@repo/ui/components/button'; // Adjust path
-import { Sheet, SheetTrigger } from '@repo/ui/components/sheet'; // Adjust path
-import { useCartStore } from '@/features/cart/store/cart.store';
+import { MOCK_CATEGORIES, MOCK_STORE_DETAILS } from '@/features/menu/mocks';
+import type { Category, MenuItem } from '@/features/menu/types/menu.types';
+import { formatCurrency } from '@/utils/formatting';
+import { Button } from '@repo/ui/components/button';
+import { Sheet, SheetTrigger } from '@repo/ui/components/sheet';
 import { toast } from '@repo/ui/lib/toast';
 
 export default function RestaurantMenuPage() {
@@ -38,21 +39,7 @@ export default function RestaurantMenuPage() {
   );
 
   // --- Zustand Store Integration ---
-  // const {
-  //   cart,
-  //   optimisticAddItem,
-  //   optimisticUpdateItem,
-  //   optimisticRemoveItem,
-  //   optimisticClearCart,
-  // } = useCartStore((state) => ({ // The result of getServerSnapshot should be cached to avoid an infinite loop
-  //   cart: state.cart,
-  //   optimisticAddItem: state.optimisticAddItem,
-  //   optimisticUpdateItem: state.optimisticUpdateItem,
-  //   optimisticRemoveItem: state.optimisticRemoveItem,
-  //   optimisticClearCart: state.optimisticClearCart,
-  // }));
   const cart = useCartStore((state) => state.cart);
-  const optimisticAddItem = useCartStore((state) => state.optimisticAddItem);
   const optimisticUpdateItem = useCartStore(
     (state) => state.optimisticUpdateItem
   );
@@ -67,38 +54,29 @@ export default function RestaurantMenuPage() {
   const showStickyHeader = useStickyHeader();
 
   // --- Derived Cart State ---
-  const cartItems = useMemo(() => cart?.items ?? [], [cart]);
-  const cartItemsMap = useMemo(() => {
-    return cartItems.reduce(
-      (acc, item) => {
-        // Use actual cart item ID if available, otherwise temp ID (less reliable for mapping)
-        const key = item.menuItem.id ?? item.id; // Prioritize menuItemId if available and stable
-        acc[key] = item;
-        return acc;
-      },
-      {} as Record<string, CartItem>
-    );
-  }, [cartItems]);
+  const cartItems = useMemo<CartItemDto[]>(
+    () => cart?.items ?? [],
+    [cart]
+  );
 
   const cartItemCount = useMemo(() => {
     return cartItems.reduce((total, item) => total + item.quantity, 0);
   }, [cartItems]);
 
   const cartTotal = useMemo(() => {
-    // Calculate total based on potentially optimistic state
+    // Use subTotal from cart if available, otherwise calculate from items
+    if (cart?.subTotal) {
+      return parseFloat(cart.subTotal);
+    }
     return cartItems.reduce((sum, cartItem) => {
-      // Ensure menuItem exists and basePrice is valid before parsing
-      const basePrice = parseFloat(cartItem.menuItem?.basePrice ?? '0');
-      let customizationPrice = 0;
-      if (cartItem.selectedOptions) {
-        customizationPrice = cartItem.selectedOptions.reduce((optSum, opt) => {
-          // Ensure additionalPrice is valid before parsing
-          return optSum + parseFloat(opt.additionalPrice?.toString() ?? '0'); // API uses number, spec uses string|null
-        }, 0);
-      }
+      const basePrice = parseFloat(cartItem.basePrice);
+      const customizationPrice = cartItem.customizations.reduce(
+        (optSum, opt) => optSum + parseFloat(opt.additionalPrice),
+        0
+      );
       return sum + (basePrice + customizationPrice) * cartItem.quantity;
     }, 0);
-  }, [cartItems]);
+  }, [cart?.subTotal, cartItems]);
 
   // --- Data Fetching (Replace Mocks) ---
   // TODO: Replace mocks with actual data fetching (e.g., using React Query)
@@ -124,59 +102,25 @@ export default function RestaurantMenuPage() {
     setCustomizationItem(item);
   };
 
-  // TODO: Implement this function in CustomizationDialog and pass it down or lift state up
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _handleAddCustomizedItem = (item: CartItem) => {
-    // The item passed from dialog should already have quantity, notes, selectedOptions etc.
-    // Destructure to omit generated fields
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, cartId, createdAt, updatedAt, ...payload } = item;
-    optimisticAddItem(payload).catch((err) =>
-      handleApiError('add customized item', err)
-    );
-    setCustomizationItem(null); // Close dialog
-  };
-
-  const handleIncrement = (
-    cartItemId: string | undefined,
-    menuItemId: string | undefined // Use menuItemId to find the item in the map
-  ) => {
-    if (!menuItemId) return;
-    const currentItem = cartItemsMap[menuItemId];
+  /** Increment cart item quantity using cart item ID */
+  const handleIncrement = (cartItemId: string) => {
+    const currentItem = cartItems.find((item) => item.id === cartItemId);
     if (!currentItem) return;
 
-    // Construct the updated CartItem payload
-    const updatedItemPayload: CartItem = {
-      ...currentItem,
+    optimisticUpdateItem(cartItemId, {
       quantity: currentItem.quantity + 1,
-      // id is required by the optimisticUpdateItem payload type
-      id: currentItem.id, // Ensure the correct ID is passed
-    };
-
-    optimisticUpdateItem(updatedItemPayload).catch((err) =>
-      handleApiError('increase quantity', err)
-    );
+    }).catch((err) => handleApiError('increase quantity', err));
   };
 
-  const handleDecrement = (
-    cartItemId: string | undefined,
-    menuItemId: string | undefined // Use menuItemId to find the item in the map
-  ) => {
-    if (!menuItemId) return;
-    const currentItem = cartItemsMap[menuItemId];
+  /** Decrement cart item quantity or remove if quantity becomes 0 */
+  const handleDecrement = (cartItemId: string) => {
+    const currentItem = cartItems.find((item) => item.id === cartItemId);
     if (!currentItem) return;
 
     if (currentItem.quantity > 1) {
-      // Construct the updated CartItem payload
-      const updatedItemPayload: CartItem = {
-        ...currentItem,
+      optimisticUpdateItem(cartItemId, {
         quantity: currentItem.quantity - 1,
-        // id is required by the optimisticUpdateItem payload type
-        id: currentItem.id, // Ensure the correct ID is passed
-      };
-      optimisticUpdateItem(updatedItemPayload).catch((err) =>
-        handleApiError('decrease quantity', err)
-      );
+      }).catch((err) => handleApiError('decrease quantity', err));
     } else {
       // Remove item if quantity becomes 0
       optimisticRemoveItem(currentItem.id).catch((err) =>
@@ -185,15 +129,13 @@ export default function RestaurantMenuPage() {
     }
   };
 
-  const handleRemoveItem = (cartItemId: string | undefined) => {
-    if (!cartItemId) return;
+  const handleRemoveItem = (cartItemId: string) => {
     optimisticRemoveItem(cartItemId).catch((err) =>
       handleApiError('remove item', err)
     );
   };
 
   const handleClearCart = () => {
-    console.log('UI Action: Clear Cart');
     optimisticClearCart().catch((err) => handleApiError('clear cart', err));
   };
 

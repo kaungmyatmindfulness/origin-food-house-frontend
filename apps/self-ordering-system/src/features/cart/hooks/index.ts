@@ -1,9 +1,8 @@
 import { useEffect } from 'react';
 import { useCartStore } from '@/features/cart/store/cart.store';
-
-import { Cart } from '@/features/cart/types/cart.types';
-
+import type { CartResponseDto } from '@repo/api/generated/types';
 import { useSocket } from '@/utils/socket-provider';
+import { debug } from '@/utils/debug';
 
 export const useCartSocketListener = () => {
   const { socket, isConnected } = useSocket();
@@ -16,9 +15,9 @@ export const useCartSocketListener = () => {
 
   useEffect(() => {
     if (socket && isConnected) {
-      console.log('Setting up cart WebSocket listeners...');
-      const handleCartUpdate = (updatedCart: Cart | null) => {
-        console.log(`Received ${CART_UPDATED_EVENT}:`, updatedCart);
+      debug.log('Setting up cart WebSocket listeners...');
+      const handleCartUpdate = (updatedCart: CartResponseDto | null) => {
+        debug.log(`Received ${CART_UPDATED_EVENT}:`, updatedCart);
         setCart(updatedCart);
       };
       const handleCartError = (errorData: {
@@ -26,7 +25,7 @@ export const useCartSocketListener = () => {
         details?: unknown;
         event?: string;
       }) => {
-        console.error(
+        debug.error(
           `Received ${CART_ERROR_EVENT} (Originating Event: ${errorData.event || 'N/A'}):`,
           errorData.message,
           errorData.details
@@ -36,7 +35,7 @@ export const useCartSocketListener = () => {
       socket.on(CART_UPDATED_EVENT, handleCartUpdate);
       socket.on(CART_ERROR_EVENT, handleCartError);
       return () => {
-        console.log('Cleaning up cart WebSocket listeners...');
+        debug.log('Cleaning up cart WebSocket listeners...');
         socket.off(CART_UPDATED_EVENT, handleCartUpdate);
         socket.off(CART_ERROR_EVENT, handleCartError);
       };

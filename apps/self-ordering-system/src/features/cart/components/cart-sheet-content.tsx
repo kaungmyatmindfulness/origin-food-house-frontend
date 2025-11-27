@@ -1,66 +1,57 @@
 import { Minus, Plus, ShoppingBasket, Trash2 } from 'lucide-react';
-import Image from 'next/image';
 import React, { useMemo } from 'react';
 
-import { formatCurrency } from '@/utils/formatting'; // Adjust path
-import { Button } from '@repo/ui/components/button'; // Adjust path
-import { ScrollArea } from '@repo/ui/components/scroll-area'; // Adjust path
+import { formatCurrency } from '@/utils/formatting';
+import { Button } from '@repo/ui/components/button';
+import { ScrollArea } from '@repo/ui/components/scroll-area';
 import {
   SheetClose,
   SheetContent,
   SheetFooter,
   SheetHeader,
   SheetTitle,
-} from '@repo/ui/components/sheet'; // Adjust path
-import { useCartStore } from '@/features/cart/store/cart.store';
-import { getImageUrl } from '@repo/api/utils/s3-url';
+} from '@repo/ui/components/sheet';
+import { useCartStore, type CartItemDto } from '@/features/cart/store/cart.store';
 
 interface CartSheetContentProps {
-  // cart prop removed - state comes from store
   currency: string;
-  onIncrement: (
-    cartItemId: string | undefined,
-    menuItemId: string | undefined
-  ) => void;
-  onDecrement: (
-    cartItemId: string | undefined,
-    menuItemId: string | undefined
-  ) => void;
-  onRemoveItem: (cartItemId: string | undefined) => void;
+  onIncrement: (cartItemId: string) => void;
+  onDecrement: (cartItemId: string) => void;
+  onRemoveItem: (cartItemId: string) => void;
   onClearCart: () => void;
-  // isLoading prop removed
 }
 
 export function CartSheetContent({
-  // cart prop removed
   currency,
   onIncrement,
   onDecrement,
   onRemoveItem,
   onClearCart,
-  // isLoading prop removed
 }: CartSheetContentProps) {
   // Get cart state directly from the store
   const cart = useCartStore((state) => state.cart);
 
   // Memoize itemsArray to prevent useMemo dependency issues
-  const itemsArray = useMemo(() => cart?.items ?? [], [cart?.items]);
+  const itemsArray = useMemo<CartItemDto[]>(
+    () => cart?.items ?? [],
+    [cart?.items]
+  );
 
   // Calculate total based on store state
+  // Note: We use subTotal from cart if available, otherwise calculate from items
   const cartTotal = useMemo(() => {
+    if (cart?.subTotal) {
+      return parseFloat(cart.subTotal);
+    }
     return itemsArray.reduce((sum, cartItem) => {
-      // Ensure menuItem exists and basePrice is valid before parsing
-      const basePrice = parseFloat(cartItem.menuItem?.basePrice ?? '0');
-      let customizationPrice = 0;
-      if (cartItem.selectedOptions) {
-        customizationPrice = cartItem.selectedOptions.reduce((optSum, opt) => {
-          // Ensure additionalPrice is valid before parsing
-          return optSum + parseFloat(opt.additionalPrice?.toString() ?? '0');
-        }, 0);
-      }
+      const basePrice = parseFloat(cartItem.basePrice);
+      const customizationPrice = cartItem.customizations.reduce(
+        (optSum, opt) => optSum + parseFloat(opt.additionalPrice),
+        0
+      );
       return sum + (basePrice + customizationPrice) * cartItem.quantity;
     }, 0);
-  }, [itemsArray]); // Dependency is now itemsArray derived from store
+  }, [cart?.subTotal, itemsArray]);
 
   return (
     <SheetContent className="flex w-full flex-col sm:max-w-md">
@@ -78,54 +69,32 @@ export function CartSheetContent({
             <div className="space-y-4">
               {itemsArray.map((cartItem) => (
                 <div key={cartItem.id} className="flex items-center gap-4">
-                  {/* Item Image */}
-                  <div className="bg-muted relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md">
-                    {getImageUrl(cartItem.menuItem?.imagePath, 'small') ? (
-                      <Image
-                        src={
-                          getImageUrl(cartItem.menuItem?.imagePath, 'small')!
-                        }
-                        alt={cartItem.menuItem?.name ?? 'Item image'}
-                        fill
-                        className="object-cover"
-                        sizes="64px"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <span className="text-muted-foreground text-xs">
-                          No image
-                        </span>
-                      </div>
-                    )}
-                  </div>
                   {/* Item Details */}
                   <div className="flex-grow">
-                    <p className="font-medium">{cartItem.menuItem?.name}</p>
+                    <p className="font-medium">{cartItem.menuItemName}</p>
                     <p className="text-muted-foreground text-sm">
-                      {formatCurrency(cartItem.menuItem?.basePrice, currency)}
+                      {formatCurrency(cartItem.basePrice, currency)}
                     </p>
                     {/* Display selected customizations */}
-                    {cartItem.selectedOptions &&
-                      cartItem.selectedOptions.length > 0 && (
-                        <div className="text-muted-foreground mt-1 text-xs">
-                          {cartItem.selectedOptions.map((opt) => (
-                            <span
-                              key={opt.id}
-                              className="mr-1 inline-block rounded bg-gray-100 px-1.5 py-0.5"
-                            >
-                              + {opt.name}{' '}
-                              {opt.additionalPrice &&
-                              (Number(opt.additionalPrice) || 0) > 0
-                                ? `(${formatCurrency(opt.additionalPrice, currency)})`
-                                : ''}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                    {cartItem.customizations.length > 0 && (
+                      <div className="text-muted-foreground mt-1 text-xs">
+                        {cartItem.customizations.map((opt) => (
+                          <span
+                            key={opt.id}
+                            className="bg-muted mr-1 inline-block rounded px-1.5 py-0.5"
+                          >
+                            + {opt.optionName}{' '}
+                            {Number(opt.additionalPrice) > 0
+                              ? `(${formatCurrency(opt.additionalPrice, currency)})`
+                              : ''}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     {/* Display notes */}
                     {cartItem.notes && (
-                      <p className="mt-1 text-xs text-gray-500 italic">
-                        Notes: {cartItem.notes}
+                      <p className="text-muted-foreground mt-1 text-xs italic">
+                        Notes: {String(cartItem.notes)}
                       </p>
                     )}
                   </div>
@@ -135,12 +104,8 @@ export function CartSheetContent({
                       variant="outline"
                       size="icon"
                       className="h-7 w-7"
-                      onClick={() =>
-                        // Pass cartItem.id and menuItem.id if available
-                        onDecrement(cartItem.id, cartItem.menuItem?.id)
-                      }
-                      // disabled={isLoading} removed
-                      aria-label={`Decrease quantity of ${cartItem.menuItem?.name}`}
+                      onClick={() => onDecrement(cartItem.id)}
+                      aria-label={`Decrease quantity of ${cartItem.menuItemName}`}
                     >
                       <Minus className="h-3 w-3" />
                     </Button>
@@ -154,12 +119,8 @@ export function CartSheetContent({
                       variant="outline"
                       size="icon"
                       className="h-7 w-7"
-                      onClick={() =>
-                        // Pass cartItem.id and menuItem.id if available
-                        onIncrement(cartItem.id, cartItem.menuItem?.id)
-                      }
-                      // disabled={isLoading} removed
-                      aria-label={`Increase quantity of ${cartItem.menuItem?.name}`}
+                      onClick={() => onIncrement(cartItem.id)}
+                      aria-label={`Increase quantity of ${cartItem.menuItemName}`}
                     >
                       <Plus className="h-3 w-3" />
                     </Button>
@@ -170,8 +131,7 @@ export function CartSheetContent({
                     size="icon"
                     className="text-muted-foreground hover:text-destructive h-7 w-7 flex-shrink-0"
                     onClick={() => onRemoveItem(cartItem.id)}
-                    // disabled={isLoading} removed
-                    aria-label={`Remove ${cartItem.menuItem?.name} from basket`}
+                    aria-label={`Remove ${cartItem.menuItemName} from basket`}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

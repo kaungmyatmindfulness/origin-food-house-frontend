@@ -2,25 +2,28 @@
  * Category Service
  *
  * Service layer for category-related API operations.
- * Uses openapi-fetch for type-safe API calls.
+ * Uses openapi-fetch for type-safe API calls with auto-generated types.
  */
 
 import { apiClient, ApiError } from '@/utils/apiFetch';
 import type {
-  Category,
+  CategoryResponseDto,
   CreateCategoryDto,
-  SortCategoriesPayloadDto,
   UpdateCategoryDto,
-} from '../types/category.types';
+  SortCategoriesPayloadDto,
+  CategoryDeletedResponseDto,
+} from '@repo/api/generated/types';
 
 /**
  * Retrieves categories for a specific store.
  *
- * @param storeId - The ID of the store whose categories are to be fetched.
- * @returns A promise resolving to an array of Category objects.
- * @throws {ApiError} - Throws on fetch/API errors.
+ * @param storeId - The ID of the store
+ * @returns Array of categories
+ * @throws {ApiError} If the request fails
  */
-export async function getCategories(storeId: string): Promise<Category[]> {
+export async function getCategories(
+  storeId: string
+): Promise<CategoryResponseDto[]> {
   const { data, error, response } = await apiClient.GET(
     '/stores/{storeId}/categories',
     {
@@ -35,21 +38,21 @@ export async function getCategories(storeId: string): Promise<Category[]> {
     );
   }
 
-  return data.data as Category[];
+  return data.data;
 }
 
 /**
  * Creates a new category for a specific store.
  *
- * @param storeId - The ID of the store.
- * @param categoryData - The category data to create.
- * @returns A promise resolving to the created Category object.
- * @throws {ApiError} - Throws on fetch/API errors.
+ * @param storeId - The ID of the store
+ * @param categoryData - The category data to create
+ * @returns The created category
+ * @throws {ApiError} If the request fails
  */
 export async function createCategory(
   storeId: string,
   categoryData: CreateCategoryDto
-): Promise<Category> {
+): Promise<CategoryResponseDto> {
   const { data, error, response } = await apiClient.POST(
     '/stores/{storeId}/categories',
     {
@@ -65,23 +68,23 @@ export async function createCategory(
     );
   }
 
-  return data.data as Category;
+  return data.data;
 }
 
 /**
  * Updates an existing category.
  *
- * @param storeId - The ID of the store.
- * @param categoryId - The ID of the category to update.
- * @param categoryData - The updated category data.
- * @returns A promise resolving to the updated Category object.
- * @throws {ApiError} - Throws on fetch/API errors.
+ * @param storeId - The ID of the store
+ * @param categoryId - The ID of the category to update
+ * @param categoryData - The updated category data
+ * @returns The updated category
+ * @throws {ApiError} If the request fails
  */
 export async function updateCategory(
   storeId: string,
   categoryId: string,
   categoryData: UpdateCategoryDto
-): Promise<Category> {
+): Promise<CategoryResponseDto> {
   const { data, error, response } = await apiClient.PATCH(
     '/stores/{storeId}/categories/{id}',
     {
@@ -97,21 +100,21 @@ export async function updateCategory(
     );
   }
 
-  return data.data as Category;
+  return data.data;
 }
 
 /**
  * Deletes a category.
  *
- * @param storeId - The ID of the store.
- * @param categoryId - The ID of the category to delete.
- * @returns A promise resolving to the deleted category's ID.
- * @throws {ApiError} - Throws on fetch/API errors.
+ * @param storeId - The ID of the store
+ * @param categoryId - The ID of the category to delete
+ * @returns The deleted category ID
+ * @throws {ApiError} If the request fails
  */
 export async function deleteCategory(
   storeId: string,
   categoryId: string
-): Promise<{ id: string }> {
+): Promise<CategoryDeletedResponseDto> {
   const { data, error, response } = await apiClient.DELETE(
     '/stores/{storeId}/categories/{id}',
     {
@@ -126,17 +129,15 @@ export async function deleteCategory(
     );
   }
 
-  return data.data as { id: string };
+  return data.data;
 }
 
 /**
- * Updates the sort order of categories and their contained menu items for a store.
- * Requires OWNER/ADMIN permissions.
+ * Updates the sort order of categories and their menu items.
  *
- * @param storeId - The ID of the store whose categories are being sorted.
- * @param payload - The sorting payload containing the ordered list of categories and items.
- * @returns A promise resolving to void upon successful reordering.
- * @throws {ApiError} - Throws on fetch/API errors (e.g., invalid payload, permissions).
+ * @param storeId - The ID of the store
+ * @param payload - The sorting payload with ordered categories
+ * @throws {ApiError} If the request fails
  */
 export async function sortCategories(
   storeId: string,
@@ -151,6 +152,6 @@ export async function sortCategories(
   );
 
   if (error) {
-    throw new ApiError('Failed to sort categories', response.status);
+    throw new ApiError('Failed to sort categories', response?.status ?? 500);
   }
 }

@@ -1,7 +1,7 @@
 // src/features/menu/mock/index.ts
 
-import { Cart } from '@/features/cart/types/cart.types';
-import { Category } from '@/features/menu/types/menu.types';
+import type { CartResponseDto } from '@repo/api/generated/types';
+import type { Category } from '@/features/menu/types/menu.types';
 
 export const MOCK_STORE_DETAILS = {
   information: { name: 'Demo Cafe', logoUrl: '/placeholder-logo.png' },
@@ -194,9 +194,11 @@ export const MOCK_CATEGORIES: Category[] = [
   },
 ];
 
-export const INITIAL_CART_STATE: Cart = {
-  id: 'local-cart', // Use a placeholder ID for local state
-  activeTableSessionId: 'local-session', // Placeholder
+export const INITIAL_CART_STATE: CartResponseDto = {
+  id: 'local-cart',
+  sessionId: 'local-session',
+  storeId: 'store1',
+  subTotal: '0.00',
   items: [],
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
