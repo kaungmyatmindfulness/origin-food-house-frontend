@@ -5,7 +5,11 @@
  * Uses openapi-fetch for type-safe API calls with auto-generated types.
  */
 
-import { apiClient, unwrapApiResponse, unwrapApiResponseAs } from '@/utils/apiFetch';
+import {
+  apiClient,
+  unwrapApiResponse,
+  unwrapApiResponseAs,
+} from '@/utils/apiFetch';
 import type {
   OrderResponseDto,
   UpdateOrderStatusDto,
@@ -32,7 +36,10 @@ export async function addToCart(
     body: cartData,
   });
 
-  return unwrapApiResponseAs<CartResponseDto>(result, 'Failed to add item to cart');
+  return unwrapApiResponseAs<CartResponseDto>(
+    result,
+    'Failed to add item to cart'
+  );
 }
 
 /**
@@ -69,7 +76,10 @@ export async function removeFromCart(
     },
   });
 
-  return unwrapApiResponseAs<CartResponseDto>(result, 'Failed to remove item from cart');
+  return unwrapApiResponseAs<CartResponseDto>(
+    result,
+    'Failed to remove item from cart'
+  );
 }
 
 /**
@@ -94,7 +104,10 @@ export async function updateCartItem(
     body: cartData,
   });
 
-  return unwrapApiResponseAs<CartResponseDto>(result, 'Failed to update cart item');
+  return unwrapApiResponseAs<CartResponseDto>(
+    result,
+    'Failed to update cart item'
+  );
 }
 
 /**

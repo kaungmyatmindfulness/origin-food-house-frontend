@@ -83,7 +83,9 @@ function TypedRadioGroup<T extends string>({
       value={value}
       onValueChange={handleValueChange}
       className={cn(
-        orientation === 'horizontal' ? 'flex flex-row space-x-4' : 'flex flex-col space-y-2',
+        orientation === 'horizontal'
+          ? 'flex flex-row space-x-4'
+          : 'flex flex-col space-y-2',
         className
       )}
       {...radioGroupProps}

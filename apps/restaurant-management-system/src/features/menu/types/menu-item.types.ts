@@ -3,6 +3,15 @@
  *
  * Re-exports auto-generated types from @repo/api and provides
  * frontend-specific utility types for translations.
+ *
+ * NOTE: The BaseTranslation and TranslationWithDescription interfaces below
+ * are NOT duplicates of the generated types. They serve a different purpose:
+ *
+ * - Generated types (BaseTranslationResponseDto, TranslationWithDescriptionResponseDto)
+ *   are for API array format: [{locale: 'en', name: '...'}, {locale: 'zh', name: '...'}]
+ *
+ * - Frontend types (BaseTranslation, TranslationWithDescription) are value types
+ *   for TranslationMap, where locale is the key: {en: {name: '...'}, zh: {name: '...'}}
  */
 
 // Re-export all menu item types from auto-generated schemas
@@ -24,6 +33,7 @@ export type {
   UpdateMenuItemTranslationsDto,
   UpdateCustomizationGroupTranslationsDto,
   UpdateCustomizationOptionTranslationsDto,
+  // API array-format translation types (includes locale in value)
   TranslationWithDescriptionResponseDto,
   BaseTranslationDto,
   BaseTranslationResponseDto,
@@ -31,41 +41,33 @@ export type {
 } from '@repo/api/generated/types';
 
 // Re-export helper types from centralized utilities
-export type { SupportedLocale, TranslationMap } from '@/common/types/api-type-fixes';
+export type {
+  SupportedLocale,
+  TranslationMap,
+} from '@/common/types/api-type-fixes';
 
 /**
- * Base translation structure (name only).
- * Used for frontend translation utilities.
+ * Base translation value type for TranslationMap (name only).
+ *
+ * Used as the value type in TranslationMap<BaseTranslation>:
+ *   { en: { name: 'English Name' }, zh: { name: 'Chinese Name' } }
+ *
+ * Different from BaseTranslationResponseDto which includes locale in the value
+ * for API array format: [{ locale: 'en', name: '...' }]
  */
 export interface BaseTranslation {
-  locale: 'en' | 'zh' | 'my' | 'th';
   name: string;
 }
 
 /**
- * Translation with description (for menu items).
- * Used for frontend translation utilities.
+ * Translation value type with description for TranslationMap.
+ *
+ * Used as the value type in TranslationMap<TranslationWithDescription>:
+ *   { en: { name: '...', description: '...' }, zh: { name: '...', description: '...' } }
+ *
+ * Different from TranslationWithDescriptionResponseDto which includes locale
+ * in the value for API array format.
  */
 export interface TranslationWithDescription extends BaseTranslation {
   description?: string | null;
-}
-
-/**
- * Lightweight menu item type with categoryId instead of nested category.
- * Used for list views where the full category object isn't needed.
- */
-export interface MenuItem {
-  id: string;
-  name: string;
-  /** Item description */
-  description?: string | null;
-  basePrice: string;
-  /** Base S3 path for image */
-  imagePath?: string | null;
-  categoryId: string;
-  storeId: string;
-  createdAt: string;
-  updatedAt: string;
-  isOutOfStock?: boolean;
-  translations?: Record<string, TranslationWithDescription>;
 }

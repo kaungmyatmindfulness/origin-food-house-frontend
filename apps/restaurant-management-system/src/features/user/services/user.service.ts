@@ -27,7 +27,10 @@ export async function registerUser(
     body: userData,
   });
 
-  return unwrapApiResponseAs<UserProfileResponseDto>(result, 'Registration failed');
+  return unwrapApiResponseAs<UserProfileResponseDto>(
+    result,
+    'Registration failed'
+  );
 }
 
 /**
@@ -59,7 +62,10 @@ export async function getUserStores(userId: string): Promise<UserStoreRole[]> {
     params: { path: { id: userId } },
   });
 
-  return unwrapApiResponseAs<UserStoreRole[]>(result, 'Failed to get user stores');
+  return unwrapApiResponseAs<UserStoreRole[]>(
+    result,
+    'Failed to get user stores'
+  );
 }
 
 /**
@@ -76,5 +82,8 @@ export async function getCurrentUser(
     params: { query: { storeId } },
   });
 
-  return unwrapApiResponseAs<CurrentUserData>(result, 'Failed to get current user');
+  return unwrapApiResponseAs<CurrentUserData>(
+    result,
+    'Failed to get current user'
+  );
 }

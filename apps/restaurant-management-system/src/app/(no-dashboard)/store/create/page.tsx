@@ -30,7 +30,7 @@ import { ROUTES } from '@/common/constants/routes';
 import { storeKeys } from '@/features/store/queries/store.keys';
 import { createStore } from '@/features/store/services/store.service';
 
-import type { CreateStoreDto } from '@/features/store/types/store.types';
+import type { CreateStoreDto } from '@repo/api/generated/types';
 
 export default function CreateStorePage() {
   const t = useTranslations('store.create');

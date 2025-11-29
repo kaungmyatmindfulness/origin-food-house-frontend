@@ -4,13 +4,9 @@
  * Provides table status management types.
  * Note: TableStatus is defined as an enum here because we need runtime values
  * for Object.values() and as object keys in status-related UI logic.
+ *
+ * For API types (TableResponseDto, UpdateTableDto), import directly from '@repo/api/generated/types'.
  */
-
-// Re-export table types from auto-generated schemas
-export type {
-  TableResponseDto,
-  UpdateTableDto,
-} from '@repo/api/generated/types';
 
 /**
  * DTO for updating table status.

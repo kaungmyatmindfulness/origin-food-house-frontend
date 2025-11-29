@@ -1,12 +1,11 @@
 /**
  * Auth Types (Auth0-Only)
  *
- * Re-exports auto-generated types and defines types for Auth0 authentication flow.
+ * Defines types for Auth0 authentication flow.
  * Local authentication types have been removed as we now use Auth0 exclusively.
+ *
+ * Note: For API types like ChooseStoreDto, import directly from '@repo/api/generated/types'.
  */
-
-// Re-export store selection DTO from auto-generated types
-export type { ChooseStoreDto } from '@repo/api/generated/types';
 
 /**
  * AccessTokenData

@@ -2233,6 +2233,103 @@ export interface components {
              */
             name?: string;
         };
+        AuditLogDetailsDto: {
+            /**
+             * @description Previous value before the change
+             * @example 10.00
+             */
+            previousValue?: string;
+            /**
+             * @description New value after the change
+             * @example 12.00
+             */
+            newValue?: string;
+            /**
+             * @description Name of the field that was changed
+             * @example price
+             */
+            fieldName?: string;
+            /**
+             * @description Type of the entity that was changed
+             * @example MenuItem
+             */
+            entityType?: string;
+            /**
+             * @description Name or identifier of the changed entity
+             * @example Margherita Pizza
+             */
+            entityName?: string;
+            /**
+             * @description Previous role (for role change actions)
+             * @example CASHIER
+             */
+            previousRole?: string;
+            /**
+             * @description New role (for role change actions)
+             * @example ADMIN
+             */
+            newRole?: string;
+            /**
+             * @description Email of the user affected by the action
+             * @example user@example.com
+             */
+            userEmail?: string;
+            /**
+             * @description Order number for order-related actions
+             * @example ORD-001-123
+             */
+            orderNumber?: string;
+            /**
+             * @description Previous order status
+             * @example PENDING
+             */
+            previousStatus?: string;
+            /**
+             * @description New order status
+             * @example CONFIRMED
+             */
+            newStatus?: string;
+            /**
+             * @description Payment amount
+             * @example 50.00
+             */
+            amount?: string;
+            /**
+             * @description Payment method used
+             * @example CASH
+             */
+            paymentMethod?: string;
+            /**
+             * @description Reason for refund or cancellation
+             * @example Customer request
+             */
+            reason?: string;
+            /**
+             * @description Category name for menu item actions
+             * @example Appetizers
+             */
+            categoryName?: string;
+            /**
+             * @description Price change amount
+             * @example 2.00
+             */
+            priceChange?: string;
+            /**
+             * @description Setting name that was changed
+             * @example vatRate
+             */
+            settingName?: string;
+            /**
+             * @description Number of items affected
+             * @example 5
+             */
+            itemCount?: number;
+            /**
+             * @description Additional context or notes
+             * @example Bulk update from admin panel
+             */
+            notes?: string;
+        };
         AuditLogEntryDto: {
             /**
              * @description Audit log ID
@@ -2263,15 +2360,14 @@ export interface components {
              */
             entityId?: string;
             /**
-             * @description Additional action-specific details
+             * @description Additional action-specific details (fields vary by action type)
              * @example {
              *       "previousValue": "10.00",
-             *       "newValue": "12.00"
+             *       "newValue": "12.00",
+             *       "fieldName": "price"
              *     }
              */
-            details?: {
-                [key: string]: unknown;
-            } | null;
+            details?: components["schemas"]["AuditLogDetailsDto"] | null;
             /**
              * @description IP address of the requester
              * @example 192.168.1.1
@@ -2552,6 +2648,53 @@ export interface components {
              */
             updatedAt: string;
         };
+        BankTransferDetailsDto: {
+            /**
+             * @description Name of the bank
+             * @example Bank of America
+             */
+            bankName?: string;
+            /**
+             * @description Bank account number (may be masked)
+             * @example ****1234
+             */
+            accountNumber?: string;
+            /**
+             * @description Account holder name
+             * @example John Doe
+             */
+            accountHolderName?: string;
+            /**
+             * @description Date of the transfer (ISO date string)
+             * @example 2025-01-15
+             */
+            transferDate?: string;
+            /**
+             * @description Bank reference or transaction number
+             * @example TXN123456
+             */
+            referenceNumber?: string;
+            /**
+             * @description Bank branch name or code
+             * @example Downtown Branch
+             */
+            branchName?: string;
+            /**
+             * @description Bank routing number (if applicable)
+             * @example 021000021
+             */
+            routingNumber?: string;
+            /**
+             * @description SWIFT/BIC code for international transfers
+             * @example BOFAUS3N
+             */
+            swiftCode?: string;
+            /**
+             * @description Additional notes about the transfer
+             * @example Payment for Premium subscription
+             */
+            notes?: string;
+        };
         CreatePaymentRequestDto: {
             /**
              * @description Requested subscription tier
@@ -2583,7 +2726,7 @@ export interface components {
              */
             currency: "THB" | "MMK" | "USD" | "EUR" | "JPY" | "CNY" | "SGD" | "HKD";
             /**
-             * @description Bank transfer details (JSON object with bank name, account number, etc.)
+             * @description Bank transfer details for payment verification
              * @example {
              *       "bankName": "Bank of America",
              *       "accountNumber": "****1234",
@@ -2591,9 +2734,7 @@ export interface components {
              *       "referenceNumber": "TXN123456"
              *     }
              */
-            bankTransferDetails?: {
-                [key: string]: unknown;
-            } | null;
+            bankTransferDetails?: components["schemas"]["BankTransferDetailsDto"] | null;
         };
         TrialEligibilityResponseDto: {
             /**
@@ -2884,7 +3025,7 @@ export interface components {
              */
             space?: string;
             /**
-             * @description Generated versions with their metadata (dimensions and sizes, no URLs)
+             * @description Generated versions with their metadata (dimensions and sizes, no URLs). Keys are size names: 'small', 'medium', 'large', 'original'
              * @example {
              *       "small": {
              *         "width": 400,
@@ -2904,7 +3045,7 @@ export interface components {
              *     }
              */
             versions: {
-                [key: string]: unknown;
+                [key: string]: components["schemas"]["VersionMetadataDto"];
             };
         };
         UploadImageResponseDto: {
@@ -3630,10 +3771,62 @@ export interface components {
              * @enum {string}
              */
             splitType: "EVEN" | "BY_ITEM" | "CUSTOM";
-            /** @description Split data based on split type */
-            splitData: {
-                [key: string]: unknown;
+            /** @description Split data based on split type. Structure varies by splitType: EVEN requires guestCount, BY_ITEM requires itemAssignments, CUSTOM requires customAmounts. */
+            splitData: components["schemas"]["EvenSplitDataDto"] | components["schemas"]["ByItemSplitDataDto"] | components["schemas"]["CustomSplitDataDto"];
+        };
+        SplitMetadataDto: {
+            /**
+             * @description Number of guests for even split
+             * @example 3
+             */
+            guestCount?: number;
+            /**
+             * @description Amount per guest for even split
+             * @example 33.33
+             */
+            amountPerGuest?: string;
+            /**
+             * @description Item assignments for BY_ITEM split
+             * @example {
+             *       "guest1": [
+             *         "item-id-1"
+             *       ]
+             *     }
+             */
+            itemAssignments?: {
+                [key: string]: string[];
             };
+            /**
+             * @description Assigned item IDs for this guest (BY_ITEM split)
+             * @example [
+             *       "item-uuid-1",
+             *       "item-uuid-2"
+             *     ]
+             */
+            assignedItems?: string[];
+            /**
+             * @description Custom amounts for CUSTOM split
+             * @example [
+             *       "30.00",
+             *       "45.00"
+             *     ]
+             */
+            customAmounts?: string[];
+            /**
+             * @description Total number of guests in the split
+             * @example 3
+             */
+            totalGuests?: number;
+            /**
+             * @description Grand total of the order
+             * @example 100.00
+             */
+            grandTotal?: string;
+            /**
+             * @description Remaining amount to be paid
+             * @example 50.00
+             */
+            remaining?: string;
         };
         RecordSplitPaymentDto: {
             /**
@@ -3669,15 +3862,13 @@ export interface components {
              */
             guestNumber: number;
             /**
-             * @description Split metadata (JSON object with calculation details)
+             * @description Split metadata with calculation details
              * @example {
              *       "guestCount": 2,
-             *       "assignedItems": []
+             *       "amountPerGuest": "50.00"
              *     }
              */
-            splitMetadata?: {
-                [key: string]: unknown;
-            };
+            splitMetadata?: components["schemas"]["SplitMetadataDto"];
             /**
              * @description External transaction ID (for card/mobile payments)
              * @example TXN123456789
@@ -3709,6 +3900,39 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
         };
+        DayHoursDto: {
+            /**
+             * @description Whether the store is closed on this day
+             * @example false
+             */
+            closed: boolean;
+            /**
+             * @description Opening time in HH:MM format (required if not closed)
+             * @example 09:00
+             */
+            open?: string;
+            /**
+             * @description Closing time in HH:MM format (required if not closed)
+             * @example 22:00
+             */
+            close?: string;
+        };
+        BusinessHoursDto: {
+            /** @description Business hours for Monday */
+            monday: components["schemas"]["DayHoursDto"];
+            /** @description Business hours for Tuesday */
+            tuesday: components["schemas"]["DayHoursDto"];
+            /** @description Business hours for Wednesday */
+            wednesday: components["schemas"]["DayHoursDto"];
+            /** @description Business hours for Thursday */
+            thursday: components["schemas"]["DayHoursDto"];
+            /** @description Business hours for Friday */
+            friday: components["schemas"]["DayHoursDto"];
+            /** @description Business hours for Saturday */
+            saturday: components["schemas"]["DayHoursDto"];
+            /** @description Business hours for Sunday */
+            sunday: components["schemas"]["DayHoursDto"];
+        };
         StoreSettingResponseDto: {
             /**
              * Format: uuid
@@ -3737,35 +3961,60 @@ export interface components {
              */
             serviceChargeRate?: string | null;
             /**
-             * @description Business hours configuration as JSON (keys: days of week, values: open/close times)
+             * @description Business hours configuration (days of week with open/close times)
              * @example {
              *       "monday": {
+             *         "closed": false,
              *         "open": "09:00",
-             *         "close": "22:00",
-             *         "isOpen": true
+             *         "close": "22:00"
              *       },
              *       "tuesday": {
+             *         "closed": false,
              *         "open": "09:00",
-             *         "close": "22:00",
-             *         "isOpen": true
+             *         "close": "22:00"
+             *       },
+             *       "wednesday": {
+             *         "closed": false,
+             *         "open": "09:00",
+             *         "close": "22:00"
+             *       },
+             *       "thursday": {
+             *         "closed": false,
+             *         "open": "09:00",
+             *         "close": "22:00"
+             *       },
+             *       "friday": {
+             *         "closed": false,
+             *         "open": "09:00",
+             *         "close": "22:00"
+             *       },
+             *       "saturday": {
+             *         "closed": false,
+             *         "open": "10:00",
+             *         "close": "20:00"
+             *       },
+             *       "sunday": {
+             *         "closed": true
              *       }
              *     }
              */
-            businessHours?: {
-                [key: string]: unknown;
-            } | null;
+            businessHours?: components["schemas"]["BusinessHoursDto"] | null;
             /**
-             * @description Special hours configuration as JSON (holidays, special events)
+             * @description Special hours configuration (key: date in YYYY-MM-DD format, value: special hours entry)
              * @example {
              *       "2025-12-25": {
              *         "open": "10:00",
              *         "close": "18:00",
              *         "note": "Christmas Day"
+             *       },
+             *       "2025-01-01": {
+             *         "isClosed": true,
+             *         "note": "New Year's Day"
              *       }
              *     }
              */
             specialHours?: {
-                [key: string]: unknown;
+                [key: string]: components["schemas"]["SpecialHoursEntryDto"];
             } | null;
             /**
              * @description Whether to accept orders when the store is closed
@@ -3969,39 +4218,6 @@ export interface components {
              * @example 0.10
              */
             serviceChargeRate: string;
-        };
-        DayHoursDto: {
-            /**
-             * @description Whether the store is closed on this day
-             * @example false
-             */
-            closed: boolean;
-            /**
-             * @description Opening time in HH:MM format (required if not closed)
-             * @example 09:00
-             */
-            open?: string;
-            /**
-             * @description Closing time in HH:MM format (required if not closed)
-             * @example 22:00
-             */
-            close?: string;
-        };
-        BusinessHoursDto: {
-            /** @description Business hours for Monday */
-            monday: components["schemas"]["DayHoursDto"];
-            /** @description Business hours for Tuesday */
-            tuesday: components["schemas"]["DayHoursDto"];
-            /** @description Business hours for Wednesday */
-            wednesday: components["schemas"]["DayHoursDto"];
-            /** @description Business hours for Thursday */
-            thursday: components["schemas"]["DayHoursDto"];
-            /** @description Business hours for Friday */
-            friday: components["schemas"]["DayHoursDto"];
-            /** @description Business hours for Saturday */
-            saturday: components["schemas"]["DayHoursDto"];
-            /** @description Business hours for Sunday */
-            sunday: components["schemas"]["DayHoursDto"];
         };
         UpdateLoyaltyRulesDto: {
             /**
@@ -4846,10 +5062,8 @@ export interface components {
             requestedDuration?: number | null;
             /** @description Payment proof path */
             paymentProofPath?: string | null;
-            /** @description Bank transfer details */
-            bankTransferDetails?: {
-                [key: string]: unknown;
-            } | null;
+            /** @description Bank transfer details for payment verification */
+            bankTransferDetails?: components["schemas"]["BankTransferDetailsDto"] | null;
             /** @description Admin notes */
             notes?: string | null;
             /** @description Verified by admin ID */
@@ -5047,6 +5261,80 @@ export interface components {
              * @description Date range end
              */
             endDate: string;
+        };
+        SpecialHoursEntryDto: {
+            /**
+             * @description Opening time in HH:MM format
+             * @example 10:00
+             */
+            open: string;
+            /**
+             * @description Closing time in HH:MM format
+             * @example 18:00
+             */
+            close: string;
+            /**
+             * @description Optional note for this special hours entry
+             * @example Christmas Day - Limited Hours
+             */
+            note?: string | null;
+            /**
+             * @description Whether the store is closed on this date
+             * @example false
+             */
+            isClosed?: boolean;
+        };
+        EvenSplitDataDto: {
+            /**
+             * @description Number of guests to split the bill among
+             * @example 3
+             */
+            guestCount: number;
+        };
+        ByItemSplitDataDto: {
+            /**
+             * @description Item assignments by guest (e.g., { 'guest1': ['item-id-1', 'item-id-2'] })
+             * @example {
+             *       "guest1": [
+             *         "item-uuid-1",
+             *         "item-uuid-2"
+             *       ],
+             *       "guest2": [
+             *         "item-uuid-3"
+             *       ]
+             *     }
+             */
+            itemAssignments: {
+                [key: string]: string[];
+            };
+        };
+        CustomSplitDataDto: {
+            /**
+             * @description Custom amounts for each guest (as decimal strings)
+             * @example [
+             *       "30.00",
+             *       "45.00",
+             *       "25.00"
+             *     ]
+             */
+            customAmounts: string[];
+        };
+        VersionMetadataDto: {
+            /**
+             * @description Width in pixels
+             * @example 400
+             */
+            width?: number;
+            /**
+             * @description Height in pixels
+             * @example 300
+             */
+            height?: number;
+            /**
+             * @description File size in bytes
+             * @example 51200
+             */
+            size?: number;
         };
     };
     responses: never;

@@ -15,11 +15,11 @@ import {
   type TypedSelectOption,
 } from '@repo/ui/components/typed-select';
 
-import type { Category } from '@/features/menu/types/category.types';
+import type { CategoryResponseDto } from '@/features/menu/types/category.types';
 import type { StockFilter } from '@/features/menu/store/menu.store';
 
 interface MenuFiltersProps {
-  categories: Category[];
+  categories: CategoryResponseDto[];
   categoryFilter: string | null;
   stockFilter: StockFilter;
   onCategoryChange: (value: string) => void;

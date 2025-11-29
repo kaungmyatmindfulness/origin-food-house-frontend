@@ -13,7 +13,7 @@ import { SalesMenuItemCard } from './SalesMenuItemCard';
 import { $api } from '@/utils/apiFetch';
 import { API_PATHS } from '@/utils/api-paths';
 import { useSalesStore } from '@/features/sales/store/sales.store';
-import type { Category } from '@/features/menu/types/category.types';
+
 import type { MenuItemResponseDto } from '@repo/api/generated/types';
 
 interface MenuPanelProps {
@@ -54,7 +54,7 @@ export function MenuPanel({ storeId, onAddToCart }: MenuPanelProps) {
       { params: { path: { storeId } } },
       { staleTime: 5 * 60 * 1000 } // 5 minutes
     );
-  const categories = (categoriesResponse?.data ?? []) as Category[];
+  const categories = categoriesResponse?.data ?? [];
 
   // Fetch menu items using $api.useQuery
   const { data: menuItemsResponse, isLoading: itemsLoading } = $api.useQuery(
@@ -67,7 +67,7 @@ export function MenuPanel({ storeId, onAddToCart }: MenuPanelProps) {
   // Filter items by category and search
   // MenuItemResponseDto from our corrected types has proper nullable string types
   const filteredItems = useMemo(() => {
-    const menuItems = (menuItemsResponse?.data ?? []) as MenuItemResponseDto[];
+    const menuItems = menuItemsResponse?.data ?? [];
     if (!menuItems.length) return [];
 
     return menuItems.filter((item) => {
@@ -85,7 +85,8 @@ export function MenuPanel({ storeId, onAddToCart }: MenuPanelProps) {
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         const nameMatch = item.name.toLowerCase().includes(query);
-        const descMatch = item.description?.toLowerCase().includes(query) ?? false;
+        const descMatch =
+          item.description?.toLowerCase().includes(query) ?? false;
         if (!nameMatch && !descMatch) {
           return false;
         }

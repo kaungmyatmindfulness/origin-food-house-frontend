@@ -47,9 +47,37 @@ export async function createCategory(
 
 - Use `apiFetch()` from `@/utils/apiFetch` (configured with auth headers)
 - Always use `unwrapData()` for consistent error handling
-- Import types from `@repo/api/generated/types` (NEVER manually define API types)
+- Import types **directly** from `@repo/api/generated/types` (NEVER manually define API types)
+- Do NOT import from feature type files that re-export (e.g., `@/features/menu/types/category.types`)
 - Add JSDoc comments for service functions
 - Return explicit types, never rely on inference
+
+**Type Import Pattern:**
+
+```typescript
+// ✅ CORRECT - Direct import from generated types
+import type { CategoryResponseDto } from '@repo/api/generated/types';
+
+// ❌ WRONG - Import from feature type file
+import type { Category } from '@/features/menu/types/category.types';
+```
+
+**When using `$api.useQuery` (openapi-react-query):**
+
+```typescript
+// ✅ CORRECT - Let TypeScript infer the response type
+const { data: categoriesResponse } = $api.useQuery(
+  'get',
+  API_PATHS.categories,
+  {
+    params: { path: { storeId } },
+  }
+);
+const categories = categoriesResponse?.data ?? [];
+
+// ❌ WRONG - Type casting bypasses TypeScript safety
+const categories = (categoriesResponse?.data ?? []) as CategoryResponseDto[];
+```
 
 ## 2. React Query Key Factories
 

@@ -2,7 +2,11 @@
  * Category Types
  *
  * Re-exports auto-generated types from @repo/api for categories.
- * Provides type extensions for frontend-specific needs.
+ * Extends MenuItemNestedResponseDto with isOutOfStock field that the API returns
+ * but is missing from the OpenAPI spec.
+ *
+ * TODO: Update backend OpenAPI spec to include isOutOfStock in MenuItemNestedResponseDto
+ * Once the backend spec is updated and types regenerated, these extensions can be removed.
  */
 
 import type {
@@ -10,11 +14,10 @@ import type {
   MenuItemNestedResponseDto as GeneratedMenuItemNestedResponseDto,
 } from '@repo/api/generated/types';
 
-// Re-export all category-related types from auto-generated schemas
+// Re-export category-related types from auto-generated schemas
 export type {
   CategoryBasicResponseDto,
   CategoryDeletedResponseDto,
-  CategoryResponseDto as GeneratedCategoryResponseDto,
   CreateCategoryDto,
   UpdateCategoryDto,
   SortCategoryDto,
@@ -26,31 +29,24 @@ export type {
 } from '@repo/api/generated/types';
 
 // Re-export helper types from centralized utilities
-export type { SupportedLocale, TranslationMap } from '@/common/types/api-type-fixes';
-
-// Re-export translation types from menu-item.types for consistency
-export type { BaseTranslation } from './menu-item.types';
+export type {
+  SupportedLocale,
+  TranslationMap,
+} from '@/common/types/api-type-fixes';
 
 /**
  * Extended MenuItemNestedResponseDto with isOutOfStock field.
- * The generated type doesn't include isOutOfStock but the API returns it.
  *
- * Note: translations field remains as array format from API response.
- * Components should convert array to map format when needed using utility functions.
+ * The generated type from OpenAPI spec is missing isOutOfStock but the API returns it.
+ * This extension adds the missing field for type safety.
+ *
+ * TODO: Remove this extension once backend OpenAPI spec includes isOutOfStock
+ * in MenuItemNestedResponseDto and types are regenerated.
  */
 export interface MenuItemNestedResponseDto
-  extends Omit<GeneratedMenuItemNestedResponseDto, 'translations'> {
-  /** Whether the item is out of stock (added by API but not in OpenAPI spec) */
+  extends GeneratedMenuItemNestedResponseDto {
+  /** Whether the item is out of stock (returned by API but missing from OpenAPI spec) */
   isOutOfStock?: boolean;
-  /**
-   * Translations for the menu item in different locales.
-   * Array format from API: [{locale: 'en', name: '...', description: '...'}]
-   */
-  translations?: Array<{
-    locale: 'en' | 'zh' | 'my' | 'th';
-    name: string;
-    description?: string | null;
-  }>;
 }
 
 /**
@@ -61,11 +57,3 @@ export interface CategoryResponseDto
   extends Omit<GeneratedCategoryResponseDto, 'menuItems'> {
   menuItems: MenuItemNestedResponseDto[];
 }
-
-/**
- * Alias for CategoryResponseDto.
- * Used throughout the app for the full category object with nested menu items.
- *
- * @deprecated Prefer using CategoryResponseDto directly
- */
-export type Category = CategoryResponseDto;

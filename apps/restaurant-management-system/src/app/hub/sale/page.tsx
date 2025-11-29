@@ -33,10 +33,8 @@ import {
 } from '@/features/orders/services/order.service';
 import { transformOrderToReceiptData } from '@/features/sales/utils/transform-order-to-receipt';
 
-import type {
-  SalesMenuItem,
-  SalesView,
-} from '@/features/sales/types/sales.types';
+import type { MenuItemResponseDto } from '@repo/api/generated/types';
+import type { SalesView } from '@/features/sales/types/sales.types';
 
 export default function SalesPage() {
   const t = useTranslations('sales');
@@ -57,7 +55,9 @@ export default function SalesPage() {
   const clearSession = useSalesStore((state) => state.clearSession);
 
   // Quick add dialog state
-  const [quickAddItem, setQuickAddItem] = useState<SalesMenuItem | null>(null);
+  const [quickAddItem, setQuickAddItem] = useState<MenuItemResponseDto | null>(
+    null
+  );
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
 
   // Cart recovery dialog state
@@ -134,7 +134,7 @@ export default function SalesPage() {
   };
 
   // When user clicks an item in the menu grid
-  const handleMenuItemClick = (item: SalesMenuItem) => {
+  const handleMenuItemClick = (item: MenuItemResponseDto) => {
     // Check if item has customizations - if so, show dialog
     if (item.customizationGroups?.length) {
       setQuickAddItem(item);

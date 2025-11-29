@@ -39,15 +39,14 @@ import { Badge } from '@repo/ui/components/badge';
 import { Button } from '@repo/ui/components/button';
 import { ScrollArea } from '@repo/ui/components/scroll-area';
 import type {
-  Category,
+  CategoryResponseDto,
   MenuItemNestedResponseDto,
 } from '@/features/menu/types/category.types';
 import { getErrorMessage } from '@/common/utils/error.utils';
 
-// Note: Using local Category/MenuItemNestedResponseDto types instead of generated DTOs because:
-// - Generated CategoryResponseDto doesn't include nested menuItems
-// - Generated types may not match actual API response structure
-// TODO: Update OpenAPI spec on backend to properly reflect nested responses
+// Note: Using extended CategoryResponseDto/MenuItemNestedResponseDto from category.types.ts
+// because the generated types don't include isOutOfStock in MenuItemNestedResponseDto.
+// TODO: Update OpenAPI spec on backend to include isOutOfStock in MenuItemNestedResponseDto
 
 export default function MenuPage() {
   const t = useTranslations('menu');
@@ -86,10 +85,9 @@ export default function MenuPage() {
   );
 
   // Unwrap the response data (API returns { data, message, success })
-  // Cast to Category[] since the actual API response includes nested menuItems
-  // with isOutOfStock and proper string types for description/imagePath
+  // Cast to CategoryResponseDto[] since we use extended types that include isOutOfStock
   const categories = useMemo(
-    () => (categoriesResponse?.data as Category[] | undefined) ?? [],
+    () => (categoriesResponse?.data as CategoryResponseDto[] | undefined) ?? [],
     [categoriesResponse?.data]
   );
 

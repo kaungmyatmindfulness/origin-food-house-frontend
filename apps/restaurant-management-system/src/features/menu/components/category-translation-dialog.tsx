@@ -27,14 +27,17 @@ import {
 
 import { updateCategoryTranslations } from '../services/translation.service';
 import { menuKeys } from '../queries/menu.keys';
-import type { Category } from '../types/category.types';
+import type {
+  CategoryResponseDto,
+  BaseTranslationResponseDto,
+} from '../types/category.types';
 import type { SupportedLocale } from '../types/menu-item.types';
 import { LOCALE_INFO, SUPPORTED_LOCALES } from '../utils/translation.utils';
 
 interface CategoryTranslationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  category: Category;
+  category: CategoryResponseDto;
   storeId: string;
 }
 
@@ -60,7 +63,9 @@ export function CategoryTranslationDialog({
       let translation: { name?: string } | undefined;
 
       if (Array.isArray(category.translations)) {
-        translation = category.translations.find((t) => t.locale === locale);
+        translation = category.translations.find(
+          (t: BaseTranslationResponseDto) => t.locale === locale
+        );
       } else if (
         category.translations &&
         typeof category.translations === 'object'

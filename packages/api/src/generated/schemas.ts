@@ -39,6 +39,7 @@ export type AdminSuspendUserDto = Schemas['AdminSuspendUserDto'];
 export type AdminUserResponseDto = Schemas['AdminUserResponseDto'];
 export type AuditLogUserDto = Schemas['AuditLogUserDto'];
 export type BanUserDto = Schemas['BanUserDto'];
+export type BankTransferDetailsDto = Schemas['BankTransferDetailsDto'];
 export type CreateUserDto = Schemas['CreateUserDto'];
 export type InviteOrAssignRoleDto = Schemas['InviteOrAssignRoleDto'];
 export type InviteStaffDto = Schemas['InviteStaffDto'];
@@ -159,10 +160,13 @@ export type ValidateAdminResponseDto = Schemas['ValidateAdminResponseDto'];
 export type ValidateAdminTokenDto = Schemas['ValidateAdminTokenDto'];
 
 // Payment DTOs
+export type ByItemSplitDataDto = Schemas['ByItemSplitDataDto'];
 export type CalculateSplitDto = Schemas['CalculateSplitDto'];
 export type CreatePaymentRequestDto = Schemas['CreatePaymentRequestDto'];
 export type CreateRefundDto = Schemas['CreateRefundDto'];
 export type CreateRefundRequestDto = Schemas['CreateRefundRequestDto'];
+export type CustomSplitDataDto = Schemas['CustomSplitDataDto'];
+export type EvenSplitDataDto = Schemas['EvenSplitDataDto'];
 export type PaymentActionResponseDto = Schemas['PaymentActionResponseDto'];
 export type PaymentDetailResponseDto = Schemas['PaymentDetailResponseDto'];
 export type PaymentRequestResponseDto = Schemas['PaymentRequestResponseDto'];
@@ -172,6 +176,7 @@ export type RecordSplitPaymentDto = Schemas['RecordSplitPaymentDto'];
 export type RefundRequestResponseDto = Schemas['RefundRequestResponseDto'];
 export type RefundResponseDto = Schemas['RefundResponseDto'];
 export type RejectPaymentDto = Schemas['RejectPaymentDto'];
+export type SplitMetadataDto = Schemas['SplitMetadataDto'];
 export type VerifyPaymentDto = Schemas['VerifyPaymentDto'];
 
 // Translation DTOs
@@ -198,13 +203,16 @@ export type UpdateTaxAndServiceChargeDto = Schemas['UpdateTaxAndServiceChargeDto
 
 // Other DTOs
 export type ApplyDiscountDto = Schemas['ApplyDiscountDto'];
+export type AuditLogDetailsDto = Schemas['AuditLogDetailsDto'];
 export type AuditLogEntryDto = Schemas['AuditLogEntryDto'];
 export type ChangeRoleDto = Schemas['ChangeRoleDto'];
 export type DowngradeTierDto = Schemas['DowngradeTierDto'];
 export type FeatureAccessDto = Schemas['FeatureAccessDto'];
 export type ResourceUsageDto = Schemas['ResourceUsageDto'];
+export type SpecialHoursEntryDto = Schemas['SpecialHoursEntryDto'];
 export type SubscriptionResponseDto = Schemas['SubscriptionResponseDto'];
 export type SuspensionHistoryItemDto = Schemas['SuspensionHistoryItemDto'];
 export type TierResponseDto = Schemas['TierResponseDto'];
 export type TrialEligibilityResponseDto = Schemas['TrialEligibilityResponseDto'];
 export type TrialInfoResponseDto = Schemas['TrialInfoResponseDto'];
+export type VersionMetadataDto = Schemas['VersionMetadataDto'];

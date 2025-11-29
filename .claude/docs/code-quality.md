@@ -29,7 +29,9 @@ function calculateTotal(items: CartItemResponseDto[]): number {
 }
 ```
 
-### Use Auto-Generated Types
+### Use Auto-Generated Types - Direct Import
+
+**CRITICAL: Always import API types directly from `@repo/api/generated/types`.**
 
 ```typescript
 // ❌ BAD - Manual type definition
@@ -39,9 +41,52 @@ interface Category {
   storeId: string;
 }
 
-// ✅ GOOD - Auto-generated type
+// ❌ BAD - Importing from feature type files that re-export
+import type { Category } from '@/features/menu/types/category.types';
+
+// ✅ GOOD - Direct import from generated types
 import type { CategoryResponseDto } from '@repo/api/generated/types';
 ```
+
+**Type Flow:**
+
+```
+Backend OpenAPI Spec → npm run generate:api → @repo/api/generated/types → Direct import in components
+```
+
+### No Type Re-export Files
+
+**Do NOT create type files that re-export from `@repo/api/generated/types`:**
+
+```typescript
+// ❌ BAD - Unnecessary re-export file (features/menu/types/category.types.ts)
+export type {
+  CategoryResponseDto,
+  CreateCategoryDto,
+} from '@repo/api/generated/types';
+
+// ✅ GOOD - Import directly where needed
+// In your component or service:
+import type { CategoryResponseDto } from '@repo/api/generated/types';
+```
+
+**Exception:** Feature type files may contain:
+
+- Frontend-only UI state types (e.g., `SalesView = 'quick-sale' | 'tables'`)
+- Enums needed at runtime (e.g., `TableStatus` for `Object.values()`)
+- Type extensions for missing API fields (documented with TODO)
+
+### No Type Casting for API Responses
+
+```typescript
+// ❌ BAD - Type casting bypasses TypeScript safety
+const categories = (response?.data ?? []) as CategoryResponseDto[];
+
+// ✅ GOOD - Let TypeScript infer from properly typed API client
+const categories = response?.data ?? [];
+```
+
+The `$api.useQuery` from openapi-react-query returns properly typed responses. If you need to cast, the API client configuration is wrong.
 
 ### Avoid `any`, Use `unknown`
 

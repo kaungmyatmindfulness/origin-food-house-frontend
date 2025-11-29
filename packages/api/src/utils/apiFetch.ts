@@ -241,7 +241,11 @@ export function handleApiResponse<T>(
  * ```
  */
 export function unwrapApiResponse<
-  TResponse extends { data?: unknown; status?: string; message?: string | null },
+  TResponse extends {
+    data?: unknown;
+    status?: string;
+    message?: string | null;
+  },
 >(
   result: {
     data?: TResponse;

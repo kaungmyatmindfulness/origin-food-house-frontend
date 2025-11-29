@@ -62,11 +62,8 @@ export async function createRefund(
   orderId: string,
   data: CreateRefundDto
 ): Promise<RefundResponseDto> {
-  return typedFetch<RefundResponseDto>(
-    `/payments/orders/${orderId}/refunds`,
-    {
-      method: 'POST',
-      body: data,
-    }
-  );
+  return typedFetch<RefundResponseDto>(`/payments/orders/${orderId}/refunds`, {
+    method: 'POST',
+    body: data,
+  });
 }

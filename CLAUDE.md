@@ -158,6 +158,30 @@ For comprehensive guidelines, refer to these detailed documents:
 // 6. Types (import type)
 ```
 
+### Type Import Conventions
+
+**ALWAYS import API types directly from `@repo/api/generated/types`:**
+
+```typescript
+// ✅ CORRECT - Direct import
+import type { CategoryResponseDto } from '@repo/api/generated/types';
+
+// ❌ WRONG - Import from feature type file
+import type { Category } from '@/features/menu/types/category.types';
+
+// ❌ WRONG - Type casting API responses
+const items = (response?.data ?? []) as MenuItemResponseDto[];
+
+// ✅ CORRECT - Let TypeScript infer
+const items = response?.data ?? [];
+```
+
+**Feature type files should ONLY contain:**
+
+- Frontend-only UI state types (e.g., `SalesView`, `SalesPanel`)
+- Runtime enums (e.g., `TableStatus` for `Object.values()`)
+- Type extensions for missing API fields (documented with TODO)
+
 ### Semantic Color Tokens
 
 | Token              | Usage                        |
@@ -207,7 +231,9 @@ User-initiated navigation?
 ### Code Quality
 
 - [ ] Used `@repo/ui` components
-- [ ] Auto-generated API types (no manual types)
+- [ ] API types imported directly from `@repo/api/generated/types`
+- [ ] No type re-export files (import from source)
+- [ ] No type casting (`as Type[]`) for API responses
 - [ ] No `any` types
 - [ ] `import type` for type-only imports
 

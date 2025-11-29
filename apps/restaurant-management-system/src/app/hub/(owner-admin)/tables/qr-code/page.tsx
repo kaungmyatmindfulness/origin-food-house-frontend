@@ -12,7 +12,7 @@ import {
   useAuthStore,
   selectSelectedStoreId,
 } from '@/features/auth/store/auth.store';
-import type { TableResponseDto } from '@/features/tables/types/table.types';
+import type { TableResponseDto } from '@repo/api/generated/types';
 import type { ApiError } from '@/utils/apiFetch';
 
 import { Button } from '@repo/ui/components/button';

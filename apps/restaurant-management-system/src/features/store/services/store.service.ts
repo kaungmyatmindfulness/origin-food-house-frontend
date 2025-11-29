@@ -8,11 +8,11 @@
 import { apiClient, ApiError, unwrapApiResponseAs } from '@/utils/apiFetch';
 import type {
   CreateStoreDto,
-  GetStoreDetailsResponseDto,
   StoreSettingResponseDto,
   UpdateStoreInformationDto,
   UpdateStoreSettingDto,
-} from '@/features/store/types/store.types';
+} from '@repo/api/generated/types';
+import type { GetStoreDetailsResponseDto } from '@/features/store/types/store.types';
 
 /** Store creation response */
 interface StoreCreatedResponse {
@@ -107,5 +107,8 @@ export async function createStore(
     body: storeData,
   });
 
-  return unwrapApiResponseAs<StoreCreatedResponse>(result, 'Failed to create store');
+  return unwrapApiResponseAs<StoreCreatedResponse>(
+    result,
+    'Failed to create store'
+  );
 }

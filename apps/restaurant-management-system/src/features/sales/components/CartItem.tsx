@@ -7,7 +7,7 @@ import { Button } from '@repo/ui/components/button';
 
 import { formatCurrency } from '@/utils/formatting';
 
-import type { CartItemResponseDto } from '@/features/sales/types/sales.types';
+import type { CartItemResponseDto } from '@repo/api/generated/types';
 
 interface CartItemProps {
   item: CartItemResponseDto;

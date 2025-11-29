@@ -2,7 +2,12 @@
 
 import * as React from 'react';
 
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@repo/ui/components/tabs';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from '@repo/ui/components/tabs';
 import { cn } from '@repo/ui/lib/utils';
 
 /**

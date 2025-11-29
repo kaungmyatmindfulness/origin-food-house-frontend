@@ -110,8 +110,87 @@ interface Category {
   storeId: string;
 }
 
-// ✅ GOOD - Auto-generated type
+// ✅ GOOD - Auto-generated type (direct import)
 import type { CategoryResponseDto } from '@repo/api/generated/types';
+```
+
+## 6a. Type Re-export Files
+
+**Do NOT create feature type files that re-export from `@repo/api/generated/types`:**
+
+```typescript
+// ❌ BAD - features/menu/types/category.types.ts
+// This file just re-exports - DELETE IT
+export type {
+  CategoryResponseDto,
+  CreateCategoryDto,
+  UpdateCategoryDto,
+} from '@repo/api/generated/types';
+
+// ❌ BAD - Importing from the re-export file
+import type { CategoryResponseDto } from '@/features/menu/types/category.types';
+
+// ✅ GOOD - Import directly from source
+import type { CategoryResponseDto } from '@repo/api/generated/types';
+```
+
+**When feature type files ARE acceptable:**
+
+```typescript
+// ✅ OK - Frontend-only UI state types
+// features/sales/types/sales.types.ts
+export type SalesView = 'quick-sale' | 'tables';
+export type SalesPanel = 'cart' | 'payment' | 'receipt';
+
+// ✅ OK - Enums needed at runtime (for Object.values())
+export enum TableStatus {
+  VACANT = 'VACANT',
+  SEATED = 'SEATED',
+  // ...
+}
+
+// ✅ OK - Type extensions for missing API fields (with documentation)
+/**
+ * TODO: Backend should add isOutOfStock to OpenAPI spec
+ * Extension needed because API returns this field but it's not in generated types
+ */
+export interface MenuItemNestedResponseDto
+  extends GeneratedMenuItemNestedResponseDto {
+  isOutOfStock?: boolean;
+}
+```
+
+## 6b. Type Casting API Responses
+
+```typescript
+// ❌ BAD - Type casting bypasses TypeScript safety
+const categories = (categoriesResponse?.data ?? []) as CategoryResponseDto[];
+const menuItems = (response?.data ?? []) as MenuItemResponseDto[];
+
+// ✅ GOOD - Let TypeScript infer from properly typed API client
+const categories = categoriesResponse?.data ?? [];
+const menuItems = response?.data ?? [];
+```
+
+**Why this matters:**
+
+- Type casting (`as Type`) tells TypeScript "trust me" and skips validation
+- If the API response shape changes, casts hide the error
+- The `$api.useQuery` from openapi-react-query returns properly typed responses
+- If you need to cast, fix the API client configuration instead
+
+## 6c. Type Aliases That Add No Value
+
+```typescript
+// ❌ BAD - Alias adds no value, just obscures the source
+export type Category = CategoryResponseDto;
+export type SalesMenuItem = MenuItemResponseDto;
+
+// ✅ GOOD - Use the original type name directly
+import type {
+  CategoryResponseDto,
+  MenuItemResponseDto,
+} from '@repo/api/generated/types';
 ```
 
 ## 7. Raw Tailwind Colors

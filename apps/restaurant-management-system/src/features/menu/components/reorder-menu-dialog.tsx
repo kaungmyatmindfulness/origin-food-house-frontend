@@ -46,7 +46,7 @@ import { $api } from '@/utils/apiFetch';
 import { API_PATHS } from '@/utils/api-paths';
 import { getErrorMessage } from '@/common/utils/error.utils';
 import type {
-  Category,
+  CategoryResponseDto,
   SortCategoriesPayloadDto,
 } from '@/features/menu/types/category.types';
 
@@ -55,7 +55,7 @@ interface ReorderMenuDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-type OrderableCategory = Category;
+type OrderableCategory = CategoryResponseDto;
 
 const CATEGORY_PREFIX = 'cat-';
 const ITEM_PREFIX = 'item-';
@@ -150,7 +150,7 @@ export function ReorderMenuDialog({
     }
   );
   useEffect(() => {
-    const initialCategories = (categoriesResponse?.data ?? []) as Category[];
+    const initialCategories = categoriesResponse?.data ?? [];
     if (initialCategories.length > 0) {
       const sorted = initialCategories
         .sort((a, b) => a.sortOrder - b.sortOrder)

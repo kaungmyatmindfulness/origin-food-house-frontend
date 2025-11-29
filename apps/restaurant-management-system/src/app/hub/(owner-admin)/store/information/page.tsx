@@ -14,10 +14,8 @@ import {
   updateStoreInformation,
 } from '@/features/store/services/store.service'; // Adjust path
 
-import type {
-  GetStoreDetailsResponseDto,
-  UpdateStoreInformationDto,
-} from '@/features/store/types/store.types'; // Adjust path
+import type { UpdateStoreInformationDto } from '@repo/api/generated/types';
+import type { GetStoreDetailsResponseDto } from '@/features/store/types/store.types';
 import {
   useAuthStore,
   selectSelectedStoreId,

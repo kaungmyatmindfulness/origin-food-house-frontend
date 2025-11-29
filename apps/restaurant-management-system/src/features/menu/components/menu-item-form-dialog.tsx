@@ -13,7 +13,6 @@ import {
 } from '@/features/auth/store/auth.store';
 import { $api } from '@/utils/apiFetch';
 import { API_PATHS } from '@/utils/api-paths';
-import type { Category } from '@/features/menu/types/category.types';
 import { CustomizationGroupField } from '@/features/menu/components/customization-group-field';
 import { getErrorMessage } from '@/common/utils/error.utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -409,9 +408,9 @@ export function MenuItemFormDialog({
     if (values.isNewCategory && values.newCategoryName) {
       submitCategory = { name: values.newCategoryName.trim() };
     } else if (values.categoryId && values.categoryId !== 'add_new') {
-      const categoriesData = (categoriesResponse?.data ?? []) as Category[];
+      const categoriesData = categoriesResponse?.data ?? [];
       const selectedCatData = categoriesData.find(
-        (c: Category) => String(c.id) === values.categoryId
+        (c) => String(c.id) === values.categoryId
       );
       submitCategory = {
         id: values.categoryId,
@@ -444,7 +443,7 @@ export function MenuItemFormDialog({
   }
 
   const categoryOptions: CategoryOption[] = useMemo(() => {
-    const categories = (categoriesResponse?.data ?? []) as Category[];
+    const categories = categoriesResponse?.data ?? [];
     return [
       ...categories.map((cat) => ({
         label: cat.name,

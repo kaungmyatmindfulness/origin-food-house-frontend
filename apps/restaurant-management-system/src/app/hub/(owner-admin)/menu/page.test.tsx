@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MenuPage from './page';
-import type { Category } from '@/features/menu/types/category.types';
+import type { CategoryResponseDto } from '@/features/menu/types/category.types';
 
 // Mock dependencies
 jest.mock('@/features/menu/services/category.service', () => ({
@@ -22,7 +22,7 @@ jest.mock('@/features/menu/components/category-card', () => ({
     category,
     onSelectItem,
   }: {
-    category: Category;
+    category: CategoryResponseDto;
     onSelectItem: (item: any) => void;
   }) => (
     <div data-testid={`category-card-${category.id}`}>
@@ -73,7 +73,7 @@ jest.mock('@/features/menu/components/menu-filters', () => ({
     onCategoryChange,
     onStockChange,
   }: {
-    categories: Category[];
+    categories: CategoryResponseDto[];
     categoryFilter: string | null;
     stockFilter: 'all' | 'in-stock' | 'out-of-stock';
     onCategoryChange: (value: string | null) => void;
@@ -182,7 +182,7 @@ describe('MenuPage', () => {
     id: string,
     name: string,
     items: CategoryMenuItem[] = []
-  ): Category => ({
+  ): CategoryResponseDto => ({
     id,
     name,
     storeId: 'store-1',

@@ -17,9 +17,9 @@ describe('Translation Utilities', () => {
   describe('getTranslatedName', () => {
     const defaultName = 'Pad Thai';
     const translations: TranslationMap<BaseTranslation> = {
-      en: { locale: 'en', name: 'Pad Thai' },
-      th: { locale: 'th', name: 'ผัดไทย' },
-      zh: { locale: 'zh', name: '泰式炒河粉' },
+      en: { name: 'Pad Thai' },
+      th: { name: 'ผัดไทย' },
+      zh: { name: '泰式炒河粉' },
     };
 
     it('should return translated name for requested locale', () => {
@@ -58,11 +58,10 @@ describe('Translation Utilities', () => {
     const defaultDescription = 'Thai stir-fried noodles';
     const translations: TranslationMap<TranslationWithDescription> = {
       en: {
-        locale: 'en',
         name: 'Pad Thai',
         description: 'Thai stir-fried noodles',
       },
-      th: { locale: 'th', name: 'ผัดไทย', description: 'ก๋วยเตี๋ยวผัดไทย' },
+      th: { name: 'ผัดไทย', description: 'ก๋วยเตี๋ยวผัดไทย' },
     };
 
     it('should return translated description for requested locale', () => {
@@ -76,7 +75,7 @@ describe('Translation Utilities', () => {
 
     it('should handle null descriptions', () => {
       const translationsWithNull: TranslationMap<TranslationWithDescription> = {
-        en: { locale: 'en', name: 'Item', description: null },
+        en: { name: 'Item', description: null },
       };
       const result = getTranslatedDescription(
         'Default',
@@ -103,8 +102,8 @@ describe('Translation Utilities', () => {
 
   describe('hasTranslation', () => {
     const translations: TranslationMap<BaseTranslation> = {
-      en: { locale: 'en', name: 'Appetizers' },
-      th: { locale: 'th', name: 'อาหารว่าง' },
+      en: { name: 'Appetizers' },
+      th: { name: 'อาหารว่าง' },
     };
 
     it('should return true if translation exists', () => {
@@ -125,7 +124,7 @@ describe('Translation Utilities', () => {
 
     it('should return false if translation name is empty', () => {
       const badTranslations: TranslationMap<BaseTranslation> = {
-        th: { locale: 'th', name: '' },
+        th: { name: '' },
       };
       expect(hasTranslation(badTranslations, 'th')).toBe(false);
     });
@@ -134,10 +133,10 @@ describe('Translation Utilities', () => {
   describe('getTranslationCompleteness', () => {
     it('should return 100% for fully translated entity', () => {
       const translations: TranslationMap<BaseTranslation> = {
-        en: { locale: 'en', name: 'Item' },
-        zh: { locale: 'zh', name: '项目' },
-        my: { locale: 'my', name: 'အရာ' },
-        th: { locale: 'th', name: 'รายการ' },
+        en: { name: 'Item' },
+        zh: { name: '项目' },
+        my: { name: 'အရာ' },
+        th: { name: 'รายการ' },
       };
       const enabledLocales: SupportedLocale[] = ['en', 'zh', 'my', 'th'];
 
@@ -148,8 +147,8 @@ describe('Translation Utilities', () => {
 
     it('should return 50% for half-translated entity', () => {
       const translations: TranslationMap<BaseTranslation> = {
-        en: { locale: 'en', name: 'Item' },
-        th: { locale: 'th', name: 'รายการ' },
+        en: { name: 'Item' },
+        th: { name: 'รายการ' },
       };
       const enabledLocales: SupportedLocale[] = ['en', 'zh', 'my', 'th'];
 
@@ -171,7 +170,7 @@ describe('Translation Utilities', () => {
 
     it('should handle single enabled locale', () => {
       const translations: TranslationMap<BaseTranslation> = {
-        en: { locale: 'en', name: 'Item' },
+        en: { name: 'Item' },
       };
       const enabledLocales: SupportedLocale[] = ['en'];
 
@@ -184,8 +183,8 @@ describe('Translation Utilities', () => {
   describe('getMissingLocales', () => {
     it('should return locales without translations', () => {
       const translations: TranslationMap<BaseTranslation> = {
-        en: { locale: 'en', name: 'Item' },
-        th: { locale: 'th', name: 'รายการ' },
+        en: { name: 'Item' },
+        th: { name: 'รายการ' },
       };
       const enabledLocales: SupportedLocale[] = ['en', 'zh', 'my', 'th'];
 
@@ -202,10 +201,10 @@ describe('Translation Utilities', () => {
 
     it('should return empty array if all translated', () => {
       const translations: TranslationMap<BaseTranslation> = {
-        en: { locale: 'en', name: 'Item' },
-        zh: { locale: 'zh', name: '项目' },
-        my: { locale: 'my', name: 'အရာ' },
-        th: { locale: 'th', name: 'รายการ' },
+        en: { name: 'Item' },
+        zh: { name: '项目' },
+        my: { name: 'အရာ' },
+        th: { name: 'รายการ' },
       };
       const enabledLocales: SupportedLocale[] = ['en', 'zh', 'my', 'th'];
 
@@ -216,8 +215,8 @@ describe('Translation Utilities', () => {
 
   describe('isUsingFallback', () => {
     const translations: TranslationMap<BaseTranslation> = {
-      en: { locale: 'en', name: 'Appetizers' },
-      th: { locale: 'th', name: 'อาหารว่าง' },
+      en: { name: 'Appetizers' },
+      th: { name: 'อาหารว่าง' },
     };
 
     it('should return false if translation exists for requested locale', () => {

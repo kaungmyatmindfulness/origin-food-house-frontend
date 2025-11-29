@@ -76,11 +76,7 @@ export async function typedFetch<T>(
   const json: StandardApiResponse<T> = await response.json();
 
   if (json.status === 'error' || json.data === null) {
-    throw new ApiError(
-      json.message ?? 'Request failed',
-      response.status,
-      json
-    );
+    throw new ApiError(json.message ?? 'Request failed', response.status, json);
   }
 
   return json.data;
@@ -151,11 +147,7 @@ export async function typedFetchFormData<T>(
   const json: StandardApiResponse<T> = await response.json();
 
   if (json.status === 'error' || json.data === null) {
-    throw new ApiError(
-      json.message ?? 'Upload failed',
-      response.status,
-      json
-    );
+    throw new ApiError(json.message ?? 'Upload failed', response.status, json);
   }
 
   return json.data;

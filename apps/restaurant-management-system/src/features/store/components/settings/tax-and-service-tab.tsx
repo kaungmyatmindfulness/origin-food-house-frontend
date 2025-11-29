@@ -27,7 +27,7 @@ import {
 import { Input } from '@repo/ui/components/input';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateStoreSettings } from '../../services/store.service';
-import type { UpdateStoreSettingDto } from '../../types/store.types';
+import type { UpdateStoreSettingDto } from '@repo/api/generated/types';
 import type { ApiError } from '@/utils/apiFetch';
 
 const percentageRateSchema = z.preprocess(

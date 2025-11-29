@@ -58,13 +58,13 @@ import { cn } from '@repo/ui/lib/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type {
-  Category,
+  CategoryResponseDto,
   MenuItemNestedResponseDto,
   UpdateCategoryDto,
 } from '@/features/menu/types/category.types';
 
 interface CategoryCardProps {
-  category: Category;
+  category: CategoryResponseDto;
   onSelectItem: (item: MenuItemNestedResponseDto) => void;
   isLastCategory?: boolean;
 }

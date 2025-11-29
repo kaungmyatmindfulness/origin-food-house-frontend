@@ -50,7 +50,5 @@ export async function createManualSession(
 export async function getSession(
   sessionId: string
 ): Promise<SessionResponseDto> {
-  return typedFetch<SessionResponseDto>(
-    `/active-table-sessions/${sessionId}`
-  );
+  return typedFetch<SessionResponseDto>(`/active-table-sessions/${sessionId}`);
 }

@@ -15,7 +15,7 @@ import {
 import { $api } from '@/utils/apiFetch';
 import { API_PATHS } from '@/utils/api-paths';
 import type {
-  Category,
+  CategoryResponseDto,
   MenuItemNestedResponseDto,
 } from '@/features/menu/types/category.types';
 import { formatCurrency } from '@/utils/formatting';
@@ -121,7 +121,7 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
       // Optimistically update
       queryClient.setQueryData(
         fullQueryKey,
-        (old: { data?: Category[] } | undefined) => {
+        (old: { data?: CategoryResponseDto[] } | undefined) => {
           if (!old?.data) return old;
           return {
             ...old,

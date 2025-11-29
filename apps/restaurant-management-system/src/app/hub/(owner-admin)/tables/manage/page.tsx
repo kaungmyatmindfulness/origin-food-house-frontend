@@ -41,7 +41,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
   BatchUpsertTableDto,
   TableResponseDto,
-} from '@/features/tables/types/table.types';
+} from '@repo/api/generated/types';
 import type { ApiError } from '@/utils/apiFetch';
 import { Skeleton } from '@repo/ui/components/skeleton';
 

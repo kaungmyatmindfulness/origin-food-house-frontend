@@ -1,28 +1,24 @@
 /**
  * Store Types
  *
- * Re-exports auto-generated types from @repo/api and provides
- * frontend-specific extensions for features pending backend implementation.
+ * This file contains frontend-specific type extensions for store data.
+ * For standard API types, import directly from '@repo/api/generated/types'.
+ *
+ * Example:
+ *   import type { CreateStoreDto, UpdateStoreSettingDto } from '@repo/api/generated/types';
  */
 
 import type { GetStoreDetailsResponseDto as GeneratedStoreDetailsDto } from '@repo/api/generated/types';
 
-// Re-export generated types directly
-export type {
-  UpdateStoreInformationDto,
-  UpdateStoreSettingDto,
-  CreateStoreDto,
-  InviteOrAssignRoleDto,
-  StoreInformationResponseDto,
-  StoreSettingResponseDto,
-} from '@repo/api/generated/types';
-
-// Re-export business hours types from centralized utilities
-// (backend returns businessHours as { [key: string]: unknown })
-export type { BusinessHours, DayHours } from '@/common/types/api-type-fixes';
-
 /**
  * Extended GetStoreDetailsResponseDto with fields pending backend implementation.
+ *
+ * TODO: Remove this extension once backend adds these fields to the API response:
+ * - logoUrl: Store logo URL
+ * - coverImageUrl: Store cover image URL
+ * - tier: Store subscription tier for feature gating
+ *
+ * @see settings/page.tsx - BrandingTab and LoyaltyProgramTab use these fields
  */
 export type GetStoreDetailsResponseDto = GeneratedStoreDetailsDto & {
   /** Store logo URL (pending backend) */

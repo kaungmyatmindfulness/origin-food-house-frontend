@@ -22,12 +22,12 @@ import { Textarea } from '@repo/ui/components/textarea';
 
 import { formatCurrency } from '@/utils/formatting';
 
-import type { SalesMenuItem } from '@/features/sales/types/sales.types';
+import type { MenuItemResponseDto } from '@repo/api/generated/types';
 
 interface QuickAddDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  item: SalesMenuItem | null;
+  item: MenuItemResponseDto | null;
   onAddToCart: (data: {
     menuItemId: string;
     quantity: number;
