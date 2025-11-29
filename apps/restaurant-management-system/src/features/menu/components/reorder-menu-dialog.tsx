@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   DndContext,
   closestCenter,
@@ -44,6 +44,7 @@ import {
 } from '@/features/auth/store/auth.store';
 import { $api } from '@/utils/apiFetch';
 import { API_PATHS } from '@/utils/api-paths';
+import { getErrorMessage } from '@/common/utils/error.utils';
 import type {
   Category,
   SortCategoriesPayloadDto,
@@ -148,10 +149,9 @@ export function ReorderMenuDialog({
       refetchOnWindowFocus: false,
     }
   );
-  const initialCategories = (categoriesResponse?.data ?? []) as Category[];
-
   useEffect(() => {
-    if (initialCategories) {
+    const initialCategories = (categoriesResponse?.data ?? []) as Category[];
+    if (initialCategories.length > 0) {
       const sorted = initialCategories
         .sort((a, b) => a.sortOrder - b.sortOrder)
         .map((cat) => ({
@@ -162,7 +162,7 @@ export function ReorderMenuDialog({
         }));
       setOrderedCategories(sorted);
     }
-  }, [initialCategories]);
+  }, [categoriesResponse?.data]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -247,19 +247,23 @@ export function ReorderMenuDialog({
     });
   };
 
-  // Use $api.useMutation for type-safe API calls
-  const sortCategoriesApiMutation = $api.useMutation(
-    'put',
-    API_PATHS.categoriesSort
-  );
-
   const sortMutation = useMutation({
     mutationFn: async (payload: SortCategoriesPayloadDto) => {
       if (!selectedStoreId) throw new Error('Store not selected');
-      await sortCategoriesApiMutation.mutateAsync({
-        params: { path: { storeId: selectedStoreId } },
-        body: payload,
-      });
+      // Note: categoriesSort endpoint is not in OpenAPI spec, using direct fetch
+      const baseUrl = process.env['NEXT_PUBLIC_API_URL'];
+      const response = await fetch(
+        `${baseUrl}/stores/${selectedStoreId}/categories/sort`,
+        {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        }
+      );
+      if (!response.ok) {
+        throw new Error('Failed to save menu order');
+      }
     },
     onSuccess: () => {
       toast.success('Menu order saved successfully!');
@@ -270,9 +274,8 @@ export function ReorderMenuDialog({
     },
     onError: (error) => {
       console.error('Failed to save menu order:', error);
-      const apiError = error as unknown as { message?: string } | null;
       toast.error('Failed to save menu order', {
-        description: apiError?.message ?? 'Unknown error',
+        description: getErrorMessage(error) ?? 'Unknown error',
       });
     },
   });
@@ -316,8 +319,7 @@ export function ReorderMenuDialog({
           ) : isError ? (
             <div className="text-destructive py-10 text-center">
               Error loading categories:{' '}
-              {(error as unknown as { message?: string })?.message ??
-                'Unknown error'}
+              {getErrorMessage(error) ?? 'Unknown error'}
             </div>
           ) : orderedCategories.length === 0 ? (
             <div className="text-muted-foreground py-10 text-center">

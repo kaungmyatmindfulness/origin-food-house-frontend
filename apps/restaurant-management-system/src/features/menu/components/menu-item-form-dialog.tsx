@@ -15,6 +15,7 @@ import { $api } from '@/utils/apiFetch';
 import { API_PATHS } from '@/utils/api-paths';
 import type { Category } from '@/features/menu/types/category.types';
 import { CustomizationGroupField } from '@/features/menu/components/customization-group-field';
+import { getErrorMessage } from '@/common/utils/error.utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Alert, AlertDescription, AlertTitle } from '@repo/ui/components/alert';
 import { Button } from '@repo/ui/components/button';
@@ -46,7 +47,7 @@ import {
 import { Input } from '@repo/ui/components/input';
 import { Separator } from '@repo/ui/components/separator';
 import { Textarea } from '@repo/ui/components/textarea';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 /**
  * Routing area enum values
@@ -209,7 +210,6 @@ export function MenuItemFormDialog({
       staleTime: 10 * 60 * 1000,
     }
   );
-  const categories = (categoriesResponse?.data ?? []) as Category[];
 
   const form = useForm<MenuItemFormData>({
     resolver: zodResolver(menuItemSchema),
@@ -322,6 +322,7 @@ export function MenuItemFormDialog({
           customizationGroups:
             dto.customizationGroups?.map((group) => ({
               name: group.name,
+              required: group.minSelectable > 0,
               minSelectable: group.minSelectable,
               maxSelectable: group.maxSelectable,
               options: group.options.map((opt) => ({
@@ -343,9 +344,8 @@ export function MenuItemFormDialog({
     },
     onError: (error) => {
       console.error('Create item failed:', error);
-      const apiError = error as unknown as { message?: string } | null;
       toast.error('Failed to create menu item', {
-        description: apiError?.message ?? 'Unknown error',
+        description: getErrorMessage(error) ?? 'Unknown error',
       });
     },
   });
@@ -370,6 +370,7 @@ export function MenuItemFormDialog({
           customizationGroups:
             dto.customizationGroups?.map((group) => ({
               name: group.name,
+              required: group.minSelectable > 0,
               minSelectable: group.minSelectable,
               maxSelectable: group.maxSelectable,
               options: group.options.map((opt) => ({
@@ -391,9 +392,8 @@ export function MenuItemFormDialog({
     },
     onError: (error) => {
       console.error('Update item failed:', error);
-      const apiError = error as unknown as { message?: string } | null;
       toast.error('Failed to update menu item', {
-        description: apiError?.message ?? 'Unknown error',
+        description: getErrorMessage(error) ?? 'Unknown error',
       });
     },
   });
@@ -409,8 +409,9 @@ export function MenuItemFormDialog({
     if (values.isNewCategory && values.newCategoryName) {
       submitCategory = { name: values.newCategoryName.trim() };
     } else if (values.categoryId && values.categoryId !== 'add_new') {
-      const selectedCatData = categories.find(
-        (c) => String(c.id) === values.categoryId
+      const categoriesData = (categoriesResponse?.data ?? []) as Category[];
+      const selectedCatData = categoriesData.find(
+        (c: Category) => String(c.id) === values.categoryId
       );
       submitCategory = {
         id: values.categoryId,
@@ -442,16 +443,16 @@ export function MenuItemFormDialog({
     onOpenChange(false);
   }
 
-  const categoryOptions: CategoryOption[] = useMemo(
-    () => [
+  const categoryOptions: CategoryOption[] = useMemo(() => {
+    const categories = (categoriesResponse?.data ?? []) as Category[];
+    return [
       ...categories.map((cat) => ({
         label: cat.name,
         value: String(cat.id),
       })),
       { label: 'Add New Category', value: 'add_new' },
-    ],
-    [categories]
-  );
+    ];
+  }, [categoriesResponse?.data]);
 
   if (mode === 'edit' && isItemLoading) {
     return (
@@ -476,9 +477,13 @@ export function MenuItemFormDialog({
             <DialogTitle className="text-red-600">Error</DialogTitle>
             <DialogDescription>
               Could not load item data. Please try again.
-              {itemError instanceof Error && (
-                <p className="mt-2 text-xs">{itemError.message}</p>
-              )}
+              {itemError &&
+                typeof itemError === 'object' &&
+                'message' in itemError && (
+                  <p className="mt-2 text-xs">
+                    {String((itemError as { message: unknown }).message)}
+                  </p>
+                )}
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end pt-4">

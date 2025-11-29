@@ -22,6 +22,7 @@ import {
   selectSelectedStoreId,
   useAuthStore,
 } from '@/features/auth/store/auth.store';
+import { getErrorMessage } from '@/common/utils/error.utils';
 
 interface ItemModalProps {
   id: string | null;
@@ -65,13 +66,12 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
     }
 
     if (isError) {
-      const apiError = error as unknown as { message?: string } | null;
       return (
         <div className="flex min-h-[200px] flex-col items-center justify-center px-4 text-center text-red-600">
           <AlertCircle className="mb-2 h-8 w-8" />
           <p className="font-semibold">Error Loading Item</p>
           <p className="text-sm">
-            {apiError?.message ??
+            {getErrorMessage(error) ??
               'Could not load item details. Please try again.'}
           </p>
           <Button
@@ -105,12 +105,16 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
     }
 
     if (isSuccess && item) {
+      // Cast imagePath and description to handle OpenAPI-generated Record<string, never> type
+      const imagePath = item.imagePath as string | null | undefined;
+      const description = item.description as string | null | undefined;
+
       return (
         <>
-          {getImageUrl(item.imagePath, 'large') && (
+          {getImageUrl(imagePath, 'large') && (
             <div className="relative -mx-6 -mt-6 mb-4 h-48 w-full">
               <Image
-                src={getImageUrl(item.imagePath, 'large')!}
+                src={getImageUrl(imagePath, 'large')!}
                 alt={item.name}
                 fill
                 className="rounded-t-lg object-cover"
@@ -134,12 +138,12 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
             </p>
           </DialogHeader>
 
-          {item.description && (
+          {description && (
             <DialogDescription
               id="item-modal-description"
               className="mb-4 text-left text-sm text-gray-700 dark:text-gray-300"
             >
-              {item.description}
+              {description}
             </DialogDescription>
           )}
 
@@ -161,7 +165,8 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
                       >
                         <span>{option.name}</span>
 
-                        {parseFloat(option.additionalPrice) > 0 ? (
+                        {parseFloat(String(option.additionalPrice ?? '0')) >
+                        0 ? (
                           <span className="ml-2 text-gray-500 dark:text-gray-400">
                             + {formatCurrency(option.additionalPrice)}
                           </span>

@@ -5,9 +5,10 @@
  * Uses openapi-fetch for type-safe API calls with auto-generated types.
  */
 
-import { apiClient, ApiError } from '@/utils/apiFetch';
+import { apiClient, ApiError, unwrapApiResponse } from '@/utils/apiFetch';
 import type {
   CategoryResponseDto,
+  CategoryBasicResponseDto,
   CreateCategoryDto,
   UpdateCategoryDto,
   SortCategoriesPayloadDto,
@@ -24,21 +25,11 @@ import type {
 export async function getCategories(
   storeId: string
 ): Promise<CategoryResponseDto[]> {
-  const { data, error, response } = await apiClient.GET(
-    '/stores/{storeId}/categories',
-    {
-      params: { path: { storeId } },
-    }
-  );
+  const result = await apiClient.GET('/stores/{storeId}/categories', {
+    params: { path: { storeId } },
+  });
 
-  if (error || !data?.data) {
-    throw new ApiError(
-      data?.message || 'Failed to retrieve categories',
-      response.status
-    );
-  }
-
-  return data.data;
+  return unwrapApiResponse(result, 'Failed to retrieve categories');
 }
 
 /**
@@ -46,29 +37,19 @@ export async function getCategories(
  *
  * @param storeId - The ID of the store
  * @param categoryData - The category data to create
- * @returns The created category
+ * @returns The created category (basic response without menuItems)
  * @throws {ApiError} If the request fails
  */
 export async function createCategory(
   storeId: string,
   categoryData: CreateCategoryDto
-): Promise<CategoryResponseDto> {
-  const { data, error, response } = await apiClient.POST(
-    '/stores/{storeId}/categories',
-    {
-      params: { path: { storeId } },
-      body: categoryData,
-    }
-  );
+): Promise<CategoryBasicResponseDto> {
+  const result = await apiClient.POST('/stores/{storeId}/categories', {
+    params: { path: { storeId } },
+    body: categoryData,
+  });
 
-  if (error || !data?.data) {
-    throw new ApiError(
-      data?.message || 'Failed to create category',
-      response.status
-    );
-  }
-
-  return data.data;
+  return unwrapApiResponse(result, 'Failed to create category');
 }
 
 /**
@@ -77,30 +58,20 @@ export async function createCategory(
  * @param storeId - The ID of the store
  * @param categoryId - The ID of the category to update
  * @param categoryData - The updated category data
- * @returns The updated category
+ * @returns The updated category (basic response without menuItems)
  * @throws {ApiError} If the request fails
  */
 export async function updateCategory(
   storeId: string,
   categoryId: string,
   categoryData: UpdateCategoryDto
-): Promise<CategoryResponseDto> {
-  const { data, error, response } = await apiClient.PATCH(
-    '/stores/{storeId}/categories/{id}',
-    {
-      params: { path: { storeId, id: categoryId } },
-      body: categoryData,
-    }
-  );
+): Promise<CategoryBasicResponseDto> {
+  const result = await apiClient.PATCH('/stores/{storeId}/categories/{id}', {
+    params: { path: { storeId, id: categoryId } },
+    body: categoryData,
+  });
 
-  if (error || !data?.data) {
-    throw new ApiError(
-      data?.message || 'Failed to update category',
-      response.status
-    );
-  }
-
-  return data.data;
+  return unwrapApiResponse(result, 'Failed to update category');
 }
 
 /**
@@ -122,14 +93,14 @@ export async function deleteCategory(
     }
   );
 
-  if (error || !data?.data) {
-    throw new ApiError(
-      data?.message || 'Failed to delete category',
-      response.status
-    );
+  if (error) {
+    throw new ApiError('Failed to delete category', response.status);
   }
 
-  return data.data;
+  // API returns 204 No Content on success, but backend may return data
+  // Return the categoryId as the deleted ID
+  const responseData = data as { data?: { id: string } } | undefined;
+  return responseData?.data ?? { id: categoryId };
 }
 
 /**

@@ -25,6 +25,7 @@ import {
 } from '@/features/auth/store/auth.store';
 import { $api } from '@/utils/apiFetch';
 import { API_PATHS } from '@/utils/api-paths';
+import { getErrorMessage } from '@/common/utils/error.utils';
 import { ItemCard } from '@/features/menu/components/item-card';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -58,13 +59,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type {
   Category,
+  MenuItemNestedResponseDto,
   UpdateCategoryDto,
 } from '@/features/menu/types/category.types';
-import type { MenuItem } from '@/features/menu/types/menu-item.types';
 
 interface CategoryCardProps {
   category: Category;
-  onSelectItem: (item: MenuItem) => void;
+  onSelectItem: (item: MenuItemNestedResponseDto) => void;
   isLastCategory?: boolean;
 }
 
@@ -125,9 +126,8 @@ export function CategoryCard({
       setIsEditingName(false);
     },
     onError: (error) => {
-      const apiError = error as unknown as { message?: string } | null;
       toast.error(t('failedToRename'), {
-        description: apiError?.message ?? tCommon('error'),
+        description: getErrorMessage(error) ?? tCommon('error'),
       });
       renameForm.reset({ name: category.name });
       setIsEditingName(false);
@@ -154,9 +154,8 @@ export function CategoryCard({
       setIsConfirmDeleteDialogOpen(false);
     },
     onError: (error) => {
-      const apiError = error as unknown as { message?: string } | null;
       toast.error(t('failedToDelete'), {
-        description: apiError?.message ?? tCommon('error'),
+        description: getErrorMessage(error) ?? tCommon('error'),
       });
       setIsConfirmDeleteDialogOpen(false);
     },
@@ -197,8 +196,17 @@ export function CategoryCard({
     deleteCategoryMutation.mutate();
   };
 
-  const translationCount = getTranslationCompletionCount(category.translations);
-  const showTranslationBadge = hasIncompleteTranslations(category.translations);
+  // Convert array-based translations to object format expected by translation utils
+  const translationsMap = category.translations?.reduce(
+    (acc, t) => {
+      acc[t.locale] = { name: t.name };
+      return acc;
+    },
+    {} as Record<string, { name: string }>
+  );
+
+  const translationCount = getTranslationCompletionCount(translationsMap);
+  const showTranslationBadge = hasIncompleteTranslations(translationsMap);
 
   function renderTitleContent() {
     if (!isEditingName) {

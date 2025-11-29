@@ -7,7 +7,7 @@ import { Button } from '@repo/ui/components/button';
 
 import { formatCurrency } from '@/utils/formatting';
 
-import type { CartItemResponseDto } from '@repo/api/generated/types';
+import type { CartItemResponseDto } from '@/features/sales/types/sales.types';
 
 interface CartItemProps {
   item: CartItemResponseDto;
@@ -41,13 +41,8 @@ export function CartItem({
   // Calculate line total using basePrice
   const lineTotal = Number(item.basePrice) * item.quantity;
 
-  // Get notes as string if available
-  const notesText =
-    item.notes && typeof item.notes === 'object' && 'value' in item.notes
-      ? String(item.notes.value)
-      : typeof item.notes === 'string'
-        ? item.notes
-        : null;
+  // Notes is now properly typed as string | null | undefined from corrected types
+  const notesText = item.notes ?? null;
 
   return (
     <div className="border-border flex items-start gap-3 border-b py-3 last:border-0">

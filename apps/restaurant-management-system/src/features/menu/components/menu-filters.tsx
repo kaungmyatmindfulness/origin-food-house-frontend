@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 
 import {
@@ -9,6 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@repo/ui/components/select';
+import {
+  TypedSelect,
+  type TypedSelectOption,
+} from '@repo/ui/components/typed-select';
 
 import type { Category } from '@/features/menu/types/category.types';
 import type { StockFilter } from '@/features/menu/store/menu.store';
@@ -29,6 +34,17 @@ export function MenuFilters({
   onStockChange,
 }: MenuFiltersProps) {
   const t = useTranslations('menu');
+
+  // Stock filter options - typed for StockFilter
+  const stockOptions = useMemo<TypedSelectOption<StockFilter>[]>(
+    () => [
+      { value: 'all', label: t('allItems') },
+      { value: 'in-stock', label: t('inStock') },
+      { value: 'low-stock', label: t('lowStock') },
+      { value: 'out-of-stock', label: t('outOfStock') },
+    ],
+    [t]
+  );
 
   return (
     <>
@@ -51,20 +67,13 @@ export function MenuFilters({
         </SelectContent>
       </Select>
 
-      <Select
+      <TypedSelect
         value={stockFilter}
-        onValueChange={(value) => onStockChange(value as StockFilter)}
-      >
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder={t('stockStatus')} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">{t('allItems')}</SelectItem>
-          <SelectItem value="in-stock">{t('inStock')}</SelectItem>
-          <SelectItem value="low-stock">{t('lowStock')}</SelectItem>
-          <SelectItem value="out-of-stock">{t('outOfStock')}</SelectItem>
-        </SelectContent>
-      </Select>
+        onValueChange={onStockChange}
+        options={stockOptions}
+        placeholder={t('stockStatus')}
+        triggerClassName="w-[180px]"
+      />
     </>
   );
 }

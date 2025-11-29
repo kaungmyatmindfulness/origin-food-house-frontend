@@ -2,25 +2,17 @@
  * Payment Service
  *
  * Service layer for payment-related API operations.
- * Note: Uses raw fetch for endpoints not in OpenAPI spec.
+ * Note: Uses typedFetch for endpoints not in OpenAPI spec.
  */
 
-import { ApiError } from '@/utils/apiFetch';
+import { typedFetch } from '@/utils/typed-fetch';
+
 import type {
   PaymentResponseDto,
   RecordPaymentDto,
   CreateRefundDto,
   RefundResponseDto,
 } from '@repo/api/generated/types';
-
-/** Standard API response wrapper */
-interface StandardApiResponse<T> {
-  data: T;
-  message?: string;
-  status: 'success' | 'error';
-}
-
-const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 /**
  * Records a payment for an order.
@@ -34,31 +26,13 @@ export async function recordPayment(
   orderId: string,
   data: RecordPaymentDto
 ): Promise<PaymentResponseDto> {
-  const response = await fetch(
-    `${baseUrl}/payments/orders/${orderId}/payments`,
+  return typedFetch<PaymentResponseDto>(
+    `/payments/orders/${orderId}/payments`,
     {
       method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: data,
     }
   );
-
-  if (!response.ok) {
-    throw new ApiError('Failed to record payment', response.status);
-  }
-
-  const json =
-    (await response.json()) as StandardApiResponse<PaymentResponseDto>;
-
-  if (!json.data) {
-    throw new ApiError(
-      json.message || 'Failed to record payment',
-      response.status
-    );
-  }
-
-  return json.data;
 }
 
 /**
@@ -71,30 +45,9 @@ export async function recordPayment(
 export async function getOrderPayments(
   orderId: string
 ): Promise<PaymentResponseDto[]> {
-  const response = await fetch(
-    `${baseUrl}/payments/orders/${orderId}/payments`,
-    {
-      method: 'GET',
-      credentials: 'include',
-    }
+  return typedFetch<PaymentResponseDto[]>(
+    `/payments/orders/${orderId}/payments`
   );
-
-  if (!response.ok) {
-    throw new ApiError('Failed to fetch payments', response.status);
-  }
-
-  const json = (await response.json()) as StandardApiResponse<
-    PaymentResponseDto[]
-  >;
-
-  if (!json.data) {
-    throw new ApiError(
-      json.message || 'Failed to fetch payments',
-      response.status
-    );
-  }
-
-  return json.data;
 }
 
 /**
@@ -109,29 +62,11 @@ export async function createRefund(
   orderId: string,
   data: CreateRefundDto
 ): Promise<RefundResponseDto> {
-  const response = await fetch(
-    `${baseUrl}/payments/orders/${orderId}/refunds`,
+  return typedFetch<RefundResponseDto>(
+    `/payments/orders/${orderId}/refunds`,
     {
       method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: data,
     }
   );
-
-  if (!response.ok) {
-    throw new ApiError('Failed to create refund', response.status);
-  }
-
-  const json =
-    (await response.json()) as StandardApiResponse<RefundResponseDto>;
-
-  if (!json.data) {
-    throw new ApiError(
-      json.message || 'Failed to create refund',
-      response.status
-    );
-  }
-
-  return json.data;
 }

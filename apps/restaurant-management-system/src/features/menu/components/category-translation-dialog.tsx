@@ -54,7 +54,26 @@ export function CategoryTranslationDialog({
     const initial = {} as Record<SupportedLocale, string>;
 
     SUPPORTED_LOCALES.forEach((locale) => {
-      initial[locale] = category.translations?.[locale]?.name || '';
+      // Handle both array and object translation formats from API
+      // The API can return translations as either an array of {locale, name} objects
+      // or as an object keyed by locale
+      let translation: { name?: string } | undefined;
+
+      if (Array.isArray(category.translations)) {
+        translation = category.translations.find((t) => t.locale === locale);
+      } else if (
+        category.translations &&
+        typeof category.translations === 'object'
+      ) {
+        // translations is an object keyed by locale
+        const translationsMap = category.translations as Record<
+          string,
+          { name?: string }
+        >;
+        translation = translationsMap[locale];
+      }
+
+      initial[locale] = translation?.name || '';
     });
 
     return initial;

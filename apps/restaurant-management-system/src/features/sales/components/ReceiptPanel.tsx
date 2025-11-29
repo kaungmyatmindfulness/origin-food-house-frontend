@@ -22,53 +22,8 @@ import { Separator } from '@repo/ui/components/separator';
 
 import { formatCurrency } from '@/utils/formatting';
 import { getSessionTypeDisplayInfo } from '@/features/sales/utils/session-type.utils';
-
-import type {
-  OrderResponseDto,
-  PaymentResponseDto,
-} from '@repo/api/generated/types';
+import type { ReceiptOrderData } from '@/features/sales/utils/transform-order-to-receipt';
 import type { SessionType } from '../types/sales.types';
-
-/**
- * Session information for receipt display
- */
-interface ReceiptSession {
-  sessionType?: SessionType;
-  customerName?: string | null;
-  customerPhone?: string | null;
-}
-
-/**
- * Extended order item with menu item name for receipt display.
- * The base OrderItemResponseDto doesn't include menuItemName,
- * so we extend it for the receipt context.
- */
-interface ReceiptOrderItem {
-  id: string;
-  menuItemId: { [key: string]: unknown };
-  menuItemName: string;
-  price: string;
-  quantity: number;
-  finalPrice: string;
-  notes: { [key: string]: unknown };
-}
-
-/**
- * Extended order response for receipt display.
- * Includes payments array and enriched order items with menu item names.
- */
-interface ReceiptOrderData
-  extends Omit<
-    OrderResponseDto,
-    'orderItems' | 'discountAmount' | 'tableName'
-  > {
-  orderItems: ReceiptOrderItem[];
-  payments?: PaymentResponseDto[];
-  taxAmount?: string;
-  discountAmount?: string;
-  tableName?: string;
-  session?: ReceiptSession | null;
-}
 
 interface ReceiptPanelProps {
   order: ReceiptOrderData;
@@ -257,7 +212,10 @@ export function ReceiptPanel({
                         {t('method')}
                       </span>
                       <span>
-                        {formatPaymentMethod(payment.paymentMethod, t)}
+                        {formatPaymentMethod(
+                          payment.paymentMethod as PaymentMethodEnum,
+                          t
+                        )}
                       </span>
                     </div>
                     <div className="flex justify-between">

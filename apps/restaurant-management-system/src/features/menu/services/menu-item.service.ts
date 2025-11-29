@@ -5,7 +5,7 @@
  * Uses openapi-fetch for type-safe API calls with auto-generated types.
  */
 
-import { apiClient, ApiError } from '@/utils/apiFetch';
+import { apiClient, ApiError, unwrapApiResponse } from '@/utils/apiFetch';
 import type {
   MenuItemResponseDto,
   CreateMenuItemDto,
@@ -46,29 +46,19 @@ export async function getStoreMenuItems(
  *
  * @param storeId - The ID of the store
  * @param itemData - The menu item data to create
- * @returns The created menu item ID
+ * @returns The created menu item
  * @throws {ApiError} If the request fails
  */
 export async function createMenuItem(
   storeId: string,
   itemData: CreateMenuItemDto
-): Promise<string> {
-  const { data, error, response } = await apiClient.POST(
-    '/stores/{storeId}/menu-items',
-    {
-      params: { path: { storeId } },
-      body: itemData,
-    }
-  );
+): Promise<MenuItemResponseDto> {
+  const result = await apiClient.POST('/stores/{storeId}/menu-items', {
+    params: { path: { storeId } },
+    body: itemData,
+  });
 
-  if (error || !data?.data) {
-    throw new ApiError(
-      data?.message || 'Failed to create menu item',
-      response.status
-    );
-  }
-
-  return data.data as string;
+  return unwrapApiResponse(result, 'Failed to create menu item');
 }
 
 /**

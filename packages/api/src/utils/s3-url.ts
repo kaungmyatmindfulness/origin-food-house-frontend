@@ -12,8 +12,8 @@
  * S3 configuration loaded from environment variables.
  * These must be set in .env files for both RMS and SOS apps.
  */
-const AWS_S3_BUCKET = process.env.NEXT_PUBLIC_AWS_S3_BUCKET;
-const AWS_REGION = process.env.NEXT_PUBLIC_AWS_REGION;
+const AWS_S3_BUCKET = process.env['NEXT_PUBLIC_AWS_S3_BUCKET'];
+const AWS_REGION = process.env['NEXT_PUBLIC_AWS_REGION'];
 
 /**
  * Validates S3 configuration and logs warning in development if missing.
@@ -22,7 +22,7 @@ const AWS_REGION = process.env.NEXT_PUBLIC_AWS_REGION;
 function isS3ConfigValid(): boolean {
   const isValid = !!(AWS_S3_BUCKET && AWS_REGION);
 
-  if (!isValid && process.env.NODE_ENV === 'development') {
+  if (!isValid && process.env['NODE_ENV'] === 'development') {
     console.warn(
       'S3 configuration missing. Images will not display. Please set NEXT_PUBLIC_AWS_S3_BUCKET and NEXT_PUBLIC_AWS_REGION in your .env file.'
     );

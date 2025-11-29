@@ -8,56 +8,17 @@
 import type { User } from '@auth0/auth0-spa-js';
 
 import { getAuth0Client } from '@/lib/auth0';
-import { apiClient, ApiError } from '@/utils/apiFetch';
+import { apiClient, ApiError, unwrapApiResponseAs } from '@/utils/apiFetch';
+import { typedFetchUnauthenticated } from '@/utils/typed-fetch';
+
 import type { ChooseStoreDto } from '@repo/api/generated/types';
+import type { StandardApiResponse } from '@repo/api/types/api.types';
 
 /** Access token data from backend after Auth0 validation */
 interface AccessTokenData {
   access_token: string;
   userId: string;
   email: string;
-}
-
-/** Standard API response wrapper */
-interface StandardApiResponse<T> {
-  data: T;
-  message?: string;
-  status: 'success' | 'error';
-}
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
-
-/**
- * Makes an unauthenticated API request.
- * Used for auth endpoints that don't require an existing session.
- *
- * @param path - API endpoint path (e.g., '/auth/auth0/validate')
- * @param options - Fetch options (method, headers, body)
- * @returns Parsed JSON response
- * @throws {ApiError} If the request fails
- */
-async function fetchUnauthenticated<T>(
-  path: string,
-  options: RequestInit = {}
-): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-    ...options,
-  });
-
-  if (!response.ok) {
-    const errorMessage =
-      response.status === 401
-        ? 'Authentication failed'
-        : `Request failed with status ${response.status}`;
-    throw new ApiError(errorMessage, response.status);
-  }
-
-  return response.json() as Promise<T>;
 }
 
 /**
@@ -97,7 +58,7 @@ export async function handleAuth0Callback(): Promise<AccessTokenData> {
 
   const auth0Token = await auth0Client.getTokenSilently();
 
-  const response = await fetchUnauthenticated<Auth0ValidateResponse>(
+  const response = await typedFetchUnauthenticated<Auth0ValidateResponse>(
     '/auth/auth0/validate',
     {
       method: 'POST',
@@ -168,7 +129,7 @@ export async function logoutFromAuth0(returnToUrl?: string): Promise<void> {
     const auth0Client = await getAuth0Client();
 
     // Clear backend session (endpoint not in OpenAPI spec)
-    await fetchUnauthenticated('/auth/logout', { method: 'POST' });
+    await typedFetchUnauthenticated('/auth/logout', { method: 'POST' });
 
     await auth0Client.logout({
       logoutParams: {
@@ -192,22 +153,11 @@ export async function logoutFromAuth0(returnToUrl?: string): Promise<void> {
 export async function loginWithStoreAuth0(
   storeData: ChooseStoreDto
 ): Promise<AccessTokenData> {
-  const { data, error, response } = await apiClient.POST('/auth/login/store', {
+  const result = await apiClient.POST('/auth/login/store', {
     body: storeData,
   });
 
-  const res = data as unknown as
-    | StandardApiResponse<AccessTokenData>
-    | undefined;
-
-  if (error || !res?.data) {
-    throw new ApiError(
-      res?.message || 'Failed to select store',
-      response.status
-    );
-  }
-
-  return res.data;
+  return unwrapApiResponseAs<AccessTokenData>(result, 'Failed to select store');
 }
 
 /**

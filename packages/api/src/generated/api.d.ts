@@ -2011,7 +2011,7 @@ export interface components {
              * @description Identifies the specific input field related to the error, if applicable (often used for validation errors).
              * @example relevantFieldName
              */
-            field?: Record<string, never> | null;
+            field?: string | null;
         };
         StandardApiResponse: {
             /**
@@ -2020,12 +2020,14 @@ export interface components {
              */
             status: "success" | "error";
             /** @description Response data payload when status is "success". */
-            data?: Record<string, never> | null;
+            data?: {
+                [key: string]: unknown;
+            } | null;
             /**
              * @description A general human-readable message about the operation outcome.
              * @example Operation successful
              */
-            message?: Record<string, never> | null;
+            message?: string | null;
             /** @description Array of error details when status is "error". Usually empty on success. */
             errors?: components["schemas"]["StandardApiErrorDetails"][] | null;
         };
@@ -2044,7 +2046,7 @@ export interface components {
              * @description User's display name
              * @example Jane Doe
              */
-            name?: Record<string, never> | null;
+            name?: string | null;
             /**
              * @description Indicates if the user email is verified
              * @example true
@@ -2267,7 +2269,9 @@ export interface components {
              *       "newValue": "12.00"
              *     }
              */
-            details?: Record<string, never>;
+            details?: {
+                [key: string]: unknown;
+            } | null;
             /**
              * @description IP address of the requester
              * @example 192.168.1.1
@@ -2423,7 +2427,24 @@ export interface components {
              */
             status: "PENDING" | "PREPARING" | "READY" | "SERVED" | "COMPLETED" | "CANCELLED";
         };
-        ApplyDiscountDto: Record<string, never>;
+        ApplyDiscountDto: {
+            /**
+             * @description Type of discount to apply
+             * @example PERCENTAGE
+             * @enum {string}
+             */
+            discountType: "PERCENTAGE" | "FIXED_AMOUNT";
+            /**
+             * @description Discount value (percentage or fixed amount)
+             * @example 10
+             */
+            discountValue: string;
+            /**
+             * @description Reason for applying the discount
+             * @example Loyalty customer
+             */
+            reason: string;
+        };
         UpdateKitchenStatusDto: {
             /**
              * @description New kitchen status
@@ -2514,12 +2535,12 @@ export interface components {
              * @description Payment proof image path
              * @example payment-proofs/store-id/uuid-original.jpg
              */
-            paymentProofPath?: Record<string, never>;
+            paymentProofPath?: string | null;
             /**
              * @description Admin notes
              * @example Payment verified
              */
-            notes?: Record<string, never>;
+            notes?: string | null;
             /**
              * Format: date-time
              * @description Created at timestamp
@@ -2570,7 +2591,9 @@ export interface components {
              *       "referenceNumber": "TXN123456"
              *     }
              */
-            bankTransferDetails?: Record<string, never>;
+            bankTransferDetails?: {
+                [key: string]: unknown;
+            } | null;
         };
         TrialEligibilityResponseDto: {
             /**
@@ -2586,15 +2609,17 @@ export interface components {
              */
             isTrialActive: boolean;
             /**
+             * Format: date-time
              * @description Trial start date
              * @example 2025-01-01T00:00:00.000Z
              */
-            trialStartedAt?: Record<string, never>;
+            trialStartedAt?: string | null;
             /**
+             * Format: date-time
              * @description Trial end date
              * @example 2025-01-15T00:00:00.000Z
              */
-            trialEndsAt?: Record<string, never>;
+            trialEndsAt?: string | null;
             /**
              * @description Days remaining in trial
              * @example 7
@@ -2627,7 +2652,7 @@ export interface components {
              * @description Notes about the transfer
              * @example Ownership transfer for business sale
              */
-            notes?: Record<string, never>;
+            notes?: string | null;
             /**
              * Format: date-time
              * @description Created at timestamp
@@ -2710,36 +2735,42 @@ export interface components {
              * @description Admin who reviewed the refund request
              * @example 0194ca3b-...
              */
-            reviewedBy?: Record<string, never> | null;
-            /** @description When the refund was reviewed */
-            reviewedAt?: Record<string, never> | null;
+            reviewedBy?: string | null;
+            /**
+             * Format: date-time
+             * @description When the refund was reviewed
+             */
+            reviewedAt?: string | null;
             /**
              * @description Notes from admin approval
              * @example Approved due to valid reason
              */
-            approvalNotes?: Record<string, never> | null;
+            approvalNotes?: string | null;
             /**
              * @description Reason for rejection
              * @example Request does not meet refund policy criteria
              */
-            rejectionReason?: Record<string, never> | null;
+            rejectionReason?: string | null;
             /**
              * @description Admin who processed the refund
              * @example 0194ca3b-...
              */
-            processedBy?: Record<string, never> | null;
-            /** @description When the refund was processed */
-            processedAt?: Record<string, never> | null;
+            processedBy?: string | null;
+            /**
+             * Format: date-time
+             * @description When the refund was processed
+             */
+            processedAt?: string | null;
             /**
              * @description Method used for refund (e.g., bank transfer, original payment method)
              * @example bank_transfer
              */
-            refundMethod?: Record<string, never> | null;
+            refundMethod?: string | null;
             /**
              * @description Path to refund proof document/image
              * @example refunds/store-id/uuid-proof.jpg
              */
-            refundProofPath?: Record<string, never> | null;
+            refundProofPath?: string | null;
             /**
              * Format: date-time
              * @description Created at timestamp
@@ -2872,7 +2903,9 @@ export interface components {
              *       }
              *     }
              */
-            versions: Record<string, never>;
+            versions: {
+                [key: string]: unknown;
+            };
         };
         UploadImageResponseDto: {
             /**
@@ -2927,7 +2960,7 @@ export interface components {
              * @description Translated description
              * @example Delicious appetizers to start your meal
              */
-            description?: Record<string, never> | null;
+            description?: string | null;
         };
         CustomizationOptionResponseDto: {
             /** @example 0194ca3b-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
@@ -2988,7 +3021,7 @@ export interface components {
             /** @example Pad Thai */
             name: string;
             /** @example Classic Thai stir-fried rice noodles */
-            description?: Record<string, never> | null;
+            description?: string | null;
             /**
              * @description Base price, formatted as string.
              * @example 49.11
@@ -2998,7 +3031,7 @@ export interface components {
              * @description Base S3 path
              * @example uploads/abc-123-def
              */
-            imagePath?: Record<string, never> | null;
+            imagePath?: string | null;
             /** @example 2 */
             sortOrder: number;
             /**
@@ -3192,7 +3225,9 @@ export interface components {
              *       }
              *     }
              */
-            translations?: Record<string, never> | null;
+            translations?: {
+                [key: string]: components["schemas"]["BaseTranslationResponseDto"];
+            } | null;
         };
         MenuCustomizationOptionDto: {
             /** Format: uuid */
@@ -3213,7 +3248,9 @@ export interface components {
              *       }
              *     }
              */
-            translations?: Record<string, never> | null;
+            translations?: {
+                [key: string]: components["schemas"]["BaseTranslationResponseDto"];
+            } | null;
         };
         MenuCustomizationGroupDto: {
             /** @example 219 */
@@ -3249,7 +3286,9 @@ export interface components {
              *       }
              *     }
              */
-            translations?: Record<string, never> | null;
+            translations?: {
+                [key: string]: components["schemas"]["BaseTranslationResponseDto"];
+            } | null;
         };
         MenuItemResponseDto: {
             /** @example 147 */
@@ -3263,7 +3302,7 @@ export interface components {
              * @description Item description (default/fallback). Use translations map for localized descriptions.
              * @example The lavender Bike combines Bolivia aesthetics...
              */
-            description?: Record<string, never> | null;
+            description?: string | null;
             /**
              * @description Base price, formatted as string.
              * @example 49.11
@@ -3273,7 +3312,7 @@ export interface components {
              * @description Base S3 path for image. Frontend constructs URL: baseUrl + imagePath + '-' + size + '.webp'
              * @example uploads/abc-123-def
              */
-            imagePath?: Record<string, never> | null;
+            imagePath?: string | null;
             /**
              * @description Indicates if the item is temporarily hidden (e.g., out of stock).
              * @example false
@@ -3328,7 +3367,9 @@ export interface components {
              *       }
              *     }
              */
-            translations?: Record<string, never> | null;
+            translations?: {
+                [key: string]: components["schemas"]["TranslationWithDescriptionResponseDto"];
+            } | null;
         };
         UpsertCategoryDto: {
             /**
@@ -3485,7 +3526,7 @@ export interface components {
              * @description Translated description
              * @example Delicious appetizers to start your meal
              */
-            description?: Record<string, never> | null;
+            description?: string | null;
         };
         UpdateMenuItemTranslationsDto: {
             /**
@@ -3590,7 +3631,9 @@ export interface components {
              */
             splitType: "EVEN" | "BY_ITEM" | "CUSTOM";
             /** @description Split data based on split type */
-            splitData: Record<string, never>;
+            splitData: {
+                [key: string]: unknown;
+            };
         };
         RecordSplitPaymentDto: {
             /**
@@ -3632,7 +3675,9 @@ export interface components {
              *       "assignedItems": []
              *     }
              */
-            splitMetadata?: Record<string, never>;
+            splitMetadata?: {
+                [key: string]: unknown;
+            };
             /**
              * @description External transaction ID (for card/mobile payments)
              * @example TXN123456789
@@ -3649,16 +3694,16 @@ export interface components {
              * @description Base S3 path for logo
              * @example uploads/abc-123-def
              */
-            logoPath?: Record<string, never> | null;
+            logoPath?: string | null;
             /**
              * @description Base S3 path for cover photo
              * @example uploads/def-456-ghi
              */
-            coverPhotoPath?: Record<string, never> | null;
-            address?: Record<string, never> | null;
-            phone?: Record<string, never> | null;
-            email?: Record<string, never> | null;
-            website?: Record<string, never> | null;
+            coverPhotoPath?: string | null;
+            address?: string | null;
+            phone?: string | null;
+            email?: string | null;
+            website?: string | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -3706,7 +3751,9 @@ export interface components {
              *       }
              *     }
              */
-            businessHours?: Record<string, never> | null;
+            businessHours?: {
+                [key: string]: unknown;
+            } | null;
             /**
              * @description Special hours configuration as JSON (holidays, special events)
              * @example {
@@ -3717,7 +3764,9 @@ export interface components {
              *       }
              *     }
              */
-            specialHours?: Record<string, never> | null;
+            specialHours?: {
+                [key: string]: unknown;
+            } | null;
             /**
              * @description Whether to accept orders when the store is closed
              * @default false
@@ -4088,7 +4137,7 @@ export interface components {
             /** @description Store ID */
             storeId: string;
             /** @description Table ID */
-            tableId: Record<string, never> | null;
+            tableId: string | null;
             /**
              * @description Session type
              * @default TABLE
@@ -4101,15 +4150,18 @@ export interface components {
              */
             status: "ACTIVE" | "CLOSED";
             /** @description Customer name */
-            customerName?: Record<string, never> | null;
+            customerName?: string | null;
             /** @description Customer phone number */
-            customerPhone?: Record<string, never> | null;
+            customerPhone?: string | null;
             /** @description Number of guests */
             guestCount: number;
             /** @description Session token for authentication - ONLY provided on session creation */
             sessionToken: string;
-            /** @description Closed timestamp */
-            closedAt: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @description Closed timestamp
+             */
+            closedAt: string | null;
             /**
              * Format: date-time
              * @description Created timestamp
@@ -4127,7 +4179,7 @@ export interface components {
             /** @description Store ID */
             storeId: string;
             /** @description Table ID */
-            tableId: Record<string, never> | null;
+            tableId: string | null;
             /**
              * @description Session type
              * @default TABLE
@@ -4140,13 +4192,16 @@ export interface components {
              */
             status: "ACTIVE" | "CLOSED";
             /** @description Customer name */
-            customerName?: Record<string, never> | null;
+            customerName?: string | null;
             /** @description Customer phone number */
-            customerPhone?: Record<string, never> | null;
+            customerPhone?: string | null;
             /** @description Number of guests */
             guestCount: number;
-            /** @description Closed timestamp */
-            closedAt: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @description Closed timestamp
+             */
+            closedAt: string | null;
             /**
              * Format: date-time
              * @description Created timestamp
@@ -4166,11 +4221,11 @@ export interface components {
         };
         CartItemResponseDto: {
             id: string;
-            menuItemId: Record<string, never>;
+            menuItemId: string | null;
             menuItemName: string;
             basePrice: string;
             quantity: number;
-            notes: Record<string, never> | null;
+            notes: string | null;
             customizations: components["schemas"]["CartItemCustomizationResponseDto"][];
             /** Format: date-time */
             createdAt: string;
@@ -4195,24 +4250,25 @@ export interface components {
         };
         OrderItemResponseDto: {
             id: string;
-            menuItemId: Record<string, never> | null;
+            menuItemId: string | null;
             price: string;
             quantity: number;
             finalPrice: string | null;
-            notes: Record<string, never> | null;
+            notes: string | null;
             customizations: components["schemas"]["OrderItemCustomizationResponseDto"][];
         };
         OrderResponseDto: {
             id: string;
             orderNumber: string;
             storeId: string;
-            sessionId: Record<string, never> | null;
+            sessionId: string | null;
             tableName: string;
             /** @enum {string} */
             status: "PENDING" | "PREPARING" | "READY" | "SERVED" | "COMPLETED" | "CANCELLED";
             /** @enum {string} */
             orderType: "DINE_IN" | "TAKEAWAY" | "DELIVERY";
-            paidAt: Record<string, never> | null;
+            /** Format: date-time */
+            paidAt: string | null;
             subTotal: string;
             vatRateSnapshot: string | null;
             serviceChargeRateSnapshot: string | null;
@@ -4223,9 +4279,10 @@ export interface components {
             discountType: "PERCENTAGE" | "FIXED_AMOUNT" | null;
             discountValue: string | null;
             discountAmount: string | null;
-            discountReason: Record<string, never> | null;
-            discountAppliedBy: Record<string, never> | null;
-            discountAppliedAt: Record<string, never> | null;
+            discountReason: string | null;
+            discountAppliedBy: string | null;
+            /** Format: date-time */
+            discountAppliedAt: string | null;
             /** @description Total amount paid across all payments (supports bill splitting) */
             totalPaid: string;
             /** @description Remaining balance to be paid */
@@ -4309,8 +4366,8 @@ export interface components {
             id: string;
             orderId: string;
             amount: string;
-            reason: Record<string, never> | null;
-            refundedBy: Record<string, never> | null;
+            reason: string | null;
+            refundedBy: string | null;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -4323,7 +4380,8 @@ export interface components {
             /** @enum {string} */
             role: "SUPER_ADMIN" | "PLATFORM_ADMIN" | "SUPPORT_AGENT" | "FINANCE_ADMIN" | "COMPLIANCE_OFFICER";
             isActive: boolean;
-            lastLoginAt: Record<string, never>;
+            /** Format: date-time */
+            lastLoginAt: string | null;
         };
         ValidateAdminResponseDto: {
             adminUser: components["schemas"]["AdminUserResponseDto"];
@@ -4353,8 +4411,11 @@ export interface components {
             role: "SUPER_ADMIN" | "PLATFORM_ADMIN" | "SUPPORT_AGENT" | "FINANCE_ADMIN" | "COMPLIANCE_OFFICER";
             /** @example true */
             isActive: boolean;
-            /** @example 2025-10-28T10:00:00.000Z */
-            lastLoginAt: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @example 2025-10-28T10:00:00.000Z
+             */
+            lastLoginAt: string | null;
             /**
              * Format: date-time
              * @example 2025-10-01T10:00:00.000Z
@@ -4379,17 +4440,17 @@ export interface components {
             /** @description Store name */
             name: string;
             /** @description Store description */
-            description?: Record<string, never>;
+            description?: string | null;
             /** @description Store phone number */
-            phone?: Record<string, never>;
+            phone?: string | null;
             /** @description Store email */
-            email?: Record<string, never>;
+            email?: string | null;
             /** @description Store address */
-            address?: Record<string, never>;
+            address?: string | null;
             /** @description Store logo path */
-            logoPath?: Record<string, never>;
+            logoPath?: string | null;
             /** @description Store cover photo path */
-            coverPhotoPath?: Record<string, never>;
+            coverPhotoPath?: string | null;
         };
         AdminStoreSubscriptionDto: {
             /** @description Subscription ID */
@@ -4409,12 +4470,21 @@ export interface components {
              * @enum {string}
              */
             billingCycle: "MONTHLY" | "ANNUAL";
-            /** @description Current period start date */
-            currentPeriodStart?: Record<string, never>;
-            /** @description Current period end date */
-            currentPeriodEnd?: Record<string, never>;
-            /** @description Trial end date */
-            trialEndsAt?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @description Current period start date
+             */
+            currentPeriodStart?: string | null;
+            /**
+             * Format: date-time
+             * @description Current period end date
+             */
+            currentPeriodEnd?: string | null;
+            /**
+             * Format: date-time
+             * @description Trial end date
+             */
+            trialEndsAt?: string | null;
         };
         AdminStoreTierDto: {
             /** @description Tier ID */
@@ -4471,9 +4541,9 @@ export interface components {
             /** @description Currency code */
             currency: string;
             /** @description VAT rate */
-            vatRate?: Record<string, never>;
+            vatRate?: string | null;
             /** @description Service charge rate */
-            serviceChargeRate?: Record<string, never>;
+            serviceChargeRate?: string | null;
             /** @description Loyalty enabled */
             loyaltyEnabled: boolean;
         };
@@ -4483,7 +4553,7 @@ export interface components {
             /** @description User email */
             email: string;
             /** @description User name */
-            name?: Record<string, never>;
+            name?: string | null;
             /** @description User suspended status */
             isSuspended: boolean;
         };
@@ -4548,7 +4618,7 @@ export interface components {
             /** @description Admin email */
             email: string;
             /** @description Admin name */
-            name?: Record<string, never>;
+            name?: string | null;
         };
         SuspensionHistoryItemDto: {
             /** @description Suspension ID */
@@ -4560,8 +4630,11 @@ export interface components {
              * @description Suspended at timestamp
              */
             suspendedAt: string;
-            /** @description Reactivated at timestamp */
-            reactivatedAt?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @description Reactivated at timestamp
+             */
+            reactivatedAt?: string | null;
             /** @description Admin who suspended */
             suspendedByAdmin?: components["schemas"]["AdminInfoDto"];
             /** @description Admin who reactivated */
@@ -4611,11 +4684,14 @@ export interface components {
             /** @description User email */
             email: string;
             /** @description User name */
-            name?: Record<string, never>;
+            name?: string | null;
             /** @description User suspended status */
             isSuspended: boolean;
-            /** @description Suspended at timestamp */
-            suspendedAt?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @description Suspended at timestamp
+             */
+            suspendedAt?: string | null;
             /**
              * Format: date-time
              * @description Created at timestamp
@@ -4637,11 +4713,14 @@ export interface components {
             /** @description User email */
             email: string;
             /** @description User name */
-            name?: Record<string, never>;
+            name?: string | null;
             /** @description User suspended status */
             isSuspended: boolean;
-            /** @description Suspended at timestamp */
-            suspendedAt?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @description Suspended at timestamp
+             */
+            suspendedAt?: string | null;
             /**
              * Format: date-time
              * @description Created at timestamp
@@ -4663,11 +4742,14 @@ export interface components {
             /** @description User email */
             email: string;
             /** @description User name */
-            name?: Record<string, never>;
+            name?: string | null;
             /** @description User suspended status */
             isSuspended: boolean;
-            /** @description Suspended at timestamp */
-            suspendedAt?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @description Suspended at timestamp
+             */
+            suspendedAt?: string | null;
             /**
              * Format: date-time
              * @description Updated at timestamp
@@ -4680,7 +4762,7 @@ export interface components {
             /** @description User email */
             email: string;
             /** @description User name */
-            name?: Record<string, never>;
+            name?: string | null;
             /**
              * Format: date-time
              * @description Created at timestamp
@@ -4688,8 +4770,11 @@ export interface components {
             createdAt: string;
             /** @description User suspended status */
             isSuspended: boolean;
-            /** @description Suspended at timestamp */
-            suspendedAt?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @description Suspended at timestamp
+             */
+            suspendedAt?: string | null;
         };
         UserAdminInfoDto: {
             /** @description Admin ID */
@@ -4697,7 +4782,7 @@ export interface components {
             /** @description Admin email */
             email: string;
             /** @description Admin name */
-            name?: Record<string, never>;
+            name?: string | null;
         };
         UserSuspensionHistoryItemDto: {
             /** @description Suspension ID */
@@ -4709,8 +4794,11 @@ export interface components {
              * @description Suspended at timestamp
              */
             suspendedAt: string;
-            /** @description Reactivated at timestamp */
-            reactivatedAt?: Record<string, never>;
+            /**
+             * Format: date-time
+             * @description Reactivated at timestamp
+             */
+            reactivatedAt?: string | null;
             /** @description Admin who suspended */
             suspendedByAdmin?: components["schemas"]["UserAdminInfoDto"];
             /** @description Admin who reactivated */
@@ -4730,7 +4818,7 @@ export interface components {
             /** @description Store slug */
             slug: string;
             /** @description Store name */
-            name?: Record<string, never>;
+            name?: string | null;
         };
         PaymentDetailResponseDto: {
             /** @description Payment request ID */
@@ -4755,27 +4843,38 @@ export interface components {
              */
             currency: "THB" | "MMK" | "USD" | "EUR" | "JPY" | "CNY" | "SGD" | "HKD";
             /** @description Requested duration in days */
-            requestedDuration?: Record<string, never>;
+            requestedDuration?: number | null;
             /** @description Payment proof path */
-            paymentProofPath?: Record<string, never>;
+            paymentProofPath?: string | null;
             /** @description Bank transfer details */
-            bankTransferDetails?: Record<string, never>;
+            bankTransferDetails?: {
+                [key: string]: unknown;
+            } | null;
             /** @description Admin notes */
-            notes?: Record<string, never>;
+            notes?: string | null;
             /** @description Verified by admin ID */
-            verifiedBy?: Record<string, never>;
-            /** @description Verified at timestamp */
-            verifiedAt?: Record<string, never>;
+            verifiedBy?: string | null;
+            /**
+             * Format: date-time
+             * @description Verified at timestamp
+             */
+            verifiedAt?: string | null;
             /** @description Activated by admin ID */
-            activatedBy?: Record<string, never>;
-            /** @description Activated at timestamp */
-            activatedAt?: Record<string, never>;
+            activatedBy?: string | null;
+            /**
+             * Format: date-time
+             * @description Activated at timestamp
+             */
+            activatedAt?: string | null;
             /** @description Rejected by admin ID */
-            rejectedBy?: Record<string, never>;
-            /** @description Rejected at timestamp */
-            rejectedAt?: Record<string, never>;
+            rejectedBy?: string | null;
+            /**
+             * Format: date-time
+             * @description Rejected at timestamp
+             */
+            rejectedAt?: string | null;
             /** @description Rejection reason */
-            rejectionReason?: Record<string, never>;
+            rejectionReason?: string | null;
             /**
              * Format: date-time
              * @description Created at timestamp
@@ -4796,9 +4895,9 @@ export interface components {
              */
             status: "PENDING_VERIFICATION" | "VERIFIED" | "ACTIVATED" | "REJECTED";
             /** @description Admin notes */
-            notes?: Record<string, never>;
+            notes?: string | null;
             /** @description Rejection reason */
-            rejectionReason?: Record<string, never>;
+            rejectionReason?: string | null;
             /**
              * Format: date-time
              * @description Updated at timestamp

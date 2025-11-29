@@ -2,10 +2,10 @@
  * Common Service
  *
  * Re-exports common utilities for RMS app.
- * Uses openapi-fetch for type-safe API calls.
+ * Uses typedFetch for FormData uploads.
  */
 
-import { ApiError } from '@/utils/apiFetch';
+import { typedFetchFormData } from '@/utils/typed-fetch';
 
 /** Image upload response data */
 interface UploadImageResponseData {
@@ -15,7 +15,7 @@ interface UploadImageResponseData {
 
 /**
  * Uploads an image file to S3.
- * Note: Uses raw fetch since FormData uploads need special handling.
+ * Note: Uses typedFetchFormData since FormData uploads need special handling.
  *
  * @param file - Image file to upload
  * @returns Upload response with image paths
@@ -28,23 +28,14 @@ export async function uploadImage(
   const formData = new FormData();
   formData.append('file', file);
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+  const data = await typedFetchFormData<UploadImageResponseData>(
+    '/upload/image',
+    formData
+  );
 
-  const response = await fetch(`${baseUrl}/upload/image`, {
-    method: 'POST',
-    body: formData,
-    credentials: 'include',
-  });
-
-  if (!response.ok) {
-    throw new ApiError('Failed to upload image', response.status);
-  }
-
-  const json = await response.json();
-
-  if (!json.data?.basePath) {
+  if (!data.basePath) {
     throw new Error('Base path is missing in the response');
   }
 
-  return json.data as UploadImageResponseData;
+  return data;
 }

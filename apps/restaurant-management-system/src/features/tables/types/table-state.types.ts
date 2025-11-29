@@ -2,12 +2,29 @@
  * Table State Types
  *
  * Provides table status management types.
- * Note: TableStatus is defined as an enum here (not re-exported) because
- * the generated type is a union type that can't be used as a runtime value.
+ * Note: TableStatus is defined as an enum here because we need runtime values
+ * for Object.values() and as object keys in status-related UI logic.
  */
 
-// Re-export UpdateTableStatusDto from auto-generated schemas
-export type { UpdateTableStatusDto } from '@repo/api/generated/types';
+// Re-export table types from auto-generated schemas
+export type {
+  TableResponseDto,
+  UpdateTableDto,
+} from '@repo/api/generated/types';
+
+/**
+ * DTO for updating table status.
+ * Note: This is a frontend-only type pending backend implementation.
+ */
+export interface UpdateTableStatusDto {
+  status:
+    | 'VACANT'
+    | 'SEATED'
+    | 'ORDERING'
+    | 'SERVED'
+    | 'READY_TO_PAY'
+    | 'CLEANING';
+}
 
 /**
  * Table status enum for runtime usage.

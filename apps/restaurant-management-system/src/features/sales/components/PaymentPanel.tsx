@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useMutation } from '@tanstack/react-query';
 import {
@@ -22,11 +22,10 @@ import {
 import { Input } from '@repo/ui/components/input';
 import { Label } from '@repo/ui/components/label';
 import {
-  Tabs,
+  TypedTabs,
   TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@repo/ui/components/tabs';
+  type TypedTab,
+} from '@repo/ui/components/typed-tabs';
 import { Textarea } from '@repo/ui/components/textarea';
 
 import { recordPayment } from '@/features/payments/services/payment.service';
@@ -66,6 +65,28 @@ export function PaymentPanel({
   const parsedTendered = parseFloat(amountTendered) || 0;
   const change = parsedTendered - orderTotal;
   const isValidTendered = parsedTendered >= orderTotal;
+
+  // Payment method tabs configuration
+  const paymentMethodTabs = useMemo<TypedTab<PaymentMethod>[]>(
+    () => [
+      {
+        value: 'CASH',
+        label: tPayments('cash'),
+        icon: <DollarSign className="h-4 w-4" />,
+      },
+      {
+        value: 'CREDIT_CARD',
+        label: tPayments('billSplitting.card'),
+        icon: <CreditCard className="h-4 w-4" />,
+      },
+      {
+        value: 'MOBILE_PAYMENT',
+        label: tPayments('billSplitting.mobile'),
+        icon: <Smartphone className="h-4 w-4" />,
+      },
+    ],
+    [tPayments]
+  );
 
   // Record payment mutation
   const paymentMutation = useMutation({
@@ -120,26 +141,13 @@ export function PaymentPanel({
         </div>
 
         {/* Payment Method Tabs */}
-        <Tabs
+        <TypedTabs
           value={paymentMethod}
-          onValueChange={(v) => setPaymentMethod(v as PaymentMethod)}
+          onValueChange={setPaymentMethod}
+          tabs={paymentMethodTabs}
           className="flex-1"
+          listClassName="grid w-full grid-cols-3"
         >
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="CASH" className="gap-2">
-              <DollarSign className="h-4 w-4" />
-              {tPayments('cash')}
-            </TabsTrigger>
-            <TabsTrigger value="CREDIT_CARD" className="gap-2">
-              <CreditCard className="h-4 w-4" />
-              {tPayments('billSplitting.card')}
-            </TabsTrigger>
-            <TabsTrigger value="MOBILE_PAYMENT" className="gap-2">
-              <Smartphone className="h-4 w-4" />
-              {tPayments('billSplitting.mobile')}
-            </TabsTrigger>
-          </TabsList>
-
           {/* Cash Payment */}
           <TabsContent value="CASH" className="mt-4 space-y-4">
             <div className="space-y-2">
@@ -216,7 +224,7 @@ export function PaymentPanel({
               />
             </div>
           </TabsContent>
-        </Tabs>
+        </TypedTabs>
 
         {/* Notes */}
         <div className="mt-4 space-y-2">

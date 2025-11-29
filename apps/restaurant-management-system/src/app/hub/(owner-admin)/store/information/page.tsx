@@ -123,13 +123,15 @@ export default function UpdateStoreInformationPage() {
   useEffect(() => {
     if (storeDetails?.information) {
       const info = storeDetails.information;
+      // Note: API types may return Record<string, never> for nullable strings
+      // Use String() to safely convert to string
       form.reset({
         name: info.name ?? '',
-        logoUrl: info.logoUrl ?? '', // Assuming API returns logoUrl in information object
-        address: info.address ?? '',
-        phone: info.phone ?? '',
-        email: info.email ?? '',
-        website: info.website ?? '',
+        logoUrl: info.logoPath ? String(info.logoPath) : '',
+        address: info.address ? String(info.address) : '',
+        phone: info.phone ? String(info.phone) : '',
+        email: info.email ? String(info.email) : '',
+        website: info.website ? String(info.website) : '',
       });
     }
   }, [storeDetails, form]);

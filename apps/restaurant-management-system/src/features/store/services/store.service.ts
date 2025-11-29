@@ -5,7 +5,7 @@
  * Uses openapi-fetch for type-safe API calls with auto-generated types.
  */
 
-import { apiClient, ApiError } from '@/utils/apiFetch';
+import { apiClient, ApiError, unwrapApiResponseAs } from '@/utils/apiFetch';
 import type {
   CreateStoreDto,
   GetStoreDetailsResponseDto,
@@ -21,13 +21,6 @@ interface StoreCreatedResponse {
   slug: string;
 }
 
-/** Standard API response wrapper */
-interface StandardApiResponse<T> {
-  data: T;
-  message?: string;
-  success: boolean;
-}
-
 /**
  * Retrieves store details by ID.
  *
@@ -38,22 +31,14 @@ interface StandardApiResponse<T> {
 export async function getStoreDetails(
   id: string
 ): Promise<GetStoreDetailsResponseDto> {
-  const { data, error, response } = await apiClient.GET('/stores/{id}', {
+  const result = await apiClient.GET('/stores/{id}', {
     params: { path: { id } },
   });
 
-  const res = data as unknown as
-    | StandardApiResponse<GetStoreDetailsResponseDto>
-    | undefined;
-
-  if (error || !res?.data) {
-    throw new ApiError(
-      res?.message || 'Failed to retrieve store details',
-      response?.status ?? 500
-    );
-  }
-
-  return res.data;
+  return unwrapApiResponseAs<GetStoreDetailsResponseDto>(
+    result,
+    'Failed to retrieve store details'
+  );
 }
 
 /**
@@ -97,26 +82,15 @@ export async function updateStoreSettings(
   id: string,
   storeData: UpdateStoreSettingDto
 ): Promise<StoreSettingResponseDto> {
-  const { data, error, response } = await apiClient.PUT(
-    '/stores/{id}/settings',
-    {
-      params: { path: { id } },
-      body: storeData,
-    }
+  const result = await apiClient.PUT('/stores/{id}/settings', {
+    params: { path: { id } },
+    body: storeData,
+  });
+
+  return unwrapApiResponseAs<StoreSettingResponseDto>(
+    result,
+    'Failed to update store settings'
   );
-
-  const res = data as unknown as
-    | StandardApiResponse<StoreSettingResponseDto>
-    | undefined;
-
-  if (error || !res?.data) {
-    throw new ApiError(
-      res?.message || 'Failed to update store settings',
-      response?.status ?? 500
-    );
-  }
-
-  return res.data;
 }
 
 /**
@@ -129,20 +103,9 @@ export async function updateStoreSettings(
 export async function createStore(
   storeData: CreateStoreDto
 ): Promise<StoreCreatedResponse> {
-  const { data, error, response } = await apiClient.POST('/stores', {
+  const result = await apiClient.POST('/stores', {
     body: storeData,
   });
 
-  const res = data as unknown as
-    | StandardApiResponse<StoreCreatedResponse>
-    | undefined;
-
-  if (error || !res?.data) {
-    throw new ApiError(
-      res?.message || 'Failed to create store',
-      response?.status ?? 500
-    );
-  }
-
-  return res.data;
+  return unwrapApiResponseAs<StoreCreatedResponse>(result, 'Failed to create store');
 }

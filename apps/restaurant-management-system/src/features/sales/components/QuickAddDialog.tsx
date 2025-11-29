@@ -63,6 +63,10 @@ export function QuickAddDialog({
 
   if (!item) return null;
 
+  // Cast OpenAPI-generated Record<string, never> types to proper types
+  const imagePath = item.imagePath as string | null | undefined;
+  const description = item.description as string | null | undefined;
+
   const handleIncrement = () => setQuantity((q) => q + 1);
   const handleDecrement = () => setQuantity((q) => Math.max(1, q - 1));
 
@@ -114,10 +118,10 @@ export function QuickAddDialog({
         <ScrollArea className="max-h-[60vh]">
           <div className="space-y-6 pr-4">
             {/* Item Image */}
-            {getImageUrl(item.imagePath, 'medium') && (
+            {getImageUrl(imagePath, 'medium') && (
               <div className="relative h-40 w-full overflow-hidden rounded-lg">
                 <Image
-                  src={getImageUrl(item.imagePath, 'medium')!}
+                  src={getImageUrl(imagePath, 'medium')!}
                   alt={item.name}
                   fill
                   className="object-cover"
@@ -129,9 +133,9 @@ export function QuickAddDialog({
             {/* Item Info */}
             <div>
               <h3 className="text-foreground font-semibold">{item.name}</h3>
-              {item.description && (
+              {description && (
                 <p className="text-muted-foreground mt-1 text-sm">
-                  {item.description}
+                  {description}
                 </p>
               )}
               <p className="text-primary mt-2 text-lg font-bold">

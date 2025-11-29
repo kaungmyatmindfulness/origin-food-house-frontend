@@ -177,7 +177,7 @@ export default function StoreSettingsPage() {
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
           <Badge variant="outline" className="text-muted-foreground">
-            {storeDetails.information.name}
+            {storeDetails.information?.name ?? 'Store'}
           </Badge>
         </div>
         <p className="text-muted-foreground">{t('subtitle')}</p>
@@ -228,7 +228,11 @@ export default function StoreSettingsPage() {
         <TabsContent value="hours" className="mt-6" tabIndex={-1}>
           <BusinessHoursTab
             storeId={selectedStoreId}
-            initialHours={settings?.businessHours}
+            initialHours={
+              settings?.businessHours as Parameters<
+                typeof BusinessHoursTab
+              >[0]['initialHours']
+            }
           />
         </TabsContent>
 
@@ -247,7 +251,7 @@ export default function StoreSettingsPage() {
             enabled={settings?.loyaltyEnabled}
             pointRate={settings?.loyaltyPointRate}
             redemptionRate={settings?.loyaltyRedemptionRate}
-            expiryDays={settings?.loyaltyExpiryDays}
+            expiryDays={settings?.loyaltyPointExpiryDays}
           />
         </TabsContent>
 

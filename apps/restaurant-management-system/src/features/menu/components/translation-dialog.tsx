@@ -28,17 +28,14 @@ import {
 
 import { updateMenuItemTranslations } from '../services/translation.service';
 import { menuKeys } from '../queries/menu.keys';
-import type {
-  MenuItem,
-  SupportedLocale,
-  TranslationWithDescription,
-} from '../types/menu-item.types';
+import type { MenuItemNestedResponseDto } from '../types/category.types';
+import type { SupportedLocale } from '../types/menu-item.types';
 import { LOCALE_INFO, SUPPORTED_LOCALES } from '../utils/translation.utils';
 
 interface TranslationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  item: MenuItem;
+  item: MenuItemNestedResponseDto;
   storeId: string;
 }
 
@@ -61,13 +58,11 @@ export function TranslationDialog({
     >;
 
     SUPPORTED_LOCALES.forEach((locale) => {
-      const translation = item.translations?.[locale];
+      // item.translations is an array: [{locale, name, description}]
+      const translation = item.translations?.find((t) => t.locale === locale);
       initial[locale] = {
         name: translation?.name || '',
-        description:
-          ('description' in (translation || {})
-            ? (translation as TranslationWithDescription).description
-            : '') || '',
+        description: translation?.description || '',
       };
     });
 
@@ -84,7 +79,12 @@ export function TranslationDialog({
         description: translations[locale].description || null,
       }));
 
-      await updateMenuItemTranslations(item.id, storeId, translationsToUpdate);
+      // Cast to service type - description is string but API types have Record<string, never>
+      await updateMenuItemTranslations(
+        item.id,
+        storeId,
+        translationsToUpdate as Parameters<typeof updateMenuItemTranslations>[2]
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: menuKeys.items(storeId) });

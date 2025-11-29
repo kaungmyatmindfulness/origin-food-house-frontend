@@ -14,12 +14,11 @@ import { $api } from '@/utils/apiFetch';
 import { API_PATHS } from '@/utils/api-paths';
 import { useSalesStore } from '@/features/sales/store/sales.store';
 import type { Category } from '@/features/menu/types/category.types';
-import type { MenuItemDto } from '@/features/menu/types/menu-item.types';
-import type { SalesMenuItem } from '@/features/sales/types/sales.types';
+import type { MenuItemResponseDto } from '@repo/api/generated/types';
 
 interface MenuPanelProps {
   storeId: string;
-  onAddToCart: (item: SalesMenuItem) => void;
+  onAddToCart: (item: MenuItemResponseDto) => void;
 }
 
 function ItemsLoadingSkeleton() {
@@ -58,18 +57,18 @@ export function MenuPanel({ storeId, onAddToCart }: MenuPanelProps) {
   const categories = (categoriesResponse?.data ?? []) as Category[];
 
   // Fetch menu items using $api.useQuery
-  // Cast to MenuItemDto[] because generated types have incorrect nullable typing
   const { data: menuItemsResponse, isLoading: itemsLoading } = $api.useQuery(
     'get',
     API_PATHS.menuItems,
     { params: { path: { storeId } } },
     { staleTime: 2 * 60 * 1000 } // 2 minutes
   );
-  const menuItems = (menuItemsResponse?.data ?? []) as MenuItemDto[];
 
   // Filter items by category and search
+  // MenuItemResponseDto from our corrected types has proper nullable string types
   const filteredItems = useMemo(() => {
-    if (!menuItems) return [];
+    const menuItems = (menuItemsResponse?.data ?? []) as MenuItemResponseDto[];
+    if (!menuItems.length) return [];
 
     return menuItems.filter((item) => {
       // Don't show hidden items
@@ -77,7 +76,7 @@ export function MenuPanel({ storeId, onAddToCart }: MenuPanelProps) {
         return false;
       }
 
-      // Category filter - MenuItemDto has category.id, not categoryId
+      // Category filter - MenuItemResponseDto has category.id
       if (selectedCategoryId && item.category?.id !== selectedCategoryId) {
         return false;
       }
@@ -86,7 +85,7 @@ export function MenuPanel({ storeId, onAddToCart }: MenuPanelProps) {
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         const nameMatch = item.name.toLowerCase().includes(query);
-        const descMatch = item.description?.toLowerCase().includes(query);
+        const descMatch = item.description?.toLowerCase().includes(query) ?? false;
         if (!nameMatch && !descMatch) {
           return false;
         }
@@ -94,7 +93,7 @@ export function MenuPanel({ storeId, onAddToCart }: MenuPanelProps) {
 
       return true;
     });
-  }, [menuItems, selectedCategoryId, searchQuery]);
+  }, [menuItemsResponse?.data, selectedCategoryId, searchQuery]);
 
   return (
     <div className="flex h-full flex-col space-y-4">
@@ -137,7 +136,7 @@ export function MenuPanel({ storeId, onAddToCart }: MenuPanelProps) {
             {filteredItems.map((item) => (
               <SalesMenuItemCard
                 key={item.id}
-                item={item as SalesMenuItem}
+                item={item}
                 onAddToCart={onAddToCart}
               />
             ))}

@@ -5,14 +5,14 @@
  * Uses openapi-fetch for type-safe API calls with auto-generated types.
  */
 
-import { apiClient, ApiError } from '@/utils/apiFetch';
+import { apiClient, unwrapApiResponse, unwrapApiResponseAs } from '@/utils/apiFetch';
 import type {
   OrderResponseDto,
   UpdateOrderStatusDto,
-  CartResponseDto,
   AddToCartDto,
   UpdateCartItemDto,
   CheckoutCartDto,
+  CartResponseDto,
 } from '@repo/api/generated/types';
 
 /**
@@ -27,16 +27,12 @@ export async function addToCart(
   sessionId: string,
   cartData: AddToCartDto
 ): Promise<CartResponseDto> {
-  const { data, error, response } = await apiClient.POST('/cart/items', {
+  const result = await apiClient.POST('/cart/items', {
     params: { query: { sessionId } },
     body: cartData,
   });
 
-  if (error || !data) {
-    throw new ApiError('Failed to add item to cart', response.status);
-  }
-
-  return data;
+  return unwrapApiResponseAs<CartResponseDto>(result, 'Failed to add item to cart');
 }
 
 /**
@@ -47,15 +43,11 @@ export async function addToCart(
  * @throws {ApiError} If the request fails
  */
 export async function getCart(sessionId: string): Promise<CartResponseDto> {
-  const { data, error, response } = await apiClient.GET('/cart', {
+  const result = await apiClient.GET('/cart', {
     params: { query: { sessionId } },
   });
 
-  if (error || !data) {
-    throw new ApiError('Failed to fetch cart', response.status);
-  }
-
-  return data;
+  return unwrapApiResponseAs<CartResponseDto>(result, 'Failed to fetch cart');
 }
 
 /**
@@ -70,21 +62,14 @@ export async function removeFromCart(
   sessionId: string,
   cartItemId: string
 ): Promise<CartResponseDto> {
-  const { data, error, response } = await apiClient.DELETE(
-    '/cart/items/{cartItemId}',
-    {
-      params: {
-        path: { cartItemId },
-        query: { sessionId },
-      },
-    }
-  );
+  const result = await apiClient.DELETE('/cart/items/{cartItemId}', {
+    params: {
+      path: { cartItemId },
+      query: { sessionId },
+    },
+  });
 
-  if (error || !data) {
-    throw new ApiError('Failed to remove item from cart', response.status);
-  }
-
-  return data;
+  return unwrapApiResponseAs<CartResponseDto>(result, 'Failed to remove item from cart');
 }
 
 /**
@@ -101,22 +86,15 @@ export async function updateCartItem(
   cartItemId: string,
   cartData: UpdateCartItemDto
 ): Promise<CartResponseDto> {
-  const { data, error, response } = await apiClient.PATCH(
-    '/cart/items/{cartItemId}',
-    {
-      params: {
-        path: { cartItemId },
-        query: { sessionId },
-      },
-      body: cartData,
-    }
-  );
+  const result = await apiClient.PATCH('/cart/items/{cartItemId}', {
+    params: {
+      path: { cartItemId },
+      query: { sessionId },
+    },
+    body: cartData,
+  });
 
-  if (error || !data) {
-    throw new ApiError('Failed to update cart item', response.status);
-  }
-
-  return data;
+  return unwrapApiResponseAs<CartResponseDto>(result, 'Failed to update cart item');
 }
 
 /**
@@ -136,16 +114,12 @@ export async function checkoutCart(
     tableName: checkoutData.tableName,
   };
 
-  const { data, error, response } = await apiClient.POST('/orders/checkout', {
+  const result = await apiClient.POST('/orders/checkout', {
     params: { query: { sessionId } },
     body,
   });
 
-  if (error || !data) {
-    throw new ApiError('Failed to checkout cart', response?.status ?? 500);
-  }
-
-  return data;
+  return unwrapApiResponse(result, 'Failed to checkout cart');
 }
 
 /**
@@ -156,15 +130,11 @@ export async function checkoutCart(
  * @throws {ApiError} If the request fails
  */
 export async function getOrder(orderId: string): Promise<OrderResponseDto> {
-  const { data, error, response } = await apiClient.GET('/orders/{orderId}', {
-    params: { path: { orderId } },
+  const result = await apiClient.GET('/orders/{orderId}', {
+    params: { path: { orderId, id: orderId } },
   });
 
-  if (error || !data) {
-    throw new ApiError('Failed to fetch order', response.status);
-  }
-
-  return data;
+  return unwrapApiResponse(result, 'Failed to fetch order');
 }
 
 /**
@@ -179,17 +149,10 @@ export async function updateOrderStatus(
   orderId: string,
   statusData: UpdateOrderStatusDto
 ): Promise<OrderResponseDto> {
-  const { data, error, response } = await apiClient.PATCH(
-    '/orders/{orderId}/status',
-    {
-      params: { path: { orderId } },
-      body: statusData,
-    }
-  );
+  const result = await apiClient.PATCH('/orders/{orderId}/status', {
+    params: { path: { orderId } },
+    body: statusData,
+  });
 
-  if (error || !data) {
-    throw new ApiError('Failed to update order status', response.status);
-  }
-
-  return data;
+  return unwrapApiResponse(result, 'Failed to update order status');
 }

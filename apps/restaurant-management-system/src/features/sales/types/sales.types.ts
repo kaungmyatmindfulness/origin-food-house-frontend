@@ -1,17 +1,22 @@
 /**
  * Types for Sales feature UI state and operations.
  * These types are used for client-side state management and component props.
- *
- * Note: API response types should be imported from @repo/api/generated/types
  */
 
 import type { MenuItemResponseDto } from '@repo/api/generated/types';
 
+// Re-export types from generated schemas
+export type {
+  CartItemResponseDto,
+  CartResponseDto,
+  OrderItemResponseDto,
+  OrderResponseDto,
+  MenuItemResponseDto,
+} from '@repo/api/generated/types';
+
 /**
  * Extended menu item type for sales display.
- * MenuItemResponseDto already includes isOutOfStock.
- *
- * @deprecated Use MenuItemResponseDto directly from @repo/api/generated/types
+ * Uses MenuItemResponseDto with proper nullable string types.
  */
 export type SalesMenuItem = MenuItemResponseDto;
 

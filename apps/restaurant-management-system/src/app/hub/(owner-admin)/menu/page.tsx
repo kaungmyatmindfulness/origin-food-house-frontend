@@ -38,10 +38,13 @@ import { useDialog } from '@/common/hooks/useDialogState';
 import { Badge } from '@repo/ui/components/badge';
 import { Button } from '@repo/ui/components/button';
 import { ScrollArea } from '@repo/ui/components/scroll-area';
-import type { Category } from '@/features/menu/types/category.types';
-import type { MenuItem } from '@/features/menu/types/menu-item.types';
+import type {
+  Category,
+  MenuItemNestedResponseDto,
+} from '@/features/menu/types/category.types';
+import { getErrorMessage } from '@/common/utils/error.utils';
 
-// Note: Using local Category/MenuItem types instead of generated DTOs because:
+// Note: Using local Category/MenuItemNestedResponseDto types instead of generated DTOs because:
 // - Generated CategoryResponseDto doesn't include nested menuItems
 // - Generated types may not match actual API response structure
 // TODO: Update OpenAPI spec on backend to properly reflect nested responses
@@ -139,7 +142,7 @@ export default function MenuPage() {
   }, [filteredCategories]);
 
   // Event handlers
-  const handleSelectItem = useCallback((item: MenuItem) => {
+  const handleSelectItem = useCallback((item: MenuItemNestedResponseDto) => {
     setViewItemId(item.id);
   }, []);
 
@@ -163,10 +166,8 @@ export default function MenuPage() {
   }
 
   if (error) {
-    // Error from openapi-react-query - cast to unknown for safe access
-    const apiError = error as unknown as { message?: string } | null;
     const errorMessage =
-      apiError?.message ?? 'An error occurred while loading menu items.';
+      getErrorMessage(error) ?? 'An error occurred while loading menu items.';
 
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center space-y-4">

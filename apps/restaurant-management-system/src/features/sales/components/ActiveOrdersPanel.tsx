@@ -27,7 +27,7 @@ import type { OrderResponseDto } from '@repo/api/generated/types';
  * For now, returns empty array until API is ready.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function getActiveOrders(storeId: string): Promise<OrderResponseDto[]> {
+async function getActiveOrders(_storeId: string): Promise<OrderResponseDto[]> {
   // NOTE FOR BE DEVELOPER: Implement GET /stores/{storeId}/orders?status=PENDING,PREPARING,READY,SERVED
   // This should return orders that are not COMPLETED or CANCELLED
   return [];

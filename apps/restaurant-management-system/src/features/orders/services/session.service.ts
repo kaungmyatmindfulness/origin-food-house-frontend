@@ -2,10 +2,11 @@
  * Session Service
  *
  * Service layer for session-related API operations.
- * Note: Uses raw fetch for endpoints with response structure mismatch.
+ * Note: Uses typedFetch for endpoints with response structure mismatch.
  */
 
-import { ApiError } from '@/utils/apiFetch';
+import { typedFetch } from '@/utils/typed-fetch';
+
 import type {
   SessionResponseDto,
   CreateManualSessionDto,
@@ -16,15 +17,6 @@ export type { CreateManualSessionDto };
 
 /** Session type for RMS manual sessions */
 export type SessionType = 'TABLE' | 'COUNTER' | 'PHONE' | 'TAKEOUT';
-
-/** Standard API response wrapper */
-interface StandardApiResponse<T> {
-  data: T;
-  message?: string;
-  status: 'success' | 'error';
-}
-
-const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 /**
  * Creates a manual session (counter, phone, or takeout order).
@@ -39,31 +31,13 @@ export async function createManualSession(
   storeId: string,
   data: CreateManualSessionDto
 ): Promise<SessionResponseDto> {
-  const response = await fetch(
-    `${baseUrl}/active-table-sessions/manual?storeId=${storeId}`,
+  return typedFetch<SessionResponseDto>(
+    `/active-table-sessions/manual?storeId=${storeId}`,
     {
       method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: data,
     }
   );
-
-  if (!response.ok) {
-    throw new ApiError('Failed to create manual session', response.status);
-  }
-
-  const json =
-    (await response.json()) as StandardApiResponse<SessionResponseDto>;
-
-  if (!json.data) {
-    throw new ApiError(
-      json.message || 'Failed to create manual session',
-      response.status
-    );
-  }
-
-  return json.data;
 }
 
 /**
@@ -76,27 +50,7 @@ export async function createManualSession(
 export async function getSession(
   sessionId: string
 ): Promise<SessionResponseDto> {
-  const response = await fetch(
-    `${baseUrl}/active-table-sessions/${sessionId}`,
-    {
-      method: 'GET',
-      credentials: 'include',
-    }
+  return typedFetch<SessionResponseDto>(
+    `/active-table-sessions/${sessionId}`
   );
-
-  if (!response.ok) {
-    throw new ApiError('Failed to fetch session', response.status);
-  }
-
-  const json =
-    (await response.json()) as StandardApiResponse<SessionResponseDto>;
-
-  if (!json.data) {
-    throw new ApiError(
-      json.message || 'Failed to fetch session',
-      response.status
-    );
-  }
-
-  return json.data;
 }

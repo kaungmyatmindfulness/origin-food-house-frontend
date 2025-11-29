@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { ImageUpload } from './image-upload';
-import { toast } from '@repo/ui/lib/toast';
 
 // Mock dependencies
 jest.mock('sonner', () => ({
@@ -24,7 +23,7 @@ jest.mock('@/common/services/common.service', () => ({
 
 // Mock react-dropzone
 jest.mock('react-dropzone', () => ({
-  useDropzone: ({ onDropAccepted, onDropRejected, disabled }: any) => ({
+  useDropzone: ({ disabled }: any) => ({
     getRootProps: () => ({
       onClick: jest.fn(),
       'data-testid': 'dropzone',
@@ -308,9 +307,7 @@ describe('ImageUpload', () => {
 
   describe('Styling', () => {
     it('should apply correct classes to dropzone in empty state', () => {
-      const { container } = render(
-        <ImageUpload value={undefined} onChange={mockOnChange} />
-      );
+      render(<ImageUpload value={undefined} onChange={mockOnChange} />);
       const dropzone = screen.getByTestId('dropzone');
 
       // Dropzone should be clickable

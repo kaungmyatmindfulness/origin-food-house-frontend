@@ -24,7 +24,7 @@ import {
   updateCartItem,
 } from '@/features/orders/services/order.service';
 import { salesKeys } from '@/features/sales/queries/sales.keys';
-import type { CartItemResponseDto } from '@repo/api/generated/types';
+import type { CartResponseDto } from '@repo/api/generated/types';
 
 interface CartPanelProps {
   sessionId: string | null;
@@ -36,11 +36,12 @@ export function CartPanel({ sessionId, onCheckout }: CartPanelProps) {
   const queryClient = useQueryClient();
 
   // Fetch cart data
+  // The service now returns the corrected CartResponseDto type
   const {
     data: cart,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<CartResponseDto>({
     queryKey: salesKeys.cart(sessionId ?? ''),
     queryFn: () => getCart(sessionId!),
     enabled: !!sessionId,
@@ -187,7 +188,7 @@ export function CartPanel({ sessionId, onCheckout }: CartPanelProps) {
         ) : (
           <ScrollArea className="flex-1 px-6">
             <div className="py-2">
-              {cart?.items.map((item: CartItemResponseDto) => (
+              {cart?.items?.map((item) => (
                 <CartItem
                   key={item.id}
                   item={item}

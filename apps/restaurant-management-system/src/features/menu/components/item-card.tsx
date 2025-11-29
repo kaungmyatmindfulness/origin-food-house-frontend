@@ -14,8 +14,10 @@ import {
 } from '@/features/auth/store/auth.store';
 import { $api } from '@/utils/apiFetch';
 import { API_PATHS } from '@/utils/api-paths';
-import { MenuItem } from '@/features/menu/types/menu-item.types';
-import type { Category } from '@/features/menu/types/category.types';
+import type {
+  Category,
+  MenuItemNestedResponseDto,
+} from '@/features/menu/types/category.types';
 import { formatCurrency } from '@/utils/formatting';
 import {
   getTranslationCompletionCount,
@@ -35,10 +37,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useMenuStore } from '@/features/menu/store/menu.store';
 import { getImageUrl } from '@repo/api/utils/s3-url';
+import { getErrorMessage } from '@/common/utils/error.utils';
 
 interface ItemCardProps {
-  item: MenuItem;
-  onSelect: (item: MenuItem) => void;
+  item: MenuItemNestedResponseDto;
+  onSelect: (item: MenuItemNestedResponseDto) => void;
 }
 
 export function ItemCard({ item, onSelect }: ItemCardProps) {
@@ -81,9 +84,8 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
       setIsConfirmDeleteDialogOpen(false);
     },
     onError: (error) => {
-      const apiError = error as unknown as { message?: string } | null;
       toast.error('Failed to delete item', {
-        description: apiError?.message ?? 'Unknown error',
+        description: getErrorMessage(error) ?? 'Unknown error',
       });
       setIsConfirmDeleteDialogOpen(false);
     },
@@ -152,9 +154,8 @@ export function ItemCard({ item, onSelect }: ItemCardProps) {
         ];
         queryClient.setQueryData(fullQueryKey, context.previousData);
       }
-      const apiError = error as unknown as { message?: string } | null;
       toast.error('Failed to update stock status', {
-        description: apiError?.message ?? 'Unknown error',
+        description: getErrorMessage(error) ?? 'Unknown error',
       });
     },
     onSettled: () => {

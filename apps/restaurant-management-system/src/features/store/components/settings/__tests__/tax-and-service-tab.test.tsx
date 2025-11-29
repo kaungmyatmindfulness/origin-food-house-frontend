@@ -164,6 +164,12 @@ describe('TaxAndServiceTab', () => {
       currency: 'THB',
       vatRate: '0.15',
       serviceChargeRate: '0.10',
+      acceptOrdersWhenClosed: false,
+      loyaltyEnabled: false,
+      loyaltyPointExpiryDays: null,
+      primaryLocale: 'en',
+      enabledLocales: ['en'],
+      multiLanguageEnabled: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });

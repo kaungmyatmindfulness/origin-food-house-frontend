@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Grid3X3, List, MoreVertical, RefreshCcw, Users } from 'lucide-react';
@@ -33,12 +33,9 @@ import { Button } from '@repo/ui/components/button';
 import { Badge } from '@repo/ui/components/badge';
 import { Skeleton } from '@repo/ui/components/skeleton';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@repo/ui/components/select';
+  TypedSelect,
+  type TypedSelectOption,
+} from '@repo/ui/components/typed-select';
 import {
   Dialog,
   DialogContent,
@@ -71,6 +68,34 @@ function TableStateContent() {
     null
   );
   const [newStatus, setNewStatus] = useState<TableStatus | ''>('');
+
+  // Status filter options (includes 'all')
+  type StatusFilterValue = TableStatus | 'all';
+  const statusFilterOptions = useMemo<TypedSelectOption<StatusFilterValue>[]>(
+    () => [
+      { value: 'all', label: t('statuses.all') },
+      { value: TableStatus.VACANT, label: t('statuses.vacant') },
+      { value: TableStatus.SEATED, label: t('statuses.seated') },
+      { value: TableStatus.ORDERING, label: t('statuses.ordering') },
+      { value: TableStatus.SERVED, label: t('statuses.served') },
+      { value: TableStatus.READY_TO_PAY, label: t('statuses.readyToPay') },
+      { value: TableStatus.CLEANING, label: t('statuses.cleaning') },
+    ],
+    [t]
+  );
+
+  // Status options for changing table status (no 'all')
+  const tableStatusOptions = useMemo<TypedSelectOption<TableStatus>[]>(
+    () => [
+      { value: TableStatus.VACANT, label: t('statuses.vacant') },
+      { value: TableStatus.SEATED, label: t('statuses.seated') },
+      { value: TableStatus.ORDERING, label: t('statuses.ordering') },
+      { value: TableStatus.SERVED, label: t('statuses.served') },
+      { value: TableStatus.READY_TO_PAY, label: t('statuses.readyToPay') },
+      { value: TableStatus.CLEANING, label: t('statuses.cleaning') },
+    ],
+    [t]
+  );
 
   // Fetch tables with auto-refresh every 30 seconds
   const {
@@ -167,37 +192,12 @@ function TableStateContent() {
       {/* Status Filter */}
       <div className="flex items-center gap-2">
         <span className="text-sm font-medium">{t('filterByStatus')}:</span>
-        <Select
+        <TypedSelect
           value={statusFilter}
-          onValueChange={(value) =>
-            setStatusFilter(value as TableStatus | 'all')
-          }
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t('statuses.all')}</SelectItem>
-            <SelectItem value={TableStatus.VACANT}>
-              {t('statuses.vacant')}
-            </SelectItem>
-            <SelectItem value={TableStatus.SEATED}>
-              {t('statuses.seated')}
-            </SelectItem>
-            <SelectItem value={TableStatus.ORDERING}>
-              {t('statuses.ordering')}
-            </SelectItem>
-            <SelectItem value={TableStatus.SERVED}>
-              {t('statuses.served')}
-            </SelectItem>
-            <SelectItem value={TableStatus.READY_TO_PAY}>
-              {t('statuses.readyToPay')}
-            </SelectItem>
-            <SelectItem value={TableStatus.CLEANING}>
-              {t('statuses.cleaning')}
-            </SelectItem>
-          </SelectContent>
-        </Select>
+          onValueChange={setStatusFilter}
+          options={statusFilterOptions}
+          triggerClassName="w-[180px]"
+        />
       </div>
 
       {/* Tables Display */}
@@ -246,7 +246,7 @@ function TableStateContent() {
                         size="sm"
                         onClick={() => {
                           setSelectedTable(table);
-                          setNewStatus(table.currentStatus);
+                          setNewStatus(table.currentStatus as TableStatus);
                         }}
                       >
                         <MoreVertical className="h-4 w-4" />
@@ -260,36 +260,12 @@ function TableStateContent() {
                         </DialogDescription>
                       </DialogHeader>
                       <div className="space-y-4 py-4">
-                        <Select
-                          value={newStatus}
-                          onValueChange={(value) =>
-                            setNewStatus(value as TableStatus)
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder={t('selectStatus')} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value={TableStatus.VACANT}>
-                              {t('statuses.vacant')}
-                            </SelectItem>
-                            <SelectItem value={TableStatus.SEATED}>
-                              {t('statuses.seated')}
-                            </SelectItem>
-                            <SelectItem value={TableStatus.ORDERING}>
-                              {t('statuses.ordering')}
-                            </SelectItem>
-                            <SelectItem value={TableStatus.SERVED}>
-                              {t('statuses.served')}
-                            </SelectItem>
-                            <SelectItem value={TableStatus.READY_TO_PAY}>
-                              {t('statuses.readyToPay')}
-                            </SelectItem>
-                            <SelectItem value={TableStatus.CLEANING}>
-                              {t('statuses.cleaning')}
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <TypedSelect
+                          value={newStatus || TableStatus.VACANT}
+                          onValueChange={setNewStatus}
+                          options={tableStatusOptions}
+                          placeholder={t('selectStatus')}
+                        />
                       </div>
                       <DialogFooter>
                         <Button
@@ -390,7 +366,7 @@ function TableStateContent() {
                         size="sm"
                         onClick={() => {
                           setSelectedTable(table);
-                          setNewStatus(table.currentStatus);
+                          setNewStatus(table.currentStatus as TableStatus);
                         }}
                       >
                         {t('changeStatus')}
@@ -404,36 +380,12 @@ function TableStateContent() {
                         </DialogDescription>
                       </DialogHeader>
                       <div className="space-y-4 py-4">
-                        <Select
-                          value={newStatus}
-                          onValueChange={(value) =>
-                            setNewStatus(value as TableStatus)
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder={t('selectStatus')} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value={TableStatus.VACANT}>
-                              {t('statuses.vacant')}
-                            </SelectItem>
-                            <SelectItem value={TableStatus.SEATED}>
-                              {t('statuses.seated')}
-                            </SelectItem>
-                            <SelectItem value={TableStatus.ORDERING}>
-                              {t('statuses.ordering')}
-                            </SelectItem>
-                            <SelectItem value={TableStatus.SERVED}>
-                              {t('statuses.served')}
-                            </SelectItem>
-                            <SelectItem value={TableStatus.READY_TO_PAY}>
-                              {t('statuses.readyToPay')}
-                            </SelectItem>
-                            <SelectItem value={TableStatus.CLEANING}>
-                              {t('statuses.cleaning')}
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <TypedSelect
+                          value={newStatus || TableStatus.VACANT}
+                          onValueChange={setNewStatus}
+                          options={tableStatusOptions}
+                          placeholder={t('selectStatus')}
+                        />
                       </div>
                       <DialogFooter>
                         <Button

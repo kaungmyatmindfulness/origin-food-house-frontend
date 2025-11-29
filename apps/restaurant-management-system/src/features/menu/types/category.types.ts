@@ -14,31 +14,43 @@ import type {
 export type {
   CategoryBasicResponseDto,
   CategoryDeletedResponseDto,
+  CategoryResponseDto as GeneratedCategoryResponseDto,
   CreateCategoryDto,
   UpdateCategoryDto,
   SortCategoryDto,
   SortCategoriesPayloadDto,
   SortMenuItemDto,
   UpsertCategoryDto,
+  TranslationWithDescriptionResponseDto,
+  BaseTranslationResponseDto,
 } from '@repo/api/generated/types';
 
+// Re-export helper types from centralized utilities
+export type { SupportedLocale, TranslationMap } from '@/common/types/api-type-fixes';
+
 // Re-export translation types from menu-item.types for consistency
-export type {
-  SupportedLocale,
-  BaseTranslation,
-  TranslationMap,
-} from './menu-item.types';
+export type { BaseTranslation } from './menu-item.types';
 
 /**
  * Extended MenuItemNestedResponseDto with isOutOfStock field.
  * The generated type doesn't include isOutOfStock but the API returns it.
- * Also fixes the description type from Record<string, never> to string.
+ *
+ * Note: translations field remains as array format from API response.
+ * Components should convert array to map format when needed using utility functions.
  */
 export interface MenuItemNestedResponseDto
-  extends Omit<GeneratedMenuItemNestedResponseDto, 'description' | 'imagePath'> {
-  description?: string | null;
-  imagePath?: string | null;
+  extends Omit<GeneratedMenuItemNestedResponseDto, 'translations'> {
+  /** Whether the item is out of stock (added by API but not in OpenAPI spec) */
   isOutOfStock?: boolean;
+  /**
+   * Translations for the menu item in different locales.
+   * Array format from API: [{locale: 'en', name: '...', description: '...'}]
+   */
+  translations?: Array<{
+    locale: 'en' | 'zh' | 'my' | 'th';
+    name: string;
+    description?: string | null;
+  }>;
 }
 
 /**

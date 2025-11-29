@@ -103,23 +103,39 @@ export function LoyaltyProgramTab({
     LoyaltyProgramFormData
   >({
     mutationFn: async (formData: LoyaltyProgramFormData) => {
-      const apiData = {
-        pointRate: formData.pointRate?.toString() || null,
-        redemptionRate: formData.redemptionRate?.toString() || null,
-        expiryDays: formData.expiryDays || null,
-      };
+      // Build body without null values - API expects specific format
+      const apiData: {
+        pointRate?: string;
+        redemptionRate?: string;
+        expiryDays?: number;
+      } = {};
+
+      if (formData.pointRate != null) {
+        apiData.pointRate = formData.pointRate.toString();
+      }
+      if (formData.redemptionRate != null) {
+        apiData.redemptionRate = formData.redemptionRate.toString();
+      }
+      if (formData.expiryDays != null) {
+        apiData.expiryDays = formData.expiryDays;
+      }
 
       const { data, error, response } = await apiClient.PATCH(
         '/stores/{id}/settings/loyalty-rules',
         {
           params: { path: { id: storeId } },
-          body: apiData,
+          // Cast apiData since we conditionally build it and API expects all fields
+          body: apiData as {
+            pointRate: string;
+            redemptionRate: string;
+            expiryDays: number;
+          },
         }
       );
 
       if (error || !data?.data) {
         throw new ApiError(
-          data?.message || 'Failed to update loyalty rules',
+          String(data?.message ?? 'Failed to update loyalty rules'),
           response.status
         );
       }

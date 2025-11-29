@@ -99,13 +99,13 @@ export function errorToastMiddleware(): Middleware {
 export function loggingMiddleware(): Middleware {
   return {
     async onRequest({ request }) {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env['NODE_ENV'] === 'development') {
         console.log(`[API] ${request.method} ${request.url}`);
       }
       return request;
     },
     async onResponse({ response, request }) {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env['NODE_ENV'] === 'development') {
         const status = response.ok ? '✓' : '✗';
         console.log(
           `[API] ${status} ${request.method} ${request.url} → ${response.status}`

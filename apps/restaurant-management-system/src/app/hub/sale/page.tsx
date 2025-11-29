@@ -145,7 +145,7 @@ export default function SalesPage() {
         addItemToLocalCart({
           menuItemId: item.id,
           menuItemName: item.name,
-          menuItemImage: item.imagePath ?? undefined,
+          menuItemImage: item.imagePath ? String(item.imagePath) : undefined,
           basePrice: Number(item.basePrice),
           quantity: 1,
         });
@@ -194,7 +194,9 @@ export default function SalesPage() {
       addItemToLocalCart({
         menuItemId: data.menuItemId,
         menuItemName: quickAddItem.name,
-        menuItemImage: quickAddItem.imagePath ?? undefined,
+        menuItemImage: quickAddItem.imagePath
+          ? String(quickAddItem.imagePath)
+          : undefined,
         basePrice: Number(quickAddItem.basePrice),
         quantity: data.quantity,
         notes: data.notes,

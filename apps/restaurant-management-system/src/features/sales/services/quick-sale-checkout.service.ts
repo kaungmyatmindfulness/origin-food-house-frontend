@@ -6,10 +6,18 @@
  */
 
 import { apiClient, ApiError } from '@/utils/apiFetch';
-import type {
-  OrderResponseDto,
-  QuickSaleItemDto,
-} from '@repo/api/generated/schemas';
+import type { OrderResponseDto } from '@repo/api/generated/types';
+
+/**
+ * Item for quick sale order.
+ * Note: This type is defined locally as it's not yet in the generated types.
+ */
+export interface QuickSaleItemDto {
+  menuItemId: string;
+  quantity: number;
+  customizationOptionIds?: string[];
+  notes?: string;
+}
 
 /** Session type for quick sale */
 type SessionType = 'COUNTER' | 'PHONE' | 'TAKEOUT' | 'TABLE';
@@ -25,7 +33,7 @@ interface QuickSaleCheckoutParams {
 }
 
 /** Result of quick sale checkout */
-interface QuickSaleCheckoutResult {
+export interface QuickSaleCheckoutResult {
   orderId: string;
   orderNumber: string;
   sessionId: string;
@@ -101,20 +109,22 @@ export async function quickSaleCheckout(
   );
 
   if (error || !data?.data) {
-    throw new ApiError(data?.message || 'Failed to checkout', response.status);
+    throw new ApiError(
+      String(data?.message ?? 'Failed to checkout'),
+      response.status
+    );
   }
 
   const order = data.data as OrderResponseDto;
-  const sessionId = order.sessionId as unknown as string | null;
 
-  if (!sessionId) {
+  if (!order.sessionId) {
     throw new Error('Session ID missing in checkout response');
   }
 
   return {
     orderId: order.id,
     orderNumber: order.orderNumber,
-    sessionId,
+    sessionId: order.sessionId,
     grandTotal: order.grandTotal,
   };
 }

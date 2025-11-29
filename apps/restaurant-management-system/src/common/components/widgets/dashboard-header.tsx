@@ -90,7 +90,7 @@ export function DashboardHeader() {
           {currentStore && (
             <div className="hidden items-center gap-3 md:flex">
               <span className="text-foreground text-sm font-medium">
-                {currentStore.information.name}
+                {currentStore.information?.name ?? 'Store'}
               </span>
             </div>
           )}

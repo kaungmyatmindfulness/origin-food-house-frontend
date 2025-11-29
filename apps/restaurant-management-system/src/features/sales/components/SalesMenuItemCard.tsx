@@ -10,11 +10,11 @@ import { cn } from '@repo/ui/lib/utils';
 
 import { formatCurrency } from '@/utils/formatting';
 
-import type { SalesMenuItem } from '@/features/sales/types/sales.types';
+import type { MenuItemResponseDto } from '@repo/api/generated/types';
 
 interface SalesMenuItemCardProps {
-  item: SalesMenuItem;
-  onAddToCart: (item: SalesMenuItem) => void;
+  item: MenuItemResponseDto;
+  onAddToCart: (item: MenuItemResponseDto) => void;
   disabled?: boolean;
 }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Utensils, Phone, Package } from 'lucide-react';
 import { toast } from '@repo/ui/lib/toast';
@@ -33,7 +33,7 @@ import {
   FormMessage,
 } from '@repo/ui/components/form';
 import { Input } from '@repo/ui/components/input';
-import { Tabs, TabsList, TabsTrigger } from '@repo/ui/components/tabs';
+import { TypedTabs, type TypedTab } from '@repo/ui/components/typed-tabs';
 
 interface ManualOrderFormData {
   customerName?: string;
@@ -104,6 +104,28 @@ export function ManualOrderDialog({
 
   const isPhoneOrder = sessionType === 'PHONE';
 
+  // Session type tabs configuration
+  const sessionTypeTabs = useMemo<TypedTab<SessionType>[]>(
+    () => [
+      {
+        value: 'COUNTER',
+        label: t('counterOrder'),
+        icon: <Utensils className="h-4 w-4" />,
+      },
+      {
+        value: 'PHONE',
+        label: t('phoneOrder'),
+        icon: <Phone className="h-4 w-4" />,
+      },
+      {
+        value: 'TAKEOUT',
+        label: t('takeoutOrder'),
+        icon: <Package className="h-4 w-4" />,
+      },
+    ],
+    [t]
+  );
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-md">
@@ -116,25 +138,12 @@ export function ManualOrderDialog({
 
         <div className="space-y-6 py-4">
           {/* Session Type Tabs */}
-          <Tabs
+          <TypedTabs
             value={sessionType}
-            onValueChange={(value) => setSessionType(value as SessionType)}
-          >
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="COUNTER" className="flex items-center gap-2">
-                <Utensils className="h-4 w-4" />
-                {t('counterOrder')}
-              </TabsTrigger>
-              <TabsTrigger value="PHONE" className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                {t('phoneOrder')}
-              </TabsTrigger>
-              <TabsTrigger value="TAKEOUT" className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                {t('takeoutOrder')}
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+            onValueChange={setSessionType}
+            tabs={sessionTypeTabs}
+            listClassName="grid w-full grid-cols-3"
+          />
 
           {/* Customer Information Form */}
           <Form {...form}>

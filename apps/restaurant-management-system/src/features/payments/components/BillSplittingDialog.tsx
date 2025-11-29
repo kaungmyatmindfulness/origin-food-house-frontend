@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -26,7 +26,10 @@ import {
   FormMessage,
 } from '@repo/ui/components/form';
 import { Input } from '@repo/ui/components/input';
-import { RadioGroup, RadioGroupItem } from '@repo/ui/components/radio-group';
+import {
+  TypedRadioGroup,
+  type TypedRadioGroupOption,
+} from '@repo/ui/components/typed-radio-group';
 import {
   Card,
   CardContent,
@@ -237,6 +240,21 @@ export function BillSplittingDialog({
   const paidDiners = diners.filter((d) => d.paid).length;
   const totalDiners = diners.length;
 
+  // Split method options for TypedRadioGroup
+  const splitMethodOptions = useMemo<TypedRadioGroupOption<SplitMethod>[]>(
+    () => [
+      { value: 'EQUAL', label: t('equalSplit') },
+      { value: 'CUSTOM', label: t('customAmounts') },
+      {
+        value: 'BY_ITEM',
+        label: t('byItem'),
+        description: t('comingSoon'),
+        disabled: true,
+      },
+    ],
+    [t]
+  );
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
@@ -252,33 +270,11 @@ export function BillSplittingDialog({
             {/* Split Method Selector */}
             <div className="space-y-3">
               <label className="text-sm font-medium">{t('splitMethod')}</label>
-              <RadioGroup
+              <TypedRadioGroup
                 value={splitMethod}
-                onValueChange={(v) => setSplitMethod(v as SplitMethod)}
-                className="flex flex-col space-y-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="EQUAL" id="equal" />
-                  <label htmlFor="equal" className="cursor-pointer text-sm">
-                    {t('equalSplit')}
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="CUSTOM" id="custom" />
-                  <label htmlFor="custom" className="cursor-pointer text-sm">
-                    {t('customAmounts')}
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2 opacity-50">
-                  <RadioGroupItem value="BY_ITEM" id="byItem" disabled />
-                  <label
-                    htmlFor="byItem"
-                    className="cursor-not-allowed text-sm"
-                  >
-                    {t('byItem')} {t('comingSoon')}
-                  </label>
-                </div>
-              </RadioGroup>
+                onValueChange={setSplitMethod}
+                options={splitMethodOptions}
+              />
             </div>
 
             {/* Equal Split UI */}

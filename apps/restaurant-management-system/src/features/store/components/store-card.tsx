@@ -22,6 +22,8 @@ export const StoreCard: React.FC<StoreCardProps> = ({
   const { information } = store;
   const isDisabled = isLoading;
 
+  const storeName = information?.name ?? 'Unnamed Store';
+
   return (
     <li>
       <button
@@ -33,7 +35,7 @@ export const StoreCard: React.FC<StoreCardProps> = ({
           'relative text-left',
           isDisabled && 'cursor-not-allowed opacity-50 hover:shadow-sm'
         )}
-        aria-label={`Select store ${information.name}, role ${role}`}
+        aria-label={`Select store ${storeName}, role ${role}`}
       >
         {isLoading && isSelected && (
           <div className="bg-card/80 absolute inset-0 flex items-center justify-center rounded-lg">
@@ -41,16 +43,16 @@ export const StoreCard: React.FC<StoreCardProps> = ({
           </div>
         )}
         <div className="mb-2">
-          <h3 className="text-foreground text-lg font-semibold">
-            {information.name}
-          </h3>
-          {information.address && (
+          <h3 className="text-foreground text-lg font-semibold">{storeName}</h3>
+          {information?.address && (
             <p className="text-muted-foreground text-sm">
-              {information.address}
+              {String(information.address)}
             </p>
           )}
-          {information.phone && (
-            <p className="text-muted-foreground text-sm">{information.phone}</p>
+          {information?.phone && (
+            <p className="text-muted-foreground text-sm">
+              {String(information.phone)}
+            </p>
           )}
         </div>
         <div className="mt-2">

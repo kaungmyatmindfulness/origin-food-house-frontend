@@ -5,17 +5,29 @@
 
 import type {
   OrderResponseDto,
-  PaymentResponseDto,
+  OrderItemResponseDto,
 } from '@repo/api/generated/types';
 import type { SessionType } from '../types/sales.types';
 
 /**
  * Session information for receipt display
  */
-interface ReceiptSession {
+export interface ReceiptSession {
   sessionType?: SessionType;
   customerName?: string | null;
   customerPhone?: string | null;
+}
+
+/**
+ * Order payment data for receipt display.
+ * Note: This differs from PaymentResponseDto which is for subscription payments.
+ */
+export interface OrderPayment {
+  id?: string;
+  amount: string | number;
+  paymentMethod?: string;
+  amountTendered?: string | number;
+  change?: string | number;
 }
 
 /**
@@ -23,12 +35,12 @@ interface ReceiptSession {
  */
 interface ReceiptOrderItem {
   id: string;
-  menuItemId: { [key: string]: unknown };
+  menuItemId: string | null;
   menuItemName: string;
   price: string;
   quantity: number;
-  finalPrice: string;
-  notes: { [key: string]: unknown };
+  finalPrice: string | null;
+  notes: string | null;
 }
 
 /**
@@ -40,7 +52,7 @@ export interface ReceiptOrderData
     'orderItems' | 'discountAmount' | 'tableName'
   > {
   orderItems: ReceiptOrderItem[];
-  payments?: PaymentResponseDto[];
+  payments?: OrderPayment[];
   taxAmount?: string;
   discountAmount?: string;
   tableName?: string;
@@ -50,21 +62,15 @@ export interface ReceiptOrderData
 /**
  * Extended order item type that may include menuItemName from the API
  */
-interface OrderItemWithMenuName {
-  id: string;
-  menuItemId: string;
+interface OrderItemWithMenuName extends OrderItemResponseDto {
   menuItemName?: string;
-  price: string;
-  quantity: number;
-  finalPrice: string;
-  notes?: string | null;
 }
 
 /**
- * Extended order response that may include payments from the API
+ * Extended order response that may include payments from the API.
  */
 interface OrderWithPayments extends OrderResponseDto {
-  payments?: PaymentResponseDto[];
+  payments?: OrderPayment[];
   session?: ReceiptSession | null;
 }
 
@@ -91,22 +97,16 @@ export function transformOrderToReceiptData(
     discountAmount: discountAmount ?? undefined,
     orderItems:
       orderItems?.map((item) => {
-        // Cast to extended type to access potential menuItemName
-        const extendedItem = item as unknown as OrderItemWithMenuName;
+        const extendedItem = item as OrderItemWithMenuName;
         return {
           id: extendedItem.id,
-          menuItemId: extendedItem.menuItemId as unknown as {
-            [key: string]: unknown;
-          },
+          menuItemId: extendedItem.menuItemId ?? null,
           // Use menuItemName from API if available, otherwise fallback
-          // TODO: Request backend to always include menuItemName in order items
           menuItemName: extendedItem.menuItemName ?? 'Item',
           price: extendedItem.price,
           quantity: extendedItem.quantity,
           finalPrice: extendedItem.finalPrice,
-          notes: (extendedItem.notes ?? null) as unknown as {
-            [key: string]: unknown;
-          },
+          notes: extendedItem.notes ?? null,
         };
       }) ?? [],
     payments: order.payments,
