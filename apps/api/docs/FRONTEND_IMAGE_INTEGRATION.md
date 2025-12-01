@@ -29,17 +29,19 @@ NEXT_PUBLIC_S3_BASE_URL=https://your-bucket.s3.us-east-1.amazonaws.com
 ## Image Path Format
 
 ### Database Storage
+
 The database stores **base paths without version suffixes**:
 
 ```typescript
 {
-  imagePath: "uploads/abc-123-def-456"  // Base path only
+  imagePath: 'uploads/abc-123-def-456'; // Base path only
 }
 ```
 
 ### Available Sizes
 
 Images are generated in multiple sizes:
+
 - **original**: Original dimensions (kept for some presets)
 - **small**: 400px width
 - **medium**: 800px width
@@ -48,11 +50,13 @@ Images are generated in multiple sizes:
 ### File Naming Convention
 
 Each size version is stored as:
+
 ```
 {basePath}-{size}.webp
 ```
 
 **Examples**:
+
 - `uploads/abc-123-def-456-small.webp`
 - `uploads/abc-123-def-456-medium.webp`
 - `uploads/abc-123-def-456-large.webp`
@@ -287,6 +291,7 @@ function ZoomableImage({ basePath }: { basePath: string }) {
 ```
 
 **Frontend URL Construction**:
+
 ```typescript
 const menuItem = response.data[0];
 const imageUrl = getImageUrl(menuItem.imagePath, 'medium');
@@ -312,6 +317,7 @@ const imageUrl = getImageUrl(menuItem.imagePath, 'medium');
 ```
 
 **Frontend URL Construction**:
+
 ```typescript
 const logo = getImageUrl(store.information.logoPath, 'small');
 const cover = getImageUrl(store.information.coverPhotoPath, 'large');
@@ -372,10 +378,7 @@ async function createMenuItem(data: CreateMenuItemDto) {
 function MenuItemCard({ item }: { item: MenuItem }) {
   return (
     <div>
-      <img
-        src={getImageUrl(item.imagePath, 'medium')}
-        alt={item.name}
-      />
+      <img src={getImageUrl(item.imagePath, 'medium')} alt={item.name} />
       <h3>{item.name}</h3>
       <p>${item.basePrice}</p>
     </div>
@@ -389,12 +392,12 @@ function MenuItemCard({ item }: { item: MenuItem }) {
 
 Different image types use different size presets:
 
-| Image Type | Preset | Generated Sizes | Primary | Use Case |
-|------------|--------|-----------------|---------|----------|
-| Menu Items | `menu-item` | small, medium, large | medium | Product displays |
-| Store Logos | `store-logo` | small, medium | medium | Headers, branding |
-| Cover Photos | `cover-photo` | small, medium, large | large | Hero images |
-| Payment Proofs | `payment-proof` | original | original | Documents (PDFs) |
+| Image Type     | Preset          | Generated Sizes      | Primary  | Use Case          |
+| -------------- | --------------- | -------------------- | -------- | ----------------- |
+| Menu Items     | `menu-item`     | small, medium, large | medium   | Product displays  |
+| Store Logos    | `store-logo`    | small, medium        | medium   | Headers, branding |
+| Cover Photos   | `cover-photo`   | small, medium, large | large    | Hero images       |
+| Payment Proofs | `payment-proof` | original             | original | Documents (PDFs)  |
 
 ### Usage with Presets
 
@@ -431,7 +434,13 @@ Always provide srcset for better performance:
 ### 2. Handle Null Images
 
 ```tsx
-function MenuImage({ imagePath, name }: { imagePath: string | null; name: string }) {
+function MenuImage({
+  imagePath,
+  name,
+}: {
+  imagePath: string | null;
+  name: string;
+}) {
   const imageUrl = imagePath
     ? getImageUrl(imagePath, 'medium')
     : '/placeholder-food.jpg';
@@ -461,8 +470,8 @@ function MenuImage({ imagePath, name }: { imagePath: string | null; name: string
 ```tsx
 <img
   src={getImageUrl(imagePath, 'medium')}
-  loading="lazy"  // ← Browser-native lazy loading
-  decoding="async"  // ← Asynchronous image decoding
+  loading="lazy" // ← Browser-native lazy loading
+  decoding="async" // ← Asynchronous image decoding
   alt={name}
 />
 ```
@@ -474,6 +483,7 @@ function MenuImage({ imagePath, name }: { imagePath: string | null; name: string
 If migrating from the old system where the API returned full URLs:
 
 ### Old Format
+
 ```json
 {
   "imageUrl": "https://bucket.s3.region.amazonaws.com/uploads/uuid-medium.webp"
@@ -481,6 +491,7 @@ If migrating from the old system where the API returned full URLs:
 ```
 
 ### New Format
+
 ```json
 {
   "imagePath": "uploads/uuid"
@@ -490,17 +501,20 @@ If migrating from the old system where the API returned full URLs:
 ### Migration Steps
 
 1. **Update Environment**:
+
    ```bash
    # Add to .env
    VITE_S3_BASE_URL=https://your-bucket.s3.us-east-1.amazonaws.com
    ```
 
 2. **Create Utility Function**:
+
    ```typescript
    // Copy the getImageUrl function from above
    ```
 
 3. **Update Components**:
+
    ```tsx
    // Before
    <img src={menuItem.imageUrl} alt={menuItem.name} />
@@ -510,6 +524,7 @@ If migrating from the old system where the API returned full URLs:
    ```
 
 4. **Update Form Submissions**:
+
    ```tsx
    // Before
    formData.imageUrl = uploadResult.data.imageUrl;
@@ -525,6 +540,7 @@ If migrating from the old system where the API returned full URLs:
 To use a CDN (e.g., CloudFront) instead of direct S3 access:
 
 1. **Update Environment Variable**:
+
    ```bash
    # Instead of S3 URL:
    VITE_S3_BASE_URL=https://d1234567890.cloudfront.net
@@ -546,19 +562,12 @@ To use a CDN (e.g., CloudFront) instead of direct S3 access:
 
 ```tsx
 <picture>
-  <source
-    media="(max-width: 640px)"
-    srcSet={getImageUrl(imagePath, 'small')}
-  />
+  <source media="(max-width: 640px)" srcSet={getImageUrl(imagePath, 'small')} />
   <source
     media="(max-width: 1024px)"
     srcSet={getImageUrl(imagePath, 'medium')}
   />
-  <img
-    src={getImageUrl(imagePath, 'large')}
-    alt={altText}
-    loading="lazy"
-  />
+  <img src={getImageUrl(imagePath, 'large')} alt={altText} loading="lazy" />
 </picture>
 ```
 
@@ -566,11 +575,7 @@ To use a CDN (e.g., CloudFront) instead of direct S3 access:
 
 ```tsx
 // In <head> or Next.js _document.tsx
-<link
-  rel="preload"
-  as="image"
-  href={getImageUrl(store.logoPath, 'small')}
-/>
+<link rel="preload" as="image" href={getImageUrl(store.logoPath, 'small')} />
 ```
 
 ---
@@ -580,17 +585,20 @@ To use a CDN (e.g., CloudFront) instead of direct S3 access:
 ### Image Not Loading
 
 1. **Check base URL configuration**:
+
    ```typescript
    console.log('S3 Base URL:', import.meta.env.VITE_S3_BASE_URL);
    ```
 
 2. **Verify path format**:
+
    ```typescript
    console.log('Image Path:', menuItem.imagePath);
    // Should be: "uploads/abc-123-def" (no version suffix)
    ```
 
 3. **Check constructed URL**:
+
    ```typescript
    const url = getImageUrl(menuItem.imagePath, 'medium');
    console.log('Constructed URL:', url);
@@ -609,7 +617,9 @@ console.log('Available Sizes:', uploadResult.data.availableSizes);
 // Should be: ["small", "medium", "large"]
 
 // Ensure you're requesting an available size
-const size = uploadResult.data.availableSizes.includes('large') ? 'large' : 'medium';
+const size = uploadResult.data.availableSizes.includes('large')
+  ? 'large'
+  : 'medium';
 ```
 
 ---
@@ -617,17 +627,20 @@ const size = uploadResult.data.availableSizes.includes('large') ? 'large' : 'med
 ## API Endpoints Reference
 
 ### Upload Image
+
 - **Endpoint**: `POST /upload/image`
 - **Body**: `multipart/form-data` with `file` field
 - **Optional**: `sizePreset` (menu-item, store-logo, cover-photo, payment-proof)
 - **Returns**: `{ basePath, availableSizes, primarySize, metadata }`
 
 ### Create/Update Menu Item
+
 - **Endpoint**: `POST /menu/:storeId/items` or `PATCH /menu/:storeId/items/:id`
 - **Body**: `{ name, basePrice, imagePath, ... }`
 - **Returns**: Menu item with `imagePath` field
 
 ### Update Store Information
+
 - **Endpoint**: `PATCH /store/:storeId/information`
 - **Body**: `{ name, logoPath, coverPhotoPath, ... }`
 - **Returns**: Store information with `logoPath` and `coverPhotoPath`

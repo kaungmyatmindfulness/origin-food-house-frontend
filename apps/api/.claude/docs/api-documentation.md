@@ -143,6 +143,7 @@ interface ApiCrudOptions {
 ### When to Use Raw Decorators
 
 Use raw Swagger decorators when:
+
 - Custom `@ApiBody` with examples is needed
 - Complex query parameters (`@ApiQuery`)
 - Custom headers (`@ApiHeader`)
@@ -171,6 +172,7 @@ async updateTranslations(@Body() dto: UpdateTranslationsDto) {}
 **IMPORTANT**: This project uses `@ApiSuccessResponse` decorator with `getSchemaPath()` to reference DTOs in a generic `StandardApiResponse<T>` wrapper. This pattern requires **manual registration** of Response DTOs.
 
 **Why this is needed:**
+
 - Input DTOs (`@Body()`, `@Query()`) are auto-discovered by NestJS Swagger
 - Response DTOs referenced via `getSchemaPath()` are **NOT auto-discovered**
 - Without registration, the OpenAPI spec will have `$ref` references to schemas that don't exist
@@ -195,23 +197,23 @@ const document = SwaggerModule.createDocument(app, config, {
     CartResponseDto,
     CartItemResponseDto,
     // ... add your new DTO here
-    MyNewResponseDto,  // Don't forget this step!
+    MyNewResponseDto, // Don't forget this step!
   ],
 });
 ```
 
 **DTO categories currently registered:**
 
-| Category     | DTOs                                                                                        |
-| ------------ | ------------------------------------------------------------------------------------------- |
-| Session      | `SessionCreatedResponseDto`, `SessionResponseDto`                                           |
-| Cart         | `CartResponseDto`, `CartItemResponseDto`, `CartItemCustomizationResponseDto`                |
-| Order        | `OrderResponseDto`, `OrderItemResponseDto`, `OrderItemCustomizationResponseDto`             |
-| Kitchen      | `KitchenOrderResponseDto`                                                                   |
-| Payment      | `PaymentResponseDto`, `RefundResponseDto`                                                   |
-| Admin        | `ValidateAdminResponseDto`, `AdminUserResponseDto`, `AdminProfileResponseDto`, `AdminPermissionsResponseDto` |
-| Reports      | `SalesSummaryDto`, `PaymentBreakdownDto`, `PaymentMethodBreakdownDto`, `PopularItemsDto`, `PopularItemDto`, `OrderStatusReportDto`, `OrderStatusCountDto` |
-| Store        | `GetStoreDetailsResponseDto`, `StoreInformationResponseDto`, `StoreSettingResponseDto`      |
+| Category     | DTOs                                                                                                                                                                      |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Session      | `SessionCreatedResponseDto`, `SessionResponseDto`                                                                                                                         |
+| Cart         | `CartResponseDto`, `CartItemResponseDto`, `CartItemCustomizationResponseDto`                                                                                              |
+| Order        | `OrderResponseDto`, `OrderItemResponseDto`, `OrderItemCustomizationResponseDto`                                                                                           |
+| Kitchen      | `KitchenOrderResponseDto`                                                                                                                                                 |
+| Payment      | `PaymentResponseDto`, `RefundResponseDto`                                                                                                                                 |
+| Admin        | `ValidateAdminResponseDto`, `AdminUserResponseDto`, `AdminProfileResponseDto`, `AdminPermissionsResponseDto`                                                              |
+| Reports      | `SalesSummaryDto`, `PaymentBreakdownDto`, `PaymentMethodBreakdownDto`, `PopularItemsDto`, `PopularItemDto`, `OrderStatusReportDto`, `OrderStatusCountDto`                 |
+| Store        | `GetStoreDetailsResponseDto`, `StoreInformationResponseDto`, `StoreSettingResponseDto`                                                                                    |
 | Subscription | `SubscriptionResponseDto`, `TrialEligibilityResponseDto`, `TrialInfoResponseDto`, `PaymentRequestResponseDto`, `RefundRequestResponseDto`, `OwnershipTransferResponseDto` |
 
 **Verification:**
@@ -280,6 +282,7 @@ curl -s http://localhost:3000/api-docs-json | jq '.components.schemas | keys[]' 
 ```
 
 **Rules for nested resources:**
+
 - Nest up to 2-3 levels maximum (avoid deep nesting)
 - Use query parameters instead of deep nesting for filtering
 - For complex relationships, consider separate endpoints
@@ -584,24 +587,24 @@ metadata?: { width: number; height: number; format: string };
 
 ### Patterns That Cause Record<string, unknown>
 
-| Pattern | Problem | Solution |
-|---------|---------|----------|
-| `additionalProperties: true` | No value type constraint | Use `additionalProperties: { $ref: "..." }` |
-| `type: "object"` alone | No schema for properties | Add `properties` or `additionalProperties` with schema |
-| Generic `T` in wrapper class | OpenAPI can't resolve generics | Use `allOf` composition with `$ref` |
-| `Record<string, any>` | TypeScript any propagates | Define explicit value DTO |
+| Pattern                      | Problem                        | Solution                                               |
+| ---------------------------- | ------------------------------ | ------------------------------------------------------ |
+| `additionalProperties: true` | No value type constraint       | Use `additionalProperties: { $ref: "..." }`            |
+| `type: "object"` alone       | No schema for properties       | Add `properties` or `additionalProperties` with schema |
+| Generic `T` in wrapper class | OpenAPI can't resolve generics | Use `allOf` composition with `$ref`                    |
+| `Record<string, any>`        | TypeScript any propagates      | Define explicit value DTO                              |
 
 ### DTOs Requiring Value Type Definitions
 
 The following DTOs currently use `Record<string, unknown>` and need typed value DTOs:
 
-| DTO | Field | Recommended Value DTO |
-|-----|-------|----------------------|
-| `StoreSettingResponseDto` | `businessHours` | `BusinessHoursSlotDto` |
-| `StoreSettingResponseDto` | `specialHours` | `SpecialHoursEntryDto` |
-| `PaymentResponseDto` | `splitMetadata` | `SplitMetadataDto` |
-| `AuditLogResponseDto` | `details` | Use discriminated union by `action` |
-| `UploadImageResponseDto` | `versions` | `ImageVersionMetadataDto` |
+| DTO                       | Field           | Recommended Value DTO               |
+| ------------------------- | --------------- | ----------------------------------- |
+| `StoreSettingResponseDto` | `businessHours` | `BusinessHoursSlotDto`              |
+| `StoreSettingResponseDto` | `specialHours`  | `SpecialHoursEntryDto`              |
+| `PaymentResponseDto`      | `splitMetadata` | `SplitMetadataDto`                  |
+| `AuditLogResponseDto`     | `details`       | Use discriminated union by `action` |
+| `UploadImageResponseDto`  | `versions`      | `ImageVersionMetadataDto`           |
 
 ### Registration Requirement
 
@@ -612,7 +615,7 @@ The following DTOs currently use `Record<string, unknown>` and need typed value 
 const document = SwaggerModule.createDocument(app, config, {
   extraModels: [
     // ... existing models
-    BusinessHoursSlotDto,        // Required for $ref resolution
+    BusinessHoursSlotDto, // Required for $ref resolution
     SpecialHoursEntryDto,
     SplitMetadataDto,
     ImageVersionMetadataDto,
@@ -656,8 +659,8 @@ The `StandardApiResponse<T>` generic wrapper class intentionally uses `additiona
 // src/common/dto/standard-api-response.dto.ts
 export class StandardApiResponse<T> {
   @ApiPropertyOptional({
-    type: "object",
-    additionalProperties: true,  // Intentional - resolved via allOf composition
+    type: 'object',
+    additionalProperties: true, // Intentional - resolved via allOf composition
     nullable: true,
   })
   data: T | null;
@@ -673,10 +676,10 @@ The `ApiSuccessResponse` decorator resolves the generic type using OpenAPI `allO
 ResponseDecorator({
   schema: {
     allOf: [
-      { $ref: getSchemaPath(StandardApiResponse) },  // Base wrapper
+      { $ref: getSchemaPath(StandardApiResponse) }, // Base wrapper
       {
         properties: {
-          data: { $ref: getSchemaPath(model) },      // Specific DTO type
+          data: { $ref: getSchemaPath(model) }, // Specific DTO type
         },
       },
     ],
@@ -713,7 +716,7 @@ ResponseDecorator({
 ```typescript
 // Properly typed, NOT Record<string, unknown>
 interface GetMenuItemResponse {
-  status: "success" | "error";
+  status: 'success' | 'error';
   data: MenuItemResponseDto | null;
   message: string | null;
   errors: StandardApiErrorDetails[] | null;

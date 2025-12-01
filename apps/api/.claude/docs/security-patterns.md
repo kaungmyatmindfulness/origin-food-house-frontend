@@ -5,21 +5,25 @@
 **P0 Critical Issues** - Fixed as of 2025-11-29. See [Security Audit](docs/security-audit/2025-10-28-comprehensive-security-audit.md) for historical context.
 
 ### 1. WebSocket Authentication Bypass (CVSS 9.1) - FIXED
+
 - **Location**: `src/cart/cart.gateway.ts:68-150`
 - **Original Issue**: No authentication guards
 - **Resolution**: `handleConnection` now validates session token OR JWT, disconnects unauthenticated clients
 
 ### 2. Session Token Exposure (CVSS 8.9) - FIXED
+
 - **Location**: `src/active-table-session/active-table-session.controller.ts`
 - **Original Issue**: Returns `sessionToken` in API response
 - **Resolution**: `mapToSessionResponse()` strips token from all responses; token only returned on creation via `SessionCreatedResponseDto`
 
 ### 3. Checkout Authentication Bypass (CVSS 8.6) - FIXED
+
 - **Location**: `src/order/order.service.ts:51-109`
 - **Original Issue**: Missing authentication guard
 - **Resolution**: Dual auth validation - validates session token against stored value AND staff JWT with `checkStorePermission()`
 
 ### 4. Missing Store Isolation (CVSS 7.8) - FIXED
+
 - **Location**: `src/active-table-session/active-table-session.service.ts:354-450`
 - **Original Issue**: No `storeId` validation
 - **Resolution**: `update()` and `close()` verify store permission using `session.storeId` for both table and manual sessions
@@ -47,6 +51,7 @@ async checkStoreMembership(userId: string, storeId: string): Promise<void> {
 **Status**: Implemented across all input DTOs as of 2025-11-29.
 
 All user-facing string fields now use `@Transform(({ value }) => value?.trim())` for input sanitization:
+
 - Category DTOs (create, update, upsert)
 - Menu Item DTOs (create, update)
 - Customization Group/Option DTOs
@@ -115,11 +120,12 @@ const result = await this.prisma.$queryRaw`
 
 // DANGEROUS - String interpolation (SQL injection risk)
 const result = await this.prisma.$queryRawUnsafe(
-  `SELECT * FROM users WHERE email = '${email}'`, // NEVER DO THIS
+  `SELECT * FROM users WHERE email = '${email}'` // NEVER DO THIS
 );
 ```
 
 **Security rules:**
+
 - PREFER Prisma's type-safe queries (automatic SQL injection protection)
 - USE `$queryRaw` with template literals (parameterized) if raw SQL needed
 - NEVER use `$queryRawUnsafe` with user input

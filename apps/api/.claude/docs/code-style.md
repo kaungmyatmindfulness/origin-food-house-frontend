@@ -3,6 +3,7 @@
 ## Prettier Configuration
 
 **Implicit configuration** (using Prettier defaults):
+
 - Single quotes for strings
 - 2 spaces indentation
 - Semicolons required
@@ -12,8 +13,8 @@
 
 ```typescript
 // 1. Nullish coalescing over OR
-const value = config ?? "default"; // GOOD
-const value = config || "default"; // BAD
+const value = config ?? 'default'; // GOOD
+const value = config || 'default'; // BAD
 
 // 2. Optional chaining
 const name = user?.profile?.name; // GOOD
@@ -29,7 +30,7 @@ let items = []; // BAD (if never reassigned)
 
 // 5. Template literals
 const message = `User ${userId} created`; // GOOD
-const message = "User " + userId + " created"; // BAD
+const message = 'User ' + userId + ' created'; // BAD
 
 // 6. Import order (enforced by eslint-plugin-import)
 // 1. Built-in modules (fs, path)
@@ -131,6 +132,7 @@ export class MenuCategoryDto {
 ```
 
 **DTO naming rules:**
+
 - ALWAYS use globally unique class names
 - PREFIX with module/domain name when DTOs serve different purposes:
   - `MenuCategoryDto` (in menu module) vs `CategoryResponseDto` (in category module)

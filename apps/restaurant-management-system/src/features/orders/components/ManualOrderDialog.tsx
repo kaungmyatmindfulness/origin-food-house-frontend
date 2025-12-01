@@ -5,17 +5,8 @@ import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Utensils, Phone, Package } from 'lucide-react';
 import { toast } from '@repo/ui/lib/toast';
-import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 
-import {
-  selectSelectedStoreId,
-  useAuthStore,
-} from '@/features/auth/store/auth.store';
-import {
-  createManualSession,
-  type SessionType,
-} from '@/features/orders/services/session.service';
 import { Button } from '@repo/ui/components/button';
 import {
   Dialog,
@@ -34,6 +25,17 @@ import {
 } from '@repo/ui/components/form';
 import { Input } from '@repo/ui/components/input';
 import { TypedTabs, type TypedTab } from '@repo/ui/components/typed-tabs';
+
+import {
+  selectSelectedStoreId,
+  useAuthStore,
+} from '@/features/auth/store/auth.store';
+import { $api } from '@/utils/apiFetch';
+
+import type { CreateManualSessionDto } from '@repo/api/generated/types';
+
+/** Session type for RMS manual sessions */
+type SessionType = CreateManualSessionDto['sessionType'];
 
 interface ManualOrderFormData {
   customerName?: string;
@@ -63,35 +65,46 @@ export function ManualOrderDialog({
     },
   });
 
-  const createSessionMutation = useMutation({
-    mutationFn: (data: ManualOrderFormData) =>
-      createManualSession(selectedStoreId!, {
-        sessionType,
-        customerName: data.customerName || undefined,
-        customerPhone: data.customerPhone || undefined,
-        guestCount: data.guestCount,
-      }),
-    onSuccess: (session) => {
-      toast.success(t('manualSessionCreated'), {
-        description: t('manualSessionCreatedDescription', {
-          type: sessionType.toLowerCase(),
-          sessionId: session.id.slice(0, 8),
-        }),
-      });
-      onOpenChange(false);
-      form.reset();
-      // Navigate to order creation page with session ID
-      router.push(`/hub/(owner-admin)/orders/create?sessionId=${session.id}`);
-    },
-    onError: (error) => {
-      toast.error(t('manualSessionFailed'), {
-        description: error.message || t('manualSessionFailedDescription'),
-      });
-    },
-  });
+  // Create manual session mutation using $api
+  const createSessionMutation = $api.useMutation(
+    'post',
+    '/active-table-sessions/manual',
+    {
+      onSuccess: (response) => {
+        const session = response.data;
+        if (!session) return;
+
+        toast.success(t('manualSessionCreated'), {
+          description: t('manualSessionCreatedDescription', {
+            type: sessionType.toLowerCase(),
+            sessionId: session.id.slice(0, 8),
+          }),
+        });
+        onOpenChange(false);
+        form.reset();
+        // Navigate to order creation page with session ID
+        router.push(`/hub/(owner-admin)/orders/create?sessionId=${session.id}`);
+      },
+      onError: () => {
+        toast.error(t('manualSessionFailed'), {
+          description: t('manualSessionFailedDescription'),
+        });
+      },
+    }
+  );
 
   const handleSubmit = async (values: ManualOrderFormData) => {
-    await createSessionMutation.mutateAsync(values);
+    const sessionData: CreateManualSessionDto = {
+      sessionType,
+      customerName: values.customerName || undefined,
+      customerPhone: values.customerPhone || undefined,
+      guestCount: values.guestCount,
+    };
+
+    await createSessionMutation.mutateAsync({
+      params: { query: { storeId: selectedStoreId! } },
+      body: sessionData,
+    });
   };
 
   const handleOpenChange = (val: boolean) => {

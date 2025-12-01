@@ -69,6 +69,7 @@ CORS_ORIGIN=http://localhost:3001,http://localhost:3002
 ```
 
 **NEVER**:
+
 - Commit `.env` files
 - Use `process.env.VARIABLE` directly (use `ConfigService`)
 - Use weak JWT secrets (<32 characters)

@@ -22,6 +22,7 @@ async getMenuItems() {
 ```
 
 **Rules:**
+
 - ALWAYS filter by `storeId` in queries
 - ALWAYS verify user has access to the store before operations
 - ALWAYS include store context in audit logs
@@ -46,6 +47,7 @@ async deleteMenuItem(id: string) {
 ```
 
 **Rules:**
+
 - ALWAYS use `deletedAt` timestamp for deletions
 - ALWAYS exclude soft-deleted records with `where: { deletedAt: null }`
 - NEVER use `prisma.model.delete()` except for test cleanup
@@ -58,7 +60,7 @@ async deleteMenuItem(id: string) {
 // CRITICAL VULNERABILITY - No authentication (existing code has this issue)
 @WebSocketGateway()
 export class CartGateway {
-  @SubscribeMessage("cart:add")
+  @SubscribeMessage('cart:add')
   async handleAddItem(client: Socket, data: any) {
     // Anyone can manipulate any cart!
   }
@@ -83,7 +85,7 @@ export class CartGateway implements OnGatewayConnection {
     client.data.userId = user.id;
   }
 
-  @SubscribeMessage("cart:add")
+  @SubscribeMessage('cart:add')
   async handleAddItem(client: Socket, data: AddCartItemDto) {
     const userId = client.data.userId;
     // ... validated operation
@@ -92,6 +94,7 @@ export class CartGateway implements OnGatewayConnection {
 ```
 
 **Rules:**
+
 - ALWAYS validate authentication in `handleConnection`
 - ALWAYS disconnect unauthenticated clients
 - ALWAYS validate DTOs for WebSocket messages
@@ -119,6 +122,7 @@ async updateStoreSettings(userId: string, storeId: string, dto: UpdateSettingsDt
 ```
 
 **Rules:**
+
 - ALWAYS verify role before privileged operations
 - ALWAYS use `checkUserRole` helper method
 - OWNER and ADMIN can manage store settings
@@ -159,7 +163,7 @@ model MenuItem {
 
 ```typescript
 // CORRECT - UploadService returns base path
-const uploadResult = await this.uploadService.uploadImage(file, "menu-item");
+const uploadResult = await this.uploadService.uploadImage(file, 'menu-item');
 // Returns: { basePath: "uploads/abc-123", availableSizes: ["small", "medium", "large"] }
 
 await this.prisma.menuItem.create({
@@ -191,7 +195,7 @@ await this.prisma.menuItem.create({
 
 ```typescript
 // 1. Upload image
-const uploadResult = await this.uploadService.uploadImage(file, "menu-item");
+const uploadResult = await this.uploadService.uploadImage(file, 'menu-item');
 // Returns:
 // {
 //   basePath: "uploads/abc-123-def",
@@ -203,16 +207,16 @@ const uploadResult = await this.uploadService.uploadImage(file, "menu-item");
 // 2. Store base path in database
 await this.prisma.menuItem.create({
   data: {
-    name: "Pad Thai",
+    name: 'Pad Thai',
     imagePath: uploadResult.basePath, // Just the base path
   },
 });
 
 // 3. API returns base path to frontend
 return {
-  id: "item-123",
-  name: "Pad Thai",
-  imagePath: "uploads/abc-123-def", // Frontend constructs URLs
+  id: 'item-123',
+  name: 'Pad Thai',
+  imagePath: 'uploads/abc-123-def', // Frontend constructs URLs
 };
 ```
 
@@ -222,7 +226,7 @@ return {
 
 ```typescript
 // CORRECT - Validate base path format
-import { IsImagePath } from "src/common/validators/is-image-path.validator";
+import { IsImagePath } from 'src/common/validators/is-image-path.validator';
 
 export class CreateMenuItemDto {
   @IsOptional()
@@ -232,7 +236,7 @@ export class CreateMenuItemDto {
 }
 
 // INCORRECT - Don't use URL validator for paths
-import { IsS3ImageUrl } from "src/common/validators/is-s3-image-url.validator";
+import { IsS3ImageUrl } from 'src/common/validators/is-s3-image-url.validator';
 
 export class CreateMenuItemDto {
   @IsS3ImageUrl() // NO! This expects full HTTPS URLs
@@ -248,15 +252,15 @@ export class CreateMenuItemDto {
 import {
   getVersionPath,
   isValidImagePath,
-} from "src/common/utils/image-path.util";
+} from 'src/common/utils/image-path.util';
 
 // Check if path is valid
-if (isValidImagePath("uploads/abc-123")) {
+if (isValidImagePath('uploads/abc-123')) {
   // Valid base path
 }
 
 // Construct version-specific path (internal use only)
-const mediumPath = getVersionPath("uploads/abc-123", "medium");
+const mediumPath = getVersionPath('uploads/abc-123', 'medium');
 // Returns: "uploads/abc-123-medium.webp"
 ```
 
@@ -299,18 +303,18 @@ export class Order {
   constructor(
     private readonly id: string,
     private readonly items: OrderItem[],
-    private readonly status: OrderStatus,
+    private readonly status: OrderStatus
   ) {}
 
   calculateTotal(): Decimal {
     return this.items.reduce(
       (sum, item) => sum.add(item.price.mul(item.quantity)),
-      new Decimal(0),
+      new Decimal(0)
     );
   }
 
   canBeCancelled(): boolean {
-    return this.status === "PENDING" || this.status === "CONFIRMED";
+    return this.status === 'PENDING' || this.status === 'CONFIRMED';
   }
 }
 
@@ -322,7 +326,7 @@ export class OrderResponseDto {
   @ApiProperty()
   orderNumber: string;
 
-  @ApiProperty({ type: "number" })
+  @ApiProperty({ type: 'number' })
   total: string; // Decimal as string for JSON
 
   @ApiProperty()
@@ -334,11 +338,13 @@ export class OrderResponseDto {
 ```
 
 **When to use each layer:**
+
 - **Prisma Models**: ALWAYS (database operations)
 - **Domain Entities**: ONLY when you have complex business rules that belong to the entity
 - **DTOs**: ALWAYS for API input/output
 
 **This project's pattern:**
+
 - Often returns Prisma entities directly (acceptable for simple cases)
 - Uses DTOs for input validation
 - Consider adding domain entities for complex business logic (order calculations, payment processing)

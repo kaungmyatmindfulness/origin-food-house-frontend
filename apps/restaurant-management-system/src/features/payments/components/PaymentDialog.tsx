@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { DollarSign, CreditCard, AlertCircle } from 'lucide-react';
 
-import { recordPayment } from '@/features/payments/services/payment.service';
+import { $api } from '@/utils/apiFetch';
+
 import type {
   OrderResponseDto,
   RecordPaymentDto,
@@ -85,35 +86,26 @@ export function PaymentDialog({
     }
   }, [open, remainingBalance, amount]);
 
-  // Record payment mutation
-  const recordPaymentMutation = useMutation({
-    mutationFn: async () => {
-      const paymentData: RecordPaymentDto = {
-        amount: amount,
-        paymentMethod,
-        ...(paymentMethod === 'CASH' && amountTendered && { amountTendered }),
-        ...(transactionId && { transactionId }),
-        ...(notes && { notes }),
-      };
-
-      return recordPayment(order.id, paymentData);
-    },
-    onSuccess: () => {
-      toast.success(t('paymentRecorded'), {
-        description: t('paymentRecordedDesc'),
-      });
-      queryClient.invalidateQueries({ queryKey: ['order', order.id] });
-      queryClient.invalidateQueries({ queryKey: ['payments', order.id] });
-      onOpenChange(false);
-      onSuccess?.();
-      resetForm();
-    },
-    onError: (error: Error) => {
-      toast.error(tCommon('error'), {
-        description: error.message,
-      });
-    },
-  });
+  // Record payment mutation using $api
+  const recordPaymentMutation = $api.useMutation(
+    'post',
+    '/payments/orders/{orderId}',
+    {
+      onSuccess: () => {
+        toast.success(t('paymentRecorded'), {
+          description: t('paymentRecordedDesc'),
+        });
+        queryClient.invalidateQueries({ queryKey: ['order', order.id] });
+        queryClient.invalidateQueries({ queryKey: ['payments', order.id] });
+        onOpenChange(false);
+        onSuccess?.();
+        resetForm();
+      },
+      onError: () => {
+        toast.error(tCommon('error'));
+      },
+    }
+  );
 
   const resetForm = () => {
     setPaymentMethod('CASH');
@@ -147,7 +139,18 @@ export function PaymentDialog({
       return;
     }
 
-    recordPaymentMutation.mutate();
+    const paymentData: RecordPaymentDto = {
+      amount: amount,
+      paymentMethod,
+      ...(paymentMethod === 'CASH' && amountTendered && { amountTendered }),
+      ...(transactionId && { transactionId }),
+      ...(notes && { notes }),
+    };
+
+    recordPaymentMutation.mutate({
+      params: { path: { orderId: order.id } },
+      body: paymentData,
+    });
   };
 
   return (

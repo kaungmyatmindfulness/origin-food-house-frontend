@@ -39,7 +39,7 @@ const items = await this.prisma.menuItem.findMany({
 export class StoreService {
   constructor(
     private prisma: PrismaService,
-    private cacheService: CacheService,
+    private cacheService: CacheService
   ) {}
 
   async getStoreDetails(storeId: string): Promise<Store> {

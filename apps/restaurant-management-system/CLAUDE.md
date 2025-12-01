@@ -37,25 +37,27 @@ const nextConfig = {
 
 ### Page Pattern
 
-All pages are **Client Components** that fetch data on mount:
+All pages are **Client Components** that fetch data on mount using `$api` React Query hooks:
 
 ```typescript
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import { useAuthStore, selectSelectedStoreId } from '@/features/auth/store/auth.store';
-import { menuKeys } from '@/features/menu/queries/menu.keys';
-import { getCategories } from '@/features/menu/services/category.service';
+import { $api } from '@/utils/apiFetch';
 
 export default function MenuPage() {
   const storeId = useAuthStore(selectSelectedStoreId);
 
-  // ✅ Client-side data fetching (SSG-friendly)
-  const { data: categories, isLoading } = useQuery({
-    queryKey: menuKeys.categories(storeId!),
-    queryFn: () => getCategories(storeId!),
-    enabled: !!storeId,
-  });
+  // ✅ Client-side data fetching with $api (SSG-friendly)
+  const { data: categoriesResponse, isLoading } = $api.useQuery(
+    'get',
+    '/stores/{storeId}/categories',
+    { params: { path: { storeId: storeId ?? '' } } },
+    { enabled: !!storeId }
+  );
+
+  // Extract data from wrapped response
+  const categories = categoriesResponse?.data ?? [];
 
   if (isLoading) return <MenuSkeleton />;
 
@@ -78,11 +80,23 @@ export const dynamic = 'force-dynamic';
 // ❌ WRONG - Middleware doesn't run in static export
 // (middleware.ts has been removed)
 
-// ✅ CORRECT - Client-side with React Query
+// ❌ WRONG - Using service functions (deprecated pattern)
+import { getCategories } from '@/features/menu/services/category.service';
+const { data } = useQuery({
+  queryKey: ['categories'],
+  queryFn: () => getCategories(storeId),
+});
+
+// ✅ CORRECT - Client-side with $api React Query hooks
 'use client';
+import { $api } from '@/utils/apiFetch';
+
 export default function MenuPage() {
-  const { data } = useQuery({ ... });
-  return <MenuContent data={data} />;
+  const { data: response } = $api.useQuery('get', '/stores/{storeId}/categories', {
+    params: { path: { storeId } },
+  });
+  const categories = response?.data ?? [];
+  return <MenuContent categories={categories} />;
 }
 ```
 
@@ -699,12 +713,23 @@ RMS is the only app with Jest tests configured:
 
 - Uses `@testing-library/react` and `@testing-library/user-event`
 - Tests located alongside components: `*.test.tsx`
-- Mock API services, not implementation details
+- Mock `$api` hooks, not implementation details
 - Use `screen.getByRole()` over `getByTestId()`
 
 ```typescript
-// Example test pattern
-jest.mock('@/features/menu/services/category.service');
+// Example test pattern - mock $api hooks
+jest.mock('@/utils/apiFetch', () => ({
+  $api: {
+    useQuery: jest.fn().mockReturnValue({
+      data: { data: [{ id: '1', name: 'Appetizers' }] },
+      isLoading: false,
+    }),
+    useMutation: jest.fn().mockReturnValue({
+      mutate: jest.fn(),
+      isPending: false,
+    }),
+  },
+}));
 
 it('should display categories', async () => {
   render(<CategoryList />);

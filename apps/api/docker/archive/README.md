@@ -7,12 +7,14 @@ This directory contains the old Docker configuration files from when the applica
 We simplified the Docker strategy for local development:
 
 **OLD APPROACH** (Archived):
+
 - Full containerization with `docker-compose.dev.yml`
 - Both app and database ran in Docker containers
 - Required `Dockerfile.dev` and `docker-entrypoint.sh`
 - Slower hot reload, volume mounting complexity
 
 **NEW APPROACH** (Current):
+
 - Docker provides ONLY infrastructure services (PostgreSQL, pgAdmin)
 - Application runs natively on host machine
 - Simpler, faster developer experience
@@ -27,12 +29,14 @@ We simplified the Docker strategy for local development:
 ## Production Deployment
 
 For production deployment, we still use:
+
 - `Dockerfile` (multi-stage production build) - Located in project root
 - Can be deployed to any container platform (AWS ECS, Kubernetes, etc.)
 
 ## Why Keep These Files?
 
 These files are archived for reference in case:
+
 1. You need to fully containerize the app for a specific environment
 2. You want to understand the previous Docker strategy
 3. You need to deploy to an environment that requires full containerization
@@ -42,6 +46,7 @@ These files are archived for reference in case:
 If you need to use the old fully-containerized approach:
 
 1. Copy files back to project root:
+
    ```bash
    cp docker/archive/docker-compose.dev.yml ./
    cp docker/archive/Dockerfile.dev ./

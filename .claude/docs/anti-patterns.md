@@ -298,11 +298,15 @@ const useMenuStore = create((set) => ({
   setCategories: (cats) => set({ categories: cats }),
 }));
 
-// ✅ GOOD - Server state in React Query, client state in Zustand
-const { data: categories } = useQuery({
-  queryKey: menuKeys.categories(storeId),
-  queryFn: () => getCategories(storeId),
-});
+// ✅ GOOD - Server state in $api hooks, client state in Zustand
+const { data: response } = $api.useQuery(
+  'get',
+  '/stores/{storeId}/categories',
+  {
+    params: { path: { storeId } },
+  }
+);
+const categories = response?.data ?? [];
 
 // Zustand only for UI state
 const useUIStore = create((set) => ({
@@ -310,6 +314,71 @@ const useUIStore = create((set) => ({
   setSelectedCategoryId: (id) => set({ selectedCategoryId: id }),
 }));
 ```
+
+## 13a. Using Service Functions (Deprecated)
+
+**Service functions are deprecated. Use `$api.useQuery()` and `$api.useMutation()` instead:**
+
+```typescript
+// ❌ BAD - Service functions are deprecated
+import {
+  getCategories,
+  createCategory,
+} from '@/features/menu/services/category.service';
+
+const { data } = useQuery({
+  queryKey: ['categories', storeId],
+  queryFn: () => getCategories(storeId),
+});
+
+const mutation = useMutation({
+  mutationFn: (data) => createCategory(storeId, data),
+});
+
+// ✅ GOOD - Use $api React Query hooks
+import { $api } from '@/utils/apiFetch';
+
+const { data: response } = $api.useQuery(
+  'get',
+  '/stores/{storeId}/categories',
+  {
+    params: { path: { storeId } },
+  }
+);
+const categories = response?.data ?? [];
+
+const createMutation = $api.useMutation(
+  'post',
+  '/stores/{storeId}/categories',
+  {
+    onSuccess: () => {
+      toast.success('Category created');
+      queryClient.invalidateQueries({
+        queryKey: ['get', '/stores/{storeId}/categories'],
+      });
+    },
+    onError: (error: unknown) => {
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to create category'
+      );
+    },
+  }
+);
+
+// Call mutation with params and body
+createMutation.mutate({
+  params: { path: { storeId } },
+  body: { name: 'New Category' },
+});
+```
+
+**Why $api hooks are better:**
+
+- Type-safe at compile time (generated from OpenAPI spec)
+- No manual type annotations needed
+- Response types automatically inferred
+- Consistent API across all endpoints
+- Eliminates boilerplate service files
 
 ## 14. Hardcoded Strings
 

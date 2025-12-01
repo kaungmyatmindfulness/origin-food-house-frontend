@@ -13,13 +13,14 @@ function processData(data) {
 // GOOD - explicit types, null safety
 function processData(data: DataResponse): ProcessedItem[] {
   if (!data?.items) {
-    throw new BadRequestException("Items array is required");
+    throw new BadRequestException('Items array is required');
   }
   return data.items.map((item) => item.value);
 }
 ```
 
 **Rules:**
+
 - NEVER use `any` type (ESLint warns, but fix it)
 - NEVER use non-null assertion (`!`) without null check first
 - ALWAYS handle null/undefined cases explicitly
@@ -35,8 +36,13 @@ function processData(data: DataResponse): ProcessedItem[] {
 
 ```typescript
 // GOOD - Narrow union types instead of string
-type UserRole = "OWNER" | "ADMIN" | "CHEF" | "CASHIER" | "SERVER";
-type OrderStatus = "PENDING" | "CONFIRMED" | "PREPARING" | "READY" | "COMPLETED";
+type UserRole = 'OWNER' | 'ADMIN' | 'CHEF' | 'CASHIER' | 'SERVER';
+type OrderStatus =
+  | 'PENDING'
+  | 'CONFIRMED'
+  | 'PREPARING'
+  | 'READY'
+  | 'COMPLETED';
 
 // GOOD - Discriminated unions for type-safe branching
 type PaymentResult =
@@ -63,7 +69,7 @@ class CreateOrderDto {
 function calculateOrderTotal(items: OrderItem[]): Decimal {
   return items.reduce(
     (sum, item) => sum.add(item.price.mul(item.quantity)),
-    new Decimal(0),
+    new Decimal(0)
   );
 }
 ```
@@ -107,6 +113,7 @@ async findUser(id: string): Promise<User> {
 ```
 
 **Rules:**
+
 - ALWAYS use NestJS exception classes (`NotFoundException`, `BadRequestException`, etc.)
 - ALWAYS log errors with context (method name, relevant IDs, error details)
 - ALWAYS use `getErrorDetails(error)` utility for error logging
@@ -139,6 +146,7 @@ async createStore(userId: string, dto: CreateStoreDto): Promise<Store> {
 ```
 
 **Rules:**
+
 - ALWAYS prefix logs with `[${method}]` using `const method = this.methodName.name`
 - ALWAYS log at method entry with key parameters (user ID, entity ID)
 - ALWAYS log success with created/updated entity IDs
@@ -182,6 +190,7 @@ async createStore(userId: string, dto: CreateStoreDto): Promise<Store> {
 ```
 
 **Rules:**
+
 - ALWAYS use `$transaction` for operations creating multiple related entities
 - ALWAYS use `findUniqueOrThrow` instead of `findUnique` + null check when entity must exist
 - ALWAYS include `where: { deletedAt: null }` for soft-deleted entities
@@ -220,6 +229,7 @@ async update(userId: string, storeId: string, dto: UpdateStoreDto) {
 ```
 
 **Rules:**
+
 - ALWAYS use `@UseGuards(JwtAuthGuard)` on protected routes
 - ALWAYS verify user role before privileged operations (use `checkUserRole` helper)
 - ALWAYS validate store membership before accessing store data
@@ -275,6 +285,7 @@ export class CreateMenuItemDto {
 ```
 
 **Rules:**
+
 - ALWAYS use class-validator decorators on all DTO properties
 - ALWAYS add `@ApiProperty` or `@ApiPropertyOptional` for Swagger docs
 - ALWAYS validate string lengths (`@MinLength`, `@MaxLength`)
@@ -288,7 +299,7 @@ export class CreateMenuItemDto {
 **ALWAYS write tests for new code (target: 85% coverage):**
 
 ```typescript
-describe("StoreService", () => {
+describe('StoreService', () => {
   let service: StoreService;
   let prismaMock: ReturnType<typeof createPrismaMock>;
 
@@ -307,13 +318,13 @@ describe("StoreService", () => {
     service = module.get<StoreService>(StoreService);
   });
 
-  describe("createStore", () => {
-    it("should create store with information and settings in transaction", async () => {
-      const dto: CreateStoreDto = { name: "Test Store", slug: "test-store" };
-      const userId = "user-123";
+  describe('createStore', () => {
+    it('should create store with information and settings in transaction', async () => {
+      const dto: CreateStoreDto = { name: 'Test Store', slug: 'test-store' };
+      const userId = 'user-123';
 
       prismaMock.$transaction.mockImplementation((callback) =>
-        callback(prismaMock),
+        callback(prismaMock)
       );
 
       const result = await service.createStore(userId, dto);
@@ -322,20 +333,20 @@ describe("StoreService", () => {
       expect(prismaMock.store.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({ slug: dto.slug }),
-        }),
+        })
       );
     });
 
-    it("should throw BadRequestException for duplicate slug", async () => {
+    it('should throw BadRequestException for duplicate slug', async () => {
       prismaMock.$transaction.mockRejectedValue(
-        new Prisma.PrismaClientKnownRequestError("Unique constraint", {
-          code: "P2002",
-          clientVersion: "5.0.0",
-        }),
+        new Prisma.PrismaClientKnownRequestError('Unique constraint', {
+          code: 'P2002',
+          clientVersion: '5.0.0',
+        })
       );
 
-      await expect(service.createStore("user-123", dto)).rejects.toThrow(
-        BadRequestException,
+      await expect(service.createStore('user-123', dto)).rejects.toThrow(
+        BadRequestException
       );
     });
   });
@@ -343,6 +354,7 @@ describe("StoreService", () => {
 ```
 
 **Rules:**
+
 - ALWAYS write unit tests for service methods (aim for 85%+ coverage)
 - ALWAYS mock Prisma with `createPrismaMock()` helper
 - ALWAYS test both success and error cases

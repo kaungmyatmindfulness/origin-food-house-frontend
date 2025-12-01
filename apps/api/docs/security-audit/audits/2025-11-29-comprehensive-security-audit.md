@@ -1,11 +1,13 @@
 # Comprehensive Security Audit Report
 
 ---
+
 date: 2025-11-29
 agent: security-audit
 scope: full-stack
 type: audit
 severity: P1
+
 ---
 
 ## Executive Summary
@@ -16,18 +18,18 @@ This security audit was conducted against the security patterns documented in `.
 
 ### Key Findings Summary
 
-| Issue ID | Vulnerability | Original Severity | Current Status | Evidence |
-|----------|--------------|-------------------|----------------|----------|
-| P0-001 | WebSocket Authentication Bypass | CVSS 9.1 | **FIXED** | Authentication implemented in `handleConnection` |
-| P0-002 | Session Token Exposure | CVSS 8.9 | **FIXED** | Token excluded from response DTOs |
-| P0-003 | Checkout Authentication Bypass | CVSS 8.6 | **FIXED** | Dual auth (session token OR JWT) required |
-| P0-004 | Missing Store Isolation | CVSS 7.8 | **FIXED** | Store permission checks added |
-| SEC-001 | Store Ownership Validation | P2 | **COMPLIANT** | `checkStorePermission` used consistently |
-| SEC-002 | DTO Sanitization | P3 | **PARTIAL** | Limited `@Transform` usage |
-| SEC-003 | SQL Injection Prevention | P1 | **COMPLIANT** | No `$queryRawUnsafe` usage |
-| SEC-004 | Sensitive Data Exposure | P2 | **COMPLIANT** | Proper DTO separation |
-| SEC-005 | Authentication Guards | P1 | **COMPLIANT** | Guards applied consistently |
-| SEC-006 | File Upload Validation | P2 | **COMPLIANT** | MIME type and size validation |
+| Issue ID | Vulnerability                   | Original Severity | Current Status | Evidence                                         |
+| -------- | ------------------------------- | ----------------- | -------------- | ------------------------------------------------ |
+| P0-001   | WebSocket Authentication Bypass | CVSS 9.1          | **FIXED**      | Authentication implemented in `handleConnection` |
+| P0-002   | Session Token Exposure          | CVSS 8.9          | **FIXED**      | Token excluded from response DTOs                |
+| P0-003   | Checkout Authentication Bypass  | CVSS 8.6          | **FIXED**      | Dual auth (session token OR JWT) required        |
+| P0-004   | Missing Store Isolation         | CVSS 7.8          | **FIXED**      | Store permission checks added                    |
+| SEC-001  | Store Ownership Validation      | P2                | **COMPLIANT**  | `checkStorePermission` used consistently         |
+| SEC-002  | DTO Sanitization                | P3                | **PARTIAL**    | Limited `@Transform` usage                       |
+| SEC-003  | SQL Injection Prevention        | P1                | **COMPLIANT**  | No `$queryRawUnsafe` usage                       |
+| SEC-004  | Sensitive Data Exposure         | P2                | **COMPLIANT**  | Proper DTO separation                            |
+| SEC-005  | Authentication Guards           | P1                | **COMPLIANT**  | Guards applied consistently                      |
+| SEC-006  | File Upload Validation          | P2                | **COMPLIANT**  | MIME type and size validation                    |
 
 ---
 
@@ -102,6 +104,7 @@ async handleConnection(client: AuthenticatedSocket) {
 ```
 
 **Remediation Applied**:
+
 - `handleConnection` validates authentication on connection
 - Supports dual authentication: session token (customers) OR JWT (staff)
 - Unauthenticated clients are immediately disconnected
@@ -138,15 +141,18 @@ return StandardApiResponse.success(this.mapToSessionResponse(session));
 **DTO Separation** (Verified):
 
 `SessionResponseDto` (`/Users/kaungmyat/Desktop/FILES/Codes/Personal/origin-food-house/origin-food-house-backend/src/active-table-session/dto/session-response.dto.ts`):
+
 - Does NOT include `sessionToken` field
 - Used for all GET/UPDATE operations
 
 `SessionCreatedResponseDto` (`/Users/kaungmyat/Desktop/FILES/Codes/Personal/origin-food-house/origin-food-house-backend/src/active-table-session/dto/session-created-response.dto.ts`):
+
 - Includes `sessionToken` field
 - Used ONLY for session creation (POST)
 - Documented: "Session token is ONLY provided on session creation, never on subsequent queries"
 
 **Remediation Applied**:
+
 - All session query endpoints use `mapToSessionResponse()` to strip token
 - Separate DTOs for creation (with token) vs query (without token)
 - Token returned only once on creation, never exposed again
@@ -207,6 +213,7 @@ async checkoutCart(
 ```
 
 **Remediation Applied**:
+
 - Dual authentication support: session token (customers) OR JWT (staff)
 - Session token validated against stored value
 - Staff JWT validated with store permission check
@@ -270,6 +277,7 @@ async close(sessionId: string, userId: string): Promise<ActiveTableSession> {
 ```
 
 **Remediation Applied**:
+
 - `update()` and `close()` methods validate store permission
 - Uses `session.storeId` directly (works for table and manual sessions)
 - `checkStorePermission()` verifies user belongs to the store
@@ -282,18 +290,18 @@ async close(sessionId: string, userId: string): Promise<ActiveTableSession> {
 
 **Evidence**: The codebase consistently uses `authService.checkStorePermission()` across all services:
 
-| Service | Usage Count | Method |
-|---------|-------------|--------|
-| `menu.service.ts` | 8 | `checkStorePermission` |
-| `order.service.ts` | 4 | `checkStorePermission` |
-| `store.service.ts` | 6 | `checkStorePermission` |
-| `table.service.ts` | 5 | `checkStorePermission` |
-| `category.service.ts` | 6 | `checkStorePermission` |
-| `cart.service.ts` | 1 | `checkStorePermission` |
-| `active-table-session.service.ts` | 3 | `checkStorePermission` |
-| `payment.service.ts` | Multiple | `checkStorePermission` |
-| `report.controller.ts` | 4 | `checkStorePermission` |
-| `kitchen.controller.ts` | 3 | `checkStorePermission` |
+| Service                           | Usage Count | Method                 |
+| --------------------------------- | ----------- | ---------------------- |
+| `menu.service.ts`                 | 8           | `checkStorePermission` |
+| `order.service.ts`                | 4           | `checkStorePermission` |
+| `store.service.ts`                | 6           | `checkStorePermission` |
+| `table.service.ts`                | 5           | `checkStorePermission` |
+| `category.service.ts`             | 6           | `checkStorePermission` |
+| `cart.service.ts`                 | 1           | `checkStorePermission` |
+| `active-table-session.service.ts` | 3           | `checkStorePermission` |
+| `payment.service.ts`              | Multiple    | `checkStorePermission` |
+| `report.controller.ts`            | 4           | `checkStorePermission` |
+| `kitchen.controller.ts`           | 3           | `checkStorePermission` |
 
 **AuthService Implementation** (`/Users/kaungmyat/Desktop/FILES/Codes/Personal/origin-food-house/origin-food-house-backend/src/auth/auth.service.ts`, Lines 79-89):
 
@@ -347,6 +355,7 @@ name: string;
 **Evidence**: No usage of `$queryRawUnsafe` in application code (only in generated Prisma client).
 
 Grep results show:
+
 - `src/generated/prisma/client/internal/prismaNamespace.ts` - Generated code
 - `src/generated/prisma/client/internal/class.ts` - Generated code
 
@@ -359,6 +368,7 @@ All database queries use Prisma's typed ORM methods, which automatically paramet
 **Status**: **COMPLIANT**
 
 **Findings**:
+
 - No passwords, secrets, or API keys in DTOs
 - Session tokens properly excluded from response DTOs (as documented above)
 - Auth0 tokens handled securely (not stored in database)
@@ -372,21 +382,22 @@ All database queries use Prisma's typed ORM methods, which automatically paramet
 
 **Evidence**: Analysis of 26 controllers shows proper authentication guard usage:
 
-| Controller | Guard Usage | Notes |
-|------------|-------------|-------|
-| `report.controller.ts` | `@UseGuards(JwtAuthGuard)` at class level | All endpoints protected |
-| `kitchen.controller.ts` | `@UseGuards(JwtAuthGuard)` at class level | All endpoints protected |
-| `ownership-transfer.controller.ts` | `@UseGuards(JwtAuthGuard)` at class level | All endpoints protected |
-| `user.controller.ts` | Per-method guards | Mixed public/protected |
-| `table.controller.ts` | Per-method guards | GET public, mutations protected |
-| `category.controller.ts` | Per-method guards | GET public, mutations protected |
-| `active-table-session.controller.ts` | Per-method guards | Join public, admin protected |
-| `admin-auth.controller.ts` | `PlatformAdminGuard` for admin routes | Public validate, protected profile |
-| `cart.controller.ts` | No guards (uses session token auth) | By design - customer access |
-| `order.controller.ts` | Per-method guards | Checkout supports dual auth |
-| `upload.controller.ts` | `@UseGuards(JwtAuthGuard)` at class level | All uploads protected |
+| Controller                           | Guard Usage                               | Notes                              |
+| ------------------------------------ | ----------------------------------------- | ---------------------------------- |
+| `report.controller.ts`               | `@UseGuards(JwtAuthGuard)` at class level | All endpoints protected            |
+| `kitchen.controller.ts`              | `@UseGuards(JwtAuthGuard)` at class level | All endpoints protected            |
+| `ownership-transfer.controller.ts`   | `@UseGuards(JwtAuthGuard)` at class level | All endpoints protected            |
+| `user.controller.ts`                 | Per-method guards                         | Mixed public/protected             |
+| `table.controller.ts`                | Per-method guards                         | GET public, mutations protected    |
+| `category.controller.ts`             | Per-method guards                         | GET public, mutations protected    |
+| `active-table-session.controller.ts` | Per-method guards                         | Join public, admin protected       |
+| `admin-auth.controller.ts`           | `PlatformAdminGuard` for admin routes     | Public validate, protected profile |
+| `cart.controller.ts`                 | No guards (uses session token auth)       | By design - customer access        |
+| `order.controller.ts`                | Per-method guards                         | Checkout supports dual auth        |
+| `upload.controller.ts`               | `@UseGuards(JwtAuthGuard)` at class level | All uploads protected              |
 
 **Design Pattern**: The codebase correctly uses:
+
 - Class-level guards for fully protected resources
 - Method-level guards for mixed access patterns
 - Dual authentication (session token OR JWT) for customer-facing endpoints
@@ -429,17 +440,17 @@ async uploadImage(
 **File Filter** (`/Users/kaungmyat/Desktop/FILES/Codes/Personal/origin-food-house/origin-food-house-backend/src/common/utils/file-filter.utils.ts`):
 
 ```typescript
-export const imageFileFilter: MulterOptions["fileFilter"] = (
+export const imageFileFilter: MulterOptions['fileFilter'] = (
   req,
   file,
-  callback,
+  callback
 ) => {
   if (!file.mimetype.match(/\/(jpg|jpeg|png|webp)$/)) {
     return callback(
       new BadRequestException(
-        "Only image files (jpg, jpeg, png, webp) are allowed!",
+        'Only image files (jpg, jpeg, png, webp) are allowed!'
       ),
-      false,
+      false
     );
   }
   callback(null, true);
@@ -471,6 +482,7 @@ private validateFile(
 ```
 
 **Validation Layers**:
+
 1. Multer `limits.fileSize` - 10MB max
 2. Multer `fileFilter` - MIME type validation
 3. NestJS `ParseFilePipe` - Size and type validators
@@ -481,11 +493,13 @@ private validateFile(
 ## Recommendations
 
 ### Immediate Actions (None Required)
+
 All P0 critical vulnerabilities have been remediated.
 
 ### Short-term Improvements (P3)
 
 1. **DTO Input Sanitization**: Add `@Transform` decorators for string trimming:
+
    ```typescript
    @Transform(({ value }) => value?.trim())
    @IsString()

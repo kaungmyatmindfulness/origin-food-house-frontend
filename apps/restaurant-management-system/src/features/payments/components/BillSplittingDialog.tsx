@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from '@repo/ui/lib/toast';
 import { useTranslations } from 'next-intl';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { Plus, Trash2, CheckCircle2 } from 'lucide-react';
 
 import { Button } from '@repo/ui/components/button';
@@ -39,11 +39,12 @@ import {
 import { Badge } from '@repo/ui/components/badge';
 import { Alert, AlertDescription } from '@repo/ui/components/alert';
 
+import { $api } from '@/utils/apiFetch';
+
 import type {
   OrderResponseDto,
   RecordPaymentDto,
 } from '@repo/api/generated/types';
-import { recordPayment } from '../services/payment.service';
 
 interface BillSplittingDialogProps {
   open: boolean;
@@ -166,40 +167,41 @@ export function BillSplittingDialog({
     }
   };
 
-  // Payment recording mutation
-  const paymentMutation = useMutation({
-    mutationFn: async (data: RecordPaymentDto) => {
-      return await recordPayment(orderId, data);
-    },
-    onSuccess: () => {
-      if (currentDinerIndex === null) return;
+  // Payment recording mutation using $api
+  const paymentMutation = $api.useMutation(
+    'post',
+    '/payments/orders/{orderId}',
+    {
+      onSuccess: () => {
+        if (currentDinerIndex === null) return;
 
-      const dinerIndex = currentDinerIndex;
-      const newDiners = [...diners];
-      if (newDiners[dinerIndex]) {
-        newDiners[dinerIndex].paid = true;
-      }
-      setDiners(newDiners);
+        const dinerIndex = currentDinerIndex;
+        const newDiners = [...diners];
+        if (newDiners[dinerIndex]) {
+          newDiners[dinerIndex].paid = true;
+        }
+        setDiners(newDiners);
 
-      toast.success(t('paymentRecorded', { diner: dinerIndex + 1 }));
+        toast.success(t('paymentRecorded', { diner: dinerIndex + 1 }));
 
-      // Check if all diners paid
-      const allPaid = newDiners.every((d) => d.paid);
-      if (allPaid) {
-        queryClient.invalidateQueries({ queryKey: ['orders'] });
-        queryClient.invalidateQueries({ queryKey: ['payments', orderId] });
-        toast.success(t('allPaymentsRecorded'));
-        setTimeout(() => {
-          onOpenChange(false);
-        }, 1000);
-      } else {
-        setCurrentDinerIndex(null);
-      }
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || t('paymentFailed'));
-    },
-  });
+        // Check if all diners paid
+        const allPaid = newDiners.every((d) => d.paid);
+        if (allPaid) {
+          queryClient.invalidateQueries({ queryKey: ['orders'] });
+          queryClient.invalidateQueries({ queryKey: ['payments', orderId] });
+          toast.success(t('allPaymentsRecorded'));
+          setTimeout(() => {
+            onOpenChange(false);
+          }, 1000);
+        } else {
+          setCurrentDinerIndex(null);
+        }
+      },
+      onError: () => {
+        toast.error(t('paymentFailed'));
+      },
+    }
+  );
 
   // Start recording payments
   const handleProceedToPayments = () => {
@@ -219,9 +221,14 @@ export function BillSplittingDialog({
     const diner = diners[dinerIndex];
     if (!diner) return;
 
-    await paymentMutation.mutateAsync({
+    const paymentData: RecordPaymentDto = {
       amount: diner.amount,
       paymentMethod: paymentMethod as RecordPaymentDto['paymentMethod'],
+    };
+
+    await paymentMutation.mutateAsync({
+      params: { path: { orderId } },
+      body: paymentData,
     });
   };
 

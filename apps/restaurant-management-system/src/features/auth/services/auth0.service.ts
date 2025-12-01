@@ -9,10 +9,11 @@ import type { User } from '@auth0/auth0-spa-js';
 
 import { getAuth0Client } from '@/lib/auth0';
 import { apiClient, ApiError, unwrapApiResponseAs } from '@/utils/apiFetch';
-import { typedFetchUnauthenticated } from '@/utils/typed-fetch';
 
 import type { ChooseStoreDto } from '@repo/api/generated/types';
 import type { StandardApiResponse } from '@repo/api/types/api.types';
+
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 /** Access token data from backend after Auth0 validation */
 interface AccessTokenData {
@@ -58,15 +59,21 @@ export async function handleAuth0Callback(): Promise<AccessTokenData> {
 
   const auth0Token = await auth0Client.getTokenSilently();
 
-  const response = await typedFetchUnauthenticated<Auth0ValidateResponse>(
-    '/auth/auth0/validate',
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${auth0Token}`,
-      },
-    }
-  );
+  // Use direct fetch since this is an unauthenticated request with Auth0 token
+  const fetchResponse = await fetch(`${baseUrl}/auth/auth0/validate`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${auth0Token}`,
+    },
+  });
+
+  if (!fetchResponse.ok) {
+    throw new ApiError('Authentication failed', fetchResponse.status);
+  }
+
+  const response: Auth0ValidateResponse = await fetchResponse.json();
 
   if ('status' in response && response.status === 'success' && response.data) {
     return response.data;
@@ -129,7 +136,14 @@ export async function logoutFromAuth0(returnToUrl?: string): Promise<void> {
     const auth0Client = await getAuth0Client();
 
     // Clear backend session (endpoint not in OpenAPI spec)
-    await typedFetchUnauthenticated('/auth/logout', { method: 'POST' });
+    // Use direct fetch since this is a simple POST without response handling
+    await fetch(`${baseUrl}/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
     await auth0Client.logout({
       logoutParams: {

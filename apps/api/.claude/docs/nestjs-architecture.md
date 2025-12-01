@@ -25,6 +25,7 @@ src/
 ```
 
 **Each module MUST contain:**
+
 - **Controller** (HTTP endpoints)
 - **Service** (business logic & use cases)
 - **DTOs** (input/output contracts)
@@ -32,6 +33,7 @@ src/
 - **Tests** (unit & integration tests)
 
 **Optional but recommended:**
+
 - **Gateway** (WebSocket for real-time features)
 - **Types** (custom TypeScript types)
 - **Constants** (module-specific constants)
@@ -65,12 +67,14 @@ async createUser(
 ```
 
 **Controller responsibilities (ONLY):**
+
 1. Request validation (automatic via DTOs)
 2. Authentication/authorization (via guards)
 3. Call appropriate service method
 4. Return response (with proper HTTP status codes)
 
 **Controllers MUST NOT:**
+
 - Access database directly (use services)
 - Contain business logic (delegate to services)
 - Hash passwords, calculate totals, etc. (belongs in services)
@@ -101,7 +105,7 @@ export class StoreService {
 export class StoreService {
   constructor(
     private prisma: PrismaService,
-    private cacheService: CacheService, // Use Redis for caching
+    private cacheService: CacheService // Use Redis for caching
   ) {}
 
   async findOne(id: string): Promise<Store> {
@@ -117,6 +121,7 @@ export class StoreService {
 ```
 
 **Service responsibilities:**
+
 - Orchestrate business logic
 - Manage transactions
 - Enforce domain rules
@@ -124,6 +129,7 @@ export class StoreService {
 - Emit events for side effects
 
 **Services MUST:**
+
 - Be injected (never use `new StoreService()`)
 - Return DTOs or mapped objects (not always Prisma entities directly, but acceptable in this project)
 - Handle all error cases with typed exceptions
@@ -140,7 +146,7 @@ export class OrderService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
-    private readonly auditLogService: AuditLogService,
+    private readonly auditLogService: AuditLogService
   ) {}
 }
 
@@ -162,6 +168,7 @@ export class OrderCalculationService {
 ```
 
 **Injection patterns in this project:**
+
 - Use `PrismaService` directly (no repository abstraction layer)
 - Use `ConfigService` for all environment variables (never `process.env` directly)
 - Inject all dependencies through constructor (no property injection)
@@ -185,6 +192,7 @@ export class UserModule {}
 ```
 
 **Strategies to avoid circular dependencies:**
+
 1. Extract shared logic to a common/shared module
 2. Use events (EventEmitter) for cross-module communication
 3. Restructure modules to have clear dependency direction
@@ -205,7 +213,7 @@ export class StoreService {
       const store = await tx.store.create({ data: dto });
       // Direct Prisma call for category creation
       await tx.category.createMany({
-        data: [{ name: "Appetizers", storeId: store.id }],
+        data: [{ name: 'Appetizers', storeId: store.id }],
       });
       return store;
     });
@@ -218,7 +226,7 @@ export class StoreService {
   constructor(
     private categoryService: CategoryService,
     private tableService: TableService,
-    private menuService: MenuService,
+    private menuService: MenuService
   ) {}
 
   async createStore(dto: CreateStoreDto) {
@@ -228,12 +236,12 @@ export class StoreService {
       await this.categoryService.createBulkForSeeding(
         tx,
         store.id,
-        DEFAULT_CATEGORIES,
+        DEFAULT_CATEGORIES
       );
       await this.tableService.createBulkForSeeding(
         tx,
         store.id,
-        DEFAULT_TABLES,
+        DEFAULT_TABLES
       );
       return store;
     });
@@ -242,6 +250,7 @@ export class StoreService {
 ```
 
 **Service delegation rules:**
+
 1. **Single Responsibility**: Each service handles its own domain entities
 2. **Transaction Support**: Seeding methods accept `tx: TransactionClient` for atomicity
 3. **RBAC Bypass**: Seeding methods skip authorization (system operations)
@@ -305,11 +314,11 @@ src/
 
 ```typescript
 // CORRECT - Use absolute paths with 'src/' prefix
-import { PrismaService } from "src/prisma/prisma.service";
-import { AuthService } from "src/auth/auth.service";
+import { PrismaService } from 'src/prisma/prisma.service';
+import { AuthService } from 'src/auth/auth.service';
 
 // INCORRECT - Relative paths for cross-module imports
-import { PrismaService } from "../../prisma/prisma.service";
+import { PrismaService } from '../../prisma/prisma.service';
 ```
 
 ## Documentation Requirements
@@ -340,6 +349,7 @@ async createStore(
 ```
 
 **Rules:**
+
 - ALWAYS document public service methods
 - ALWAYS describe parameters with `@param`
 - ALWAYS describe return value with `@returns`

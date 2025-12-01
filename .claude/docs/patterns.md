@@ -1,58 +1,107 @@
 # Critical Patterns
 
-## 1. API Services with Auto-Generated Types
+## 1. API Calls with $api React Query Hooks
 
-**ALWAYS use auto-generated types from `@repo/api/generated/types`:**
+**ALWAYS use `$api.useQuery()` and `$api.useMutation()` for API calls in RMS:**
+
+The `$api` client provides type-safe React Query hooks generated from the OpenAPI specification. This is the **only** pattern to use for API calls - service functions are deprecated.
+
+### Query Pattern (GET requests)
 
 ```typescript
-import { apiFetch, unwrapData } from '@/utils/apiFetch';
-import type {
-  CategoryResponseDto,
-  CreateCategoryDto,
-} from '@repo/api/generated/types';
+import { $api } from '@/utils/apiFetch';
+import { useQueryClient } from '@tanstack/react-query';
 
-/**
- * Fetches all categories for a store
- */
-export async function getCategories(
-  storeId: string
-): Promise<CategoryResponseDto[]> {
-  const res = await apiFetch<CategoryResponseDto[]>({
-    path: '/categories',
-    query: { storeId },
-  });
+function CategoryList({ storeId }: { storeId: string }) {
+  // ✅ CORRECT - Use $api.useQuery for data fetching
+  const { data: response, isLoading, error } = $api.useQuery(
+    'get',
+    '/stores/{storeId}/categories',
+    { params: { path: { storeId } } },
+    { enabled: !!storeId, staleTime: 30 * 1000 }
+  );
 
-  return unwrapData(res, 'Failed to retrieve categories');
-}
+  // Extract data from wrapped response (StandardApiResponse)
+  const categories = response?.data ?? [];
 
-/**
- * Creates a new category
- */
-export async function createCategory(
-  storeId: string,
-  data: CreateCategoryDto
-): Promise<CategoryResponseDto> {
-  const res = await apiFetch<CategoryResponseDto>({
-    path: '/categories',
-    method: 'POST',
-    query: { storeId },
-    body: JSON.stringify(data),
-  });
+  if (isLoading) return <Skeleton />;
+  if (error) return <ErrorMessage error={error} />;
 
-  return unwrapData(res, 'Failed to create category');
+  return <CategoryGrid categories={categories} />;
 }
 ```
 
-**Key Points:**
+### Mutation Pattern (POST/PATCH/DELETE requests)
 
-- Use `apiFetch()` from `@/utils/apiFetch` (configured with auth headers)
-- Always use `unwrapData()` for consistent error handling
+```typescript
+import { $api } from '@/utils/apiFetch';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from '@repo/ui/lib/toast';
+
+function CreateCategoryForm({ storeId }: { storeId: string }) {
+  const queryClient = useQueryClient();
+
+  // ✅ CORRECT - Use $api.useMutation for mutations
+  const createMutation = $api.useMutation('post', '/stores/{storeId}/categories', {
+    onSuccess: () => {
+      toast.success('Category created successfully');
+      // Invalidate related queries
+      queryClient.invalidateQueries({ queryKey: ['get', '/stores/{storeId}/categories'] });
+    },
+    onError: (error: unknown) => {
+      toast.error('Failed to create category', {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
+  });
+
+  const handleSubmit = (data: CreateCategoryDto) => {
+    createMutation.mutate({
+      params: { path: { storeId } },
+      body: data,
+    });
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* Form fields */}
+      <Button type="submit" disabled={createMutation.isPending}>
+        {createMutation.isPending ? 'Creating...' : 'Create Category'}
+      </Button>
+    </form>
+  );
+}
+```
+
+### Key Points
+
+- **Use `$api` from `@/utils/apiFetch`** - configured with auth headers and error handling
+- **Response structure**: `$api.useQuery` returns `{ data: StandardApiResponse<T> }` - actual data is in `response?.data`
+- **Mutation call signature**: `mutation.mutate({ params: { path, query }, body })`
+- **Error typing**: Use `(error: unknown)` in callbacks since OpenAPI doesn't define error types
 - Import types **directly** from `@repo/api/generated/types` (NEVER manually define API types)
-- Do NOT import from feature type files that re-export (e.g., `@/features/menu/types/category.types`)
-- Add JSDoc comments for service functions
-- Return explicit types, never rely on inference
 
-**Type Import Pattern:**
+### Deprecated Pattern (DO NOT USE)
+
+```typescript
+// ❌ WRONG - Service functions are deprecated
+import {
+  getCategories,
+  createCategory,
+} from '@/features/menu/services/category.service';
+
+const { data } = useQuery({
+  queryKey: ['categories', storeId],
+  queryFn: () => getCategories(storeId),
+});
+
+// ❌ WRONG - Manual useMutation with service function
+const mutation = useMutation({
+  mutationFn: (data) => createCategory(storeId, data),
+});
+```
+
+### Type Import Pattern
 
 ```typescript
 // ✅ CORRECT - Direct import from generated types
@@ -60,23 +109,12 @@ import type { CategoryResponseDto } from '@repo/api/generated/types';
 
 // ❌ WRONG - Import from feature type file
 import type { Category } from '@/features/menu/types/category.types';
-```
 
-**When using `$api.useQuery` (openapi-react-query):**
-
-```typescript
 // ✅ CORRECT - Let TypeScript infer the response type
-const { data: categoriesResponse } = $api.useQuery(
-  'get',
-  API_PATHS.categories,
-  {
-    params: { path: { storeId } },
-  }
-);
-const categories = categoriesResponse?.data ?? [];
+const categories = response?.data ?? [];
 
 // ❌ WRONG - Type casting bypasses TypeScript safety
-const categories = (categoriesResponse?.data ?? []) as CategoryResponseDto[];
+const categories = (response?.data ?? []) as CategoryResponseDto[];
 ```
 
 ## 2. React Query Key Factories

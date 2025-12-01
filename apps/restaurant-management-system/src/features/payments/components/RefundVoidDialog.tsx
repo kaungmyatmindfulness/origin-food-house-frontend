@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from '@repo/ui/lib/toast';
 import { useTranslations } from 'next-intl';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { Button } from '@repo/ui/components/button';
 import { Checkbox } from '@repo/ui/components/checkbox';
@@ -43,8 +43,9 @@ import {
 import { Textarea } from '@repo/ui/components/textarea';
 import { Alert, AlertDescription } from '@repo/ui/components/alert';
 
-import { createRefund } from '../services/payment.service';
-import { updateOrderStatus } from '@/features/orders/services/order.service';
+import { $api } from '@/utils/apiFetch';
+
+import type { CreateRefundDto } from '@repo/api/generated/types';
 
 interface RefundVoidDialogProps {
   open: boolean;
@@ -123,42 +124,32 @@ export function RefundVoidDialog({
   const refundReason = refundForm.watch('reason');
   const voidReason = voidForm.watch('reason');
 
-  // Refund mutation
-  const refundMutation = useMutation({
-    mutationFn: async (values: RefundFormValues) => {
-      const refundAmount =
-        values.refundType === 'FULL' ? totalPaid : values.amount || '0';
-      const reason =
-        values.reason === 'OTHER' ? values.reasonText : values.reason;
+  // Refund mutation using $api
+  const refundMutation = $api.useMutation(
+    'post',
+    '/payments/orders/{orderId}/refunds',
+    {
+      onSuccess: () => {
+        toast.success(t('refundSuccess'));
+        queryClient.invalidateQueries({ queryKey: ['orders'] });
+        queryClient.invalidateQueries({ queryKey: ['payments', orderId] });
+        onOpenChange(false);
+      },
+      onError: () => {
+        toast.error(t('refundFailed'));
+      },
+    }
+  );
 
-      return await createRefund(orderId, {
-        amount: refundAmount,
-        reason: reason || undefined,
-      });
-    },
-    onSuccess: () => {
-      toast.success(t('refundSuccess'));
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
-      queryClient.invalidateQueries({ queryKey: ['payments', orderId] });
-      onOpenChange(false);
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || t('refundFailed'));
-    },
-  });
-
-  // Void mutation
-  const voidMutation = useMutation({
-    mutationFn: async () => {
-      return await updateOrderStatus(orderId, { status: 'CANCELLED' });
-    },
+  // Void mutation using $api
+  const voidMutation = $api.useMutation('patch', '/orders/{orderId}/status', {
     onSuccess: () => {
       toast.success(t('voidSuccess'));
       queryClient.invalidateQueries({ queryKey: ['orders'] });
       onOpenChange(false);
     },
-    onError: (error: Error) => {
-      toast.error(error.message || t('voidFailed'));
+    onError: (error: unknown) => {
+      toast.error(error instanceof Error ? error.message : t('voidFailed'));
     },
   });
 
@@ -172,11 +163,27 @@ export function RefundVoidDialog({
       }
     }
 
-    await refundMutation.mutateAsync(values);
+    const refundAmount =
+      values.refundType === 'FULL' ? totalPaid : values.amount || '0';
+    const reason =
+      values.reason === 'OTHER' ? values.reasonText : values.reason;
+
+    const refundData: CreateRefundDto = {
+      amount: refundAmount,
+      reason: reason || undefined,
+    };
+
+    await refundMutation.mutateAsync({
+      params: { path: { orderId } },
+      body: refundData,
+    });
   };
 
   const handleVoidSubmit = async () => {
-    await voidMutation.mutateAsync();
+    await voidMutation.mutateAsync({
+      params: { path: { orderId } },
+      body: { status: 'CANCELLED' },
+    });
   };
 
   // Reset forms when dialog opens

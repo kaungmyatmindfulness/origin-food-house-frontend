@@ -50,6 +50,7 @@ model MenuItem {
 ```
 
 **Rules:**
+
 - ALWAYS use `uuid(7)` for primary keys (this project's standard, not `gen_random_uuid()`)
 - ALWAYS use `DateTime` fields (Prisma handles timezone conversion)
 - ALWAYS use Prisma ENUMs instead of raw strings for finite sets
@@ -88,6 +89,7 @@ model Order {
 ```
 
 **Indexing rules:**
+
 - ALWAYS index foreign keys (`storeId`, `userId`, etc.)
 - ALWAYS index fields used in `WHERE` clauses frequently
 - CREATE composite indexes with filter columns first, then sort columns
@@ -132,6 +134,7 @@ async createStore(userId: string, dto: CreateStoreDto) {
 ```
 
 **Transaction rules:**
+
 - ALWAYS wrap multiple related CREATE/UPDATE operations in `$transaction`
 - USE `FOR UPDATE` pattern for race condition prevention (inventory, balance checks):
   ```typescript
@@ -161,6 +164,7 @@ npx prisma migrate deploy
 ```
 
 **Migration rules:**
+
 - NEVER modify existing migration files (create new ones)
 - NEVER drop columns without deprecation period:
   1. Stop writing to column
@@ -196,6 +200,7 @@ connection_limit=20-50     // Higher for parallel jobs
 ```
 
 **Connection pool rules:**
+
 - API servers: 10 connections (per instance)
 - Background workers: 20-50 connections
 - NEVER exceed PostgreSQL max_connections (typically 100)
@@ -293,7 +298,7 @@ await this.prisma.$transaction(
     const account = await tx.account.findUnique({ where: { id } });
 
     if (account.balance < amount) {
-      throw new BadRequestException("Insufficient funds");
+      throw new BadRequestException('Insufficient funds');
     }
 
     // Deduct balance
@@ -307,11 +312,12 @@ await this.prisma.$transaction(
   },
   {
     isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-  },
+  }
 );
 ```
 
 **Isolation level guidelines:**
+
 - `READ COMMITTED` (default): Most operations
 - `REPEATABLE READ`: Reporting, analytics (consistent snapshot)
 - `SERIALIZABLE`: Financial transactions, inventory updates (prevent race conditions)

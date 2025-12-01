@@ -80,43 +80,51 @@ Multi-tenant restaurant management platform backend built with NestJS, Prisma OR
 ## Technology Stack
 
 ### Core Framework
+
 - **NestJS** v11.1.6 - Progressive Node.js framework
 - **TypeScript** v5.9.3 - Type-safe JavaScript
 - **Node.js** 18+ - Runtime environment
 
 ### Database & ORM
+
 - **PostgreSQL** 16 - Relational database
 - **Prisma** v6.17.1 - Type-safe ORM
 - **19 Models** - Multi-tenant schema with soft deletes
 
 ### Authentication & Authorization
+
 - **Auth0** - OAuth2/OIDC authentication (exclusive)
 - **JWT** - Internal token management
 - **Passport** - Authentication middleware
 - **RBAC** - Role-based access control (5 roles)
 
 ### Real-time & Background Processing
+
 - **Socket.IO** v4.8.1 - WebSocket communication
 - **Bull** - Job queue (Redis-based)
 - **@nestjs/schedule** - Cron jobs
 
 ### File Storage
+
 - **AWS S3** - Cloud file storage
 - **Sharp** - Image processing and optimization
 - **Multer** - File upload handling
 
 ### Testing
+
 - **Jest** v30.2.0 - Testing framework
 - **320 Tests** across 17 suites (11 failing due to compilation errors)
 - **31.7% Coverage** (target: 80%+)
 
 ### Code Quality
+
 - **ESLint** v9.37.0 - Linting
 - **Prettier** v3.6.2 - Code formatting
 - **Husky** v9.1.7 - Git hooks
 - **lint-staged** - Pre-commit checks
 
 ### Additional Tools
+
 - **Swagger/OpenAPI** - API documentation
 - **Cookie Parser** - Session management
 - **Class Validator** - DTO validation
@@ -163,6 +171,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 ### 🔐 Authentication & Authorization
 
 **Auth0 Integration** (AuthModule - 1,542 LOC)
+
 - OAuth2/OIDC authentication (exclusive method)
 - JWT token generation and validation
 - JWKS-based token verification
@@ -171,6 +180,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Role-based access control (RBAC)
 
 **Roles:**
+
 - **Owner** - Full store access, ownership transfer
 - **Admin** - Store management, user roles, settings
 - **Chef** - Kitchen operations, menu management
@@ -178,6 +188,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - **Server** - Order taking, table management
 
 **API Endpoints:**
+
 - `POST /auth/auth0/validate` - Validate Auth0 token
 - `POST /auth/login/store` - Select store after login
 - `GET /auth/auth0/config` - Get Auth0 configuration
@@ -188,6 +199,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 ### 🏪 Store Management
 
 **Multi-Tenant Store Operations** (StoreModule - 2,463 LOC)
+
 - Store creation with slug generation
 - Store information management (logo, description, contact)
 - Store settings (VAT rate, service charge, currency)
@@ -197,6 +209,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Store suspension and banning (Admin)
 
 **Key Capabilities:**
+
 - Transactional store creation (Store + Information + Settings + UserStore)
 - Slug uniqueness validation
 - Store-scoped data isolation
@@ -204,6 +217,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Public QR menu access
 
 **API Endpoints:**
+
 - `POST /store` - Create new store
 - `GET /store/:id` - Get store details (public)
 - `PATCH /store/:id/information` - Update store info (OWNER/ADMIN)
@@ -216,6 +230,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 ### 👤 User Management
 
 **User Profile & Authentication** (UserModule - 1,620 LOC)
+
 - User profile management
 - Auth0 user synchronization
 - Profile updates (name, phone)
@@ -225,6 +240,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **Coverage:** 92.06% ✅ (Production-ready)
 
 **API Endpoints:**
+
 - `GET /user/profile` - Get current user profile
 - `PATCH /user/profile` - Update profile
 - `GET /user/:id` - Get user by ID (admin)
@@ -235,6 +251,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 ### 🍽️ Menu & Category Management
 
 **Menu Item Management** (MenuModule - 2,223 LOC)
+
 - Menu item CRUD operations
 - Pricing and availability control
 - Image upload for menu items
@@ -245,6 +262,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Public menu access (no auth)
 
 **Customization Features:**
+
 - Multiple customization groups per item
 - Single/multiple selection options
 - Price adjustments per option
@@ -252,6 +270,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Nested customization sync
 
 **Category Management** (CategoryModule - 1,547 LOC)
+
 - Category CRUD with soft deletes
 - Drag-and-drop sorting
 - Category-menu item relationships
@@ -259,10 +278,12 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Public category access
 
 **Coverage:**
+
 - MenuModule: 73.74% (needs improvement)
 - CategoryModule: 95.08% ✅ (Production-ready)
 
 **API Endpoints:**
+
 - `GET /menu/store/:storeId` - Public menu listing
 - `POST /menu` - Create menu item (OWNER/ADMIN)
 - `PATCH /menu/:id` - Update menu item
@@ -277,6 +298,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 ### 🪑 Table Management
 
 **Table Operations** (TableModule - 1,824 LOC)
+
 - Table CRUD operations
 - QR code generation per table
 - Batch table creation/updates
@@ -285,6 +307,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Table area/zone organization
 
 **Features:**
+
 - UUID-based QR codes for customer access
 - Transactional batch operations
 - Table status tracking (available, occupied, reserved)
@@ -295,6 +318,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **⚠️ Known Issue:** Soft delete not implemented (hard delete currently)
 
 **API Endpoints:**
+
 - `GET /table/store/:storeId` - List all tables
 - `POST /table` - Create table (OWNER/ADMIN)
 - `POST /table/batch` - Batch create/update tables
@@ -306,6 +330,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 ### 🎫 Session Management
 
 **Active Table Sessions** (ActiveTableSessionModule - 1,174 LOC)
+
 - Customer session creation via QR code
 - Manual session creation by staff
 - Session token generation and validation
@@ -314,6 +339,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Session expiry management
 
 **Authentication:**
+
 - Session token for customer cart operations
 - JWT for staff cart operations
 - Dual authentication support
@@ -321,6 +347,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **Coverage:** 18.83% ⚠️ (Critical gap - needs improvement)
 
 **API Endpoints:**
+
 - `POST /active-table-sessions/join-by-table/:tableId` - Join/create session (customers)
 - `POST /active-table-sessions` - Create manual session (staff)
 - `PATCH /active-table-sessions/:id` - Update session status
@@ -332,6 +359,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 ### 🛒 Cart & Ordering
 
 **Shopping Cart** (CartModule - 1,587 LOC)
+
 - Real-time cart synchronization (WebSocket)
 - Cart item management (add, update, remove)
 - Customization selections
@@ -341,6 +369,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Multi-device cart sync
 
 **Security:**
+
 - Session token validation (customers)
 - JWT validation (staff)
 - Store isolation enforcement
@@ -348,6 +377,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **Coverage:** 91.09% ✅ (Production-ready)
 
 **WebSocket Events:**
+
 - `cart:add` - Add item to cart
 - `cart:update` - Update cart item
 - `cart:remove` - Remove cart item
@@ -355,6 +385,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - `cart:updated` - Broadcast cart changes
 
 **Order Processing** (OrderModule - 2,930 LOC)
+
 - Cart checkout to order conversion
 - Order number generation (YYYYMMDD-XXX format)
 - VAT and service charge calculation
@@ -365,6 +396,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Order item customization tracking
 
 **Order Statuses:**
+
 - PENDING → CONFIRMED → PREPARING → READY → COMPLETED → CANCELLED
 
 **Coverage:** 95.6% ✅ (Production-ready - highest coverage)
@@ -374,6 +406,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **API Endpoints:**
 
 **Cart:**
+
 - `GET /cart/:sessionId` - Get cart (session token or JWT)
 - `POST /cart/:sessionId/items` - Add item to cart
 - `PATCH /cart/:sessionId/items/:itemId` - Update cart item
@@ -382,6 +415,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - `POST /cart/:sessionId/checkout` - Checkout cart
 
 **Orders:**
+
 - `GET /order/store/:storeId` - List store orders
 - `GET /order/:id` - Get order details
 - `PATCH /order/:id/status` - Update order status
@@ -393,6 +427,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 ### 💳 Payment Processing
 
 **Payment Management** (PaymentModule - 2,483 LOC)
+
 - Payment recording per order
 - Multiple payment methods (cash, card, digital wallet)
 - Split payment support (even split, by item, custom)
@@ -402,11 +437,13 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Transaction history
 
 **Split Payment Methods:**
+
 - **EVEN** - Equal split among payers
 - **BY_ITEM** - Split by ordered items
 - **CUSTOM** - Custom amount per payer
 
 **Refund Features:**
+
 - Partial refund with reason tracking
 - Full order refund
 - Refund calculation against payments
@@ -415,6 +452,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **Coverage:** 69.92% ⚠️ (Below 85% target)
 
 **API Endpoints:**
+
 - `POST /payment` - Record payment (CASHIER/OWNER)
 - `GET /payment/order/:orderId` - Get order payments
 - `GET /payment/store/:storeId/summary` - Payment summary
@@ -426,6 +464,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 ### 👨‍🍳 Kitchen Display System (KDS)
 
 **Kitchen Operations** (KitchenModule - 808 LOC)
+
 - Real-time order notifications
 - Kitchen order queue
 - Order status updates for kitchen staff
@@ -434,6 +473,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - WebSocket real-time updates
 
 **Features:**
+
 - Automatic order broadcast to kitchen on creation
 - Status transitions visible in real-time
 - Store-scoped kitchen views
@@ -442,11 +482,13 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **Coverage:** 90.32% ✅ (Production-ready)
 
 **WebSocket Events:**
+
 - `order:new` - New order notification
 - `order:status-update` - Order status changed
 - `kitchen:join-store` - Kitchen staff joins store room
 
 **API Endpoints:**
+
 - `GET /kitchen/orders` - Get kitchen orders (CHEF/ADMIN)
 - `PATCH /kitchen/orders/:id/status` - Update order status
 
@@ -455,6 +497,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 ### 📊 Reporting & Analytics
 
 **Business Intelligence** (ReportModule - 1,229 LOC)
+
 - Sales summary reports
 - Order status breakdown
 - Payment method analysis
@@ -464,6 +507,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Store performance metrics
 
 **Report Types:**
+
 - Sales summary (total revenue, order count, avg order value)
 - Order status distribution
 - Payment breakdown by method
@@ -473,6 +517,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **Coverage:** 18.25% ⚠️ (Critical gap - minimal testing)
 
 **API Endpoints:**
+
 - `GET /report/sales-summary` - Sales metrics
 - `GET /report/order-status` - Order status breakdown
 - `GET /report/payment-breakdown` - Payment method analysis
@@ -485,12 +530,14 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **Subscription & Billing** (SubscriptionModule - Complex, multiple services)
 
 **Tier Management** (TierService - 571 LOC)
+
 - Subscription tier CRUD
 - Tier feature limits (stores, users, tables)
 - Trial/paid tier differentiation
 - Tier upgrade/downgrade
 
 **Subscription Features:**
+
 - Trial period management (7-30 days)
 - Automatic subscription renewal
 - Payment proof uploads
@@ -500,6 +547,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Refund processing
 
 **Background Jobs:**
+
 - Trial expiration notifications (daily 2 AM)
 - Subscription renewal processing (daily 3 AM)
 - Usage report generation
@@ -507,6 +555,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **Coverage:** 0% ⚠️ (Critical gap - core revenue feature untested)
 
 **API Endpoints:**
+
 - `GET /subscription/tiers` - List available tiers
 - `POST /subscription` - Create subscription
 - `PATCH /subscription/:id` - Update subscription
@@ -521,6 +570,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **Platform Administration** (AdminModule - Multiple services)
 
 **Admin Capabilities:**
+
 - Platform-level authentication
 - Store management (suspend, ban, restore)
 - User management (suspend, ban, verify)
@@ -530,6 +580,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Platform analytics
 
 **Admin Services:**
+
 - AdminAuthService - Admin authentication
 - AdminStoreService - Store suspension/banning
 - AdminUserService - User management
@@ -537,11 +588,13 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - SuspensionService - Suspension logic
 
 **Audit Features:**
+
 - Automatic audit logging for all mutations
 - AdminAuditInterceptor logs non-GET requests
 - Action tracking (who, what, when, where)
 
 **API Endpoints:**
+
 - `POST /admin/auth/login` - Admin login
 - `GET /admin/stores` - List all stores
 - `PATCH /admin/stores/:id/suspend` - Suspend store
@@ -557,6 +610,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **AWS S3 Integration** (StorageModule - Multiple services)
 
 **S3 Service Features:**
+
 - File upload to S3
 - Pre-signed URL generation
 - File retrieval with expiring URLs
@@ -565,12 +619,14 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - File size limits (10MB default)
 
 **Image Processing:**
+
 - Automatic resize and optimization
 - Format conversion (JPEG, PNG, WebP)
 - Thumbnail generation
 - Quality adjustment
 
 **Cleanup Service:**
+
 - Scheduled orphaned file detection
 - Monthly cleanup job
 - Batch deletion operations
@@ -578,6 +634,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **Coverage:** 0% ⚠️ (Critical gap - 5,448 lines untested)
 
 **Supported Use Cases:**
+
 - Store logos
 - Menu item images
 - Payment proof uploads
@@ -590,6 +647,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **WebSocket Gateways** (Socket.IO)
 
 **Cart Gateway** (CartGateway)
+
 - Real-time cart synchronization
 - Multi-device cart updates
 - Session-based room management
@@ -598,6 +656,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **⚠️ Security Issue:** No authentication guards (CVSS 9.1 vulnerability)
 
 **Kitchen Gateway** (KitchenGateway)
+
 - Real-time order notifications
 - Kitchen staff order updates
 - Store-scoped broadcasting
@@ -605,6 +664,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **Coverage:** 0-19% ⚠️ (WebSocket gateways undertested)
 
 **Table Gateway** (TableGateway)
+
 - Real-time table status updates
 - Table availability notifications
 
@@ -615,6 +675,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **Scheduled Tasks** (JobsModule)
 
 **Jobs:**
+
 1. **TrialExpirationJob** - Daily at 2:00 AM
    - Sends trial expiration notifications
    - Updates trial status
@@ -631,6 +692,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
    - Sends usage reports to store owners
 
 **Infrastructure:**
+
 - Bull queue with Redis
 - Cron-based scheduling
 - Job retry logic
@@ -643,6 +705,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **Email Service** (EmailModule - 832 LOC)
 
 **Email Types:**
+
 - Trial expiration warnings
 - Subscription renewal confirmations
 - Payment receipts
@@ -652,6 +715,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Password reset (handled by Auth0)
 
 **Template Engine:**
+
 - Handlebars templates (14 templates)
 - HTML and plain text versions
 - Dynamic content rendering
@@ -667,6 +731,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 **Audit Logging** (AuditLogModule)
 
 **Features:**
+
 - Automatic mutation logging
 - User action tracking
 - Admin action logging
@@ -674,6 +739,7 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 - Timestamp and user attribution
 
 **Logged Actions:**
+
 - Store creation/updates
 - User role changes
 - Menu modifications
@@ -685,27 +751,28 @@ Origin Food House provides a comprehensive suite of features for managing multi-
 
 ## Feature Implementation Status
 
-| Feature Area | Status | Coverage | Priority |
-|--------------|--------|----------|----------|
-| Authentication & Authorization | ✅ Complete | 23.83% | HIGH |
-| Store Management | ✅ Complete | 53.10% | MEDIUM |
-| User Management | ✅ Complete | 92.06% | LOW |
-| Menu & Categories | ✅ Complete | 73-95% | MEDIUM |
-| Table Management | ⚠️ Missing soft delete | 86.07% | MEDIUM |
-| Session Management | ✅ Complete | 18.83% | HIGH |
-| Cart & Ordering | ✅ Complete | 91-96% | LOW |
-| Payment Processing | ✅ Complete | 69.92% | HIGH |
-| Kitchen Display System | ✅ Complete | 90.32% | LOW |
-| Reporting & Analytics | ✅ Complete | 18.25% | HIGH |
-| Subscription Management | ✅ Complete | 0% | CRITICAL |
-| Admin Platform | ✅ Complete | Unknown | HIGH |
-| File Storage | ✅ Complete | 0% | CRITICAL |
-| Real-Time Features | ⚠️ Security issues | 0-19% | CRITICAL |
-| Background Jobs | ✅ Complete | Unknown | MEDIUM |
-| Email Notifications | ✅ Complete | 18.18% | HIGH |
-| Audit Trail | ✅ Complete | Unknown | MEDIUM |
+| Feature Area                   | Status                 | Coverage | Priority |
+| ------------------------------ | ---------------------- | -------- | -------- |
+| Authentication & Authorization | ✅ Complete            | 23.83%   | HIGH     |
+| Store Management               | ✅ Complete            | 53.10%   | MEDIUM   |
+| User Management                | ✅ Complete            | 92.06%   | LOW      |
+| Menu & Categories              | ✅ Complete            | 73-95%   | MEDIUM   |
+| Table Management               | ⚠️ Missing soft delete | 86.07%   | MEDIUM   |
+| Session Management             | ✅ Complete            | 18.83%   | HIGH     |
+| Cart & Ordering                | ✅ Complete            | 91-96%   | LOW      |
+| Payment Processing             | ✅ Complete            | 69.92%   | HIGH     |
+| Kitchen Display System         | ✅ Complete            | 90.32%   | LOW      |
+| Reporting & Analytics          | ✅ Complete            | 18.25%   | HIGH     |
+| Subscription Management        | ✅ Complete            | 0%       | CRITICAL |
+| Admin Platform                 | ✅ Complete            | Unknown  | HIGH     |
+| File Storage                   | ✅ Complete            | 0%       | CRITICAL |
+| Real-Time Features             | ⚠️ Security issues     | 0-19%    | CRITICAL |
+| Background Jobs                | ✅ Complete            | Unknown  | MEDIUM   |
+| Email Notifications            | ✅ Complete            | 18.18%   | HIGH     |
+| Audit Trail                    | ✅ Complete            | Unknown  | MEDIUM   |
 
 **Legend:**
+
 - ✅ Complete - Feature fully implemented
 - ⚠️ Issues - Feature complete but has known issues
 - ❌ Incomplete - Feature partially implemented or missing
@@ -729,6 +796,7 @@ This project follows a **hybrid approach** for local development:
 - **Services**: Run in Docker containers (PostgreSQL)
 
 **Benefits:**
+
 - ✅ Fast hot reload (no container overhead)
 - ✅ Easy debugging with your IDE
 - ✅ Native performance
@@ -737,17 +805,20 @@ This project follows a **hybrid approach** for local development:
 ### Installation Steps
 
 1. **Clone the repository:**
+
    ```bash
    git clone <repository-url>
    cd origin-food-house-backend
    ```
 
 2. **Install Node.js dependencies:**
+
    ```bash
    npm install
    ```
 
 3. **Configure environment:**
+
    ```bash
    cp .env.example .env
    ```
@@ -759,11 +830,13 @@ This project follows a **hybrid approach** for local development:
    - **CORS origins** for frontend apps
 
 4. **Start infrastructure services:**
+
    ```bash
    npm run docker:up
    ```
 
 5. **Initialize database:**
+
    ```bash
    npm run migrate:db    # Run migrations
    npm run generate:db   # Generate Prisma client
@@ -785,6 +858,7 @@ This application **exclusively** uses Auth0 for authentication. Local email/pass
    - Configure Allowed Callback URLs, Logout URLs, and Web Origins
 
 2. **Configure Environment Variables:**
+
    ```env
    AUTH0_DOMAIN="your-tenant.auth0.com"
    AUTH0_CLIENT_ID="your-client-id"
@@ -807,6 +881,7 @@ Docker Compose provides **ONLY** the infrastructure services needed for developm
 ### Services Provided
 
 #### PostgreSQL Database
+
 - **Image:** `postgres:16-alpine`
 - **Port:** `5432` (configurable via `POSTGRES_PORT`)
 - **Access:** `localhost:5432`
@@ -877,6 +952,7 @@ npm run drop:db
 ### Database Schema
 
 **19 Prisma Models:**
+
 - User, Store, UserStore (multi-tenancy)
 - StoreInformation, StoreSetting (store config)
 - Category, MenuItem, CustomizationGroup, CustomizationOption (menu)
@@ -886,6 +962,7 @@ npm run drop:db
 - Payment, Refund (payment processing)
 
 **Key Features:**
+
 - Soft deletes (`deletedAt` timestamp)
 - Audit trails (`createdAt`, `updatedAt`)
 - Decimal precision for monetary values
@@ -904,6 +981,7 @@ docker exec -it origin-food-house-postgres psql -U myuser -d mydb
 ### Database GUI Tools
 
 For database management, you can use:
+
 - **Prisma Studio:** `npm run studio:db` (included)
 - **TablePlus, DBeaver, pgAdmin (desktop):** Connect to `localhost:5432`
 
@@ -1025,6 +1103,7 @@ origin-food-house-backend/
 ### Modular Architecture
 
 **14 Domain Modules:**
+
 1. **AuthModule** - Auth0, JWT, RBAC (23.83% test coverage)
 2. **StoreModule** - Multi-store management (53.10% coverage)
 3. **UserModule** - User profiles, Auth0 sync (60.86% coverage)
@@ -1041,6 +1120,7 @@ origin-food-house-backend/
 14. **SubscriptionModule** - Billing, tiers (0% coverage ⚠️)
 
 **Infrastructure Modules:**
+
 - PrismaModule, RedisModule, EmailModule, StorageModule, JobsModule, AdminModule, AuditLogModule, TierModule, CommonModule
 
 ### Design Patterns
@@ -1056,6 +1136,7 @@ origin-food-house-backend/
 ### Authentication Flow
 
 **Staff Users (POS App):**
+
 1. Auth0 Universal Login (OAuth2/OIDC)
 2. Token validation via JWKS
 3. User sync to database
@@ -1063,6 +1144,7 @@ origin-food-house-backend/
 5. Store-scoped JWT
 
 **Customers (SOS App):**
+
 1. QR code scan
 2. Table session creation
 3. Session JWT
@@ -1125,6 +1207,7 @@ REDIS_PASSWORD=""
 ```
 
 **Security Notes:**
+
 - Use **strong, unique secrets** for JWT_SECRET (minimum 32 characters)
 - **Never commit** `.env` files to version control
 - Use **environment-specific** configuration for production
@@ -1137,6 +1220,7 @@ REDIS_PASSWORD=""
 ### Test Status
 
 **Current State (October 28, 2025):**
+
 - **Total Test Suites:** 17 suites
 - **Compiling Suites:** 6/17 (35%)
 - **Failing Suites:** 11/17 (65%)
@@ -1144,6 +1228,7 @@ REDIS_PASSWORD=""
 - **Overall Coverage:** 31.7% statement coverage
 
 **Critical Gaps:**
+
 - ❌ **SubscriptionModule:** 0% coverage (core revenue feature)
 - ❌ **ReportModule:** 18.25% coverage (analytics untested)
 - ❌ **StorageModule:** 0% coverage (5,448 lines untested)
@@ -1207,14 +1292,14 @@ describe('StoreService', () => {
 
 ### Test Coverage Goals
 
-| Module | Current | Target | Priority |
-|--------|---------|--------|----------|
-| OrderModule | 78.02% | 85%+ | ✅ Met |
-| CartModule | 49.07% | 85%+ | 🟡 High |
-| PaymentModule | 53.75% | 85%+ | 🟡 High |
-| SubscriptionModule | 0% | 85%+ | 🔴 Critical |
-| StorageModule | 0% | 80%+ | 🔴 Critical |
-| ReportModule | 18.25% | 80%+ | 🔴 Critical |
+| Module             | Current | Target | Priority    |
+| ------------------ | ------- | ------ | ----------- |
+| OrderModule        | 78.02%  | 85%+   | ✅ Met      |
+| CartModule         | 49.07%  | 85%+   | 🟡 High     |
+| PaymentModule      | 53.75%  | 85%+   | 🟡 High     |
+| SubscriptionModule | 0%      | 85%+   | 🔴 Critical |
+| StorageModule      | 0%      | 80%+   | 🔴 Critical |
+| ReportModule       | 18.25%  | 80%+   | 🔴 Critical |
 
 **See:** [Quality Assurance Assessment](docs/quality-assurance/audits/2025-10-28-comprehensive-qa-assessment.md)
 
@@ -1227,6 +1312,7 @@ describe('StoreService', () => {
 > **⚠️ PRODUCTION BLOCKER:** Critical vulnerabilities present
 
 **Priority 0 (IMMEDIATE FIX REQUIRED):**
+
 1. **WebSocket Authentication Bypass** (CVSS 9.1)
    - `src/cart/cart.gateway.ts` - No authentication guards
    - **Impact:** Cart manipulation, session hijacking, financial fraud
@@ -1275,6 +1361,7 @@ describe('StoreService', () => {
 **Current Status:** ❌ **NOT PRODUCTION READY**
 
 **Blockers:**
+
 - 🔴 4 critical security vulnerabilities
 - 🔴 11 failing test suites
 - 🟡 31.7% test coverage (target: 80%+)
@@ -1301,6 +1388,7 @@ docker run -d \
 ```
 
 **Dockerfile Features:**
+
 - Multi-stage build (builder + production)
 - Alpine Linux base (minimal size)
 - Non-root user (security)
@@ -1318,22 +1406,26 @@ docker run -d \
 ### Pre-Deployment Checklist
 
 **Phase 1: Critical Fixes (Week 1-2)**
+
 - [ ] Fix 4 P0 security vulnerabilities
 - [ ] Fix 11 failing test suites
 - [ ] Verify all tests pass
 - [ ] Security audit score: 8.0/10+
 
 **Phase 2: Quality (Week 3-5)**
+
 - [ ] Test coverage ≥80% on critical modules
 - [ ] Integration tests for critical flows
 - [ ] Performance testing completed
 
 **Phase 3: Infrastructure (Week 6-8)**
+
 - [ ] Database indexes optimized
 - [ ] Redis caching implemented
 - [ ] API response times <500ms (p95)
 
 **Phase 4: Production (Week 9-12)**
+
 - [ ] Observability dashboard operational
 - [ ] Health checks configured
 - [ ] Backup and disaster recovery tested
@@ -1355,20 +1447,24 @@ docker run -d \
 ### Comprehensive Analysis Reports
 
 **Codebase Analysis:**
+
 - [Codebase Analysis Report](CODEBASE_ANALYSIS_REPORT.md) - 932 lines of structural analysis
 - [Analysis Summary](ANALYSIS_SUMMARY.md) - Quick reference guide
 - [Analysis Index](ANALYSIS_INDEX.md) - Navigation guide
 
 **Security:**
+
 - [Comprehensive Security Audit](docs/security-audit/2025-10-28-comprehensive-security-audit.md)
 - [Security Executive Summary](docs/security-audit/EXECUTIVE_SUMMARY.md)
 
 **Architecture:**
+
 - [Architecture Review](docs/solution-architect/architecture/2025-10-28-comprehensive-architecture-review.md)
 - [Architecture Diagrams](docs/solution-architect/architecture/2025-10-28-architecture-diagrams.md)
 - [Scalability Roadmap](docs/solution-architect/scaling/2025-10-28-scalability-roadmap.md)
 
 **Quality Assurance:**
+
 - [QA Assessment](docs/quality-assurance/audits/2025-10-28-comprehensive-qa-assessment.md)
 - [QA Executive Summary](docs/quality-assurance/test-reports/2025-10-28-qa-executive-summary.md)
 - [Subscription Module Test Plan](docs/quality-assurance/test-plans/2025-10-28-subscription-module-test-plan.md)
@@ -1389,18 +1485,18 @@ docker run -d \
 
 ## Project Statistics
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| **Lines of Code** | 39,637 | - |
-| **Domain Modules** | 14 | ✅ |
-| **Infrastructure Modules** | 10 | ✅ |
-| **Database Models** | 19 | ✅ |
-| **Test Suites** | 17 | 🔴 11 failing |
-| **Passing Tests** | ~100 | ⚠️ Unknown (compilation errors) |
-| **Test Coverage** | 31.7% | 🔴 Target: 80%+ |
-| **Dependencies** | 49 | ✅ Up-to-date |
-| **Dev Dependencies** | 34 | ✅ |
-| **Security Vulnerabilities** | 4 P0 | 🔴 Critical |
+| Metric                       | Value  | Status                          |
+| ---------------------------- | ------ | ------------------------------- |
+| **Lines of Code**            | 39,637 | -                               |
+| **Domain Modules**           | 14     | ✅                              |
+| **Infrastructure Modules**   | 10     | ✅                              |
+| **Database Models**          | 19     | ✅                              |
+| **Test Suites**              | 17     | 🔴 11 failing                   |
+| **Passing Tests**            | ~100   | ⚠️ Unknown (compilation errors) |
+| **Test Coverage**            | 31.7%  | 🔴 Target: 80%+                 |
+| **Dependencies**             | 49     | ✅ Up-to-date                   |
+| **Dev Dependencies**         | 34     | ✅                              |
+| **Security Vulnerabilities** | 4 P0   | 🔴 Critical                     |
 
 ---
 
@@ -1425,12 +1521,14 @@ docker run -d \
 ### Development Guidelines
 
 **Before Starting Development:**
+
 1. Read [CLAUDE.md](CLAUDE.md) for architectural principles
 2. Review the [Master Refactoring Plan](docs/MASTER_REFACTORING_PLAN.md)
 3. Check for open issues in the relevant analysis report
 4. Follow the established patterns and conventions
 
 **Quality Gates (Every Task):**
+
 1. ✅ Code formatted (`npm run format`)
 2. ✅ Linting passes (`npm run lint`)
 3. ✅ Type checking passes (`npx tsc --noEmit`)
@@ -1450,6 +1548,7 @@ docker run -d \
 ## Acknowledgments
 
 Built with:
+
 - [NestJS](https://nestjs.com/) - Progressive Node.js framework
 - [Prisma](https://www.prisma.io/) - Next-generation ORM
 - [Auth0](https://auth0.com/) - Authentication platform

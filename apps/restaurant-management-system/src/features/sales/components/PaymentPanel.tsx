@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useMutation } from '@tanstack/react-query';
 import {
   DollarSign,
   CreditCard,
@@ -28,7 +27,7 @@ import {
 } from '@repo/ui/components/typed-tabs';
 import { Textarea } from '@repo/ui/components/textarea';
 
-import { recordPayment } from '@/features/payments/services/payment.service';
+import { $api } from '@/utils/apiFetch';
 import { formatCurrency } from '@/utils/formatting';
 
 import type { RecordPaymentDto } from '@repo/api/generated/types';
@@ -88,36 +87,40 @@ export function PaymentPanel({
     [tPayments]
   );
 
-  // Record payment mutation
-  const paymentMutation = useMutation({
-    mutationFn: async () => {
-      const paymentData: RecordPaymentDto = {
-        amount: orderTotal.toFixed(2),
-        paymentMethod,
-        ...(paymentMethod === 'CASH' &&
-          amountTendered && { amountTendered: amountTendered }),
-        ...(transactionId && { transactionId }),
-        ...(notes && { notes }),
-      };
-      return recordPayment(orderId, paymentData);
-    },
-    onSuccess: () => {
-      toast.success(t('paymentSuccessful'));
-      onPaymentSuccess();
-    },
-    onError: (error) => {
-      toast.error(t('paymentFailed'), {
-        description: error instanceof Error ? error.message : undefined,
-      });
-    },
-  });
+  // Record payment mutation using $api
+  const paymentMutation = $api.useMutation(
+    'post',
+    '/payments/orders/{orderId}',
+    {
+      onSuccess: () => {
+        toast.success(t('paymentSuccessful'));
+        onPaymentSuccess();
+      },
+      onError: () => {
+        toast.error(t('paymentFailed'));
+      },
+    }
+  );
 
   const handleSubmit = () => {
     if (paymentMethod === 'CASH' && !isValidTendered) {
       toast.error(t('insufficientAmount'));
       return;
     }
-    paymentMutation.mutate();
+
+    const paymentData: RecordPaymentDto = {
+      amount: orderTotal.toFixed(2),
+      paymentMethod,
+      ...(paymentMethod === 'CASH' &&
+        amountTendered && { amountTendered: amountTendered }),
+      ...(transactionId && { transactionId }),
+      ...(notes && { notes }),
+    };
+
+    paymentMutation.mutate({
+      params: { path: { orderId } },
+      body: paymentData,
+    });
   };
 
   return (

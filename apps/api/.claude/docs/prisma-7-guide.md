@@ -10,17 +10,17 @@ Prisma 7 introduces a TypeScript-based configuration file that replaces the prev
 
 ```typescript
 // prisma.config.ts
-import "dotenv/config";
-import { defineConfig, env } from "prisma/config";
+import 'dotenv/config';
+import { defineConfig, env } from 'prisma/config';
 
 export default defineConfig({
-  schema: "prisma/schema.prisma",
+  schema: 'prisma/schema.prisma',
   migrations: {
-    path: "prisma/migrations",
-    seed: "ts-node --transpile-only prisma/seed.ts",
+    path: 'prisma/migrations',
+    seed: 'ts-node --transpile-only prisma/seed.ts',
   },
   datasource: {
-    url: env("DATABASE_URL"),
+    url: env('DATABASE_URL'),
   },
 });
 ```
@@ -31,9 +31,9 @@ Prisma 7 uses a new driver-based architecture with adapters. This project uses t
 
 ```typescript
 // src/prisma/prisma.service.ts
-import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
-import { PrismaClient } from "src/generated/prisma/client";
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
+import { PrismaClient } from 'src/generated/prisma/client';
 
 @Injectable()
 export class PrismaService
@@ -41,7 +41,7 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   constructor(configService: ConfigService) {
-    const connectionString = configService.get<string>("DATABASE_URL");
+    const connectionString = configService.get<string>('DATABASE_URL');
     const pool = new Pool({ connectionString });
     const adapter = new PrismaPg(pool);
     super({ adapter });
@@ -58,6 +58,7 @@ export class PrismaService
 ```
 
 **Benefits of the adapter pattern:**
+
 - Direct connection pooling via `pg` library
 - Better performance and control over database connections
 - Flexibility to swap database drivers without changing application code
@@ -77,7 +78,7 @@ generator client {
 Import pattern:
 
 ```typescript
-import { PrismaClient } from "src/generated/prisma/client";
+import { PrismaClient } from 'src/generated/prisma/client';
 ```
 
 ## TypeScript Configuration for Prisma 7
@@ -96,6 +97,7 @@ import { PrismaClient } from "src/generated/prisma/client";
 ```
 
 **Why CommonJS works with Prisma 7:**
+
 - Prisma 7's "esnext" requirement refers to TypeScript's ability to understand modern import syntax during compilation
 - The final compiled JavaScript output can be CommonJS
 - ES modules in Node.js would require adding `.js` extensions to all imports (not practical for large codebases)
@@ -104,6 +106,7 @@ import { PrismaClient } from "src/generated/prisma/client";
 ## Prisma 7 Best Practices
 
 **DO:**
+
 - Use the `@prisma/adapter-pg` driver for PostgreSQL
 - Configure connection pooling via the `pg` library's `Pool`
 - Use `prisma.config.ts` for centralized configuration
@@ -111,6 +114,7 @@ import { PrismaClient } from "src/generated/prisma/client";
 - Extend `PrismaClient` in your service class for proper lifecycle management
 
 **DON'T:**
+
 - Don't switch to ES modules unless absolutely necessary (requires extensive refactoring)
 - Don't use the old `PrismaClient` constructor without adapters (deprecated in Prisma 7)
 - Don't skip the `onModuleInit` and `onModuleDestroy` lifecycle hooks

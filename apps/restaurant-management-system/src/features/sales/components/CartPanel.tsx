@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { ShoppingCart } from 'lucide-react';
 import { toast } from '@repo/ui/lib/toast';
 
@@ -18,13 +18,8 @@ import { Skeleton } from '@repo/ui/components/skeleton';
 import { CartItem } from './CartItem';
 import { CartTotals } from './CartTotals';
 
-import {
-  getCart,
-  removeFromCart,
-  updateCartItem,
-} from '@/features/orders/services/order.service';
+import { $api } from '@/utils/apiFetch';
 import { salesKeys } from '@/features/sales/queries/sales.keys';
-import type { CartResponseDto } from '@repo/api/generated/types';
 
 interface CartPanelProps {
   sessionId: string | null;
@@ -35,59 +30,85 @@ export function CartPanel({ sessionId, onCheckout }: CartPanelProps) {
   const t = useTranslations('sales');
   const queryClient = useQueryClient();
 
-  // Fetch cart data
-  // The service now returns the corrected CartResponseDto type
+  // Fetch cart data using $api React Query hook
   const {
-    data: cart,
+    data: cartResponse,
     isLoading,
     error,
-  } = useQuery<CartResponseDto>({
-    queryKey: salesKeys.cart(sessionId ?? ''),
-    queryFn: () => getCart(sessionId!),
-    enabled: !!sessionId,
-    staleTime: 30 * 1000, // 30 seconds
-  });
+  } = $api.useQuery(
+    'get',
+    '/cart',
+    { params: { query: { sessionId: sessionId ?? '' } } },
+    {
+      enabled: !!sessionId,
+      staleTime: 30 * 1000, // 30 seconds
+    }
+  );
+
+  // Extract cart data from wrapped response
+  const cart = cartResponse?.data ?? null;
 
   // Remove item mutation
-  const removeItemMutation = useMutation({
-    mutationFn: (cartItemId: string) => removeFromCart(sessionId!, cartItemId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: salesKeys.cart(sessionId!) });
-      toast.success(t('itemRemoved'));
-    },
-    onError: (err) => {
-      toast.error(t('failedToRemoveItem'), {
-        description: err instanceof Error ? err.message : undefined,
-      });
-    },
-  });
+  const removeItemMutation = $api.useMutation(
+    'delete',
+    '/cart/items/{cartItemId}',
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: salesKeys.cart(sessionId!) });
+        toast.success(t('itemRemoved'));
+      },
+      onError: (err: unknown) => {
+        toast.error(t('failedToRemoveItem'), {
+          description: err instanceof Error ? err.message : undefined,
+        });
+      },
+    }
+  );
 
   // Update quantity mutation
-  const updateQuantityMutation = useMutation({
-    mutationFn: ({ itemId, quantity }: { itemId: string; quantity: number }) =>
-      updateCartItem(sessionId!, itemId, { quantity }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: salesKeys.cart(sessionId!) });
-    },
-    onError: (err) => {
-      toast.error(t('failedToUpdateItem'), {
-        description: err instanceof Error ? err.message : undefined,
-      });
-    },
-  });
+  const updateQuantityMutation = $api.useMutation(
+    'patch',
+    '/cart/items/{cartItemId}',
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: salesKeys.cart(sessionId!) });
+      },
+      onError: (err: unknown) => {
+        toast.error(t('failedToUpdateItem'), {
+          description: err instanceof Error ? err.message : undefined,
+        });
+      },
+    }
+  );
 
   // Handle quantity update
   const handleUpdateQuantity = (itemId: string, quantity: number) => {
     if (quantity < 1) {
-      removeItemMutation.mutate(itemId);
+      removeItemMutation.mutate({
+        params: {
+          path: { cartItemId: itemId },
+          query: { sessionId: sessionId! },
+        },
+      });
     } else {
-      updateQuantityMutation.mutate({ itemId, quantity });
+      updateQuantityMutation.mutate({
+        params: {
+          path: { cartItemId: itemId },
+          query: { sessionId: sessionId! },
+        },
+        body: { quantity },
+      });
     }
   };
 
   // Handle remove
   const handleRemove = (itemId: string) => {
-    removeItemMutation.mutate(itemId);
+    removeItemMutation.mutate({
+      params: {
+        path: { cartItemId: itemId },
+        query: { sessionId: sessionId! },
+      },
+    });
   };
 
   // Calculate totals

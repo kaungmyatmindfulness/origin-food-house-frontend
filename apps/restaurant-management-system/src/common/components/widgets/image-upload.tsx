@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { useDropzone, FileRejection } from 'react-dropzone';
 import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { toast } from '@repo/ui/lib/toast';
 import { useMutation } from '@tanstack/react-query';
 import { getImageUrl } from '@repo/api/utils/s3-url';
+import { createUploadService } from '@repo/api/services/upload.service';
 
 import { cn } from '@repo/ui/lib/utils';
-import { uploadImage } from '@/common/services/common.service';
 
 interface ImageUploadProps {
   /** The current image identifier (e.g., S3 key/path) or undefined */
@@ -48,8 +48,14 @@ export function ImageUpload({
 
   const [error, setError] = useState<string | null>(null);
 
+  // Create upload service with base URL
+  const uploadService = useMemo(
+    () => createUploadService(process.env.NEXT_PUBLIC_API_URL ?? ''),
+    []
+  );
+
   const uploadImageMutation = useMutation({
-    mutationFn: uploadImage,
+    mutationFn: uploadService.uploadImage,
   });
 
   const generatePreview = useCallback(

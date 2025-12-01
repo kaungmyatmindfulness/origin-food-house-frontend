@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { Store, UtensilsCrossed, Loader2 } from 'lucide-react';
 import { toast } from '@repo/ui/lib/toast';
 
@@ -27,10 +27,7 @@ import {
   selectSelectedStoreId,
   useAuthStore,
 } from '@/features/auth/store/auth.store';
-import {
-  checkoutCart,
-  getOrder,
-} from '@/features/orders/services/order.service';
+import { $api } from '@/utils/apiFetch';
 import { transformOrderToReceiptData } from '@/features/sales/utils/transform-order-to-receipt';
 
 import type { MenuItemResponseDto } from '@repo/api/generated/types';
@@ -100,19 +97,21 @@ export default function SalesPage() {
     ? false // Local cart is instant
     : isAddingToServerCart;
 
-  // Checkout mutation
-  const checkoutMutation = useMutation({
-    mutationFn: (sessionId: string) => checkoutCart(sessionId),
-    onSuccess: (order) => {
-      setCurrentOrder(order.id);
-      setActivePanel('payment');
-      // Invalidate cart query since we've checked out
-      queryClient.invalidateQueries({
-        queryKey: salesKeys.cart(activeSessionId ?? ''),
-      });
-      toast.success(t('checkoutSuccessful'));
+  // Checkout mutation using $api
+  const checkoutMutation = $api.useMutation('post', '/orders/checkout', {
+    onSuccess: (response) => {
+      const order = response.data;
+      if (order) {
+        setCurrentOrder(order.id);
+        setActivePanel('payment');
+        // Invalidate cart query since we've checked out
+        queryClient.invalidateQueries({
+          queryKey: salesKeys.cart(activeSessionId ?? ''),
+        });
+        toast.success(t('checkoutSuccessful'));
+      }
     },
-    onError: (error) => {
+    onError: (error: unknown) => {
       toast.error(t('checkoutFailed'), {
         description: error instanceof Error ? error.message : undefined,
       });
@@ -120,14 +119,24 @@ export default function SalesPage() {
   });
 
   // Fetch order data when we have a currentOrderId (for PaymentPanel and ReceiptPanel)
-  const { data: currentOrder, isLoading: isLoadingOrder } = useQuery({
-    queryKey: salesKeys.order(currentOrderId ?? ''),
-    queryFn: () => getOrder(currentOrderId!),
-    enabled:
-      !!currentOrderId &&
-      (activePanel === 'payment' || activePanel === 'receipt'),
-    staleTime: 30 * 1000,
-  });
+  const { data: orderResponse, isLoading: isLoadingOrder } = $api.useQuery(
+    'get',
+    '/orders/{orderId}',
+    {
+      params: {
+        path: { orderId: currentOrderId ?? '', id: currentOrderId ?? '' },
+      },
+    },
+    {
+      enabled:
+        !!currentOrderId &&
+        (activePanel === 'payment' || activePanel === 'receipt'),
+      staleTime: 30 * 1000,
+    }
+  );
+
+  // Extract order data from wrapped response
+  const currentOrder = orderResponse?.data ?? null;
 
   const handleViewChange = (value: string) => {
     setActiveView(value as SalesView);
@@ -221,7 +230,10 @@ export default function SalesPage() {
       toast.error(t('noActiveSession'));
       return;
     }
-    checkoutMutation.mutate(activeSessionId);
+    checkoutMutation.mutate({
+      params: { query: { sessionId: activeSessionId } },
+      body: { orderType: 'DINE_IN' },
+    });
   };
 
   // Handle payment success

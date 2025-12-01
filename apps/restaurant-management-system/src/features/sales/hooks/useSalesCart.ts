@@ -1,18 +1,17 @@
 'use client';
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from '@repo/ui/lib/toast';
 import { useTranslations } from 'next-intl';
 
-import { createManualSession } from '@/features/orders/services/session.service';
-import { addToCart } from '@/features/orders/services/order.service';
+import { $api } from '@/utils/apiFetch';
 import { useSalesStore } from '@/features/sales/store/sales.store';
 import { salesKeys } from '@/features/sales/queries/sales.keys';
 
-import type { SessionType } from '@/features/sales/types/sales.types';
 import type {
   AddToCartDto,
   CartItemCustomizationDto,
+  CreateManualSessionDto,
 } from '@repo/api/generated/types';
 
 interface UseSalesCartOptions {
@@ -52,41 +51,36 @@ export function useSalesCart({
   const sessionType = useSalesStore((state) => state.sessionType);
   const setActiveSession = useSalesStore((state) => state.setActiveSession);
 
-  // Create session mutation
-  const createSessionMutation = useMutation({
-    mutationFn: (type: SessionType) =>
-      createManualSession(storeId, { sessionType: type }),
-    onSuccess: (session) => {
-      setActiveSession(session.id, sessionType);
-    },
-    onError: (error) => {
-      toast.error(t('failedToCreateSession'), {
-        description: error instanceof Error ? error.message : undefined,
-      });
-    },
-  });
+  // Create session mutation using $api
+  const createSessionMutation = $api.useMutation(
+    'post',
+    '/active-table-sessions/manual',
+    {
+      onSuccess: (response) => {
+        const session = response.data;
+        if (session) {
+          setActiveSession(session.id, sessionType);
+        }
+      },
+      onError: () => {
+        toast.error(t('failedToCreateSession'));
+      },
+    }
+  );
 
-  // Add to cart mutation
-  const addToCartMutation = useMutation({
-    mutationFn: async ({
-      sessionId,
-      data,
-    }: {
-      sessionId: string;
-      data: AddToCartDto;
-    }) => {
-      return addToCart(sessionId, data);
-    },
+  // Add to cart mutation using $api
+  const addToCartMutation = $api.useMutation('post', '/cart/items', {
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: salesKeys.cart(variables.sessionId),
-      });
+      const sessionId = variables.params?.query?.sessionId;
+      if (sessionId) {
+        queryClient.invalidateQueries({
+          queryKey: salesKeys.cart(sessionId),
+        });
+      }
       toast.success(t('itemAddedToCart'));
     },
-    onError: (error) => {
-      toast.error(t('failedToAddItem'), {
-        description: error instanceof Error ? error.message : undefined,
-      });
+    onError: () => {
+      toast.error(t('failedToAddItem'));
     },
   });
 
@@ -103,8 +97,16 @@ export function useSalesCart({
 
     // Create session if needed
     if (!sessionId) {
-      const session = await createSessionMutation.mutateAsync(sessionType);
-      sessionId = session.id;
+      const sessionData: CreateManualSessionDto = { sessionType };
+      const response = await createSessionMutation.mutateAsync({
+        params: { query: { storeId } },
+        body: sessionData,
+      });
+      sessionId = response.data?.id ?? null;
+    }
+
+    if (!sessionId) {
+      throw new Error('Failed to create session');
     }
 
     // Prepare cart data
@@ -115,10 +117,10 @@ export function useSalesCart({
       customizations: params.customizations,
     };
 
-    // Add to cart (sessionId is guaranteed to be set at this point)
+    // Add to cart
     await addToCartMutation.mutateAsync({
-      sessionId: sessionId!,
-      data: cartData,
+      params: { query: { sessionId } },
+      body: cartData,
     });
   };
 
