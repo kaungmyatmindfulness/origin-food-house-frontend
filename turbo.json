@@ -4,13 +4,29 @@
   "globalEnv": [
     "NODE_ENV",
     "NEXT_PUBLIC_AWS_S3_BUCKET",
-    "NEXT_PUBLIC_AWS_REGION"
+    "NEXT_PUBLIC_AWS_REGION",
+    "DATABASE_URL",
+    "AUTH0_DOMAIN",
+    "AUTH0_CLIENT_ID",
+    "AUTH0_CLIENT_SECRET",
+    "AUTH0_AUDIENCE",
+    "AUTH0_ISSUER",
+    "AUTH0_CALLBACK_URL",
+    "AUTH0_MANAGEMENT_API_TOKEN",
+    "ADMIN_AUTH0_DOMAIN",
+    "ADMIN_AUTH0_CLIENT_ID",
+    "ADMIN_AUTH0_CLIENT_SECRET",
+    "ADMIN_AUTH0_AUDIENCE",
+    "ADMIN_AUTH0_ISSUER",
+    "JWT_SECRET",
+    "JWT_EXPIRES_IN",
+    "CORS_ORIGIN"
   ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -22,6 +38,29 @@
       "dependsOn": ["^format"]
     },
     "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "src/**/*.spec.ts", "test/**/*.ts"],
+      "outputs": ["coverage/**"]
+    },
+    "test:cov": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "src/**/*.spec.ts", "test/**/*.ts"],
+      "outputs": ["coverage/**"]
+    },
+    "db:generate": {
+      "cache": false
+    },
+    "db:migrate": {
+      "cache": false
+    },
+    "db:seed": {
+      "cache": false
+    },
+    "db:studio": {
       "cache": false,
       "persistent": true
     }

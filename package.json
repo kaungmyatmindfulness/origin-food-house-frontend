@@ -1,16 +1,23 @@
 {
-  "name": "origin-food-house-frontend",
+  "name": "origin-food-house",
   "private": true,
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:api": "turbo run dev --filter=@app/api",
     "dev:rms": "turbo run dev --filter=@app/restaurant-management-system",
     "dev:sos": "turbo run dev --filter=@app/self-ordering-system",
     "dev:admin": "turbo run dev --filter=@app/admin-platform",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "generate:api": "npm run generate --workspace=@repo/api"
+    "test": "turbo run test",
+    "test:cov": "turbo run test:cov",
+    "generate:api": "npm run generate --workspace=@repo/api",
+    "db:generate": "turbo run db:generate --filter=@app/api",
+    "db:migrate": "turbo run db:migrate --filter=@app/api",
+    "db:seed": "turbo run db:seed --filter=@app/api",
+    "db:studio": "turbo run db:studio --filter=@app/api"
   },
   "devDependencies": {
     "prettier": "^3.6.2",
@@ -29,6 +36,7 @@
   ],
   "dependencies": {
     "@app/admin-platform": "^0.1.0",
+    "@app/api": "^0.0.1",
     "@app/restaurant-management-system": "^0.1.0",
     "@app/self-ordering-system": "^0.1.0"
   }
