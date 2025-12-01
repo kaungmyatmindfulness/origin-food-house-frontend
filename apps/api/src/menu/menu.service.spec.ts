@@ -24,8 +24,7 @@ jest.mock('src/common/utils/sort-order.util', () => ({
 }));
 
 // Type assertion for the mocked function
-const mockCalculateNextSortOrder =
-  calculateNextSortOrder;
+const mockCalculateNextSortOrder = jest.mocked(calculateNextSortOrder);
 
 describe('MenuService', () => {
   let service: MenuService;
