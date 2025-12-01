@@ -4,50 +4,37 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Origin Food House is an enterprise-grade restaurant management system built as a **Turborepo monorepo** with Next.js 15, React 19, and TypeScript. The system supports multi-language capabilities (English, Chinese, Myanmar, Thai) and follows clean architecture patterns.
+Origin Food House is an enterprise-grade restaurant management platform built as a **Turborepo monorepo**. It includes a NestJS backend API and multiple Next.js frontend applications, supporting multi-language capabilities (English, Chinese, Myanmar, Thai) and clean architecture patterns.
 
 **Monorepo Structure:**
 
-| Package                             | Description                          | Port | Rendering       | CLAUDE.md                                            |
-| ----------------------------------- | ------------------------------------ | ---- | --------------- | ---------------------------------------------------- |
-| `apps/restaurant-management-system` | POS system for restaurant staff      | 3002 | **Static (SG)** | [Guide](apps/restaurant-management-system/CLAUDE.md) |
-| `apps/self-ordering-system`         | Customer-facing self-ordering        | 3001 | **SSR**         | [Guide](apps/self-ordering-system/CLAUDE.md)         |
-| `apps/admin-platform`               | Platform admin (in development)      | 3003 | **SSR**         | [Guide](apps/admin-platform/CLAUDE.md)               |
-| `packages/api`                      | Shared API utilities + OpenAPI types | -    | -               | -                                                    |
-| `packages/ui`                       | Shared shadcn/ui components (52+)    | -    | -               | -                                                    |
-| `packages/eslint-config`            | Shared ESLint configuration          | -    | -               | -                                                    |
-| `packages/typescript-config`        | Shared TypeScript configuration      | -    | -               | -                                                    |
+| Package                             | Description                          | Port | Tech        | CLAUDE.md                                            |
+| ----------------------------------- | ------------------------------------ | ---- | ----------- | ---------------------------------------------------- |
+| **Backend**                         |                                      |      |             |                                                      |
+| `apps/api`                          | NestJS REST API + WebSocket          | 3000 | NestJS 11   | [Guide](apps/api/CLAUDE.md)                          |
+| **Frontend Apps**                   |                                      |      |             |                                                      |
+| `apps/restaurant-management-system` | POS system for restaurant staff      | 3002 | Next.js SSG | [Guide](apps/restaurant-management-system/CLAUDE.md) |
+| `apps/self-ordering-system`         | Customer-facing self-ordering        | 3001 | Next.js SSR | [Guide](apps/self-ordering-system/CLAUDE.md)         |
+| `apps/admin-platform`               | Platform admin (in development)      | 3003 | Next.js SSR | [Guide](apps/admin-platform/CLAUDE.md)               |
+| **Shared Packages**                 |                                      |      |             |                                                      |
+| `packages/api`                      | Shared API utilities + OpenAPI types | -    | TypeScript  | -                                                    |
+| `packages/ui`                       | Shared shadcn/ui components (52+)    | -    | React       | -                                                    |
+| `packages/eslint-config`            | Shared ESLint configuration          | -    | -           | -                                                    |
+| `packages/typescript-config`        | Shared TypeScript configuration      | -    | -           | -                                                    |
 
-**Note:** Each app has its own CLAUDE.md with app-specific routes, features, and rendering patterns. This root file covers shared conventions.
+**Note:** Each app has its own CLAUDE.md with app-specific patterns. This root file covers **monorepo-wide conventions** and **frontend-shared patterns**. See `apps/api/CLAUDE.md` for backend-specific guidelines.
 
 ---
 
-## Rendering Strategies
+## Frontend Rendering Strategies
 
-Each app uses a different rendering strategy based on its requirements:
+Each frontend app uses a different rendering strategy:
 
 | App       | Strategy                    | Rationale                                                |
 | --------- | --------------------------- | -------------------------------------------------------- |
 | **RMS**   | Static Generation (SG)      | Future Tauri desktop integration, offline POS capability |
 | **SOS**   | Server-Side Rendering (SSR) | SEO for menu pages, fast first paint on mobile           |
 | **Admin** | Server-Side Rendering (SSR) | Fresh admin data, security (no client exposure)          |
-
-### Quick Reference
-
-```typescript
-// RMS: Static Generation - ALL client components
-'use client';
-export default function Page() {
-  const { data } = useQuery({ ... });  // Client-side fetch
-  return <Content data={data} />;
-}
-
-// SOS/Admin: SSR - Server component + client hydration
-export default async function Page() {
-  const data = await fetchData();      // Server-side fetch
-  return <ClientComponent initialData={data} />;
-}
-```
 
 **See each app's CLAUDE.md for detailed patterns and examples.**
 
@@ -58,68 +45,110 @@ export default async function Page() {
 ### Development
 
 ```bash
-npm install                                          # Install dependencies
-npm run dev                                          # Run all apps (POS :3002, SOS :3001)
-npm run dev --filter=@app/restaurant-management-system  # Run specific app
-npm run build                                        # Build all apps
+npm install                                             # Install all dependencies
+
+# Frontend apps
+npm run dev                                             # Run all frontend apps
+npm run dev --filter=@app/restaurant-management-system  # Run RMS (port 3002)
+npm run dev --filter=@app/self-ordering-system          # Run SOS (port 3001)
+npm run dev --filter=@app/admin-platform                # Run Admin (port 3003)
+
+# Backend API (run in apps/api directory)
+cd apps/api
+npm run docker:up                                       # Start PostgreSQL database
+npm run db:migrate                                      # Run database migrations
+npm run db:generate                                     # Generate Prisma client
+npm run dev                                             # Start API server (port 3000)
 ```
 
 ### Quality Gates (MUST PASS before completion)
 
 ```bash
+# Monorepo-wide (from root)
 npm run format       # Format code with Prettier
 npm run lint         # ESLint (max 0 warnings)
 npm run check-types  # TypeScript type checking (0 errors)
-npm run build        # Ensure all apps build successfully
+npm run build        # Build all apps
+
+# Backend-specific (from apps/api)
+cd apps/api
+npm run format       # Format backend code
+npm run lint         # Lint backend
+npm run check-types  # Type check backend (uses tsc --noEmit)
+npm test             # Run backend tests
+npm run build        # Build backend
 ```
 
-### Testing (RMS only)
+### Testing
 
 ```bash
+# Frontend (RMS only)
 npm test --workspace=@app/restaurant-management-system              # Run all tests
 npm run test:watch --workspace=@app/restaurant-management-system    # Watch mode
 npm run test:coverage --workspace=@app/restaurant-management-system # Coverage report
+
+# Backend (from apps/api)
+cd apps/api
+npm test             # Run all unit tests
+npm run test:watch   # Watch mode
+npm run test:cov     # Coverage report
+npm run test:e2e     # End-to-end tests
 ```
 
 ### OpenAPI Type Generation
 
-**CRITICAL**: When backend API changes, regenerate types:
+**CRITICAL**: When backend API changes, regenerate frontend types:
 
 ```bash
-npm run generate:api
+npm run generate:api  # Regenerates packages/api/src/generated/types.gen.ts
 ```
 
 ---
 
-## Tech Stack Quick Reference
+## Tech Stack
+
+### Backend (`apps/api`)
+
+| Category    | Technology                       |
+| ----------- | -------------------------------- |
+| Framework   | NestJS 11, TypeScript 5.9        |
+| Database    | PostgreSQL + Prisma 7            |
+| Auth        | Auth0 (JWT), Passport.js         |
+| Real-time   | Socket.IO (WebSocket)            |
+| File Upload | AWS S3, Sharp (image processing) |
+| Queue       | Bull + Redis                     |
+| API Docs    | Swagger/OpenAPI (auto-generated) |
+
+### Frontend (`apps/*` except `api`)
 
 | Category         | Technology                                    |
 | ---------------- | --------------------------------------------- |
 | Framework        | Next.js 15 (App Router), React 19, TypeScript |
 | State Management | Zustand (client), React Query (server)        |
 | Styling          | Tailwind CSS v4, shadcn/ui via `@repo/ui`     |
-| API              | `apiFetch` + auto-generated OpenAPI types     |
+| API Client       | `apiFetch` + auto-generated OpenAPI types     |
 | Forms            | react-hook-form + Zod                         |
-| Real-time        | Socket.IO                                     |
-| i18n             | next-intl (cookie-based, 4 languages)         |
+| Real-time        | Socket.IO client                              |
+| i18n             | next-intl (4 languages: en, zh, my, th)       |
 
 ---
 
 ## Key Architectural Decisions
 
-| Decision              | Rationale                                            |
-| --------------------- | ---------------------------------------------------- |
-| Turborepo             | Fast builds, shared packages, intelligent caching    |
-| Auto-generated types  | Single source of truth, compile-time safety          |
-| Zustand over Redux    | Minimal boilerplate, better TypeScript support       |
-| Feature-Sliced Design | Better organization, enforces separation of concerns |
-| Cookie-based i18n     | Clean URLs, persists across navigation               |
+| Decision                  | Rationale                                            |
+| ------------------------- | ---------------------------------------------------- |
+| Turborepo                 | Fast builds, shared packages, intelligent caching    |
+| OpenAPI auto-gen types    | Single source of truth, compile-time type safety     |
+| NestJS + Prisma (backend) | Type-safe API, modern Node.js patterns               |
+| Zustand over Redux        | Minimal boilerplate, better TypeScript support       |
+| Feature-Sliced Design     | Better organization, enforces separation of concerns |
+| Cookie-based i18n         | Clean URLs, persists across navigation               |
 
 ---
 
 ## Detailed Documentation
 
-For comprehensive guidelines, refer to these detailed documents:
+### Frontend Guidelines (applies to all Next.js apps)
 
 @.claude/docs/architecture.md
 @.claude/docs/code-quality.md
@@ -131,9 +160,15 @@ For comprehensive guidelines, refer to these detailed documents:
 @.claude/docs/anti-patterns.md
 @.claude/docs/workflows.md
 
+### Backend Guidelines
+
+See `apps/api/CLAUDE.md` which references detailed docs:
+
+- `apps/api/.claude/docs/` - NestJS architecture, Prisma patterns, security, API documentation
+
 ---
 
-## Quick Reference Cards
+## Quick Reference Cards (Frontend)
 
 ### File Naming Conventions
 
@@ -145,6 +180,8 @@ For comprehensive guidelines, refer to these detailed documents:
 | Types      | `*.types.ts`   | `menu-item.types.ts`  |
 | Query Keys | `*.keys.ts`    | `menu.keys.ts`        |
 | Hooks      | `use*.ts`      | `useProtected.ts`     |
+
+**Backend naming:** See `apps/api/CLAUDE.md` for NestJS conventions (controllers, services, DTOs, modules).
 
 ### Import Order
 
@@ -160,7 +197,7 @@ For comprehensive guidelines, refer to these detailed documents:
 
 ### Type Import Conventions
 
-**ALWAYS import API types directly from `@repo/api/generated/types`:**
+**ALWAYS import API types directly for frontend projects from `@repo/api/generated/types`:**
 
 ```typescript
 // ✅ CORRECT - Direct import
@@ -208,27 +245,45 @@ User-initiated navigation?
 
 ## Important Files & Locations
 
+### Shared Packages
+
 | File                                      | Purpose                      |
 | ----------------------------------------- | ---------------------------- |
-| `apps/*/src/utils/apiFetch.ts`            | API client config            |
-| `packages/api/src/generated/types.gen.ts` | Auto-generated types         |
+| `packages/api/src/generated/types.gen.ts` | Auto-generated OpenAPI types |
 | `packages/ui/src/components/`             | Shared UI components (52+)   |
 | `packages/ui/src/styles/globals.css`      | Global styles & color tokens |
-| `apps/*/messages/[locale]/*.json`         | Translation files            |
-| `apps/*/src/i18n/`                        | i18n configuration           |
+
+### Frontend Apps
+
+| File                              | Purpose            |
+| --------------------------------- | ------------------ |
+| `apps/*/src/utils/apiFetch.ts`    | API client config  |
+| `apps/*/messages/[locale]/*.json` | Translation files  |
+| `apps/*/src/i18n/`                | i18n configuration |
+
+### Backend (`apps/api`)
+
+| File                             | Purpose                        |
+| -------------------------------- | ------------------------------ |
+| `apps/api/prisma/schema.prisma`  | Database schema                |
+| `apps/api/src/main.ts`           | App entry point, Swagger setup |
+| `apps/api/src/generated/prisma/` | Generated Prisma client        |
+| `apps/api/.env`                  | Backend environment variables  |
 
 ---
 
 ## Pre-Completion Checklist
 
-### Quality Gates
+### Quality Gates (All Apps)
 
-- [ ] `npm run format`
-- [ ] `npm run lint` (0 warnings)
-- [ ] `npm run check-types` (0 errors)
-- [ ] `npm run build`
+```bash
+npm run format       # Format code
+npm run lint         # Lint (0 warnings)
+npm run check-types  # Type check (0 errors)
+npm run build        # Build succeeds
+```
 
-### Code Quality
+### Frontend Code Quality
 
 - [ ] Used `@repo/ui` components
 - [ ] API types imported directly from `@repo/api/generated/types`
@@ -237,17 +292,26 @@ User-initiated navigation?
 - [ ] No `any` types
 - [ ] `import type` for type-only imports
 
-### Design System
+### Frontend Design System
 
 - [ ] Semantic colors only (no raw Tailwind)
 - [ ] Component variant props (not custom classes)
 - [ ] No arbitrary values (`w-[234px]`)
 
-### i18n
+### Frontend i18n
 
 - [ ] Translations in all 4 languages (en, zh, my, th)
 - [ ] No hardcoded display strings
 - [ ] Routes WITHOUT locale prefix
+
+### Backend Code Quality (see `apps/api/CLAUDE.md` for full checklist)
+
+- [ ] Input validation with class-validator DTOs
+- [ ] Swagger documentation (@ApiOperation, @ApiResponse)
+- [ ] Authentication guards applied where needed
+- [ ] Store isolation enforced (multi-tenancy)
+- [ ] Soft deletes used (no hard deletes)
+- [ ] Transactions for multi-step DB operations
 
 ---
 
@@ -255,6 +319,7 @@ User-initiated navigation?
 
 - **`README.md`** - Project overview and architecture details
 - **`packages/api/README.md`** - API package usage and OpenAPI integration
+- **`apps/api/README.md`** - Backend API documentation
 
 ---
 

@@ -1,8 +1,6 @@
-# CLAUDE.md
+# CLAUDE.md - Admin Platform
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-**Important:** This app is part of a Turborepo monorepo. See the root `/CLAUDE.md` for shared conventions, design system, and quality gates that apply across all apps.
+This file provides Admin Platform-specific guidance. **See root `/CLAUDE.md` for shared conventions, design system, code quality rules, and quality gates.**
 
 ## App Overview
 
@@ -15,15 +13,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
+See root `/CLAUDE.md` for full command reference. Admin Platform-specific commands:
+
 ```bash
 # Development
 npm run dev --filter=@app/admin-platform    # Run on port 3003
 
-# Quality checks (no tests in Admin Platform)
-npm run lint --filter=@app/admin-platform
-npm run check-types --filter=@app/admin-platform
+# Build
 npm run build --filter=@app/admin-platform
 ```
+
+**Note:** Admin Platform has no tests yet. Use monorepo-wide quality gates from root.
 
 ## Route Structure
 

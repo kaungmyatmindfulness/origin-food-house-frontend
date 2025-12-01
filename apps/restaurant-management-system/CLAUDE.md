@@ -1,8 +1,6 @@
-# CLAUDE.md
+# CLAUDE.md - Restaurant Management System (RMS)
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-**Important:** This app is part of a Turborepo monorepo. See the root `/CLAUDE.md` for shared conventions, design system, and quality gates that apply across all apps.
+This file provides RMS-specific guidance. **See root `/CLAUDE.md` for shared conventions, design system, code quality rules, and quality gates.**
 
 ## App Overview
 
@@ -179,6 +177,8 @@ const { isOnline } = useNetwork();
 
 ## Commands
 
+See root `/CLAUDE.md` for full command reference. RMS-specific commands:
+
 ```bash
 # Development
 npm run dev --filter=@app/restaurant-management-system    # Run on port 3002
@@ -189,7 +189,7 @@ npm run build --workspace=@app/restaurant-management-system
 # Test static export locally
 npx serve apps/restaurant-management-system/out
 
-# Testing (RMS is the only app with tests)
+# Testing (RMS is the only frontend app with tests)
 npm test --workspace=@app/restaurant-management-system
 npm run test:watch --workspace=@app/restaurant-management-system
 npm run test:coverage --workspace=@app/restaurant-management-system

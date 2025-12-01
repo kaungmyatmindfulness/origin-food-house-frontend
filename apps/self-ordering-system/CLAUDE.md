@@ -1,8 +1,6 @@
-# CLAUDE.md
+# CLAUDE.md - Self-Ordering System (SOS)
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-**Important:** This app is part of a Turborepo monorepo. See the root `/CLAUDE.md` for shared conventions, design system, and quality gates that apply across all apps.
+This file provides SOS-specific guidance. **See root `/CLAUDE.md` for shared conventions, design system, code quality rules, and quality gates.**
 
 ## App Overview
 
@@ -102,15 +100,17 @@ export function ClientComponent({ initialData }) {
 
 ## Commands
 
+See root `/CLAUDE.md` for full command reference. SOS-specific commands:
+
 ```bash
 # Development
 npm run dev --filter=@app/self-ordering-system    # Run on port 3001
 
-# Quality checks (no tests in SOS)
-npm run lint --filter=@app/self-ordering-system
-npm run check-types --filter=@app/self-ordering-system
+# Build
 npm run build --filter=@app/self-ordering-system
 ```
+
+**Note:** SOS has no tests. Use monorepo-wide quality gates from root.
 
 ## Route Structure
 

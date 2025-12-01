@@ -1,14 +1,15 @@
-# CLAUDE.md
+# CLAUDE.md - Backend API
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides backend-specific guidance. **See root `/CLAUDE.md` for monorepo-wide commands and structure.**
 
 ## Overview
 
 Origin Food House Backend is a **multi-tenant restaurant management platform** built with NestJS, Prisma 7 ORM, and PostgreSQL. The system supports POS (Point of Sale) operations, Kitchen Display Systems (KDS), customer self-ordering via QR codes, payment processing, and subscription management.
 
-**Tech Stack**: NestJS 11 + Prisma 7.0.0 + PostgreSQL + TypeScript 5.9
-
-**Status**: Development (v0.0.1) - NOT production-ready due to critical security vulnerabilities and test failures.
+- **Port:** 3000
+- **Package name:** `@app/api`
+- **Tech Stack:** NestJS 11 + Prisma 7.0.0 + PostgreSQL + TypeScript 5.9
+- **API Docs:** `http://localhost:3000/api/docs` (when server running)
 
 ---
 
@@ -40,11 +41,9 @@ npm run build               # 5. Build succeeds
 
 ## Additional Resources
 
-- **Master Refactoring Plan**: [docs/MASTER_REFACTORING_PLAN.md](docs/MASTER_REFACTORING_PLAN.md)
-- **Security Audit**: [docs/security-audit/2025-10-28-comprehensive-security-audit.md](docs/security-audit/2025-10-28-comprehensive-security-audit.md)
-- **Architecture Review**: [docs/solution-architect/architecture/2025-10-28-comprehensive-architecture-review.md](docs/solution-architect/architecture/2025-10-28-comprehensive-architecture-review.md)
+- **Architecture Review**: [docs/solution-architect/architecture/](docs/solution-architect/architecture/)
+- **Security Audit**: [docs/security-audit/](docs/security-audit/)
 - **Auth0 Integration**: [docs/AUTH0_INTEGRATION.md](docs/AUTH0_INTEGRATION.md)
-- **API Docs**: `http://localhost:3000/api/docs` (when server running)
 
 ---
 
