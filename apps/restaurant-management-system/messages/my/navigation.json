@@ -9,9 +9,9 @@
     "kitchenDisplay": "မီးဖိုချောင် မျက်နှာပြင်",
     "menu": "မီနူး",
     "store": "စတိုး",
-    "choose": "ရွေးချယ်ရန်",
     "information": "အချက်အလက်",
     "settings": "ဆက်တင်များ",
+    "printSettings": "ပရင့်ဆက်တင်များ",
     "tables": "စားပွဲများ",
     "manage": "စီမံမည်",
     "qrCodes": "QR ကုဒ်များ",
@@ -19,6 +19,7 @@
     "reports": "အစီရင်ခံစာများ",
     "sales": "ရောင်းချမှု",
     "salesHistory": "ရောင်းချမှုမှတ်တမ်း",
-    "menuItems": "အစားအစာများ"
+    "menuItems": "အစားအစာများ",
+    "switchStore": "စတိုးပြောင်းရန်"
   }
 }

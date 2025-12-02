@@ -9,9 +9,9 @@
     "kitchenDisplay": "厨房显示",
     "menu": "菜单",
     "store": "店铺",
-    "choose": "选择",
     "information": "信息",
     "settings": "设置",
+    "printSettings": "打印设置",
     "tables": "桌位",
     "manage": "管理",
     "qrCodes": "二维码",
@@ -19,6 +19,7 @@
     "reports": "报表",
     "sales": "销售",
     "salesHistory": "销售记录",
-    "menuItems": "菜品"
+    "menuItems": "菜品",
+    "switchStore": "切换店铺"
   }
 }

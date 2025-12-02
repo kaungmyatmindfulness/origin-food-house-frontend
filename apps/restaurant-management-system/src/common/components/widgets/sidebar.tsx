@@ -8,21 +8,25 @@ import { useTranslations } from 'next-intl';
 import {
   ShoppingCart,
   ChefHat,
-  MenuIcon,
+  UtensilsCrossed,
   Settings,
-  Users,
+  UserCog,
   BarChart3,
   ChevronRight,
   ChevronLeft,
   Info,
   List,
-  LayoutGrid,
+  Grid3X3,
   DollarSign,
   History,
   QrCode,
   Store,
+  Printer,
+  Building2,
+  ClipboardList,
 } from 'lucide-react';
 import { cn } from '@repo/ui/lib/utils';
+import { Button } from '@repo/ui/components/button';
 import { LanguageSwitcher } from '@/common/components/LanguageSwitcher';
 
 interface NavSubItem {
@@ -41,87 +45,92 @@ interface NavItem {
 const useNavSections = () => {
   return React.useMemo<NavItem[][]>(
     () => [
+      // Section 1: Daily Operations (POS & Kitchen)
       [
         {
           labelKey: 'sale',
-          icon: <ShoppingCart className="mr-2 h-5 w-5 text-gray-500" />,
+          icon: <ShoppingCart className="h-4 w-4 text-muted-foreground" />,
           href: '/hub/sale',
         },
         {
           labelKey: 'kitchenDisplay',
-          icon: <ChefHat className="mr-2 h-5 w-5 text-gray-500" />,
+          icon: <ChefHat className="h-4 w-4 text-muted-foreground" />,
           href: '/hub/kitchen',
         },
       ],
+      // Section 2: Catalog Management (Menu & Tables)
       [
         {
           labelKey: 'menu',
-          icon: <MenuIcon className="mr-2 h-5 w-5 text-gray-500" />,
+          icon: <UtensilsCrossed className="h-4 w-4 text-muted-foreground" />,
           href: '/hub/menu',
         },
         {
-          labelKey: 'store',
-          icon: <Settings className="mr-2 h-5 w-5 text-gray-500" />,
-          subItems: [
-            {
-              labelKey: 'choose',
-              href: '/store/choose',
-              icon: <Store className="mr-2 h-5 w-5 text-gray-500" />,
-            },
-            {
-              labelKey: 'information',
-              href: '/hub/store/information',
-              icon: <Info className="mr-2 h-5 w-5 text-gray-500" />,
-            },
-            {
-              labelKey: 'settings',
-              href: '/hub/store/settings',
-              icon: <Settings className="mr-2 h-5 w-5 text-gray-500" />,
-            },
-          ],
-        },
-
-        {
           labelKey: 'tables',
-          icon: <LayoutGrid className="mr-2 h-5 w-5 text-gray-500" />,
+          icon: <Grid3X3 className="h-4 w-4 text-muted-foreground" />,
           subItems: [
             {
               labelKey: 'manage',
               href: '/hub/tables/manage',
-              icon: <List className="mr-2 h-5 w-5 text-gray-500" />,
+              icon: <List className="h-4 w-4 text-muted-foreground" />,
             },
             {
               labelKey: 'qrCodes',
               href: '/hub/tables/qr-code',
-              icon: <QrCode className="mr-2 h-5 w-5 text-gray-500" />,
+              icon: <QrCode className="h-4 w-4 text-muted-foreground" />,
             },
           ],
         },
       ],
+      // Section 3: Store Administration
       [
         {
-          labelKey: 'storePersonnel',
-          icon: <Users className="mr-2 h-5 w-5 text-gray-500" />,
-          href: '/hub/store-personnel',
+          labelKey: 'store',
+          icon: <Building2 className="h-4 w-4 text-muted-foreground" />,
+          subItems: [
+            {
+              labelKey: 'information',
+              href: '/hub/store/information',
+              icon: <Info className="h-4 w-4 text-muted-foreground" />,
+            },
+            {
+              labelKey: 'settings',
+              href: '/hub/store/settings',
+              icon: <Settings className="h-4 w-4 text-muted-foreground" />,
+            },
+            {
+              labelKey: 'printSettings',
+              href: '/hub/store/print-settings',
+              icon: <Printer className="h-4 w-4 text-muted-foreground" />,
+            },
+          ],
         },
         {
+          labelKey: 'storePersonnel',
+          icon: <UserCog className="h-4 w-4 text-muted-foreground" />,
+          href: '/hub/store-personnel',
+        },
+      ],
+      // Section 4: Analytics & Reporting
+      [
+        {
           labelKey: 'reports',
-          icon: <BarChart3 className="mr-2 h-5 w-5 text-gray-500" />,
+          icon: <BarChart3 className="h-4 w-4 text-muted-foreground" />,
           subItems: [
             {
               labelKey: 'sales',
               href: '/hub/reports/sales',
-              icon: <DollarSign className="mr-2 h-5 w-5 text-gray-500" />,
+              icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
             },
             {
               labelKey: 'salesHistory',
               href: '/hub/reports/history',
-              icon: <History className="mr-2 h-5 w-5 text-gray-500" />,
+              icon: <History className="h-4 w-4 text-muted-foreground" />,
             },
             {
               labelKey: 'menuItems',
               href: '/hub/reports/menu',
-              icon: <List className="mr-2 h-5 w-5 text-gray-500" />,
+              icon: <ClipboardList className="h-4 w-4 text-muted-foreground" />,
             },
           ],
         },
@@ -172,16 +181,17 @@ export function DashboardSidebar({
         <button
           onClick={() => setCollapsed((prev) => !prev)}
           className={cn(
-            'flex min-h-11 items-center rounded px-3 py-3 text-base transition-colors hover:bg-gray-50 active:bg-gray-100',
+            'flex min-h-9 items-center rounded px-3 py-2 text-sm transition-colors',
+            'hover:bg-primary hover:text-primary-foreground [&:hover_svg]:text-primary-foreground',
             collapsed ? 'w-auto' : 'w-full'
           )}
           aria-label="Toggle sidebar collapse"
         >
           {collapsed ? (
-            <ChevronRight className="h-5 w-5 text-gray-500" />
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
           ) : (
             <>
-              <ChevronLeft className="mr-2 h-5 w-5" />
+              <ChevronLeft className="mr-2 h-4 w-4 text-muted-foreground" />
               <span>{t('collapse')}</span>
             </>
           )}
@@ -189,7 +199,7 @@ export function DashboardSidebar({
       </div>
 
       {/* Nav sections */}
-      <nav className="flex-1 overflow-y-auto text-base">
+      <nav className="flex-1 overflow-y-auto text-sm">
         {navSections.map((section, idx) => (
           <React.Fragment key={idx}>
             <div className="py-2">
@@ -201,15 +211,15 @@ export function DashboardSidebar({
                       key={item.labelKey}
                       href={item.href ?? '#'}
                       className={cn(
-                        'flex min-h-11 items-center rounded px-3 py-3 hover:bg-gray-50 active:bg-gray-100',
-                        active && 'bg-gray-200 font-medium',
+                        'flex min-h-9 items-center gap-2 rounded px-3 py-2 transition-colors',
+                        'hover:bg-primary hover:text-primary-foreground [&:hover_svg]:text-primary-foreground',
+                        active &&
+                          'bg-primary font-medium text-primary-foreground [&_svg]:text-primary-foreground',
                         collapsed ? 'justify-center' : ''
                       )}
                     >
                       {item.icon}
-                      {!collapsed && (
-                        <span className="ml-2">{t(item.labelKey)}</span>
-                      )}
+                      {!collapsed && <span>{t(item.labelKey)}</span>}
                     </Link>
                   );
                 }
@@ -218,18 +228,16 @@ export function DashboardSidebar({
                   <div key={item.labelKey} className="px-2 py-1">
                     <div
                       className={cn(
-                        'flex min-h-11 items-center rounded px-3 py-3 hover:bg-gray-50',
-                        active && 'bg-gray-200 font-medium',
+                        'flex min-h-9 items-center gap-2 rounded px-3 py-2',
+                        active && 'font-medium',
                         collapsed ? 'justify-center' : ''
                       )}
                     >
                       {item.icon}
-                      {!collapsed && (
-                        <span className="ml-2">{t(item.labelKey)}</span>
-                      )}
+                      {!collapsed && <span>{t(item.labelKey)}</span>}
                     </div>
                     {!collapsed && (
-                      <ul className="mt-1 space-y-1 pl-6">
+                      <ul className="mt-1 space-y-0.5 pl-6">
                         {item.subItems.map((sub) => {
                           const subPath = pathname.startsWith(sub.href);
                           return (
@@ -237,8 +245,10 @@ export function DashboardSidebar({
                               <Link
                                 href={sub.href}
                                 className={cn(
-                                  'flex min-h-11 items-center rounded px-3 py-3 hover:bg-gray-100 active:bg-gray-200',
-                                  subPath && 'bg-gray-200 font-medium'
+                                  'flex min-h-8 items-center gap-2 rounded px-3 py-1.5 transition-colors',
+                                  'hover:bg-primary hover:text-primary-foreground [&:hover_svg]:text-primary-foreground',
+                                  subPath &&
+                                    'bg-primary font-medium text-primary-foreground [&_svg]:text-primary-foreground'
                                 )}
                               >
                                 {sub.icon}
@@ -258,12 +268,31 @@ export function DashboardSidebar({
         ))}
       </nav>
 
-      {/* Language Switcher */}
-      {!collapsed && (
-        <div className="border-t p-2">
-          <LanguageSwitcher />
+      {/* Footer: Switch Store & Language Switcher */}
+      <div className="border-t p-2">
+        <div className="flex flex-col gap-1">
+          {/* Switch Store */}
+          <Button
+            variant="ghost"
+            size="sm"
+            className={cn(
+              'h-9 w-full gap-2',
+              collapsed ? 'justify-center px-2' : 'justify-start'
+            )}
+            asChild
+          >
+            <Link href="/store/choose">
+              <Store className="h-4 w-4 shrink-0" />
+              {!collapsed && (
+                <span className="truncate text-sm">{t('switchStore')}</span>
+              )}
+            </Link>
+          </Button>
+
+          {/* Language Switcher */}
+          <LanguageSwitcher collapsed={collapsed} />
         </div>
-      )}
+      </div>
 
       <div className="border-t p-2 text-center text-xs text-gray-400">
         v0.0.1

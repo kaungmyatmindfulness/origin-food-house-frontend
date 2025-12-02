@@ -9,9 +9,9 @@
     "kitchenDisplay": "Kitchen Display",
     "menu": "Menu",
     "store": "Store",
-    "choose": "Choose",
     "information": "Information",
     "settings": "Settings",
+    "printSettings": "Print Settings",
     "tables": "Tables",
     "manage": "Manage",
     "qrCodes": "QR Codes",
@@ -19,6 +19,7 @@
     "reports": "Reports",
     "sales": "Sales",
     "salesHistory": "Sales History",
-    "menuItems": "Menu Items"
+    "menuItems": "Menu Items",
+    "switchStore": "Switch Store"
   }
 }

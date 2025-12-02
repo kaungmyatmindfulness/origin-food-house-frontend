@@ -9,9 +9,9 @@
     "kitchenDisplay": "จอแสดงผลครัว",
     "menu": "เมนู",
     "store": "ร้าน",
-    "choose": "เลือก",
     "information": "ข้อมูล",
     "settings": "ตั้งค่า",
+    "printSettings": "ตั้งค่าการพิมพ์",
     "tables": "โต๊ะ",
     "manage": "จัดการ",
     "qrCodes": "คิวอาร์โค้ด",
@@ -19,6 +19,7 @@
     "reports": "รายงาน",
     "sales": "ยอดขาย",
     "salesHistory": "ประวัติการขาย",
-    "menuItems": "รายการเมนู"
+    "menuItems": "รายการเมนู",
+    "switchStore": "เปลี่ยนร้าน"
   }
 }
