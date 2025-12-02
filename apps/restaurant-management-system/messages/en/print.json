@@ -1,0 +1,85 @@
+{
+  "print": {
+    "printReceipt": "Print Receipt",
+    "printing": "Printing...",
+    "printQueued": "Print job added to queue",
+    "printSuccess": "Print completed successfully",
+    "printFailed": "Print failed",
+    "printCancelled": "Print was cancelled",
+    "retrying": "Retrying print ({current}/{max})",
+    "printDisabled": "Printing is disabled for this store",
+
+    "queue": {
+      "title": "Print Queue",
+      "empty": "No print jobs in queue",
+      "pending": "Pending",
+      "printing": "Printing",
+      "completed": "Completed",
+      "failed": "Failed",
+      "cancelled": "Cancelled",
+      "retry": "Retry",
+      "cancel": "Cancel",
+      "remove": "Remove",
+      "clearCompleted": "Clear Completed",
+      "clearAll": "Clear All",
+      "pause": "Pause Queue",
+      "resume": "Resume Queue",
+      "retryCount": "Retry {count}/{max}"
+    },
+
+    "settings": {
+      "title": "Print Settings",
+      "description": "Configure automatic printing behavior",
+      "customerReceipt": "Customer Receipt",
+      "kitchenTicket": "Kitchen Ticket",
+      "autoPrintMode": "Auto-Print Mode",
+      "copies": "Copies",
+      "showLogo": "Show Logo",
+      "headerText": "Header Text",
+      "footerText": "Footer Text",
+      "save": "Save Settings",
+      "saving": "Saving...",
+      "saved": "Settings saved",
+      "mode": {
+        "manual": "Manual",
+        "manualDescription": "Show print button, user decides",
+        "auto": "Auto-Print",
+        "autoDescription": "Automatically print after payment",
+        "never": "Never",
+        "neverDescription": "Disable printing entirely"
+      }
+    },
+
+    "receipt": {
+      "orderNumber": "Order #",
+      "date": "Date",
+      "subtotal": "Subtotal",
+      "tax": "Tax",
+      "vat": "VAT",
+      "serviceCharge": "Service Charge",
+      "discount": "Discount",
+      "total": "Total",
+      "paymentMethod": "Payment",
+      "amountTendered": "Tendered",
+      "change": "Change",
+      "thankYou": "Thank you for dining with us!"
+    },
+
+    "kitchen": {
+      "header": "KITCHEN",
+      "orderNumber": "Order",
+      "table": "Table",
+      "dineIn": "DINE-IN",
+      "takeaway": "TAKEAWAY",
+      "notes": "Notes"
+    },
+
+    "errors": {
+      "printerOffline": "Printer is not responding",
+      "printerBusy": "Printer is busy",
+      "paperOut": "Printer may be out of paper",
+      "unknown": "An unknown error occurred",
+      "noSupport": "Printing is not supported in this browser"
+    }
+  }
+}

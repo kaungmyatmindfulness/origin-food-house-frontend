@@ -40,6 +40,7 @@ const messageLoaders: Record<Locale, () => Promise<Messages>> = {
       () => import('../../messages/en/tierUsage.json'),
       () => import('../../messages/en/admin.json'),
       () => import('../../messages/en/sales.json'),
+      () => import('../../messages/en/print.json'),
     ]),
 
   zh: () =>
@@ -60,6 +61,7 @@ const messageLoaders: Record<Locale, () => Promise<Messages>> = {
       () => import('../../messages/zh/tierUsage.json'),
       () => import('../../messages/zh/admin.json'),
       () => import('../../messages/zh/sales.json'),
+      () => import('../../messages/zh/print.json'),
     ]),
 
   my: () =>
@@ -80,6 +82,7 @@ const messageLoaders: Record<Locale, () => Promise<Messages>> = {
       () => import('../../messages/my/tierUsage.json'),
       () => import('../../messages/my/admin.json'),
       () => import('../../messages/my/sales.json'),
+      () => import('../../messages/my/print.json'),
     ]),
 
   th: () =>
@@ -100,6 +103,7 @@ const messageLoaders: Record<Locale, () => Promise<Messages>> = {
       () => import('../../messages/th/tierUsage.json'),
       () => import('../../messages/th/admin.json'),
       () => import('../../messages/th/sales.json'),
+      () => import('../../messages/th/print.json'),
     ]),
 };
 

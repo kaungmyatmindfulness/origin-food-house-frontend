@@ -1866,6 +1866,24 @@ export interface paths {
     patch: operations['StoreController_updateLoyaltyRules'];
     trace?: never;
   };
+  '/stores/{id}/settings/print-settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get print settings for a store (any authenticated store member) */
+    get: operations['StoreController_getPrintSettings'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Update print settings (OWNER or ADMIN only) */
+    patch: operations['StoreController_updatePrintSettings'];
+    trace?: never;
+  };
   '/stores/{storeId}/tables': {
     parameters: {
       query?: never;
@@ -4031,6 +4049,64 @@ export interface components {
       /** @description Business hours for Sunday */
       sunday: components['schemas']['DayHoursDto'];
     };
+    /**
+     * @description Receipt auto-print mode: manual (button click), auto (after payment), never
+     * @enum {string}
+     */
+    AutoPrintMode: 'manual' | 'auto' | 'never';
+    PrintSettingsDto: {
+      /**
+       * @description Receipt auto-print mode: manual (button click), auto (after payment), never
+       * @example manual
+       */
+      autoPrintReceipt: components['schemas']['AutoPrintMode'];
+      /**
+       * @description Whether to automatically print kitchen tickets when orders are placed
+       * @example true
+       */
+      autoPrintKitchenTicket: boolean;
+      /**
+       * @description Name/identifier of the default receipt printer
+       * @example Front Counter Printer
+       */
+      defaultReceiptPrinter?: string | null;
+      /**
+       * @description Name/identifier of the default kitchen ticket printer
+       * @example Kitchen Printer
+       */
+      defaultKitchenPrinter?: string | null;
+      /**
+       * @description Number of receipt copies to print (1-5)
+       * @example 1
+       */
+      receiptCopies: number;
+      /**
+       * @description Number of kitchen ticket copies to print (1-5)
+       * @example 1
+       */
+      kitchenTicketCopies: number;
+      /**
+       * @description Whether to show store logo on receipts
+       * @example true
+       */
+      showLogo: boolean;
+      /**
+       * @description Array of header text lines to print on receipts
+       * @example [
+       *       "Welcome to Our Restaurant",
+       *       "Thank you for dining with us!"
+       *     ]
+       */
+      headerText: string[];
+      /**
+       * @description Array of footer text lines to print on receipts
+       * @example [
+       *       "Thank you for visiting!",
+       *       "Please come again"
+       *     ]
+       */
+      footerText: string[];
+    };
     StoreSettingResponseDto: {
       /**
        * Format: uuid
@@ -4168,6 +4244,19 @@ export interface components {
        * @description Timestamp when multi-language was migrated/enabled
        */
       multiLanguageMigratedAt?: string | null;
+      /**
+       * @description Print settings configuration (receipt/kitchen ticket printing behavior)
+       * @example {
+       *       "autoPrintReceipt": "manual",
+       *       "autoPrintKitchenTicket": true,
+       *       "receiptCopies": 1,
+       *       "kitchenTicketCopies": 1,
+       *       "showLogo": true,
+       *       "headerText": [],
+       *       "footerText": []
+       *     }
+       */
+      printSettings?: components['schemas']['PrintSettingsDto'] | null;
       /**
        * Format: date-time
        * @description Record creation timestamp
@@ -4339,6 +4428,59 @@ export interface components {
        * @example 365
        */
       expiryDays: number;
+    };
+    UpdatePrintSettingsDto: {
+      /**
+       * @description Receipt auto-print mode: manual (button click), auto (after payment), never
+       * @example manual
+       */
+      autoPrintReceipt?: components['schemas']['AutoPrintMode'];
+      /**
+       * @description Whether to automatically print kitchen tickets when orders are placed
+       * @example true
+       */
+      autoPrintKitchenTicket?: boolean;
+      /**
+       * @description Name/identifier of the default receipt printer
+       * @example Front Counter Printer
+       */
+      defaultReceiptPrinter?: string | null;
+      /**
+       * @description Name/identifier of the default kitchen ticket printer
+       * @example Kitchen Printer
+       */
+      defaultKitchenPrinter?: string | null;
+      /**
+       * @description Number of receipt copies to print (1-5)
+       * @example 1
+       */
+      receiptCopies?: number;
+      /**
+       * @description Number of kitchen ticket copies to print (1-5)
+       * @example 1
+       */
+      kitchenTicketCopies?: number;
+      /**
+       * @description Whether to show store logo on receipts
+       * @example true
+       */
+      showLogo?: boolean;
+      /**
+       * @description Array of header text lines to print on receipts
+       * @example [
+       *       "Welcome to Our Restaurant",
+       *       "Thank you for dining with us!"
+       *     ]
+       */
+      headerText?: string[];
+      /**
+       * @description Array of footer text lines to print on receipts
+       * @example [
+       *       "Thank you for visiting!",
+       *       "Please come again"
+       *     ]
+       */
+      footerText?: string[];
     };
     /**
      * @description Current status of the table
@@ -12075,6 +12217,107 @@ export interface operations {
             /** @example null */
             errors?: unknown[] | null;
             /** @example Loyalty rules updated successfully. */
+            message?: string;
+          };
+        };
+      };
+      /** @description Invalid input data */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Authentication required */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Insufficient permissions */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Resource not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  StoreController_getPrintSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description ID (UUID) of the store */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Print settings retrieved successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StandardApiResponse'] & {
+            /** @example success */
+            status?: string;
+            data?: components['schemas']['PrintSettingsDto'];
+            /** @example null */
+            errors?: unknown[] | null;
+            /** @example Print settings retrieved successfully. */
+            message?: string;
+          };
+        };
+      };
+      /** @description print settings not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  StoreController_updatePrintSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description ID (UUID) of the store */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdatePrintSettingsDto'];
+      };
+    };
+    responses: {
+      /** @description Print settings updated successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StandardApiResponse'] & {
+            /** @example success */
+            status?: string;
+            data?: components['schemas']['PrintSettingsDto'];
+            /** @example null */
+            errors?: unknown[] | null;
+            /** @example Print settings updated successfully. */
             message?: string;
           };
         };

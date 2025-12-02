@@ -51,6 +51,11 @@ import {
 } from 'src/menu/menu.service';
 import { BusinessHoursDto } from 'src/store/dto/business-hours.dto';
 import { CreateStoreDto } from 'src/store/dto/create-store.dto';
+import {
+  DEFAULT_PRINT_SETTINGS,
+  PrintSettingsDto,
+  UpdatePrintSettingsDto,
+} from 'src/store/dto/print-settings.dto';
 import { UpdateStoreInformationDto } from 'src/store/dto/update-store-information.dto';
 import { UpdateStoreSettingDto } from 'src/store/dto/update-store-setting.dto';
 import { TableService } from 'src/table/table.service';
@@ -925,6 +930,175 @@ export class StoreService {
         stack
       );
       throw new InternalServerErrorException('Could not update loyalty rules.');
+    }
+  }
+
+  /**
+   * Gets print settings for a store.
+   * Returns default settings if not configured.
+   * Requires any store membership (no specific role required).
+   * @param userId The ID of the user performing the action.
+   * @param storeId The ID of the Store whose print settings are being retrieved.
+   * @returns The print settings for the store.
+   * @throws {ForbiddenException} If user is not a member of the store.
+   * @throws {NotFoundException} If store settings are not found.
+   * @throws {InternalServerErrorException} On unexpected database errors.
+   */
+  async getPrintSettings(
+    userId: string,
+    storeId: string
+  ): Promise<PrintSettingsDto> {
+    const method = this.getPrintSettings.name;
+    this.logger.log(
+      `[${method}] User ${userId} retrieving print settings for Store ID: ${storeId}`
+    );
+
+    // Check if user has any role in the store
+    const userRole = await this.authService.getUserStoreRole(userId, storeId);
+    if (!userRole) {
+      this.logger.warn(
+        `[${method}] User ${userId} is not a member of Store ${storeId}`
+      );
+      throw new ForbiddenException(
+        `You do not have access to store ${storeId}.`
+      );
+    }
+
+    try {
+      const setting = await this.prisma.storeSetting.findUnique({
+        where: { storeId },
+        select: { printSettings: true },
+      });
+
+      if (!setting) {
+        this.logger.warn(
+          `[${method}] StoreSetting for Store ID ${storeId} not found.`
+        );
+        throw new NotFoundException(
+          `Settings for store with ID ${storeId} not found.`
+        );
+      }
+
+      // Return stored settings or defaults
+      const printSettings = setting.printSettings
+        ? (setting.printSettings as unknown as PrintSettingsDto)
+        : DEFAULT_PRINT_SETTINGS;
+
+      this.logger.log(
+        `[${method}] Print settings retrieved for Store ${storeId}`
+      );
+      return printSettings;
+    } catch (error) {
+      if (
+        error instanceof ForbiddenException ||
+        error instanceof NotFoundException
+      ) {
+        throw error;
+      }
+      const { stack } = getErrorDetails(error);
+      this.logger.error(
+        `[${method}] Failed to retrieve print settings for Store ID ${storeId}`,
+        stack
+      );
+      throw new InternalServerErrorException(
+        'Could not retrieve print settings.'
+      );
+    }
+  }
+
+  /**
+   * Updates print settings for a store.
+   * Merges provided settings with existing/default settings.
+   * Requires OWNER or ADMIN role.
+   * @param userId The ID of the user performing the action.
+   * @param storeId The ID of the Store whose print settings are being updated.
+   * @param dto The partial print settings to update.
+   * @returns The full updated print settings.
+   * @throws {ForbiddenException} If user lacks OWNER or ADMIN permission.
+   * @throws {NotFoundException} If store settings are not found.
+   * @throws {InternalServerErrorException} On unexpected database errors.
+   */
+  async updatePrintSettings(
+    userId: string,
+    storeId: string,
+    dto: UpdatePrintSettingsDto
+  ): Promise<PrintSettingsDto> {
+    const method = this.updatePrintSettings.name;
+    this.logger.log(
+      `[${method}] User ${userId} updating print settings for Store ID: ${storeId}`
+    );
+
+    await this.authService.checkStorePermission(userId, storeId, [
+      Role.OWNER,
+      Role.ADMIN,
+    ]);
+
+    try {
+      // Get current settings
+      const currentSetting = await this.prisma.storeSetting.findUnique({
+        where: { storeId },
+        select: { printSettings: true },
+      });
+
+      if (!currentSetting) {
+        this.logger.warn(
+          `[${method}] StoreSetting for Store ID ${storeId} not found.`
+        );
+        throw new NotFoundException(
+          `Settings for store with ID ${storeId} not found.`
+        );
+      }
+
+      // Merge with existing or default settings
+      const existingSettings = currentSetting.printSettings
+        ? (currentSetting.printSettings as unknown as PrintSettingsDto)
+        : DEFAULT_PRINT_SETTINGS;
+
+      const updatedSettings: PrintSettingsDto = {
+        ...existingSettings,
+        ...dto,
+      };
+
+      // Update in database
+      await this.prisma.storeSetting.update({
+        where: { storeId },
+        data: {
+          printSettings: toJsonValue(updatedSettings),
+        },
+      });
+
+      // Log the change
+      await this.auditLogService.logStoreSettingChange(
+        storeId,
+        userId,
+        {
+          field: 'printSettings',
+          oldValue: JSON.stringify(existingSettings),
+          newValue: JSON.stringify(updatedSettings),
+        },
+        undefined,
+        undefined
+      );
+
+      this.logger.log(
+        `[${method}] Print settings updated for Store ${storeId} by User ${userId}`
+      );
+      return updatedSettings;
+    } catch (error) {
+      if (
+        error instanceof ForbiddenException ||
+        error instanceof NotFoundException
+      ) {
+        throw error;
+      }
+      const { stack } = getErrorDetails(error);
+      this.logger.error(
+        `[${method}] Failed to update print settings for Store ID ${storeId}`,
+        stack
+      );
+      throw new InternalServerErrorException(
+        'Could not update print settings.'
+      );
     }
   }
 

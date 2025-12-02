@@ -1,0 +1,85 @@
+{
+  "print": {
+    "printReceipt": "พิมพ์ใบเสร็จ",
+    "printing": "กำลังพิมพ์...",
+    "printQueued": "เพิ่มงานพิมพ์ลงในคิวแล้ว",
+    "printSuccess": "พิมพ์สำเร็จ",
+    "printFailed": "พิมพ์ไม่สำเร็จ",
+    "printCancelled": "ยกเลิกการพิมพ์แล้ว",
+    "retrying": "กำลังลองพิมพ์อีกครั้ง ({current}/{max})",
+    "printDisabled": "การพิมพ์ถูกปิดใช้งานสำหรับร้านนี้",
+
+    "queue": {
+      "title": "คิวการพิมพ์",
+      "empty": "ไม่มีงานพิมพ์ในคิว",
+      "pending": "รอดำเนินการ",
+      "printing": "กำลังพิมพ์",
+      "completed": "เสร็จสิ้น",
+      "failed": "ล้มเหลว",
+      "cancelled": "ยกเลิกแล้ว",
+      "retry": "ลองใหม่",
+      "cancel": "ยกเลิก",
+      "remove": "ลบ",
+      "clearCompleted": "ล้างที่เสร็จแล้ว",
+      "clearAll": "ล้างทั้งหมด",
+      "pause": "หยุดคิวชั่วคราว",
+      "resume": "ดำเนินการคิวต่อ",
+      "retryCount": "ลองใหม่ {count}/{max}"
+    },
+
+    "settings": {
+      "title": "ตั้งค่าการพิมพ์",
+      "description": "กำหนดค่าพฤติกรรมการพิมพ์อัตโนมัติ",
+      "customerReceipt": "ใบเสร็จลูกค้า",
+      "kitchenTicket": "ตั๋วครัว",
+      "autoPrintMode": "โหมดพิมพ์อัตโนมัติ",
+      "copies": "จำนวนสำเนา",
+      "showLogo": "แสดงโลโก้",
+      "headerText": "ข้อความส่วนหัว",
+      "footerText": "ข้อความส่วนท้าย",
+      "save": "บันทึกการตั้งค่า",
+      "saving": "กำลังบันทึก...",
+      "saved": "บันทึกการตั้งค่าแล้ว",
+      "mode": {
+        "manual": "ด้วยตนเอง",
+        "manualDescription": "แสดงปุ่มพิมพ์ ผู้ใช้ตัดสินใจเอง",
+        "auto": "พิมพ์อัตโนมัติ",
+        "autoDescription": "พิมพ์อัตโนมัติหลังชำระเงิน",
+        "never": "ไม่เคย",
+        "neverDescription": "ปิดใช้งานการพิมพ์ทั้งหมด"
+      }
+    },
+
+    "receipt": {
+      "orderNumber": "หมายเลขออเดอร์",
+      "date": "วันที่",
+      "subtotal": "ยอดรวมย่อย",
+      "tax": "ภาษี",
+      "vat": "ภาษีมูลค่าเพิ่ม",
+      "serviceCharge": "ค่าบริการ",
+      "discount": "ส่วนลด",
+      "total": "ยอดรวม",
+      "paymentMethod": "วิธีชำระเงิน",
+      "amountTendered": "จำนวนเงินที่รับ",
+      "change": "เงินทอน",
+      "thankYou": "ขอบคุณที่มาใช้บริการ!"
+    },
+
+    "kitchen": {
+      "header": "ครัว",
+      "orderNumber": "ออเดอร์",
+      "table": "โต๊ะ",
+      "dineIn": "ทานที่ร้าน",
+      "takeaway": "สั่งกลับบ้าน",
+      "notes": "หมายเหตุ"
+    },
+
+    "errors": {
+      "printerOffline": "เครื่องพิมพ์ไม่ตอบสนอง",
+      "printerBusy": "เครื่องพิมพ์ไม่ว่าง",
+      "paperOut": "เครื่องพิมพ์อาจหมดกระดาษ",
+      "unknown": "เกิดข้อผิดพลาดที่ไม่รู้จัก",
+      "noSupport": "เบราว์เซอร์นี้ไม่รองรับการพิมพ์"
+    }
+  }
+}

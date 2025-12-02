@@ -124,3 +124,28 @@ export const useSocket = (): SocketContextType => {
   }
   return context;
 };
+
+/**
+ * Optional version of useSocket that returns null values when used outside SocketProvider.
+ * Use this for features that are enhanced by real-time updates but can work without them.
+ *
+ * @returns Socket context if available, otherwise { socket: null, isConnected: false }
+ *
+ * @example
+ * ```tsx
+ * function MyComponent() {
+ *   const { socket, isConnected } = useSocketOptional();
+ *
+ *   // Socket features only work when provider is present
+ *   useEffect(() => {
+ *     if (!socket || !isConnected) return;
+ *     socket.on('event', handler);
+ *     return () => socket.off('event', handler);
+ *   }, [socket, isConnected]);
+ * }
+ * ```
+ */
+export const useSocketOptional = (): SocketContextType => {
+  const context = useContext(SocketContext);
+  return context ?? { socket: null, isConnected: false };
+};

@@ -95,6 +95,7 @@ export type StoreSettingCountAggregateOutputType = {
   enabledLocales: number;
   multiLanguageEnabled: number;
   multiLanguageMigratedAt: number;
+  printSettings: number;
   createdAt: number;
   updatedAt: number;
   _all: number;
@@ -169,6 +170,7 @@ export type StoreSettingCountAggregateInputType = {
   enabledLocales?: true;
   multiLanguageEnabled?: true;
   multiLanguageMigratedAt?: true;
+  printSettings?: true;
   createdAt?: true;
   updatedAt?: true;
   _all?: true;
@@ -285,6 +287,7 @@ export type StoreSettingGroupByOutputType = {
   enabledLocales: string[];
   multiLanguageEnabled: boolean;
   multiLanguageMigratedAt: Date | null;
+  printSettings: runtime.JsonValue | null;
   createdAt: Date;
   updatedAt: Date;
   _count: StoreSettingCountAggregateOutputType | null;
@@ -358,6 +361,7 @@ export type StoreSettingWhereInput = {
     | Date
     | string
     | null;
+  printSettings?: Prisma.JsonNullableFilter<'StoreSetting'>;
   createdAt?: Prisma.DateTimeFilter<'StoreSetting'> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<'StoreSetting'> | Date | string;
   store?: Prisma.XOR<Prisma.StoreScalarRelationFilter, Prisma.StoreWhereInput>;
@@ -380,6 +384,7 @@ export type StoreSettingOrderByWithRelationInput = {
   enabledLocales?: Prisma.SortOrder;
   multiLanguageEnabled?: Prisma.SortOrder;
   multiLanguageMigratedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
+  printSettings?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   store?: Prisma.StoreOrderByWithRelationInput;
@@ -437,6 +442,7 @@ export type StoreSettingWhereUniqueInput = Prisma.AtLeast<
       | Date
       | string
       | null;
+    printSettings?: Prisma.JsonNullableFilter<'StoreSetting'>;
     createdAt?: Prisma.DateTimeFilter<'StoreSetting'> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<'StoreSetting'> | Date | string;
     store?: Prisma.XOR<
@@ -464,6 +470,7 @@ export type StoreSettingOrderByWithAggregationInput = {
   enabledLocales?: Prisma.SortOrder;
   multiLanguageEnabled?: Prisma.SortOrder;
   multiLanguageMigratedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
+  printSettings?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   _count?: Prisma.StoreSettingCountOrderByAggregateInput;
@@ -534,6 +541,7 @@ export type StoreSettingScalarWhereWithAggregatesInput = {
     | Date
     | string
     | null;
+  printSettings?: Prisma.JsonNullableWithAggregatesFilter<'StoreSetting'>;
   createdAt?:
     | Prisma.DateTimeWithAggregatesFilter<'StoreSetting'>
     | Date
@@ -575,6 +583,7 @@ export type StoreSettingCreateInput = {
   enabledLocales?: Prisma.StoreSettingCreateenabledLocalesInput | string[];
   multiLanguageEnabled?: boolean;
   multiLanguageMigratedAt?: Date | string | null;
+  printSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   store: Prisma.StoreCreateNestedOneWithoutSettingInput;
@@ -612,6 +621,7 @@ export type StoreSettingUncheckedCreateInput = {
   enabledLocales?: Prisma.StoreSettingCreateenabledLocalesInput | string[];
   multiLanguageEnabled?: boolean;
   multiLanguageMigratedAt?: Date | string | null;
+  printSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
 };
@@ -663,6 +673,7 @@ export type StoreSettingUpdateInput = {
     | Date
     | string
     | null;
+  printSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   store?: Prisma.StoreUpdateOneRequiredWithoutSettingNestedInput;
@@ -716,6 +727,7 @@ export type StoreSettingUncheckedUpdateInput = {
     | Date
     | string
     | null;
+  printSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -752,6 +764,7 @@ export type StoreSettingCreateManyInput = {
   enabledLocales?: Prisma.StoreSettingCreateenabledLocalesInput | string[];
   multiLanguageEnabled?: boolean;
   multiLanguageMigratedAt?: Date | string | null;
+  printSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
 };
@@ -803,6 +816,7 @@ export type StoreSettingUpdateManyMutationInput = {
     | Date
     | string
     | null;
+  printSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -855,6 +869,7 @@ export type StoreSettingUncheckedUpdateManyInput = {
     | Date
     | string
     | null;
+  printSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -889,6 +904,7 @@ export type StoreSettingCountOrderByAggregateInput = {
   enabledLocales?: Prisma.SortOrder;
   multiLanguageEnabled?: Prisma.SortOrder;
   multiLanguageMigratedAt?: Prisma.SortOrder;
+  printSettings?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
 };
@@ -1061,6 +1077,7 @@ export type StoreSettingCreateWithoutStoreInput = {
   enabledLocales?: Prisma.StoreSettingCreateenabledLocalesInput | string[];
   multiLanguageEnabled?: boolean;
   multiLanguageMigratedAt?: Date | string | null;
+  printSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
 };
@@ -1096,6 +1113,7 @@ export type StoreSettingUncheckedCreateWithoutStoreInput = {
   enabledLocales?: Prisma.StoreSettingCreateenabledLocalesInput | string[];
   multiLanguageEnabled?: boolean;
   multiLanguageMigratedAt?: Date | string | null;
+  printSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
 };
@@ -1175,6 +1193,7 @@ export type StoreSettingUpdateWithoutStoreInput = {
     | Date
     | string
     | null;
+  printSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -1226,6 +1245,7 @@ export type StoreSettingUncheckedUpdateWithoutStoreInput = {
     | Date
     | string
     | null;
+  printSettings?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -1251,6 +1271,7 @@ export type StoreSettingSelect<
     enabledLocales?: boolean;
     multiLanguageEnabled?: boolean;
     multiLanguageMigratedAt?: boolean;
+    printSettings?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>;
@@ -1279,6 +1300,7 @@ export type StoreSettingSelectCreateManyAndReturn<
     enabledLocales?: boolean;
     multiLanguageEnabled?: boolean;
     multiLanguageMigratedAt?: boolean;
+    printSettings?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>;
@@ -1307,6 +1329,7 @@ export type StoreSettingSelectUpdateManyAndReturn<
     enabledLocales?: boolean;
     multiLanguageEnabled?: boolean;
     multiLanguageMigratedAt?: boolean;
+    printSettings?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>;
@@ -1331,6 +1354,7 @@ export type StoreSettingSelectScalar = {
   enabledLocales?: boolean;
   multiLanguageEnabled?: boolean;
   multiLanguageMigratedAt?: boolean;
+  printSettings?: boolean;
   createdAt?: boolean;
   updatedAt?: boolean;
 };
@@ -1355,6 +1379,7 @@ export type StoreSettingOmit<
   | 'enabledLocales'
   | 'multiLanguageEnabled'
   | 'multiLanguageMigratedAt'
+  | 'printSettings'
   | 'createdAt'
   | 'updatedAt',
   ExtArgs['result']['storeSetting']
@@ -1404,6 +1429,11 @@ export type $StoreSettingPayload<
       enabledLocales: string[];
       multiLanguageEnabled: boolean;
       multiLanguageMigratedAt: Date | null;
+      /**
+       * Print settings configuration (receipt/kitchen ticket printing)
+       * Default: { autoPrintReceipt: 'manual', autoPrintKitchenTicket: true, receiptCopies: 1, kitchenTicketCopies: 1, showLogo: true, headerText: [], footerText: [] }
+       */
+      printSettings: runtime.JsonValue | null;
       createdAt: Date;
       updatedAt: Date;
     },
@@ -2034,6 +2064,7 @@ export interface StoreSettingFieldRefs {
   readonly enabledLocales: Prisma.FieldRef<'StoreSetting', 'String[]'>;
   readonly multiLanguageEnabled: Prisma.FieldRef<'StoreSetting', 'Boolean'>;
   readonly multiLanguageMigratedAt: Prisma.FieldRef<'StoreSetting', 'DateTime'>;
+  readonly printSettings: Prisma.FieldRef<'StoreSetting', 'Json'>;
   readonly createdAt: Prisma.FieldRef<'StoreSetting', 'DateTime'>;
   readonly updatedAt: Prisma.FieldRef<'StoreSetting', 'DateTime'>;
 }

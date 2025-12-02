@@ -9,6 +9,7 @@ import {
   ShoppingBag,
   Store,
   User,
+  Loader2,
 } from 'lucide-react';
 
 import { Button } from '@repo/ui/components/button';
@@ -22,6 +23,11 @@ import { Separator } from '@repo/ui/components/separator';
 
 import { formatCurrency } from '@/utils/formatting';
 import { getSessionTypeDisplayInfo } from '@/features/sales/utils/session-type.utils';
+import { usePrintService } from '@/features/print/hooks/usePrintService';
+import {
+  useAuthStore,
+  selectSelectedStoreId,
+} from '@/features/auth/store/auth.store';
 import type { ReceiptOrderData } from '@/features/sales/utils/transform-order-to-receipt';
 import type { SessionType } from '../types/sales.types';
 
@@ -47,6 +53,15 @@ export function ReceiptPanel({
   onPrint,
 }: ReceiptPanelProps) {
   const t = useTranslations('sales');
+  const tPrint = useTranslations('print');
+
+  // Get store ID for print service
+  const storeId = useAuthStore(selectSelectedStoreId);
+
+  // Print service hook
+  const { printReceipt, isPrinting } = usePrintService({
+    storeId: storeId ?? '',
+  });
 
   // Format date
   const orderDate = new Date(order.createdAt).toLocaleString();
@@ -63,9 +78,9 @@ export function ReceiptPanel({
   const handlePrint = () => {
     if (onPrint) {
       onPrint();
-    } else {
-      // Default: use browser print with print-specific CSS
-      window.print();
+    } else if (storeId) {
+      // Use print service for proper receipt printing
+      printReceipt(order);
     }
   };
 
@@ -253,9 +268,23 @@ export function ReceiptPanel({
 
       {/* Actions - hidden when printing */}
       <div className="space-y-2 border-t p-4 print:hidden">
-        <Button variant="outline" className="w-full" onClick={handlePrint}>
-          <Printer className="mr-2 h-4 w-4" />
-          {t('printReceipt')}
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={handlePrint}
+          disabled={isPrinting || !storeId}
+        >
+          {isPrinting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {tPrint('printing')}
+            </>
+          ) : (
+            <>
+              <Printer className="mr-2 h-4 w-4" />
+              {t('printReceipt')}
+            </>
+          )}
         </Button>
         <Button className="w-full" onClick={onNewOrder}>
           <Plus className="mr-2 h-4 w-4" />

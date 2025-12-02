@@ -117,6 +117,10 @@ model StoreSetting {
   multiLanguageEnabled    Boolean   @default(false)
   multiLanguageMigratedAt DateTime?
 
+  /// Print settings configuration (receipt/kitchen ticket printing)
+  /// Default: { autoPrintReceipt: 'manual', autoPrintKitchenTicket: true, receiptCopies: 1, kitchenTicketCopies: 1, showLogo: true, headerText: [], footerText: [] }
+  printSettings Json?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }

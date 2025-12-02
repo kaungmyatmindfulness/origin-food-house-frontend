@@ -36,6 +36,10 @@ import { StandardApiResponse } from 'src/common/dto/standard-api-response.dto';
 import { BusinessHoursDto } from 'src/store/dto/business-hours.dto';
 import { CreateStoreDto } from 'src/store/dto/create-store.dto';
 import { GetStoreDetailsResponseDto } from 'src/store/dto/get-store-details-response.dto';
+import {
+  PrintSettingsDto,
+  UpdatePrintSettingsDto,
+} from 'src/store/dto/print-settings.dto';
 import { StoreInformationResponseDto } from 'src/store/dto/store-information-response.dto';
 import { StoreSettingResponseDto } from 'src/store/dto/store-setting-response.dto';
 import { UpdateLoyaltyRulesDto } from 'src/store/dto/update-loyalty-rules.dto';
@@ -54,7 +58,8 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
   StandardApiErrorDetails,
   GetStoreDetailsResponseDto,
   StoreInformationResponseDto,
-  StoreSettingResponseDto
+  StoreSettingResponseDto,
+  PrintSettingsDto
 )
 export class StoreController {
   private readonly logger = new Logger(StoreController.name);
@@ -188,6 +193,10 @@ export class StoreController {
       enabledLocales: updatedSettings.enabledLocales,
       multiLanguageEnabled: updatedSettings.multiLanguageEnabled,
       multiLanguageMigratedAt: updatedSettings.multiLanguageMigratedAt ?? null,
+      printSettings: updatedSettings.printSettings as Record<
+        string,
+        unknown
+      > | null,
       createdAt: updatedSettings.createdAt,
       updatedAt: updatedSettings.updatedAt,
     };
@@ -274,6 +283,7 @@ export class StoreController {
       enabledLocales: settings.enabledLocales,
       multiLanguageEnabled: settings.multiLanguageEnabled,
       multiLanguageMigratedAt: settings.multiLanguageMigratedAt ?? null,
+      printSettings: settings.printSettings as Record<string, unknown> | null,
       createdAt: settings.createdAt,
       updatedAt: settings.updatedAt,
     };
@@ -326,6 +336,7 @@ export class StoreController {
       enabledLocales: settings.enabledLocales,
       multiLanguageEnabled: settings.multiLanguageEnabled,
       multiLanguageMigratedAt: settings.multiLanguageMigratedAt ?? null,
+      printSettings: settings.printSettings as Record<string, unknown> | null,
       createdAt: settings.createdAt,
       updatedAt: settings.updatedAt,
     };
@@ -419,6 +430,7 @@ export class StoreController {
       enabledLocales: settings.enabledLocales,
       multiLanguageEnabled: settings.multiLanguageEnabled,
       multiLanguageMigratedAt: settings.multiLanguageMigratedAt ?? null,
+      printSettings: settings.printSettings as Record<string, unknown> | null,
       createdAt: settings.createdAt,
       updatedAt: settings.updatedAt,
     };
@@ -426,6 +438,65 @@ export class StoreController {
     return StandardApiResponse.success(
       mappedSettings,
       'Loyalty rules updated successfully.'
+    );
+  }
+
+  @Get(':id/settings/print-settings')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiGetOne(PrintSettingsDto, 'print settings', {
+    summary: 'Get print settings for a store (any authenticated store member)',
+    description: 'Print settings retrieved successfully.',
+    idDescription: 'ID (UUID) of the store',
+  })
+  async getPrintSettings(
+    @GetUser('sub') userId: string,
+    @Param('id', ParseUUIDPipe) storeId: string
+  ): Promise<StandardApiResponse<PrintSettingsDto>> {
+    const method = this.getPrintSettings.name;
+    this.logger.log(
+      `[${method}] User ${userId} retrieving print settings for Store ID: ${storeId}`
+    );
+
+    const printSettings = await this.storeService.getPrintSettings(
+      userId,
+      storeId
+    );
+
+    return StandardApiResponse.success(
+      printSettings,
+      'Print settings retrieved successfully.'
+    );
+  }
+
+  @Patch(':id/settings/print-settings')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiPatch(PrintSettingsDto, 'print settings', {
+    summary: 'Update print settings (OWNER or ADMIN only)',
+    description: 'Print settings updated successfully.',
+    roles: 'OWNER, ADMIN',
+    idDescription: 'ID (UUID) of the store',
+  })
+  async updatePrintSettings(
+    @GetUser('sub') userId: string,
+    @Param('id', ParseUUIDPipe) storeId: string,
+    @Body() dto: UpdatePrintSettingsDto
+  ): Promise<StandardApiResponse<PrintSettingsDto>> {
+    const method = this.updatePrintSettings.name;
+    this.logger.log(
+      `[${method}] User ${userId} updating print settings for Store ID: ${storeId}`
+    );
+
+    const printSettings = await this.storeService.updatePrintSettings(
+      userId,
+      storeId,
+      dto
+    );
+
+    return StandardApiResponse.success(
+      printSettings,
+      'Print settings updated successfully.'
     );
   }
 }

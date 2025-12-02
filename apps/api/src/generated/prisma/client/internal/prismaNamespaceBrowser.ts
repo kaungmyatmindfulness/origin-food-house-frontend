@@ -187,6 +187,7 @@ export const StoreSettingScalarFieldEnum = {
   enabledLocales: 'enabledLocales',
   multiLanguageEnabled: 'multiLanguageEnabled',
   multiLanguageMigratedAt: 'multiLanguageMigratedAt',
+  printSettings: 'printSettings',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
 } as const;

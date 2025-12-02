@@ -3,6 +3,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Currency } from 'src/generated/prisma/client';
 
 import { BusinessHoursDto, SpecialHoursEntryDto } from './business-hours.dto';
+import { PrintSettingsDto } from './print-settings.dto';
 
 export class StoreSettingResponseDto {
   @ApiProperty({ format: 'uuid', description: 'Setting record ID' })
@@ -147,6 +148,27 @@ export class StoreSettingResponseDto {
     description: 'Timestamp when multi-language was migrated/enabled',
   })
   multiLanguageMigratedAt?: Date | null;
+
+  /**
+   * Print settings configuration.
+   * TypeScript type is flexible for Prisma JSON, OpenAPI schema is typed for code generation.
+   */
+  @ApiPropertyOptional({
+    type: () => PrintSettingsDto,
+    nullable: true,
+    description:
+      'Print settings configuration (receipt/kitchen ticket printing behavior)',
+    example: {
+      autoPrintReceipt: 'manual',
+      autoPrintKitchenTicket: true,
+      receiptCopies: 1,
+      kitchenTicketCopies: 1,
+      showLogo: true,
+      headerText: [],
+      footerText: [],
+    },
+  })
+  printSettings?: PrintSettingsDto | Record<string, unknown> | null;
 
   @ApiProperty({ description: 'Record creation timestamp' })
   createdAt: Date;

@@ -29,16 +29,37 @@ import {
 } from '@/features/auth/store/auth.store';
 import { $api } from '@/utils/apiFetch';
 import { transformOrderToReceiptData } from '@/features/sales/utils/transform-order-to-receipt';
+import { useAutoPrint } from '@/features/print/hooks/useAutoPrint';
+import { SocketProvider } from '@/utils/socket-provider';
 
 import type { MenuItemResponseDto } from '@repo/api/generated/types';
 import type { SalesView } from '@/features/sales/types/sales.types';
 
+/**
+ * Sales page wrapper that provides SocketProvider for real-time features.
+ * The SocketProvider enables auto-print functionality for kitchen tickets.
+ */
 export default function SalesPage() {
+  return (
+    <SocketProvider>
+      <SalesPageContent />
+    </SocketProvider>
+  );
+}
+
+/**
+ * Main sales page content component.
+ * Must be rendered inside SocketProvider for auto-print to work.
+ */
+function SalesPageContent() {
   const t = useTranslations('sales');
   const queryClient = useQueryClient();
 
   // Auth store - get selected store
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
+
+  // Enable auto-print for kitchen tickets when orders are created via socket
+  useAutoPrint({ storeId: selectedStoreId ?? '', enabled: !!selectedStoreId });
 
   // Sales store
   const activeView = useSalesStore((state) => state.activeView);

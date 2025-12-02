@@ -224,9 +224,11 @@ export type UpdateTaxAndServiceChargeDto =
 export type ApplyDiscountDto = Schemas['ApplyDiscountDto'];
 export type AuditLogDetailsDto = Schemas['AuditLogDetailsDto'];
 export type AuditLogEntryDto = Schemas['AuditLogEntryDto'];
+export type AutoPrintMode = Schemas['AutoPrintMode'];
 export type ChangeRoleDto = Schemas['ChangeRoleDto'];
 export type DowngradeTierDto = Schemas['DowngradeTierDto'];
 export type FeatureAccessDto = Schemas['FeatureAccessDto'];
+export type PrintSettingsDto = Schemas['PrintSettingsDto'];
 export type ResourceUsageDto = Schemas['ResourceUsageDto'];
 export type SpecialHoursEntryDto = Schemas['SpecialHoursEntryDto'];
 export type SubscriptionResponseDto = Schemas['SubscriptionResponseDto'];
@@ -235,4 +237,5 @@ export type TierResponseDto = Schemas['TierResponseDto'];
 export type TrialEligibilityResponseDto =
   Schemas['TrialEligibilityResponseDto'];
 export type TrialInfoResponseDto = Schemas['TrialInfoResponseDto'];
+export type UpdatePrintSettingsDto = Schemas['UpdatePrintSettingsDto'];
 export type VersionMetadataDto = Schemas['VersionMetadataDto'];

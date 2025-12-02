@@ -1,0 +1,85 @@
+{
+  "print": {
+    "printReceipt": "打印收据",
+    "printing": "正在打印...",
+    "printQueued": "打印任务已添加到队列",
+    "printSuccess": "打印成功完成",
+    "printFailed": "打印失败",
+    "printCancelled": "打印已取消",
+    "retrying": "正在重试打印 ({current}/{max})",
+    "printDisabled": "此店铺已禁用打印功能",
+
+    "queue": {
+      "title": "打印队列",
+      "empty": "队列中没有打印任务",
+      "pending": "等待中",
+      "printing": "打印中",
+      "completed": "已完成",
+      "failed": "失败",
+      "cancelled": "已取消",
+      "retry": "重试",
+      "cancel": "取消",
+      "remove": "移除",
+      "clearCompleted": "清除已完成",
+      "clearAll": "清除全部",
+      "pause": "暂停队列",
+      "resume": "恢复队列",
+      "retryCount": "重试 {count}/{max}"
+    },
+
+    "settings": {
+      "title": "打印设置",
+      "description": "配置自动打印行为",
+      "customerReceipt": "顾客收据",
+      "kitchenTicket": "厨房小票",
+      "autoPrintMode": "自动打印模式",
+      "copies": "打印份数",
+      "showLogo": "显示标志",
+      "headerText": "页眉文字",
+      "footerText": "页脚文字",
+      "save": "保存设置",
+      "saving": "正在保存...",
+      "saved": "设置已保存",
+      "mode": {
+        "manual": "手动",
+        "manualDescription": "显示打印按钮，由用户决定",
+        "auto": "自动打印",
+        "autoDescription": "付款后自动打印",
+        "never": "从不",
+        "neverDescription": "完全禁用打印"
+      }
+    },
+
+    "receipt": {
+      "orderNumber": "订单号",
+      "date": "日期",
+      "subtotal": "小计",
+      "tax": "税费",
+      "vat": "增值税",
+      "serviceCharge": "服务费",
+      "discount": "折扣",
+      "total": "总计",
+      "paymentMethod": "支付方式",
+      "amountTendered": "收款金额",
+      "change": "找零",
+      "thankYou": "感谢您的光临！"
+    },
+
+    "kitchen": {
+      "header": "厨房",
+      "orderNumber": "订单",
+      "table": "桌号",
+      "dineIn": "堂食",
+      "takeaway": "外带",
+      "notes": "备注"
+    },
+
+    "errors": {
+      "printerOffline": "打印机无响应",
+      "printerBusy": "打印机忙碌中",
+      "paperOut": "打印机可能缺纸",
+      "unknown": "发生未知错误",
+      "noSupport": "此浏览器不支持打印功能"
+    }
+  }
+}
