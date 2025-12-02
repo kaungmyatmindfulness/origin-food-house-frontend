@@ -40,6 +40,14 @@
       "save": "Save Settings",
       "saving": "Saving...",
       "saved": "Settings saved",
+      "receiptPrinter": "Receipt Printer",
+      "receiptPrinterDescription": "Select printer for customer receipts",
+      "kitchenPrinter": "Kitchen Printer",
+      "kitchenPrinterDescription": "Select printer for kitchen tickets",
+      "silentPrint": "Silent Print",
+      "silentPrintDescription": "Print without showing dialog (desktop only)",
+      "paperWidth": "Paper Width",
+      "paperWidthDescription": "Thermal paper width in mm",
       "mode": {
         "manual": "Manual",
         "manualDescription": "Show print button, user decides",
@@ -48,6 +56,18 @@
         "never": "Never",
         "neverDescription": "Disable printing entirely"
       }
+    },
+
+    "printerSelector": {
+      "selectPrinter": "Select a printer",
+      "systemDefault": "System Default",
+      "noDefault": "No default printer",
+      "default": "Default",
+      "refresh": "Refresh printer list",
+      "retry": "Retry",
+      "browserOnly": "Printer selection is only available in the desktop app",
+      "noPrinters": "No printers found. Please check your printer connections.",
+      "errorLoading": "Failed to load printers"
     },
 
     "receipt": {
@@ -79,7 +99,8 @@
       "printerBusy": "Printer is busy",
       "paperOut": "Printer may be out of paper",
       "unknown": "An unknown error occurred",
-      "noSupport": "Printing is not supported in this browser"
+      "noSupport": "Printing is not supported in this browser",
+      "tauriNotAvailable": "Native printing requires the desktop app"
     }
   }
 }

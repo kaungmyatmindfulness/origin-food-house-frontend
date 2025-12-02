@@ -13,6 +13,8 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query';
 
+import { UpdateChecker } from '@/features/updates/components/UpdateChecker';
+
 import { NetworkProvider } from './network-provider';
 
 function makeQueryClient() {
@@ -69,7 +71,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <NetworkProvider>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        {children}
+        <UpdateChecker />
+      </QueryClientProvider>
     </NetworkProvider>
   );
 }

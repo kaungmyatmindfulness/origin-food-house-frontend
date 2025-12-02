@@ -28,7 +28,12 @@ export {
 
 // Adapters
 export { BrowserPrintAdapter } from './adapters';
-export { TauriPrintAdapter } from './adapters';
+export {
+  TauriPrintAdapter,
+  getTauriPrinters,
+  getDefaultTauriPrinter,
+} from './adapters';
+export type { TauriPrinterInfo, TauriPrintOptions } from './adapters';
 export { getPrintAdapter, resetPrintAdapter } from './adapters';
 
 // Queries
@@ -40,6 +45,7 @@ export {
   usePrintSettings,
   usePrintQueue,
   useAutoPrint,
+  useTauriPrinters,
 } from './hooks';
 
 // Components
@@ -47,4 +53,5 @@ export {
   PrintStatusBadge,
   PrintQueueDialog,
   PrintSettingsDialog,
+  PrinterSelector,
 } from './components';

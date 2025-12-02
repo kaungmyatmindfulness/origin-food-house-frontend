@@ -17,7 +17,16 @@
     "db:generate": "turbo run db:generate --filter=@app/api",
     "db:migrate": "turbo run db:migrate --filter=@app/api",
     "db:seed": "turbo run db:seed --filter=@app/api",
-    "db:studio": "turbo run db:studio --filter=@app/api"
+    "db:studio": "turbo run db:studio --filter=@app/api",
+    "tauri:dev": "npm run tauri:dev --workspace=@app/restaurant-management-system",
+    "tauri:build": "npm run tauri:build --workspace=@app/restaurant-management-system",
+    "tauri:build:debug": "npm run tauri:build:debug --workspace=@app/restaurant-management-system",
+    "tauri:android:init": "npm run tauri:android:init --workspace=@app/restaurant-management-system",
+    "tauri:android:dev": "npm run tauri:android:dev --workspace=@app/restaurant-management-system",
+    "tauri:android:build": "npm run tauri:android:build --workspace=@app/restaurant-management-system",
+    "tauri:ios:init": "npm run tauri:ios:init --workspace=@app/restaurant-management-system",
+    "tauri:ios:dev": "npm run tauri:ios:dev --workspace=@app/restaurant-management-system",
+    "tauri:ios:build": "npm run tauri:ios:build --workspace=@app/restaurant-management-system"
   },
   "devDependencies": {
     "prettier": "^3.6.2",

@@ -1,0 +1,91 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Origin Food House RMS",
+  "identifier": "com.originfoodhouse.rms",
+  "version": "1.0.0",
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:3002",
+    "frontendDist": "../out"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Origin Food House - Restaurant Management",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 1024,
+        "minHeight": 768,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; connect-src 'self' http://localhost:* https://*.originfoodhouse.com https://*.auth0.com wss://*; img-src 'self' data: blob: https://*.amazonaws.com; style-src 'self' 'unsafe-inline'; script-src 'self'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "targets": ["dmg", "nsis", "deb"],
+    "macOS": {
+      "minimumSystemVersion": "10.15"
+    },
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser"
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "endpoints": [
+        "https://releases.originfoodhouse.com/rms/latest.json"
+      ],
+      "pubkey": "YOUR_PUBLIC_KEY_HERE"
+    },
+    "deep-link": {
+      "desktop": {
+        "schemes": ["originfoodhouse"]
+      },
+      "mobile": [
+        {
+          "scheme": ["originfoodhouse"],
+          "appLink": false
+        }
+      ]
+    },
+    "shell": {
+      "open": true,
+      "scope": [
+        {
+          "name": "lp",
+          "cmd": "lp",
+          "args": true
+        },
+        {
+          "name": "lpstat",
+          "cmd": "lpstat",
+          "args": ["-p", "-d"]
+        },
+        {
+          "name": "print-windows",
+          "cmd": "cmd",
+          "args": ["/c", "print", { "validator": "\\S+" }]
+        },
+        {
+          "name": "get-printers-windows",
+          "cmd": "powershell",
+          "args": ["-Command", "Get-Printer | Select-Object Name, DriverName, PortName | ConvertTo-Json"]
+        }
+      ]
+    }
+  }
+}

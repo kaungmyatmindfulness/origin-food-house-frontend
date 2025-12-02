@@ -40,6 +40,14 @@
       "save": "保存设置",
       "saving": "正在保存...",
       "saved": "设置已保存",
+      "receiptPrinter": "收据打印机",
+      "receiptPrinterDescription": "选择顾客收据打印机",
+      "kitchenPrinter": "厨房打印机",
+      "kitchenPrinterDescription": "选择厨房小票打印机",
+      "silentPrint": "静默打印",
+      "silentPrintDescription": "打印时不显示对话框（仅限桌面版）",
+      "paperWidth": "纸张宽度",
+      "paperWidthDescription": "热敏纸宽度（毫米）",
       "mode": {
         "manual": "手动",
         "manualDescription": "显示打印按钮，由用户决定",
@@ -48,6 +56,18 @@
         "never": "从不",
         "neverDescription": "完全禁用打印"
       }
+    },
+
+    "printerSelector": {
+      "selectPrinter": "选择打印机",
+      "systemDefault": "系统默认",
+      "noDefault": "无默认打印机",
+      "default": "默认",
+      "refresh": "刷新打印机列表",
+      "retry": "重试",
+      "browserOnly": "打印机选择仅在桌面应用中可用",
+      "noPrinters": "未找到打印机。请检查打印机连接。",
+      "errorLoading": "加载打印机失败"
     },
 
     "receipt": {
@@ -79,7 +99,8 @@
       "printerBusy": "打印机忙碌中",
       "paperOut": "打印机可能缺纸",
       "unknown": "发生未知错误",
-      "noSupport": "此浏览器不支持打印功能"
+      "noSupport": "此浏览器不支持打印功能",
+      "tauriNotAvailable": "原生打印需要桌面应用"
     }
   }
 }

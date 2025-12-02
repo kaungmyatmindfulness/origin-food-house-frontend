@@ -1,0 +1,13 @@
+{
+  "$schema": "../gen/schemas/mobile-schema.json",
+  "identifier": "mobile-capability",
+  "description": "Mobile capabilities for RMS (Android/iOS)",
+  "windows": ["main"],
+  "platforms": ["iOS", "android"],
+  "permissions": [
+    "core:default",
+    "core:event:default",
+    "deep-link:default",
+    "process:default"
+  ]
+}
