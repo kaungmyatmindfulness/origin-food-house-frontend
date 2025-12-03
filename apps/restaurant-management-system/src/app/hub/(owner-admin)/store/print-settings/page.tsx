@@ -36,11 +36,11 @@ import {
 import { usePrintSettings } from '@/features/print/hooks/usePrintSettings';
 import { usePrintPreview } from '@/features/print/hooks/usePrintPreview';
 
+import type { PrintSettings } from '@/features/print/types';
 import type {
   KitchenSettingsFormValues,
-  PrintSettings,
   ReceiptSettingsFormValues,
-} from '@/features/print/types';
+} from '@/features/print/schemas';
 
 type TabValue = 'receipt' | 'kitchen';
 

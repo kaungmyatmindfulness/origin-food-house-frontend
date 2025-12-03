@@ -10,11 +10,13 @@ src/
 ├── features/               # Domain-driven feature modules
 │   ├── auth/
 │   │   ├── components/     # Feature-specific UI components
+│   │   ├── constants/      # Feature constants (*.constants.ts)
+│   │   ├── hooks/          # Custom React hooks (use*.ts)
+│   │   ├── queries/        # React Query key factories (*.keys.ts)
+│   │   ├── schemas/        # Zod validation schemas (*.schemas.ts)
 │   │   ├── services/       # API service functions (*.service.ts)
 │   │   ├── store/          # Zustand state management (*.store.ts)
-│   │   ├── types/          # Feature-specific types (*.types.ts)
-│   │   ├── hooks/          # Custom React hooks (use*.ts)
-│   │   └── queries/        # React Query key factories (*.keys.ts)
+│   │   └── types/          # Feature-specific types ONLY (*.types.ts)
 │   ├── menu/
 │   ├── orders/
 │   └── [other-features]/
@@ -34,15 +36,41 @@ src/
 
 ## File Naming Conventions
 
-| Type       | Convention     | Example               |
-| ---------- | -------------- | --------------------- |
-| Components | PascalCase.tsx | `CategoryCard.tsx`    |
-| Services   | `*.service.ts` | `category.service.ts` |
-| Stores     | `*.store.ts`   | `auth.store.ts`       |
-| Types      | `*.types.ts`   | `menu-item.types.ts`  |
-| Query Keys | `*.keys.ts`    | `menu.keys.ts`        |
-| Hooks      | `use*.ts`      | `useProtected.ts`     |
-| Utils      | kebab-case.ts  | `format-currency.ts`  |
+| Type       | Convention        | Example                 |
+| ---------- | ----------------- | ----------------------- |
+| Components | PascalCase.tsx    | `CategoryCard.tsx`      |
+| Constants  | `*.constants.ts`  | `print.constants.ts`    |
+| Hooks      | `use*.ts`         | `useProtected.ts`       |
+| Query Keys | `*.keys.ts`       | `menu.keys.ts`          |
+| Schemas    | `*.schemas.ts`    | `print.schemas.ts`      |
+| Services   | `*.service.ts`    | `category.service.ts`   |
+| Stores     | `*.store.ts`      | `auth.store.ts`         |
+| Types      | `*.types.ts`      | `menu-item.types.ts`    |
+| Utils      | kebab-case.ts     | `format-currency.ts`    |
+
+### Types Files Convention
+
+**Types files (`*.types.ts`) should ONLY export types and interfaces - never constants or runtime values.**
+
+```typescript
+// ✅ CORRECT - types file exports only types
+// features/print/types/print.types.ts
+export type PrintJobType = 'CUSTOMER_RECEIPT' | 'KITCHEN_TICKET';
+export interface PrintSettings { /* ... */ }
+
+// ❌ WRONG - exporting constants from types file
+export const DEFAULT_PRINT_SETTINGS = { /* ... */ };  // Move to constants/
+export const printSettingsSchema = z.object({});       // Move to schemas/
+```
+
+**Where to put runtime values:**
+
+| Type of Export | File Location | Example |
+| -------------- | ------------- | ------- |
+| Types, interfaces | `types/*.types.ts` | `PrintSettings`, `PrintJob` |
+| Constants, default values | `constants/*.constants.ts` | `DEFAULT_PRINT_SETTINGS` |
+| Zod schemas | `schemas/*.schemas.ts` | `printSettingsSchema` |
+| Zod-inferred types | `schemas/*.schemas.ts` | `type FormValues = z.infer<typeof schema>` |
 
 ## Import Organization
 

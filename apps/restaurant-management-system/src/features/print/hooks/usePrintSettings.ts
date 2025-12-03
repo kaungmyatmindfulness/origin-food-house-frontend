@@ -12,14 +12,14 @@ import { useTranslations } from 'next-intl';
 
 import { $api } from '@/utils/apiFetch';
 import { printKeys } from '../queries/print.keys';
-import { DEFAULT_PRINT_SETTINGS } from '../types/print.types';
+import { DEFAULT_PRINT_SETTINGS } from '../constants';
 
 import type {
   AutoPrintMode,
   FontSize,
   PaperSize,
   PrintSettings,
-} from '../types/print.types';
+} from '../types';
 
 // =============================================================================
 // Enum Transformation Helpers

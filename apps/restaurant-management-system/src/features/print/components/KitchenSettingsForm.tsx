@@ -33,14 +33,10 @@ import {
   CardTitle,
 } from '@repo/ui/components/card';
 
-import { kitchenSettingsSchema } from '../types/print.types';
+import { kitchenSettingsSchema } from '../schemas';
 
-import type {
-  FontSize,
-  KitchenSettingsFormValues,
-  PaperSize,
-  PrintSettings,
-} from '../types/print.types';
+import type { FontSize, PaperSize, PrintSettings } from '../types';
+import type { KitchenSettingsFormValues } from '../schemas';
 
 interface KitchenSettingsFormProps {
   settings: PrintSettings;

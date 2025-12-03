@@ -9,7 +9,21 @@ export type {
   PrintResult,
   PrintSettings,
 } from './types';
-export { DEFAULT_PRINT_SETTINGS } from './types';
+
+// Constants
+export { DEFAULT_PRINT_SETTINGS } from './constants';
+
+// Schemas
+export {
+  receiptSettingsSchema,
+  kitchenSettingsSchema,
+  printSettingsSchema,
+} from './schemas';
+export type {
+  ReceiptSettingsFormValues,
+  KitchenSettingsFormValues,
+  PrintSettingsFormValues,
+} from './schemas';
 
 // Store
 export type { CreatePrintJobInput } from './store';

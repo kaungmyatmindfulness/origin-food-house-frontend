@@ -6,8 +6,6 @@
  * API types (PrintSettingsDto) are imported directly from @repo/api/generated/api.d.ts
  */
 
-import { z } from 'zod';
-
 /**
  * Type of print job
  * - CUSTOMER_RECEIPT: Receipt for customer with order details and payment info
@@ -156,67 +154,3 @@ export interface PrintSettings {
   /** Default printer for kitchen tickets (Tauri only) */
   defaultKitchenPrinter?: string;
 }
-
-/**
- * Default print settings
- * These match the backend defaults in the PrintSetting Prisma model
- */
-export const DEFAULT_PRINT_SETTINGS: PrintSettings = {
-  // Receipt settings
-  autoPrintReceipt: 'manual',
-  receiptCopies: 1,
-  showLogo: true,
-  headerText: [],
-  footerText: [],
-  paperSize: '80mm',
-  // Kitchen ticket settings
-  autoPrintKitchenTicket: true,
-  kitchenTicketCopies: 1,
-  kitchenPaperSize: '80mm',
-  kitchenFontSize: 'medium',
-  showOrderNumber: true,
-  showTableNumber: true,
-  showTimestamp: true,
-};
-
-// ==================== Zod Schemas for Form Validation ====================
-
-/**
- * Zod schema for receipt settings form validation
- */
-export const receiptSettingsSchema = z.object({
-  autoPrintReceipt: z.enum(['manual', 'auto', 'never']),
-  receiptCopies: z.coerce.number().int().min(1).max(10),
-  showLogo: z.boolean(),
-  headerText: z.array(z.string().max(100)).max(5),
-  footerText: z.array(z.string().max(100)).max(5),
-  paperSize: z.enum(['58mm', '80mm']),
-  defaultReceiptPrinter: z.string().optional(),
-});
-
-export type ReceiptSettingsFormValues = z.infer<typeof receiptSettingsSchema>;
-
-/**
- * Zod schema for kitchen ticket settings form validation
- */
-export const kitchenSettingsSchema = z.object({
-  autoPrintKitchenTicket: z.boolean(),
-  kitchenTicketCopies: z.coerce.number().int().min(1).max(10),
-  kitchenPaperSize: z.enum(['58mm', '80mm']),
-  kitchenFontSize: z.enum(['small', 'medium', 'large', 'xlarge']),
-  showOrderNumber: z.boolean(),
-  showTableNumber: z.boolean(),
-  showTimestamp: z.boolean(),
-  defaultKitchenPrinter: z.string().optional(),
-});
-
-export type KitchenSettingsFormValues = z.infer<typeof kitchenSettingsSchema>;
-
-/**
- * Combined Zod schema for all print settings
- */
-export const printSettingsSchema = receiptSettingsSchema.merge(
-  kitchenSettingsSchema
-);
-
-export type PrintSettingsFormValues = z.infer<typeof printSettingsSchema>;

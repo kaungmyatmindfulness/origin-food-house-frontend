@@ -33,14 +33,10 @@ import {
   CardTitle,
 } from '@repo/ui/components/card';
 
-import { receiptSettingsSchema } from '../types/print.types';
+import { receiptSettingsSchema } from '../schemas';
 
-import type {
-  AutoPrintMode,
-  PaperSize,
-  PrintSettings,
-  ReceiptSettingsFormValues,
-} from '../types/print.types';
+import type { AutoPrintMode, PaperSize, PrintSettings } from '../types';
+import type { ReceiptSettingsFormValues } from '../schemas';
 
 interface ReceiptSettingsFormProps {
   settings: PrintSettings;

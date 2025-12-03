@@ -25,14 +25,14 @@ import { getPrintAdapter } from '../adapters/adapter-factory';
 import { buildCustomerReceiptHtml } from '../templates/customer-receipt';
 import { buildKitchenTicketHtml } from '../templates/kitchen-ticket';
 import { usePrintSettings } from './usePrintSettings';
-import { DEFAULT_PRINT_SETTINGS } from '../types/print.types';
+import { DEFAULT_PRINT_SETTINGS } from '../constants';
 
 import type {
   PrintAdapter,
   PrintJob,
   PrintPlatform,
   PrintSettings,
-} from '../types/print.types';
+} from '../types';
 import type { ReceiptOrderData } from '@/features/sales/utils/transform-order-to-receipt';
 import type { OrderResponseDto } from '@repo/api/generated/types';
 
