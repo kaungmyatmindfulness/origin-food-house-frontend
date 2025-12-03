@@ -94,20 +94,20 @@ User-initiated navigation?
 
 The following documents contain comprehensive frontend patterns:
 
-@docs/architecture.md
+@frontend-rules/architecture.md
 
-@docs/code-quality.md
+@frontend-rules/code-quality.md
 
-@docs/navigation-patterns.md
+@frontend-rules/navigation-patterns.md
 
-@docs/props-conventions.md
+@frontend-rules/props-conventions.md
 
-@docs/design-system.md
+@frontend-rules/design-system.md
 
-@docs/patterns.md
+@frontend-rules/patterns.md
 
-@docs/i18n.md
+@frontend-rules/i18n.md
 
-@docs/anti-patterns.md
+@frontend-rules/anti-patterns.md
 
-@docs/workflows.md
+@frontend-rules/workflows.md
