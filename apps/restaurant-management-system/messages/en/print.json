@@ -29,25 +29,44 @@
 
     "settings": {
       "title": "Print Settings",
-      "description": "Configure automatic printing behavior",
+      "description": "Configure automatic printing behavior for receipts and kitchen tickets",
+      "subtitle": "Manage receipt and kitchen ticket printing preferences",
       "customerReceipt": "Customer Receipt",
       "kitchenTicket": "Kitchen Ticket",
       "autoPrintMode": "Auto-Print Mode",
       "copies": "Copies",
+      "copiesDescription": "Number of copies to print (1-10)",
       "showLogo": "Show Logo",
+      "showLogoDescription": "Display store logo on receipts",
       "headerText": "Header Text",
+      "headerTextDescription": "Custom text displayed at the top of receipts (max 5 lines)",
       "footerText": "Footer Text",
+      "footerTextDescription": "Custom text displayed at the bottom of receipts (max 5 lines)",
+      "addLine": "Add Line",
+      "removeLine": "Remove Line",
       "save": "Save Settings",
       "saving": "Saving...",
-      "saved": "Settings saved",
+      "saved": "Settings saved successfully",
+      "saveFailed": "Failed to save settings",
       "receiptPrinter": "Receipt Printer",
       "receiptPrinterDescription": "Select printer for customer receipts",
       "kitchenPrinter": "Kitchen Printer",
       "kitchenPrinterDescription": "Select printer for kitchen tickets",
       "silentPrint": "Silent Print",
       "silentPrintDescription": "Print without showing dialog (desktop only)",
-      "paperWidth": "Paper Width",
-      "paperWidthDescription": "Thermal paper width in mm",
+      "paperSize": "Paper Size",
+      "paperSizeDescription": "Thermal paper width for printing",
+      "fontSize": "Font Size",
+      "fontSizeDescription": "Text size for kitchen tickets",
+      "showOrderNumber": "Show Order Number",
+      "showOrderNumberDescription": "Display order number on kitchen tickets",
+      "showTableNumber": "Show Table Number",
+      "showTableNumberDescription": "Display table number on kitchen tickets",
+      "showTimestamp": "Show Timestamp",
+      "showTimestampDescription": "Display order time on kitchen tickets",
+      "autoPrintKitchenDescription": "Automatically print kitchen tickets when orders are placed",
+      "displayOptions": "Display Options",
+      "storeSettingsBadge": "Store Settings",
       "mode": {
         "manual": "Manual",
         "manualDescription": "Show print button, user decides",
@@ -55,7 +74,40 @@
         "autoDescription": "Automatically print after payment",
         "never": "Never",
         "neverDescription": "Disable printing entirely"
-      }
+      },
+      "paperSizes": {
+        "58mm": "58mm (Compact)",
+        "80mm": "80mm (Standard)"
+      },
+      "fontSizes": {
+        "small": "Small",
+        "medium": "Medium",
+        "large": "Large",
+        "xlarge": "Extra Large"
+      },
+      "tabs": {
+        "receipt": "Receipt Settings",
+        "kitchen": "Kitchen Ticket Settings"
+      },
+      "preview": {
+        "title": "Preview",
+        "receiptDescription": "Live preview of your receipt",
+        "kitchenDescription": "Live preview of your kitchen ticket",
+        "receiptTitle": "Receipt Preview",
+        "kitchenTitle": "Kitchen Ticket Preview",
+        "sampleStoreName": "Sample Store",
+        "sampleAddress": "123 Main Street",
+        "samplePhone": "Tel: 555-1234",
+        "sampleItem": "Menu Item",
+        "sampleOrder": "Order #1234",
+        "sampleTable": "Table 5",
+        "sampleTime": "12:30 PM",
+        "printPreview": "Print Preview"
+      },
+      "loading": "Loading settings...",
+      "errorTitle": "Error Loading Settings",
+      "errorLoading": "Failed to load print settings. Please try again.",
+      "tryAgain": "Try Again"
     },
 
     "printerSelector": {

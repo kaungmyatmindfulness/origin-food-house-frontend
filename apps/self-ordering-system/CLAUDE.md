@@ -1,6 +1,10 @@
 # CLAUDE.md - Self-Ordering System (SOS)
 
-This file provides SOS-specific guidance. **See root `/CLAUDE.md` for shared conventions, design system, code quality rules, and quality gates.**
+This file provides SOS-specific guidance.
+
+**Imported Documentation:**
+
+@../../.claude/CLAUDE-FRONTEND.md
 
 ## App Overview
 

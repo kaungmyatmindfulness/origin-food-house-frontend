@@ -1,6 +1,10 @@
 # CLAUDE.md - Restaurant Management System (RMS)
 
-This file provides RMS-specific guidance. **See root `/CLAUDE.md` for shared conventions, design system, code quality rules, and quality gates.**
+This file provides RMS-specific guidance.
+
+**Imported Documentation:**
+
+@../../.claude/CLAUDE-FRONTEND.md
 
 ## App Overview
 

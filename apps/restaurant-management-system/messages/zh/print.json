@@ -29,25 +29,44 @@
 
     "settings": {
       "title": "打印设置",
-      "description": "配置自动打印行为",
+      "description": "配置收据和厨房小票的自动打印行为",
+      "subtitle": "管理收据和厨房小票的打印偏好设置",
       "customerReceipt": "顾客收据",
       "kitchenTicket": "厨房小票",
       "autoPrintMode": "自动打印模式",
       "copies": "打印份数",
+      "copiesDescription": "打印份数（1-10）",
       "showLogo": "显示标志",
+      "showLogoDescription": "在收据上显示店铺标志",
       "headerText": "页眉文字",
+      "headerTextDescription": "显示在收据顶部的自定义文字（最多5行）",
       "footerText": "页脚文字",
+      "footerTextDescription": "显示在收据底部的自定义文字（最多5行）",
+      "addLine": "添加行",
+      "removeLine": "删除行",
       "save": "保存设置",
       "saving": "正在保存...",
-      "saved": "设置已保存",
+      "saved": "设置保存成功",
+      "saveFailed": "保存设置失败",
       "receiptPrinter": "收据打印机",
       "receiptPrinterDescription": "选择顾客收据打印机",
       "kitchenPrinter": "厨房打印机",
       "kitchenPrinterDescription": "选择厨房小票打印机",
       "silentPrint": "静默打印",
       "silentPrintDescription": "打印时不显示对话框（仅限桌面版）",
-      "paperWidth": "纸张宽度",
-      "paperWidthDescription": "热敏纸宽度（毫米）",
+      "paperSize": "纸张尺寸",
+      "paperSizeDescription": "热敏纸打印宽度",
+      "fontSize": "字体大小",
+      "fontSizeDescription": "厨房小票的文字大小",
+      "showOrderNumber": "显示订单号",
+      "showOrderNumberDescription": "在厨房小票上显示订单号",
+      "showTableNumber": "显示桌号",
+      "showTableNumberDescription": "在厨房小票上显示桌号",
+      "showTimestamp": "显示时间戳",
+      "showTimestampDescription": "在厨房小票上显示订单时间",
+      "autoPrintKitchenDescription": "下单后自动打印厨房小票",
+      "displayOptions": "显示选项",
+      "storeSettingsBadge": "店铺设置",
       "mode": {
         "manual": "手动",
         "manualDescription": "显示打印按钮，由用户决定",
@@ -55,7 +74,40 @@
         "autoDescription": "付款后自动打印",
         "never": "从不",
         "neverDescription": "完全禁用打印"
-      }
+      },
+      "paperSizes": {
+        "58mm": "58毫米（紧凑型）",
+        "80mm": "80毫米（标准型）"
+      },
+      "fontSizes": {
+        "small": "小",
+        "medium": "中",
+        "large": "大",
+        "xlarge": "特大"
+      },
+      "tabs": {
+        "receipt": "收据设置",
+        "kitchen": "厨房小票设置"
+      },
+      "preview": {
+        "title": "预览",
+        "receiptDescription": "收据实时预览",
+        "kitchenDescription": "厨房小票实时预览",
+        "receiptTitle": "收据预览",
+        "kitchenTitle": "厨房小票预览",
+        "sampleStoreName": "示例店铺",
+        "sampleAddress": "主街123号",
+        "samplePhone": "电话：555-1234",
+        "sampleItem": "菜品名称",
+        "sampleOrder": "订单 #1234",
+        "sampleTable": "5号桌",
+        "sampleTime": "下午12:30",
+        "printPreview": "打印预览"
+      },
+      "loading": "正在加载设置...",
+      "errorTitle": "加载设置错误",
+      "errorLoading": "加载打印设置失败，请重试。",
+      "tryAgain": "重试"
     },
 
     "printerSelector": {

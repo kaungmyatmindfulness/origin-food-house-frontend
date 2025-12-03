@@ -14,3 +14,4 @@ export { usePrintSettings } from './usePrintSettings';
 export { usePrintQueue } from './usePrintQueue';
 export { useAutoPrint } from './useAutoPrint';
 export { useTauriPrinters } from './useTauriPrinters';
+export { usePrintPreview } from './usePrintPreview';

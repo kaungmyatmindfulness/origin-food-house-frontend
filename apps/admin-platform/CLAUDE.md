@@ -1,6 +1,12 @@
 # CLAUDE.md - Admin Platform
 
-This file provides Admin Platform-specific guidance. **See root `/CLAUDE.md` for shared conventions, design system, code quality rules, and quality gates.**
+This file provides Admin Platform-specific guidance.
+
+**Imported Documentation:**
+
+@../../.claude/CLAUDE-FRONTEND.md
+
+**Note:** Admin Platform is English-only (no i18n).
 
 ## App Overview
 

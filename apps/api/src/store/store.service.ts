@@ -52,8 +52,8 @@ import {
 import { BusinessHoursDto } from 'src/store/dto/business-hours.dto';
 import { CreateStoreDto } from 'src/store/dto/create-store.dto';
 import {
-  DEFAULT_PRINT_SETTINGS,
-  PrintSettingsDto,
+  GetPrintSettingResponseDto,
+  UpdatePrintSettingResponseDto,
   UpdatePrintSettingsDto,
 } from 'src/store/dto/print-settings.dto';
 import { UpdateStoreInformationDto } from 'src/store/dto/update-store-information.dto';
@@ -935,19 +935,19 @@ export class StoreService {
 
   /**
    * Gets print settings for a store.
-   * Returns default settings if not configured.
+   * Creates default settings if not configured.
    * Requires any store membership (no specific role required).
    * @param userId The ID of the user performing the action.
    * @param storeId The ID of the Store whose print settings are being retrieved.
    * @returns The print settings for the store.
    * @throws {ForbiddenException} If user is not a member of the store.
-   * @throws {NotFoundException} If store settings are not found.
+   * @throws {NotFoundException} If store is not found.
    * @throws {InternalServerErrorException} On unexpected database errors.
    */
   async getPrintSettings(
     userId: string,
     storeId: string
-  ): Promise<PrintSettingsDto> {
+  ): Promise<GetPrintSettingResponseDto | null> {
     const method = this.getPrintSettings.name;
     this.logger.log(
       `[${method}] User ${userId} retrieving print settings for Store ID: ${storeId}`
@@ -965,29 +965,15 @@ export class StoreService {
     }
 
     try {
-      const setting = await this.prisma.storeSetting.findUnique({
+      // Get print settings for the store (may be null if not configured)
+      const printSetting = await this.prisma.printSetting.findUnique({
         where: { storeId },
-        select: { printSettings: true },
       });
-
-      if (!setting) {
-        this.logger.warn(
-          `[${method}] StoreSetting for Store ID ${storeId} not found.`
-        );
-        throw new NotFoundException(
-          `Settings for store with ID ${storeId} not found.`
-        );
-      }
-
-      // Return stored settings or defaults
-      const printSettings = setting.printSettings
-        ? (setting.printSettings as unknown as PrintSettingsDto)
-        : DEFAULT_PRINT_SETTINGS;
 
       this.logger.log(
         `[${method}] Print settings retrieved for Store ${storeId}`
       );
-      return printSettings;
+      return printSetting;
     } catch (error) {
       if (
         error instanceof ForbiddenException ||
@@ -1008,21 +994,20 @@ export class StoreService {
 
   /**
    * Updates print settings for a store.
-   * Merges provided settings with existing/default settings.
+   * Creates settings if they don't exist, then applies the partial update.
    * Requires OWNER or ADMIN role.
    * @param userId The ID of the user performing the action.
    * @param storeId The ID of the Store whose print settings are being updated.
    * @param dto The partial print settings to update.
    * @returns The full updated print settings.
    * @throws {ForbiddenException} If user lacks OWNER or ADMIN permission.
-   * @throws {NotFoundException} If store settings are not found.
    * @throws {InternalServerErrorException} On unexpected database errors.
    */
   async updatePrintSettings(
     userId: string,
     storeId: string,
     dto: UpdatePrintSettingsDto
-  ): Promise<PrintSettingsDto> {
+  ): Promise<UpdatePrintSettingResponseDto> {
     const method = this.updatePrintSettings.name;
     this.logger.log(
       `[${method}] User ${userId} updating print settings for Store ID: ${storeId}`
@@ -1034,37 +1019,65 @@ export class StoreService {
     ]);
 
     try {
-      // Get current settings
-      const currentSetting = await this.prisma.storeSetting.findUnique({
+      // Get current settings (or create if not exists)
+      const currentSetting = await this.prisma.printSetting.upsert({
         where: { storeId },
-        select: { printSettings: true },
+        update: {},
+        create: { storeId },
       });
 
-      if (!currentSetting) {
-        this.logger.warn(
-          `[${method}] StoreSetting for Store ID ${storeId} not found.`
-        );
-        throw new NotFoundException(
-          `Settings for store with ID ${storeId} not found.`
-        );
+      // Build update data from DTO (only include defined fields)
+      const updateData: Prisma.PrintSettingUpdateInput = {};
+      if (dto.autoPrintReceipt !== undefined) {
+        updateData.autoPrintReceipt = dto.autoPrintReceipt;
+      }
+      if (dto.autoPrintKitchenTicket !== undefined) {
+        updateData.autoPrintKitchenTicket = dto.autoPrintKitchenTicket;
+      }
+      if (dto.receiptCopies !== undefined) {
+        updateData.receiptCopies = dto.receiptCopies;
+      }
+      if (dto.kitchenTicketCopies !== undefined) {
+        updateData.kitchenTicketCopies = dto.kitchenTicketCopies;
+      }
+      if (dto.showLogo !== undefined) {
+        updateData.showLogo = dto.showLogo;
+      }
+      if (dto.headerText !== undefined) {
+        updateData.headerText = dto.headerText;
+      }
+      if (dto.footerText !== undefined) {
+        updateData.footerText = dto.footerText;
+      }
+      if (dto.paperSize !== undefined) {
+        updateData.paperSize = dto.paperSize;
+      }
+      if (dto.kitchenPaperSize !== undefined) {
+        updateData.kitchenPaperSize = dto.kitchenPaperSize;
+      }
+      if (dto.kitchenFontSize !== undefined) {
+        updateData.kitchenFontSize = dto.kitchenFontSize;
+      }
+      if (dto.showOrderNumber !== undefined) {
+        updateData.showOrderNumber = dto.showOrderNumber;
+      }
+      if (dto.showTableNumber !== undefined) {
+        updateData.showTableNumber = dto.showTableNumber;
+      }
+      if (dto.showTimestamp !== undefined) {
+        updateData.showTimestamp = dto.showTimestamp;
+      }
+      if (dto.defaultReceiptPrinter !== undefined) {
+        updateData.defaultReceiptPrinter = dto.defaultReceiptPrinter;
+      }
+      if (dto.defaultKitchenPrinter !== undefined) {
+        updateData.defaultKitchenPrinter = dto.defaultKitchenPrinter;
       }
 
-      // Merge with existing or default settings
-      const existingSettings = currentSetting.printSettings
-        ? (currentSetting.printSettings as unknown as PrintSettingsDto)
-        : DEFAULT_PRINT_SETTINGS;
-
-      const updatedSettings: PrintSettingsDto = {
-        ...existingSettings,
-        ...dto,
-      };
-
       // Update in database
-      await this.prisma.storeSetting.update({
+      const updatedSetting = await this.prisma.printSetting.update({
         where: { storeId },
-        data: {
-          printSettings: toJsonValue(updatedSettings),
-        },
+        data: updateData,
       });
 
       // Log the change
@@ -1073,8 +1086,8 @@ export class StoreService {
         userId,
         {
           field: 'printSettings',
-          oldValue: JSON.stringify(existingSettings),
-          newValue: JSON.stringify(updatedSettings),
+          oldValue: JSON.stringify(currentSetting),
+          newValue: JSON.stringify(updatedSetting),
         },
         undefined,
         undefined
@@ -1083,7 +1096,7 @@ export class StoreService {
       this.logger.log(
         `[${method}] Print settings updated for Store ${storeId} by User ${userId}`
       );
-      return updatedSettings;
+      return updatedSetting;
     } catch (error) {
       if (
         error instanceof ForbiddenException ||

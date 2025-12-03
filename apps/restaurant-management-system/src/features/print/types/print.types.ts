@@ -3,8 +3,10 @@
  * These types are used for print job management and print adapter configuration.
  *
  * Note: These are frontend-only types for local print queue management.
- * Not derived from API types as printing is handled client-side.
+ * API types (PrintSettingsDto) are imported directly from @repo/api/generated/api.d.ts
  */
+
+import { z } from 'zod';
 
 /**
  * Type of print job
@@ -29,12 +31,28 @@ export type PrintJobStatus =
   | 'CANCELLED';
 
 /**
- * Auto-print mode for receipts
+ * Auto-print mode for receipts (matches backend enum)
  * - manual: User must explicitly trigger print
  * - auto: Automatically print when order is completed
  * - never: Never prompt for printing
  */
 export type AutoPrintMode = 'manual' | 'auto' | 'never';
+
+/**
+ * Paper size options for thermal printers (matches backend enum)
+ * - 58mm: Compact thermal paper (2.25")
+ * - 80mm: Standard thermal paper (3.15")
+ */
+export type PaperSize = '58mm' | '80mm';
+
+/**
+ * Font size options for kitchen tickets (matches backend enum)
+ * - small: More content fits, harder to read
+ * - medium: Balanced readability
+ * - large: Easier to read in busy kitchens
+ * - xlarge: Maximum readability
+ */
+export type FontSize = 'small' | 'medium' | 'large' | 'xlarge';
 
 /**
  * Print platform/adapter type
@@ -101,38 +119,104 @@ export interface PrintAdapter {
 }
 
 /**
- * Print settings stored per-store
+ * Print settings stored per-store (frontend type matching backend PrintSettingsDto)
  */
 export interface PrintSettings {
+  // ==================== Receipt Settings ====================
   /** When to auto-print customer receipts */
   autoPrintReceipt: AutoPrintMode;
-  /** Whether to auto-print kitchen tickets */
-  autoPrintKitchenTicket: boolean;
-  /** Default printer for receipts (Tauri only) */
-  defaultReceiptPrinter?: string;
-  /** Default printer for kitchen tickets (Tauri only) */
-  defaultKitchenPrinter?: string;
   /** Number of receipt copies to print */
   receiptCopies: number;
-  /** Number of kitchen ticket copies to print */
-  kitchenTicketCopies: number;
   /** Whether to show store logo on receipts */
   showLogo: boolean;
   /** Custom header lines for receipts */
   headerText: string[];
   /** Custom footer lines for receipts */
   footerText: string[];
+  /** Paper size for customer receipts (58mm or 80mm) */
+  paperSize: PaperSize;
+  /** Default printer for receipts (Tauri only) */
+  defaultReceiptPrinter?: string;
+
+  // ==================== Kitchen Ticket Settings ====================
+  /** Whether to auto-print kitchen tickets */
+  autoPrintKitchenTicket: boolean;
+  /** Number of kitchen ticket copies to print */
+  kitchenTicketCopies: number;
+  /** Paper size for kitchen tickets (58mm or 80mm) */
+  kitchenPaperSize: PaperSize;
+  /** Font size for kitchen tickets */
+  kitchenFontSize: FontSize;
+  /** Whether to show order number on kitchen tickets */
+  showOrderNumber: boolean;
+  /** Whether to show table number on kitchen tickets */
+  showTableNumber: boolean;
+  /** Whether to show timestamp on kitchen tickets */
+  showTimestamp: boolean;
+  /** Default printer for kitchen tickets (Tauri only) */
+  defaultKitchenPrinter?: string;
 }
 
 /**
  * Default print settings
+ * These match the backend defaults in the PrintSetting Prisma model
  */
 export const DEFAULT_PRINT_SETTINGS: PrintSettings = {
+  // Receipt settings
   autoPrintReceipt: 'manual',
-  autoPrintKitchenTicket: true,
   receiptCopies: 1,
-  kitchenTicketCopies: 1,
   showLogo: true,
   headerText: [],
   footerText: [],
+  paperSize: '80mm',
+  // Kitchen ticket settings
+  autoPrintKitchenTicket: true,
+  kitchenTicketCopies: 1,
+  kitchenPaperSize: '80mm',
+  kitchenFontSize: 'medium',
+  showOrderNumber: true,
+  showTableNumber: true,
+  showTimestamp: true,
 };
+
+// ==================== Zod Schemas for Form Validation ====================
+
+/**
+ * Zod schema for receipt settings form validation
+ */
+export const receiptSettingsSchema = z.object({
+  autoPrintReceipt: z.enum(['manual', 'auto', 'never']),
+  receiptCopies: z.coerce.number().int().min(1).max(10),
+  showLogo: z.boolean(),
+  headerText: z.array(z.string().max(100)).max(5),
+  footerText: z.array(z.string().max(100)).max(5),
+  paperSize: z.enum(['58mm', '80mm']),
+  defaultReceiptPrinter: z.string().optional(),
+});
+
+export type ReceiptSettingsFormValues = z.infer<typeof receiptSettingsSchema>;
+
+/**
+ * Zod schema for kitchen ticket settings form validation
+ */
+export const kitchenSettingsSchema = z.object({
+  autoPrintKitchenTicket: z.boolean(),
+  kitchenTicketCopies: z.coerce.number().int().min(1).max(10),
+  kitchenPaperSize: z.enum(['58mm', '80mm']),
+  kitchenFontSize: z.enum(['small', 'medium', 'large', 'xlarge']),
+  showOrderNumber: z.boolean(),
+  showTableNumber: z.boolean(),
+  showTimestamp: z.boolean(),
+  defaultKitchenPrinter: z.string().optional(),
+});
+
+export type KitchenSettingsFormValues = z.infer<typeof kitchenSettingsSchema>;
+
+/**
+ * Combined Zod schema for all print settings
+ */
+export const printSettingsSchema = receiptSettingsSchema.merge(
+  kitchenSettingsSchema
+);
+
+export type PrintSettingsFormValues = z.infer<typeof printSettingsSchema>;

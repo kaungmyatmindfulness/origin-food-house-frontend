@@ -29,25 +29,44 @@
 
     "settings": {
       "title": "ตั้งค่าการพิมพ์",
-      "description": "กำหนดค่าพฤติกรรมการพิมพ์อัตโนมัติ",
+      "description": "กำหนดค่าการพิมพ์อัตโนมัติสำหรับใบเสร็จและตั๋วครัว",
+      "subtitle": "จัดการการตั้งค่าการพิมพ์ใบเสร็จและตั๋วครัว",
       "customerReceipt": "ใบเสร็จลูกค้า",
       "kitchenTicket": "ตั๋วครัว",
       "autoPrintMode": "โหมดพิมพ์อัตโนมัติ",
       "copies": "จำนวนสำเนา",
+      "copiesDescription": "จำนวนสำเนาที่จะพิมพ์ (1-10)",
       "showLogo": "แสดงโลโก้",
+      "showLogoDescription": "แสดงโลโก้ร้านบนใบเสร็จ",
       "headerText": "ข้อความส่วนหัว",
+      "headerTextDescription": "ข้อความที่กำหนดเองที่แสดงด้านบนของใบเสร็จ (สูงสุด 5 บรรทัด)",
       "footerText": "ข้อความส่วนท้าย",
+      "footerTextDescription": "ข้อความที่กำหนดเองที่แสดงด้านล่างของใบเสร็จ (สูงสุด 5 บรรทัด)",
+      "addLine": "เพิ่มบรรทัด",
+      "removeLine": "ลบบรรทัด",
       "save": "บันทึกการตั้งค่า",
       "saving": "กำลังบันทึก...",
-      "saved": "บันทึกการตั้งค่าแล้ว",
+      "saved": "บันทึกการตั้งค่าสำเร็จ",
+      "saveFailed": "บันทึกการตั้งค่าไม่สำเร็จ",
       "receiptPrinter": "เครื่องพิมพ์ใบเสร็จ",
       "receiptPrinterDescription": "เลือกเครื่องพิมพ์สำหรับใบเสร็จลูกค้า",
       "kitchenPrinter": "เครื่องพิมพ์ครัว",
       "kitchenPrinterDescription": "เลือกเครื่องพิมพ์สำหรับตั๋วครัว",
       "silentPrint": "พิมพ์แบบเงียบ",
       "silentPrintDescription": "พิมพ์โดยไม่แสดงกล่องโต้ตอบ (เฉพาะเดสก์ท็อป)",
-      "paperWidth": "ความกว้างกระดาษ",
-      "paperWidthDescription": "ความกว้างกระดาษความร้อน (มม.)",
+      "paperSize": "ขนาดกระดาษ",
+      "paperSizeDescription": "ความกว้างกระดาษความร้อนสำหรับการพิมพ์",
+      "fontSize": "ขนาดตัวอักษร",
+      "fontSizeDescription": "ขนาดตัวอักษรสำหรับตั๋วครัว",
+      "showOrderNumber": "แสดงหมายเลขออเดอร์",
+      "showOrderNumberDescription": "แสดงหมายเลขออเดอร์บนตั๋วครัว",
+      "showTableNumber": "แสดงหมายเลขโต๊ะ",
+      "showTableNumberDescription": "แสดงหมายเลขโต๊ะบนตั๋วครัว",
+      "showTimestamp": "แสดงเวลา",
+      "showTimestampDescription": "แสดงเวลาสั่งออเดอร์บนตั๋วครัว",
+      "autoPrintKitchenDescription": "พิมพ์ตั๋วครัวอัตโนมัติเมื่อมีออเดอร์เข้า",
+      "displayOptions": "ตัวเลือกการแสดงผล",
+      "storeSettingsBadge": "ตั้งค่าร้าน",
       "mode": {
         "manual": "ด้วยตนเอง",
         "manualDescription": "แสดงปุ่มพิมพ์ ผู้ใช้ตัดสินใจเอง",
@@ -55,7 +74,40 @@
         "autoDescription": "พิมพ์อัตโนมัติหลังชำระเงิน",
         "never": "ไม่เคย",
         "neverDescription": "ปิดใช้งานการพิมพ์ทั้งหมด"
-      }
+      },
+      "paperSizes": {
+        "58mm": "58 มม. (ขนาดกะทัดรัด)",
+        "80mm": "80 มม. (ขนาดมาตรฐาน)"
+      },
+      "fontSizes": {
+        "small": "เล็ก",
+        "medium": "กลาง",
+        "large": "ใหญ่",
+        "xlarge": "ใหญ่พิเศษ"
+      },
+      "tabs": {
+        "receipt": "ตั้งค่าใบเสร็จ",
+        "kitchen": "ตั้งค่าตั๋วครัว"
+      },
+      "preview": {
+        "title": "ตัวอย่าง",
+        "receiptDescription": "ดูตัวอย่างใบเสร็จของคุณแบบเรียลไทม์",
+        "kitchenDescription": "ดูตัวอย่างตั๋วครัวของคุณแบบเรียลไทม์",
+        "receiptTitle": "ตัวอย่างใบเสร็จ",
+        "kitchenTitle": "ตัวอย่างตั๋วครัว",
+        "sampleStoreName": "ร้านตัวอย่าง",
+        "sampleAddress": "123 ถนนหลัก",
+        "samplePhone": "โทร: 555-1234",
+        "sampleItem": "รายการเมนู",
+        "sampleOrder": "ออเดอร์ #1234",
+        "sampleTable": "โต๊ะ 5",
+        "sampleTime": "12:30 น.",
+        "printPreview": "พิมพ์ตัวอย่าง"
+      },
+      "loading": "กำลังโหลดการตั้งค่า...",
+      "errorTitle": "เกิดข้อผิดพลาดในการโหลดการตั้งค่า",
+      "errorLoading": "โหลดการตั้งค่าการพิมพ์ไม่สำเร็จ กรุณาลองใหม่",
+      "tryAgain": "ลองอีกครั้ง"
     },
 
     "printerSelector": {

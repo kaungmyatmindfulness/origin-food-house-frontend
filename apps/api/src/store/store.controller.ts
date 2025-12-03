@@ -37,7 +37,8 @@ import { BusinessHoursDto } from 'src/store/dto/business-hours.dto';
 import { CreateStoreDto } from 'src/store/dto/create-store.dto';
 import { GetStoreDetailsResponseDto } from 'src/store/dto/get-store-details-response.dto';
 import {
-  PrintSettingsDto,
+  GetPrintSettingResponseDto,
+  UpdatePrintSettingResponseDto,
   UpdatePrintSettingsDto,
 } from 'src/store/dto/print-settings.dto';
 import { StoreInformationResponseDto } from 'src/store/dto/store-information-response.dto';
@@ -59,7 +60,8 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
   GetStoreDetailsResponseDto,
   StoreInformationResponseDto,
   StoreSettingResponseDto,
-  PrintSettingsDto
+  GetPrintSettingResponseDto,
+  UpdatePrintSettingResponseDto
 )
 export class StoreController {
   private readonly logger = new Logger(StoreController.name);
@@ -193,10 +195,6 @@ export class StoreController {
       enabledLocales: updatedSettings.enabledLocales,
       multiLanguageEnabled: updatedSettings.multiLanguageEnabled,
       multiLanguageMigratedAt: updatedSettings.multiLanguageMigratedAt ?? null,
-      printSettings: updatedSettings.printSettings as Record<
-        string,
-        unknown
-      > | null,
       createdAt: updatedSettings.createdAt,
       updatedAt: updatedSettings.updatedAt,
     };
@@ -283,7 +281,6 @@ export class StoreController {
       enabledLocales: settings.enabledLocales,
       multiLanguageEnabled: settings.multiLanguageEnabled,
       multiLanguageMigratedAt: settings.multiLanguageMigratedAt ?? null,
-      printSettings: settings.printSettings as Record<string, unknown> | null,
       createdAt: settings.createdAt,
       updatedAt: settings.updatedAt,
     };
@@ -336,7 +333,6 @@ export class StoreController {
       enabledLocales: settings.enabledLocales,
       multiLanguageEnabled: settings.multiLanguageEnabled,
       multiLanguageMigratedAt: settings.multiLanguageMigratedAt ?? null,
-      printSettings: settings.printSettings as Record<string, unknown> | null,
       createdAt: settings.createdAt,
       updatedAt: settings.updatedAt,
     };
@@ -430,7 +426,6 @@ export class StoreController {
       enabledLocales: settings.enabledLocales,
       multiLanguageEnabled: settings.multiLanguageEnabled,
       multiLanguageMigratedAt: settings.multiLanguageMigratedAt ?? null,
-      printSettings: settings.printSettings as Record<string, unknown> | null,
       createdAt: settings.createdAt,
       updatedAt: settings.updatedAt,
     };
@@ -444,15 +439,16 @@ export class StoreController {
   @Get(':id/settings/print-settings')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  @ApiGetOne(PrintSettingsDto, 'print settings', {
+  @ApiGetOne(GetPrintSettingResponseDto, 'print settings', {
     summary: 'Get print settings for a store (any authenticated store member)',
-    description: 'Print settings retrieved successfully.',
+    description:
+      'Print settings retrieved successfully. Returns null if not configured.',
     idDescription: 'ID (UUID) of the store',
   })
   async getPrintSettings(
     @GetUser('sub') userId: string,
     @Param('id', ParseUUIDPipe) storeId: string
-  ): Promise<StandardApiResponse<PrintSettingsDto>> {
+  ): Promise<StandardApiResponse<GetPrintSettingResponseDto | null>> {
     const method = this.getPrintSettings.name;
     this.logger.log(
       `[${method}] User ${userId} retrieving print settings for Store ID: ${storeId}`
@@ -465,14 +461,16 @@ export class StoreController {
 
     return StandardApiResponse.success(
       printSettings,
-      'Print settings retrieved successfully.'
+      printSettings
+        ? 'Print settings retrieved successfully.'
+        : 'Print settings not configured yet.'
     );
   }
 
   @Patch(':id/settings/print-settings')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  @ApiPatch(PrintSettingsDto, 'print settings', {
+  @ApiPatch(UpdatePrintSettingResponseDto, 'print settings', {
     summary: 'Update print settings (OWNER or ADMIN only)',
     description: 'Print settings updated successfully.',
     roles: 'OWNER, ADMIN',
@@ -482,7 +480,7 @@ export class StoreController {
     @GetUser('sub') userId: string,
     @Param('id', ParseUUIDPipe) storeId: string,
     @Body() dto: UpdatePrintSettingsDto
-  ): Promise<StandardApiResponse<PrintSettingsDto>> {
+  ): Promise<StandardApiResponse<UpdatePrintSettingResponseDto>> {
     const method = this.updatePrintSettings.name;
     this.logger.log(
       `[${method}] User ${userId} updating print settings for Store ID: ${storeId}`

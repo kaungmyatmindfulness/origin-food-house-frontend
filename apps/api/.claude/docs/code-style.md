@@ -155,3 +155,137 @@ export class MenuCategoryDto {
 ```
 Duplicate DTO detected: "YourDtoName" is defined multiple times with different schemas.
 ```
+
+## Response DTO Patterns for GET vs UPDATE
+
+**ALWAYS use separate response DTOs when GET and UPDATE operations have different guarantees:**
+
+When a resource supports both GET (read) and UPDATE (write) operations with different nullability or side-effect characteristics, create separate response DTOs to accurately reflect the API contract.
+
+### Why Separate DTOs?
+
+| Operation  | Return Guarantee                               | DTO Pattern                        |
+| ---------- | ---------------------------------------------- | ---------------------------------- |
+| **GET**    | May return `null` if resource doesn't exist    | `Get{Resource}ResponseDto \| null` |
+| **UPDATE** | Always returns data (upsert ensures existence) | `Update{Resource}ResponseDto`      |
+
+### Naming Convention
+
+```typescript
+// Base DTO with common fields (not exported)
+class {Resource}BaseResponseDto {
+  id: string;
+  storeId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  // ... common fields
+}
+
+// GET response - can be null if resource not found/configured
+export class Get{Resource}ResponseDto extends {Resource}BaseResponseDto {}
+
+// UPDATE response - always returns the updated resource
+export class Update{Resource}ResponseDto extends {Resource}BaseResponseDto {}
+```
+
+### Example: Print Settings
+
+```typescript
+// print-settings.dto.ts
+
+// Base class (not exported - internal use only)
+class PrintSettingBaseResponseDto extends PrintSettingsDto {
+  @ApiProperty({ format: 'uuid' })
+  id: string;
+
+  @ApiProperty({ format: 'uuid' })
+  storeId: string;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
+}
+
+// GET endpoint - may return null if not configured
+export class GetPrintSettingResponseDto extends PrintSettingBaseResponseDto {}
+
+// UPDATE endpoint - always returns data (upsert pattern)
+export class UpdatePrintSettingResponseDto extends PrintSettingBaseResponseDto {}
+```
+
+### Service Method Signatures
+
+```typescript
+// GET - nullable return type (read-only, no side effects)
+async getPrintSettings(
+  userId: string,
+  storeId: string
+): Promise<GetPrintSettingResponseDto | null> {
+  return this.prisma.printSetting.findUnique({ where: { storeId } });
+}
+
+// UPDATE - guaranteed return type (creates if not exists)
+async updatePrintSettings(
+  userId: string,
+  storeId: string,
+  dto: UpdatePrintSettingsDto
+): Promise<UpdatePrintSettingResponseDto> {
+  return this.prisma.printSetting.upsert({
+    where: { storeId },
+    update: dto,
+    create: { storeId, ...dto },
+  });
+}
+```
+
+### Controller Usage
+
+```typescript
+// GET endpoint - nullable response
+@Get(':id/settings/print-settings')
+@ApiGetOne(GetPrintSettingResponseDto, 'print settings')
+async getPrintSettings(
+  @Param('id') storeId: string
+): Promise<StandardApiResponse<GetPrintSettingResponseDto | null>> {
+  const settings = await this.service.getPrintSettings(userId, storeId);
+  return StandardApiResponse.success(
+    settings,
+    settings ? 'Settings retrieved.' : 'Settings not configured yet.'
+  );
+}
+
+// UPDATE endpoint - always returns data
+@Patch(':id/settings/print-settings')
+@ApiPatch(UpdatePrintSettingResponseDto, 'print settings')
+async updatePrintSettings(
+  @Param('id') storeId: string,
+  @Body() dto: UpdatePrintSettingsDto
+): Promise<StandardApiResponse<UpdatePrintSettingResponseDto>> {
+  const settings = await this.service.updatePrintSettings(userId, storeId, dto);
+  return StandardApiResponse.success(settings, 'Settings updated.');
+}
+```
+
+### When to Use This Pattern
+
+Use separate GET/UPDATE response DTOs when:
+
+- **GET uses `findUnique`/`findFirst`** - may return `null`
+- **UPDATE uses `upsert`** - creates record if not exists, always returns data
+- **Different nullability guarantees** - frontend needs to handle `null` for GET but not UPDATE
+
+**Don't** use separate DTOs when:
+
+- Both operations have the same nullability (both always return data or both may return null)
+- The resource always exists (e.g., user profile created at registration)
+
+### OpenAPI Benefits
+
+Separate DTOs generate accurate OpenAPI schemas:
+
+- Frontend type generators create distinct types
+- GET responses correctly typed as nullable
+- UPDATE responses never require null checks
+- Better developer experience with accurate autocomplete

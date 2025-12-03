@@ -196,6 +196,8 @@ async createStore(userId: string, dto: CreateStoreDto): Promise<Store> {
 - ALWAYS include `where: { deletedAt: null }` for soft-deleted entities
 - ALWAYS use Decimal type for monetary values (prices, amounts)
 - ALWAYS add indexes for foreign keys and frequently queried fields
+- NEVER use `upsert` in GET methods - GET operations must be side-effect free (read-only)
+- USE separate response DTOs for GET vs UPDATE when nullability differs (see `code-style.md`)
 
 ## 5. Authentication & Authorization
 

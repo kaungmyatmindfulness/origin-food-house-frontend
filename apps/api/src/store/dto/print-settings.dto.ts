@@ -12,31 +12,14 @@ import {
   Min,
 } from 'class-validator';
 
-/**
- * Auto-print mode for receipts
- */
-export enum AutoPrintMode {
-  /** Print manually via button click */
-  MANUAL = 'manual',
-  /** Automatically print after payment */
-  AUTO = 'auto',
-  /** Never print receipts */
-  NEVER = 'never',
-}
+import {
+  AutoPrintMode,
+  FontSize,
+  PaperSize,
+} from 'src/generated/prisma/client';
 
-/**
- * Default print settings values
- * Used when store settings don't have print settings configured
- */
-export const DEFAULT_PRINT_SETTINGS: PrintSettingsDto = {
-  autoPrintReceipt: AutoPrintMode.MANUAL,
-  autoPrintKitchenTicket: true,
-  receiptCopies: 1,
-  kitchenTicketCopies: 1,
-  showLogo: true,
-  headerText: [],
-  footerText: [],
-};
+// Re-export Prisma enums for convenience
+export { AutoPrintMode, FontSize, PaperSize };
 
 /**
  * Print settings configuration for a store
@@ -48,10 +31,10 @@ export class PrintSettingsDto {
     enumName: 'AutoPrintMode',
     example: AutoPrintMode.MANUAL,
     description:
-      'Receipt auto-print mode: manual (button click), auto (after payment), never',
+      'Receipt auto-print mode: MANUAL (button click), AUTO (after payment), NEVER',
   })
   @IsEnum(AutoPrintMode, {
-    message: 'autoPrintReceipt must be one of: manual, auto, never',
+    message: 'autoPrintReceipt must be one of: MANUAL, AUTO, NEVER',
   })
   autoPrintReceipt: AutoPrintMode;
 
@@ -76,7 +59,7 @@ export class PrintSettingsDto {
     message: 'defaultReceiptPrinter must not exceed 100 characters',
   })
   @Transform(({ value }: { value: string }) => value?.trim())
-  defaultReceiptPrinter?: string;
+  defaultReceiptPrinter?: string | null;
 
   @ApiPropertyOptional({
     type: String,
@@ -90,7 +73,7 @@ export class PrintSettingsDto {
     message: 'defaultKitchenPrinter must not exceed 100 characters',
   })
   @Transform(({ value }: { value: string }) => value?.trim())
-  defaultKitchenPrinter?: string;
+  defaultKitchenPrinter?: string | null;
 
   @ApiProperty({
     type: Number,
@@ -155,7 +138,104 @@ export class PrintSettingsDto {
     Array.isArray(value) ? value.map((s) => s?.trim()).filter(Boolean) : value
   )
   footerText: string[];
+
+  // ==================== Paper Size Settings ====================
+
+  @ApiProperty({
+    enum: PaperSize,
+    enumName: 'PaperSize',
+    example: PaperSize.STANDARD_80MM,
+    description:
+      'Paper size for customer receipts (COMPACT_58MM or STANDARD_80MM)',
+  })
+  @IsEnum(PaperSize, {
+    message: 'paperSize must be one of: COMPACT_58MM, STANDARD_80MM',
+  })
+  paperSize: PaperSize;
+
+  @ApiProperty({
+    enum: PaperSize,
+    enumName: 'PaperSize',
+    example: PaperSize.STANDARD_80MM,
+    description:
+      'Paper size for kitchen tickets (COMPACT_58MM or STANDARD_80MM)',
+  })
+  @IsEnum(PaperSize, {
+    message: 'kitchenPaperSize must be one of: COMPACT_58MM, STANDARD_80MM',
+  })
+  kitchenPaperSize: PaperSize;
+
+  // ==================== Kitchen Ticket Display Settings ====================
+
+  @ApiProperty({
+    enum: FontSize,
+    enumName: 'FontSize',
+    example: FontSize.MEDIUM,
+    description:
+      'Font size for kitchen tickets (larger = more readable in busy kitchens)',
+  })
+  @IsEnum(FontSize, {
+    message: 'kitchenFontSize must be one of: SMALL, MEDIUM, LARGE, XLARGE',
+  })
+  kitchenFontSize: FontSize;
+
+  @ApiProperty({
+    type: Boolean,
+    example: true,
+    description: 'Whether to show order number on kitchen tickets',
+  })
+  @IsBoolean({ message: 'showOrderNumber must be a boolean' })
+  showOrderNumber: boolean;
+
+  @ApiProperty({
+    type: Boolean,
+    example: true,
+    description: 'Whether to show table number on kitchen tickets',
+  })
+  @IsBoolean({ message: 'showTableNumber must be a boolean' })
+  showTableNumber: boolean;
+
+  @ApiProperty({
+    type: Boolean,
+    example: true,
+    description: 'Whether to show timestamp on kitchen tickets',
+  })
+  @IsBoolean({ message: 'showTimestamp must be a boolean' })
+  showTimestamp: boolean;
 }
+
+/**
+ * Base response DTO for print settings with common fields
+ * Used as the foundation for both GET and UPDATE responses
+ */
+class PrintSettingBaseResponseDto extends PrintSettingsDto {
+  @ApiProperty({ format: 'uuid', description: 'Print setting record ID' })
+  id: string;
+
+  @ApiProperty({
+    format: 'uuid',
+    description: 'ID of the associated store',
+  })
+  storeId: string;
+
+  @ApiProperty({ description: 'Record creation timestamp' })
+  createdAt: Date;
+
+  @ApiProperty({ description: 'Record last update timestamp' })
+  updatedAt: Date;
+}
+
+/**
+ * Response DTO for GET print settings endpoint
+ * Can return null if print settings have not been configured yet
+ */
+export class GetPrintSettingResponseDto extends PrintSettingBaseResponseDto {}
+
+/**
+ * Response DTO for UPDATE print settings endpoint
+ * Always returns the updated print settings (upsert ensures it exists)
+ */
+export class UpdatePrintSettingResponseDto extends PrintSettingBaseResponseDto {}
 
 /**
  * DTO for updating print settings

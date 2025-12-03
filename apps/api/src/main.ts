@@ -94,6 +94,10 @@ import {
   SpecialHoursEntryDto,
 } from 'src/store/dto/business-hours.dto';
 import { GetStoreDetailsResponseDto } from 'src/store/dto/get-store-details-response.dto';
+import {
+  GetPrintSettingResponseDto,
+  UpdatePrintSettingResponseDto,
+} from 'src/store/dto/print-settings.dto';
 import { StoreInformationResponseDto } from 'src/store/dto/store-information-response.dto';
 import { StoreSettingResponseDto } from 'src/store/dto/store-setting-response.dto';
 import { BankTransferDetailsDto } from 'src/subscription/dto/bank-transfer-details.dto';
@@ -222,6 +226,8 @@ async function bootstrap() {
       GetStoreDetailsResponseDto,
       StoreInformationResponseDto,
       StoreSettingResponseDto,
+      GetPrintSettingResponseDto,
+      UpdatePrintSettingResponseDto,
       // Store - Business Hours (typed value DTOs)
       BusinessHoursDto,
       DayHoursDto,

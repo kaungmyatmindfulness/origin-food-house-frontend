@@ -1,5 +1,8 @@
 export type {
   AutoPrintMode,
+  FontSize,
+  KitchenSettingsFormValues,
+  PaperSize,
   PrintAdapter,
   PrintJob,
   PrintJobStatus,
@@ -7,6 +10,13 @@ export type {
   PrintPlatform,
   PrintResult,
   PrintSettings,
+  PrintSettingsFormValues,
+  ReceiptSettingsFormValues,
 } from './print.types';
 
-export { DEFAULT_PRINT_SETTINGS } from './print.types';
+export {
+  DEFAULT_PRINT_SETTINGS,
+  kitchenSettingsSchema,
+  printSettingsSchema,
+  receiptSettingsSchema,
+} from './print.types';

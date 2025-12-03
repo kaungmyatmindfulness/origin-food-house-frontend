@@ -45,6 +45,38 @@ npm run build               # 5. Build succeeds
 
 **CRITICAL**: If any of these commands fail, the task is NOT complete. Fix all errors before proceeding.
 
+## Background Task Management
+
+**ALWAYS clean up background tasks you started before finishing a task:**
+
+When you start background processes (dev servers, watchers, long-running commands), you MUST kill them when:
+
+- The task is complete
+- You no longer need the process running
+- Before ending the conversation
+
+**Rules:**
+
+- ONLY kill background tasks that YOU started (check the shell ID)
+- NEVER kill processes started by the user or other tools
+- Use `KillShell` tool with the specific shell ID
+- Track which shell IDs you started during the session
+
+**Example workflow:**
+
+```
+1. Start dev server in background → Shell ID: abc123
+2. Run tests, make changes
+3. Verify changes work
+4. Kill shell abc123 before finishing
+```
+
+**Why this matters:**
+
+- Orphaned background processes consume system resources
+- Multiple dev servers on the same port cause conflicts
+- Clean state for subsequent tasks
+
 ## Environment Variables
 
 **REQUIRED for development:**

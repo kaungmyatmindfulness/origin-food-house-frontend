@@ -4054,6 +4054,16 @@ export interface components {
      * @enum {string}
      */
     AutoPrintMode: 'manual' | 'auto' | 'never';
+    /**
+     * @description Paper size for customer receipts (58mm compact or 80mm standard)
+     * @enum {string}
+     */
+    PaperSize: '58mm' | '80mm';
+    /**
+     * @description Font size for kitchen tickets (larger = more readable in busy kitchens)
+     * @enum {string}
+     */
+    FontSize: 'small' | 'medium' | 'large' | 'xlarge';
     PrintSettingsDto: {
       /**
        * @description Receipt auto-print mode: manual (button click), auto (after payment), never
@@ -4106,6 +4116,36 @@ export interface components {
        *     ]
        */
       footerText: string[];
+      /**
+       * @description Paper size for customer receipts (58mm compact or 80mm standard)
+       * @example 80mm
+       */
+      paperSize: components['schemas']['PaperSize'];
+      /**
+       * @description Paper size for kitchen tickets (58mm compact or 80mm standard)
+       * @example 80mm
+       */
+      kitchenPaperSize: components['schemas']['PaperSize'];
+      /**
+       * @description Font size for kitchen tickets (larger = more readable in busy kitchens)
+       * @example medium
+       */
+      kitchenFontSize: components['schemas']['FontSize'];
+      /**
+       * @description Whether to show order number on kitchen tickets
+       * @example true
+       */
+      showOrderNumber: boolean;
+      /**
+       * @description Whether to show table number on kitchen tickets
+       * @example true
+       */
+      showTableNumber: boolean;
+      /**
+       * @description Whether to show timestamp on kitchen tickets
+       * @example true
+       */
+      showTimestamp: boolean;
     };
     StoreSettingResponseDto: {
       /**
@@ -4481,6 +4521,36 @@ export interface components {
        *     ]
        */
       footerText?: string[];
+      /**
+       * @description Paper size for customer receipts (58mm compact or 80mm standard)
+       * @example 80mm
+       */
+      paperSize?: components['schemas']['PaperSize'];
+      /**
+       * @description Paper size for kitchen tickets (58mm compact or 80mm standard)
+       * @example 80mm
+       */
+      kitchenPaperSize?: components['schemas']['PaperSize'];
+      /**
+       * @description Font size for kitchen tickets (larger = more readable in busy kitchens)
+       * @example medium
+       */
+      kitchenFontSize?: components['schemas']['FontSize'];
+      /**
+       * @description Whether to show order number on kitchen tickets
+       * @example true
+       */
+      showOrderNumber?: boolean;
+      /**
+       * @description Whether to show table number on kitchen tickets
+       * @example true
+       */
+      showTableNumber?: boolean;
+      /**
+       * @description Whether to show timestamp on kitchen tickets
+       * @example true
+       */
+      showTimestamp?: boolean;
     };
     /**
      * @description Current status of the table

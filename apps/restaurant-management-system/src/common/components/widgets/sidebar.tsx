@@ -49,12 +49,12 @@ const useNavSections = () => {
       [
         {
           labelKey: 'sale',
-          icon: <ShoppingCart className="h-4 w-4 text-muted-foreground" />,
+          icon: <ShoppingCart className="text-muted-foreground h-4 w-4" />,
           href: '/hub/sale',
         },
         {
           labelKey: 'kitchenDisplay',
-          icon: <ChefHat className="h-4 w-4 text-muted-foreground" />,
+          icon: <ChefHat className="text-muted-foreground h-4 w-4" />,
           href: '/hub/kitchen',
         },
       ],
@@ -62,22 +62,22 @@ const useNavSections = () => {
       [
         {
           labelKey: 'menu',
-          icon: <UtensilsCrossed className="h-4 w-4 text-muted-foreground" />,
+          icon: <UtensilsCrossed className="text-muted-foreground h-4 w-4" />,
           href: '/hub/menu',
         },
         {
           labelKey: 'tables',
-          icon: <Grid3X3 className="h-4 w-4 text-muted-foreground" />,
+          icon: <Grid3X3 className="text-muted-foreground h-4 w-4" />,
           subItems: [
             {
               labelKey: 'manage',
               href: '/hub/tables/manage',
-              icon: <List className="h-4 w-4 text-muted-foreground" />,
+              icon: <List className="text-muted-foreground h-4 w-4" />,
             },
             {
               labelKey: 'qrCodes',
               href: '/hub/tables/qr-code',
-              icon: <QrCode className="h-4 w-4 text-muted-foreground" />,
+              icon: <QrCode className="text-muted-foreground h-4 w-4" />,
             },
           ],
         },
@@ -86,28 +86,28 @@ const useNavSections = () => {
       [
         {
           labelKey: 'store',
-          icon: <Building2 className="h-4 w-4 text-muted-foreground" />,
+          icon: <Building2 className="text-muted-foreground h-4 w-4" />,
           subItems: [
             {
               labelKey: 'information',
               href: '/hub/store/information',
-              icon: <Info className="h-4 w-4 text-muted-foreground" />,
+              icon: <Info className="text-muted-foreground h-4 w-4" />,
             },
             {
               labelKey: 'settings',
               href: '/hub/store/settings',
-              icon: <Settings className="h-4 w-4 text-muted-foreground" />,
+              icon: <Settings className="text-muted-foreground h-4 w-4" />,
             },
             {
               labelKey: 'printSettings',
               href: '/hub/store/print-settings',
-              icon: <Printer className="h-4 w-4 text-muted-foreground" />,
+              icon: <Printer className="text-muted-foreground h-4 w-4" />,
             },
           ],
         },
         {
           labelKey: 'storePersonnel',
-          icon: <UserCog className="h-4 w-4 text-muted-foreground" />,
+          icon: <UserCog className="text-muted-foreground h-4 w-4" />,
           href: '/hub/store-personnel',
         },
       ],
@@ -115,22 +115,22 @@ const useNavSections = () => {
       [
         {
           labelKey: 'reports',
-          icon: <BarChart3 className="h-4 w-4 text-muted-foreground" />,
+          icon: <BarChart3 className="text-muted-foreground h-4 w-4" />,
           subItems: [
             {
               labelKey: 'sales',
               href: '/hub/reports/sales',
-              icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
+              icon: <DollarSign className="text-muted-foreground h-4 w-4" />,
             },
             {
               labelKey: 'salesHistory',
               href: '/hub/reports/history',
-              icon: <History className="h-4 w-4 text-muted-foreground" />,
+              icon: <History className="text-muted-foreground h-4 w-4" />,
             },
             {
               labelKey: 'menuItems',
               href: '/hub/reports/menu',
-              icon: <ClipboardList className="h-4 w-4 text-muted-foreground" />,
+              icon: <ClipboardList className="text-muted-foreground h-4 w-4" />,
             },
           ],
         },
@@ -188,10 +188,10 @@ export function DashboardSidebar({
           aria-label="Toggle sidebar collapse"
         >
           {collapsed ? (
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            <ChevronRight className="text-muted-foreground h-4 w-4" />
           ) : (
             <>
-              <ChevronLeft className="mr-2 h-4 w-4 text-muted-foreground" />
+              <ChevronLeft className="text-muted-foreground mr-2 h-4 w-4" />
               <span>{t('collapse')}</span>
             </>
           )}
@@ -214,7 +214,7 @@ export function DashboardSidebar({
                         'flex min-h-9 items-center gap-2 rounded px-3 py-2 transition-colors',
                         'hover:bg-primary hover:text-primary-foreground [&:hover_svg]:text-primary-foreground',
                         active &&
-                          'bg-primary font-medium text-primary-foreground [&_svg]:text-primary-foreground',
+                          'bg-primary text-primary-foreground [&_svg]:text-primary-foreground font-medium',
                         collapsed ? 'justify-center' : ''
                       )}
                     >
@@ -248,7 +248,7 @@ export function DashboardSidebar({
                                   'flex min-h-8 items-center gap-2 rounded px-3 py-1.5 transition-colors',
                                   'hover:bg-primary hover:text-primary-foreground [&:hover_svg]:text-primary-foreground',
                                   subPath &&
-                                    'bg-primary font-medium text-primary-foreground [&_svg]:text-primary-foreground'
+                                    'bg-primary text-primary-foreground [&_svg]:text-primary-foreground font-medium'
                                 )}
                               >
                                 {sub.icon}

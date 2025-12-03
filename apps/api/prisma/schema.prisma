@@ -48,6 +48,7 @@ model Store {
   tables                Table[]
   information           StoreInformation?
   setting               StoreSetting?
+  printSetting          PrintSetting?
   orders                Order[]
   activeTableSessions   ActiveTableSession[]
   carts                 Cart[]
@@ -117,9 +118,63 @@ model StoreSetting {
   multiLanguageEnabled    Boolean   @default(false)
   multiLanguageMigratedAt DateTime?
 
-  /// Print settings configuration (receipt/kitchen ticket printing)
-  /// Default: { autoPrintReceipt: 'manual', autoPrintKitchenTicket: true, receiptCopies: 1, kitchenTicketCopies: 1, showLogo: true, headerText: [], footerText: [] }
-  printSettings Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+/// Print settings configuration for a store
+/// Controls receipt and kitchen ticket printing behavior
+model PrintSetting {
+  id      String @id @default(uuid(7))
+  storeId String @unique
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  // ==================== Receipt Settings ====================
+  /// Receipt auto-print mode: MANUAL (button click), AUTO (after payment), NEVER
+  autoPrintReceipt AutoPrintMode @default(MANUAL)
+
+  /// Number of receipt copies to print (1-5)
+  receiptCopies Int @default(1)
+
+  /// Whether to show store logo on receipts
+  showLogo Boolean @default(true)
+
+  /// Array of header text lines to print on receipts (stored as JSON array)
+  headerText String[] @default([])
+
+  /// Array of footer text lines to print on receipts (stored as JSON array)
+  footerText String[] @default([])
+
+  /// Paper size for customer receipts
+  paperSize PaperSize @default(STANDARD_80MM)
+
+  /// Name/identifier of the default receipt printer
+  defaultReceiptPrinter String? @db.VarChar(100)
+
+  // ==================== Kitchen Ticket Settings ====================
+  /// Whether to automatically print kitchen tickets when orders are placed
+  autoPrintKitchenTicket Boolean @default(true)
+
+  /// Number of kitchen ticket copies to print (1-5)
+  kitchenTicketCopies Int @default(1)
+
+  /// Paper size for kitchen tickets
+  kitchenPaperSize PaperSize @default(STANDARD_80MM)
+
+  /// Font size for kitchen tickets
+  kitchenFontSize FontSize @default(MEDIUM)
+
+  /// Whether to show order number on kitchen tickets
+  showOrderNumber Boolean @default(true)
+
+  /// Whether to show table number on kitchen tickets
+  showTableNumber Boolean @default(true)
+
+  /// Whether to show timestamp on kitchen tickets
+  showTimestamp Boolean @default(true)
+
+  /// Name/identifier of the default kitchen ticket printer
+  defaultKitchenPrinter String? @db.VarChar(100)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -650,6 +705,24 @@ enum SubscriptionStatus {
 enum BillingCycle {
   MONTHLY
   ANNUAL
+}
+
+enum AutoPrintMode {
+  MANUAL
+  AUTO
+  NEVER
+}
+
+enum PaperSize {
+  COMPACT_58MM
+  STANDARD_80MM
+}
+
+enum FontSize {
+  SMALL
+  MEDIUM
+  LARGE
+  XLARGE
 }
 
 enum AuditAction {
