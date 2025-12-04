@@ -10,6 +10,7 @@
 ## Summary
 
 This review covers the implementation of a dedicated print settings page (`/hub/store/print-settings`) with:
+
 - **Backend**: New `PrintSetting` Prisma model replacing JSON column, with proper enums
 - **Frontend**: Tab-based settings page with live preview and enum transformation layer
 - **Full i18n support** across 4 languages (en, zh, my, th)
@@ -24,6 +25,7 @@ This review covers the implementation of a dedicated print settings page (`/hub/
 #### Prisma Schema (`prisma/schema.prisma`)
 
 **Strengths:**
+
 - Proper enum definitions (`AutoPrintMode`, `PaperSize`, `FontSize`) with clear values
 - Comprehensive field documentation with JSDoc comments
 - One-to-one relation with `Store` via `@unique` constraint on `storeId`
@@ -31,11 +33,13 @@ This review covers the implementation of a dedicated print settings page (`/hub/
 - `VarChar(100)` constraint on printer name fields to prevent oversized values
 
 **Observations:**
+
 - P2: Consider adding `@@index([storeId])` for query optimization (though `@unique` already creates an index)
 
 #### DTOs (`dto/print-settings.dto.ts`)
 
 **Strengths:**
+
 - Re-exports Prisma enums (`AutoPrintMode`, `FontSize`, `PaperSize`) for API consistency
 - Comprehensive validation decorators (`@IsEnum`, `@IsBoolean`, `@Min`, `@Max`, `@Transform`)
 - Proper `@ApiProperty` documentation for OpenAPI generation
@@ -44,11 +48,13 @@ This review covers the implementation of a dedicated print settings page (`/hub/
 - Input sanitization via `@Transform(({ value }) => value?.trim())`
 
 **Minor Issues:**
+
 - P2: Hardcoded strings in validation messages (e.g., `'autoPrintReceipt must be one of: MANUAL, AUTO, NEVER'`) - could use i18n keys
 
 #### Service (`store.service.ts`)
 
 **Strengths:**
+
 - Proper separation between GET (read-only) and UPDATE (upsert + update pattern)
 - **GET method is side-effect free**: Uses `findUnique` only, returns null if not found
 - **UPDATE method uses upsert**: Creates default settings if not exists, then applies partial update
@@ -57,25 +63,30 @@ This review covers the implementation of a dedicated print settings page (`/hub/
 - Structured logging with `[${method}]` prefix
 
 **Pattern Compliance:**
+
 - Follows the new GET vs UPDATE response DTO pattern documented in `code-style.md`
 
 **Minor Issues:**
+
 - P2: The `updatePrintSettings` method builds `updateData` manually for each field (lines 1030-1082). This is verbose but safe. Could be extracted to a helper.
 
 #### Controller (`store.controller.ts`)
 
 **Strengths:**
+
 - Uses distinct response DTOs (`GetPrintSettingResponseDto | null` for GET, `UpdatePrintSettingResponseDto` for PATCH)
 - Proper HTTP status codes (200 OK)
 - Role documentation in API decorators (`OWNER, ADMIN`)
 - Swagger documentation updated with proper response types
 
 **Removed Code:**
+
 - Correctly removed `printSettings` field from all `StoreSettingResponseDto` mappings
 
 #### Documentation Updates
 
 **Excellent additions to `.claude/docs/`:**
+
 - `clean-code-rules.md`: Added rule about GET methods being side-effect free (no upsert)
 - `code-style.md`: Added comprehensive "Response DTO Patterns for GET vs UPDATE" section with examples
 - `development-commands.md`: Added background task management guidelines
@@ -85,6 +96,7 @@ This review covers the implementation of a dedicated print settings page (`/hub/
 #### Print Settings Page (`print-settings/page.tsx`)
 
 **Strengths:**
+
 - Tab state persisted in URL query params (`?tab=receipt|kitchen`) for deep linking
 - Mobile-responsive with Select dropdown for tabs on small screens
 - Proper loading skeleton with accessibility (`role="status"`, `aria-label`)
@@ -93,12 +105,14 @@ This review covers the implementation of a dedicated print settings page (`/hub/
 - Print preview functionality using hidden iframe approach
 
 **Touch-Friendly Design:**
+
 - All buttons use `h-11` height minimum (44px+ touch targets)
 - Tab triggers use adequate sizing for tablet interfaces
 
 #### Form Components
 
 **ReceiptSettingsForm.tsx:**
+
 - Uses `useFieldArray` for dynamic header/footer text lines (max 5 lines)
 - Proper Zod validation with `zodResolver`
 - Touch-friendly button sizes (`h-11`, `w-11`)
@@ -106,6 +120,7 @@ This review covers the implementation of a dedicated print settings page (`/hub/
 - Limit on header/footer lines (5 max) for UX
 
 **KitchenSettingsForm.tsx:**
+
 - Similar quality patterns as ReceiptSettingsForm
 - Display options section with clear grouping
 - Font size selector for kitchen ticket readability
@@ -113,6 +128,7 @@ This review covers the implementation of a dedicated print settings page (`/hub/
 #### Preview Components
 
 **ReceiptPreview.tsx & KitchenTicketPreview.tsx:**
+
 - Clean separation of concerns
 - Proper use of `cn()` for conditional classes
 - Paper size affects preview width (visual feedback: 192px for 58mm, 256px for 80mm)
@@ -121,6 +137,7 @@ This review covers the implementation of a dedicated print settings page (`/hub/
 #### Types (`print.types.ts`)
 
 **Strengths:**
+
 - Zod schemas for form validation (`receiptSettingsSchema`, `kitchenSettingsSchema`)
 - Merged schema available (`printSettingsSchema`)
 - Type exports for form values
@@ -130,6 +147,7 @@ This review covers the implementation of a dedicated print settings page (`/hub/
 #### Hook (`usePrintSettings.ts`)
 
 **Strengths:**
+
 - **Enum transformation layer fully implemented** (lines 29-92):
   - `fromApiAutoPrintMode()`, `toApiAutoPrintMode()` for auto-print mode
   - `fromApiPaperSize()`, `toApiPaperSize()` for paper size (58mm/80mm)
@@ -141,6 +159,7 @@ This review covers the implementation of a dedicated print settings page (`/hub/
 - 5-minute stale time for settings (appropriate for rarely-changing data)
 
 **Well-Designed:**
+
 - Returns `DEFAULT_PRINT_SETTINGS` when API returns null
 - Normalizes error types from openapi-react-query
 
@@ -152,11 +171,11 @@ This review covers the implementation of a dedicated print settings page (`/hub/
 
 The enum mismatch between backend (uppercase) and frontend (lowercase) is **correctly handled** in `usePrintSettings.ts`:
 
-| API Value | Frontend Value | Transform Function |
-|-----------|----------------|-------------------|
-| `MANUAL` | `manual` | `fromApiAutoPrintMode` |
-| `STANDARD_80MM` | `80mm` | `fromApiPaperSize` |
-| `MEDIUM` | `medium` | `fromApiFontSize` |
+| API Value       | Frontend Value | Transform Function     |
+| --------------- | -------------- | ---------------------- |
+| `MANUAL`        | `manual`       | `fromApiAutoPrintMode` |
+| `STANDARD_80MM` | `80mm`         | `fromApiPaperSize`     |
+| `MEDIUM`        | `medium`       | `fromApiFontSize`      |
 
 The reverse transformation is applied before sending updates to the API.
 
@@ -171,11 +190,13 @@ The reverse transformation is applied before sending updates to the API.
 ### GET vs UPDATE Pattern
 
 **GET `/stores/{id}/settings/print-settings`:**
+
 - Returns `GetPrintSettingResponseDto | null`
 - Returns null if settings don't exist (correctly side-effect free)
 - Message indicates "not configured yet" when null
 
 **PATCH `/stores/{id}/settings/print-settings`:**
+
 - Returns `UpdatePrintSettingResponseDto` (always guaranteed)
 - Uses upsert to create default if not exists, then applies update
 - Never returns null after successful update
@@ -190,25 +211,25 @@ The reverse transformation is applied before sending updates to the API.
 
 ### P1 - Should Fix
 
-| Issue | Location | Description |
-|-------|----------|-------------|
-| Type casting | `usePrintSettings.ts:191` | `apiData.autoPrintReceipt as ApiAutoPrintMode` - consider type guard |
-| Sidebar navigation | `sidebar.tsx` | Need to verify print settings link is added to sidebar |
+| Issue              | Location                  | Description                                                          |
+| ------------------ | ------------------------- | -------------------------------------------------------------------- |
+| Type casting       | `usePrintSettings.ts:191` | `apiData.autoPrintReceipt as ApiAutoPrintMode` - consider type guard |
+| Sidebar navigation | `sidebar.tsx`             | Need to verify print settings link is added to sidebar               |
 
 ### P2 - Nice to Fix
 
-| Issue | Location | Description |
-|-------|----------|-------------|
-| Field mapping helper | `store.service.ts:1030-1082` | Extract verbose field mapping to helper function |
-| Validation messages | `print-settings.dto.ts` | Could use i18n for error messages |
-| Print preview cleanup | `page.tsx:397` | 60-second fallback cleanup could be shorter |
+| Issue                 | Location                     | Description                                      |
+| --------------------- | ---------------------------- | ------------------------------------------------ |
+| Field mapping helper  | `store.service.ts:1030-1082` | Extract verbose field mapping to helper function |
+| Validation messages   | `print-settings.dto.ts`      | Could use i18n for error messages                |
+| Print preview cleanup | `page.tsx:397`               | 60-second fallback cleanup could be shorter      |
 
 ### P3 - Optional
 
-| Issue | Location | Description |
-|-------|----------|-------------|
-| Sample data | `ReceiptPreview.tsx` | Use currency formatter for sample prices |
-| Paper size indicator | Preview components | Already shows size, could add mm dimensions |
+| Issue                | Location             | Description                                 |
+| -------------------- | -------------------- | ------------------------------------------- |
+| Sample data          | `ReceiptPreview.tsx` | Use currency formatter for sample prices    |
+| Paper size indicator | Preview components   | Already shows size, could add mm dimensions |
 
 ---
 
@@ -217,10 +238,12 @@ The reverse transformation is applied before sending updates to the API.
 ### Dependency Changes
 
 **Backend:**
+
 - No new dependencies
 - Uses existing Prisma enums (auto-generated from schema)
 
 **Frontend:**
+
 - Uses existing `$api` hooks
 - Uses existing `@repo/ui` components
 - No new dependencies
@@ -276,6 +299,7 @@ The reverse transformation is applied before sending updates to the API.
 ### Before PR Merge
 
 3. **Add type guards for safer casting:**
+
    ```typescript
    // Instead of: apiData.autoPrintReceipt as ApiAutoPrintMode
    function isApiAutoPrintMode(value: unknown): value is ApiAutoPrintMode {
@@ -302,50 +326,50 @@ The reverse transformation is applied before sending updates to the API.
 
 ### Backend (apps/api)
 
-| File | Changes |
-|------|---------|
-| `prisma/schema.prisma` | Added `PrintSetting` model and 3 enums |
-| `prisma/migrations/20251202174415_*/` | New migration for print settings table |
-| `src/main.ts` | Registered both response DTOs in extraModels |
-| `src/store/dto/print-settings.dto.ts` | Extended with new fields, added GET/UPDATE response DTOs |
-| `src/store/dto/store-setting-response.dto.ts` | Removed `printSettings` field |
-| `src/store/store.controller.ts` | Updated response types for both endpoints |
-| `src/store/store.service.ts` | Rewrote print settings methods to use new model |
-| `.claude/docs/clean-code-rules.md` | Added GET side-effect rule |
-| `.claude/docs/code-style.md` | Added GET vs UPDATE DTO pattern documentation |
-| `.claude/docs/development-commands.md` | Added background task management |
+| File                                          | Changes                                                  |
+| --------------------------------------------- | -------------------------------------------------------- |
+| `prisma/schema.prisma`                        | Added `PrintSetting` model and 3 enums                   |
+| `prisma/migrations/20251202174415_*/`         | New migration for print settings table                   |
+| `src/main.ts`                                 | Registered both response DTOs in extraModels             |
+| `src/store/dto/print-settings.dto.ts`         | Extended with new fields, added GET/UPDATE response DTOs |
+| `src/store/dto/store-setting-response.dto.ts` | Removed `printSettings` field                            |
+| `src/store/store.controller.ts`               | Updated response types for both endpoints                |
+| `src/store/store.service.ts`                  | Rewrote print settings methods to use new model          |
+| `.claude/docs/clean-code-rules.md`            | Added GET side-effect rule                               |
+| `.claude/docs/code-style.md`                  | Added GET vs UPDATE DTO pattern documentation            |
+| `.claude/docs/development-commands.md`        | Added background task management                         |
 
 ### Frontend (apps/restaurant-management-system)
 
-| File | Changes |
-|------|---------|
-| `src/app/hub/(owner-admin)/store/print-settings/page.tsx` | New page with tabs and previews |
-| `src/features/print/components/ReceiptSettingsForm.tsx` | New form component |
-| `src/features/print/components/ReceiptPreview.tsx` | New preview component |
-| `src/features/print/components/KitchenSettingsForm.tsx` | New form component |
-| `src/features/print/components/KitchenTicketPreview.tsx` | New preview component |
-| `src/features/print/components/index.ts` | Updated exports |
-| `src/features/print/hooks/usePrintSettings.ts` | Added enum transformation layer |
-| `src/features/print/types/print.types.ts` | Added Zod schemas and form types |
-| `src/features/print/types/index.ts` | Updated exports |
-| `src/features/print/index.ts` | Updated exports |
-| `src/common/components/widgets/sidebar.tsx` | Modified (check for print settings link) |
-| `messages/en/print.json` | Extended translations |
-| `messages/zh/print.json` | Extended translations |
-| `messages/my/print.json` | Extended translations |
-| `messages/th/print.json` | Extended translations |
+| File                                                      | Changes                                  |
+| --------------------------------------------------------- | ---------------------------------------- |
+| `src/app/hub/(owner-admin)/store/print-settings/page.tsx` | New page with tabs and previews          |
+| `src/features/print/components/ReceiptSettingsForm.tsx`   | New form component                       |
+| `src/features/print/components/ReceiptPreview.tsx`        | New preview component                    |
+| `src/features/print/components/KitchenSettingsForm.tsx`   | New form component                       |
+| `src/features/print/components/KitchenTicketPreview.tsx`  | New preview component                    |
+| `src/features/print/components/index.ts`                  | Updated exports                          |
+| `src/features/print/hooks/usePrintSettings.ts`            | Added enum transformation layer          |
+| `src/features/print/types/print.types.ts`                 | Added Zod schemas and form types         |
+| `src/features/print/types/index.ts`                       | Updated exports                          |
+| `src/features/print/index.ts`                             | Updated exports                          |
+| `src/common/components/widgets/sidebar.tsx`               | Modified (check for print settings link) |
+| `messages/en/print.json`                                  | Extended translations                    |
+| `messages/zh/print.json`                                  | Extended translations                    |
+| `messages/my/print.json`                                  | Extended translations                    |
+| `messages/th/print.json`                                  | Extended translations                    |
 
 ### Deleted
 
-| File | Reason |
-|------|--------|
+| File                                                    | Reason                     |
+| ------------------------------------------------------- | -------------------------- |
 | `src/features/print/components/PrintSettingsDialog.tsx` | Replaced by dedicated page |
 
 ### Generated (needs regeneration if not done)
 
-| File | Action Needed |
-|------|---------------|
-| `packages/api/src/generated/api.d.ts` | Regenerate with `npm run generate:api` |
+| File                                    | Action Needed                          |
+| --------------------------------------- | -------------------------------------- |
+| `packages/api/src/generated/api.d.ts`   | Regenerate with `npm run generate:api` |
 | `packages/api/src/generated/schemas.ts` | Regenerate with `npm run generate:api` |
 
 ---

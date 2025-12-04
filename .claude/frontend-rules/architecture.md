@@ -36,17 +36,17 @@ src/
 
 ## File Naming Conventions
 
-| Type       | Convention        | Example                 |
-| ---------- | ----------------- | ----------------------- |
-| Components | PascalCase.tsx    | `CategoryCard.tsx`      |
-| Constants  | `*.constants.ts`  | `print.constants.ts`    |
-| Hooks      | `use*.ts`         | `useProtected.ts`       |
-| Query Keys | `*.keys.ts`       | `menu.keys.ts`          |
-| Schemas    | `*.schemas.ts`    | `print.schemas.ts`      |
-| Services   | `*.service.ts`    | `category.service.ts`   |
-| Stores     | `*.store.ts`      | `auth.store.ts`         |
-| Types      | `*.types.ts`      | `menu-item.types.ts`    |
-| Utils      | kebab-case.ts     | `format-currency.ts`    |
+| Type       | Convention       | Example               |
+| ---------- | ---------------- | --------------------- |
+| Components | PascalCase.tsx   | `CategoryCard.tsx`    |
+| Constants  | `*.constants.ts` | `print.constants.ts`  |
+| Hooks      | `use*.ts`        | `useProtected.ts`     |
+| Query Keys | `*.keys.ts`      | `menu.keys.ts`        |
+| Schemas    | `*.schemas.ts`   | `print.schemas.ts`    |
+| Services   | `*.service.ts`   | `category.service.ts` |
+| Stores     | `*.store.ts`     | `auth.store.ts`       |
+| Types      | `*.types.ts`     | `menu-item.types.ts`  |
+| Utils      | kebab-case.ts    | `format-currency.ts`  |
 
 ### Types Files Convention
 
@@ -56,21 +56,25 @@ src/
 // ✅ CORRECT - types file exports only types
 // features/print/types/print.types.ts
 export type PrintJobType = 'CUSTOMER_RECEIPT' | 'KITCHEN_TICKET';
-export interface PrintSettings { /* ... */ }
+export interface PrintSettings {
+  /* ... */
+}
 
 // ❌ WRONG - exporting constants from types file
-export const DEFAULT_PRINT_SETTINGS = { /* ... */ };  // Move to constants/
-export const printSettingsSchema = z.object({});       // Move to schemas/
+export const DEFAULT_PRINT_SETTINGS = {
+  /* ... */
+}; // Move to constants/
+export const printSettingsSchema = z.object({}); // Move to schemas/
 ```
 
 **Where to put runtime values:**
 
-| Type of Export | File Location | Example |
-| -------------- | ------------- | ------- |
-| Types, interfaces | `types/*.types.ts` | `PrintSettings`, `PrintJob` |
-| Constants, default values | `constants/*.constants.ts` | `DEFAULT_PRINT_SETTINGS` |
-| Zod schemas | `schemas/*.schemas.ts` | `printSettingsSchema` |
-| Zod-inferred types | `schemas/*.schemas.ts` | `type FormValues = z.infer<typeof schema>` |
+| Type of Export            | File Location              | Example                                    |
+| ------------------------- | -------------------------- | ------------------------------------------ |
+| Types, interfaces         | `types/*.types.ts`         | `PrintSettings`, `PrintJob`                |
+| Constants, default values | `constants/*.constants.ts` | `DEFAULT_PRINT_SETTINGS`                   |
+| Zod schemas               | `schemas/*.schemas.ts`     | `printSettingsSchema`                      |
+| Zod-inferred types        | `schemas/*.schemas.ts`     | `type FormValues = z.infer<typeof schema>` |
 
 ## Import Organization
 

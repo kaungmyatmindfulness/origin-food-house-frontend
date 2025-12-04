@@ -171,7 +171,7 @@ export function DashboardSidebar({
 
   return (
     <motion.aside
-      className="fixed top-[60px] bottom-0 left-0 z-40 flex flex-col border-r bg-white"
+      className="bg-background fixed top-[60px] bottom-0 left-0 z-40 flex flex-col border-r"
       variants={sidebarVariants}
       animate={collapsed ? 'collapsed' : 'expanded'}
       initial={collapsed ? 'collapsed' : 'expanded'}
@@ -294,7 +294,7 @@ export function DashboardSidebar({
         </div>
       </div>
 
-      <div className="border-t p-2 text-center text-xs text-gray-400">
+      <div className="text-muted-foreground border-t p-2 text-center text-xs">
         v0.0.1
       </div>
     </motion.aside>

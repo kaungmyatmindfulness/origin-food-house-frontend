@@ -111,7 +111,7 @@ function generatePrintStyles(paperWidth: string): string {
 
     .p-4 { padding: ${paperWidth === '58mm' ? '12px' : '16px'}; }
     .px-2 { padding-left: ${paperWidth === '58mm' ? '6px' : '8px'}; padding-right: ${paperWidth === '58mm' ? '6px' : '8px'}; }
-    /* Escaped dot in class name: Tailwind's .py-0.5 becomes .py-0\.5 in CSS selectors */
+    /* Escaped dot in class name: Tailwind's .py-0.5 becomes .py-0.5 (escaped) in CSS selectors */
     .py-0\\.5 { padding-top: 2px; padding-bottom: 2px; }
     .py-1 { padding-top: ${paperWidth === '58mm' ? '3px' : '4px'}; padding-bottom: ${paperWidth === '58mm' ? '3px' : '4px'}; }
     .pl-2 { padding-left: ${paperWidth === '58mm' ? '6px' : '8px'}; }

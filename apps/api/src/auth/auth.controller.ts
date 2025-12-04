@@ -27,6 +27,7 @@ import {
   ApiPublicAction,
 } from 'src/common/decorators/api-crud.decorator';
 import { StandardApiResponse } from 'src/common/dto/standard-api-response.dto';
+import { getErrorDetails } from 'src/common/utils/error.util';
 
 import { AuthService } from './auth.service';
 import { ChooseStoreDto } from './dto/choose-store.dto';
@@ -217,7 +218,11 @@ export class AuthController {
         'Auth0 authentication successful'
       );
     } catch (error) {
-      this.logger.error('Auth0 token validation failed', error);
+      const { stack } = getErrorDetails(error);
+      this.logger.error(
+        '[validateAuth0Token] Auth0 token validation failed',
+        stack
+      );
       throw new UnauthorizedException('Invalid Auth0 token');
     }
   }

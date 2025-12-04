@@ -17,6 +17,8 @@ This file provides Admin Platform-specific guidance.
 - **Purpose:** Platform-level administration (store verification, subscription management, platform analytics)
 - **Status:** In development
 
+**Current State:** Skeleton - only basic layout and React Query configured. Auth0 integration, route protection, and API services must be implemented before building features. The folder structure and patterns documented below describe the **intended architecture**.
+
 ## Commands
 
 See root `/CLAUDE.md` for full command reference. Admin Platform-specific commands:

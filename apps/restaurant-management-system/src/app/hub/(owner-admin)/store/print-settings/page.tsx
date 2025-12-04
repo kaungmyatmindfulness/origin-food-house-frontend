@@ -86,20 +86,14 @@ export default function PrintSettingsPage() {
     usePrintSettings(selectedStoreId);
 
   // Handle receipt form changes for live preview
-  const handleReceiptChange = useCallback(
-    (data: ReceiptSettingsFormValues) => {
-      setReceiptPreviewSettings(data);
-    },
-    []
-  );
+  const handleReceiptChange = useCallback((data: ReceiptSettingsFormValues) => {
+    setReceiptPreviewSettings(data);
+  }, []);
 
   // Handle kitchen form changes for live preview
-  const handleKitchenChange = useCallback(
-    (data: KitchenSettingsFormValues) => {
-      setKitchenPreviewSettings(data);
-    },
-    []
-  );
+  const handleKitchenChange = useCallback((data: KitchenSettingsFormValues) => {
+    setKitchenPreviewSettings(data);
+  }, []);
 
   // Handle receipt settings submit
   const handleReceiptSubmit = useCallback(
@@ -170,7 +164,11 @@ export default function PrintSettingsPage() {
       </div>
 
       {/* Desktop: Tab navigation */}
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+      <Tabs
+        value={activeTab}
+        onValueChange={handleTabChange}
+        className="w-full"
+      >
         <TabsList className="hidden w-full grid-cols-2 md:grid">
           {TAB_CONFIG.map(({ value, icon: Icon, labelKey }) => (
             <TabsTrigger key={value} value={value} className="gap-2">

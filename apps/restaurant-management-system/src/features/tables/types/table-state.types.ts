@@ -8,19 +8,7 @@
  * For API types (TableResponseDto, UpdateTableDto), import directly from '@repo/api/generated/types'.
  */
 
-/**
- * DTO for updating table status.
- * Note: This is a frontend-only type pending backend implementation.
- */
-export interface UpdateTableStatusDto {
-  status:
-    | 'VACANT'
-    | 'SEATED'
-    | 'ORDERING'
-    | 'SERVED'
-    | 'READY_TO_PAY'
-    | 'CLEANING';
-}
+import type { TableResponseDto } from '@repo/api/generated/types';
 
 /**
  * Table status enum for runtime usage.
@@ -40,22 +28,11 @@ export enum TableStatus {
  * Extended TableResponseDto with active session information.
  * Used in the table management view to show occupied tables.
  *
- * Note: TableResponseDto includes currentStatus but not activeSession.
- * This type extends it for views that need session details.
+ * TODO: Backend should implement an endpoint that returns tables with active session data.
+ * Currently, activeSession is always undefined since the API doesn't provide this field.
+ * When backend adds support, remove this extension and use the API type directly.
  */
-export interface TableWithStatusDto {
-  id: string;
-  storeId: string;
-  name: string;
-  currentStatus:
-    | 'VACANT'
-    | 'SEATED'
-    | 'ORDERING'
-    | 'SERVED'
-    | 'READY_TO_PAY'
-    | 'CLEANING';
-  createdAt: string;
-  updatedAt: string;
+export interface TableWithSessionDto extends TableResponseDto {
   activeSession?: {
     id: string;
     guestCount: number;

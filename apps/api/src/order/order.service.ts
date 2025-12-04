@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 
 import { Decimal } from 'src/common/types/decimal.type';
+import { getErrorDetails } from 'src/common/utils/error.util';
 import {
   Prisma,
   OrderStatus,
@@ -244,10 +245,8 @@ export class OrderService {
         throw error;
       }
 
-      this.logger.error(
-        `[${method}] Failed to checkout cart`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to checkout cart`, stack);
       throw new InternalServerErrorException('Failed to create order');
     }
   }
@@ -419,10 +418,8 @@ export class OrderService {
         throw error;
       }
 
-      this.logger.error(
-        `[${method}] Failed to quick checkout`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to quick checkout`, stack);
       throw new InternalServerErrorException('Failed to create order');
     }
   }
@@ -576,10 +573,8 @@ export class OrderService {
         throw error;
       }
 
-      this.logger.error(
-        `[${method}] Failed to get order`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to get order`, stack);
       throw new InternalServerErrorException('Failed to retrieve order');
     }
   }
@@ -655,10 +650,8 @@ export class OrderService {
         limit ?? 20
       );
     } catch (error) {
-      this.logger.error(
-        `[${method}] Failed to get orders`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to get orders`, stack);
       throw new InternalServerErrorException('Failed to retrieve orders');
     }
   }
@@ -756,10 +749,8 @@ export class OrderService {
         limit ?? 20
       );
     } catch (error) {
-      this.logger.error(
-        `[${method}] Failed to get KDS orders`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to get KDS orders`, stack);
       throw new InternalServerErrorException('Failed to retrieve KDS orders');
     }
   }
@@ -813,10 +804,8 @@ export class OrderService {
 
       return enhancedOrders;
     } catch (error) {
-      this.logger.error(
-        `[${method}] Failed to get session orders`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to get session orders`, stack);
       throw new InternalServerErrorException(
         'Failed to retrieve session orders'
       );
@@ -890,10 +879,8 @@ export class OrderService {
         throw error;
       }
 
-      this.logger.error(
-        `[${method}] Failed to get payment status`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to get payment status`, stack);
       throw new InternalServerErrorException(
         'Failed to calculate payment status'
       );
@@ -967,10 +954,8 @@ export class OrderService {
         throw error;
       }
 
-      this.logger.error(
-        `[${method}] Failed to update order status`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to update order status`, stack);
       throw new InternalServerErrorException('Failed to update order status');
     }
   }
@@ -1077,10 +1062,8 @@ export class OrderService {
         throw error;
       }
 
-      this.logger.error(
-        `[${method}] Failed to apply discount`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to apply discount`, stack);
       throw new InternalServerErrorException('Failed to apply discount');
     }
   }
@@ -1162,10 +1145,8 @@ export class OrderService {
         throw error;
       }
 
-      this.logger.error(
-        `[${method}] Failed to remove discount`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to remove discount`, stack);
       throw new InternalServerErrorException('Failed to remove discount');
     }
   }

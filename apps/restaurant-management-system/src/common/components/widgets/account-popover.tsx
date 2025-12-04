@@ -15,7 +15,7 @@ export function AccountPopover({ onLogout }: AccountPopoverProps) {
 
   return (
     <Popover.PopoverContent
-      className="z-50 w-40 border bg-white p-2 shadow"
+      className="bg-background z-50 w-40 border p-2 shadow"
       align="end"
       sideOffset={8}
     >
@@ -27,13 +27,13 @@ export function AccountPopover({ onLogout }: AccountPopoverProps) {
       >
         <Link
           href="/profile"
-          className="block min-h-11 rounded px-3 py-3 text-base text-gray-700 hover:bg-gray-100 active:bg-gray-200"
+          className="text-foreground hover:bg-accent active:bg-accent/80 block min-h-11 rounded px-3 py-3 text-base"
         >
           {t('profile')}
         </Link>
         <button
           onClick={onLogout}
-          className="block min-h-11 w-full rounded px-3 py-3 text-left text-base text-red-600 hover:bg-gray-100 active:bg-gray-200"
+          className="text-destructive hover:bg-accent active:bg-accent/80 block min-h-11 w-full rounded px-3 py-3 text-left text-base"
         >
           {t('logout')}
         </button>

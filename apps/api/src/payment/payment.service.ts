@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 
 import { Decimal } from 'src/common/types/decimal.type';
+import { getErrorDetails } from 'src/common/utils/error.util';
 import {
   Prisma,
   OrderStatus,
@@ -241,10 +242,8 @@ export class PaymentService {
         throw error;
       }
 
-      this.logger.error(
-        `[${method}] Failed to record payment`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to record payment`, stack);
 
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2003') {
@@ -291,10 +290,8 @@ export class PaymentService {
         throw error;
       }
 
-      this.logger.error(
-        `[${method}] Failed to get payments`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to get payments`, stack);
       throw new InternalServerErrorException('Failed to retrieve payments');
     }
   }
@@ -390,10 +387,8 @@ export class PaymentService {
         throw error;
       }
 
-      this.logger.error(
-        `[${method}] Failed to create refund`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to create refund`, stack);
 
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2003') {
@@ -439,10 +434,8 @@ export class PaymentService {
         throw error;
       }
 
-      this.logger.error(
-        `[${method}] Failed to get refunds`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to get refunds`, stack);
       throw new InternalServerErrorException('Failed to retrieve refunds');
     }
   }
@@ -519,10 +512,8 @@ export class PaymentService {
         throw error;
       }
 
-      this.logger.error(
-        `[${method}] Failed to get payment summary`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to get payment summary`, stack);
       throw new InternalServerErrorException(
         'Failed to retrieve payment summary'
       );
@@ -812,10 +803,8 @@ export class PaymentService {
         throw error;
       }
 
-      this.logger.error(
-        `[${method}] Failed to record split payment`,
-        error instanceof Error ? error.stack : String(error)
-      );
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to record split payment`, stack);
 
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2003') {

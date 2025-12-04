@@ -22,15 +22,32 @@ interface TableWithStatus {
   currentOrderTotal?: number;
 }
 
-// TODO: Import from tables service when BE implements GET /stores/{storeId}/tables with status
+/**
+ * TODO: Migrate to $api.useQuery when backend extends TableResponseDto
+ *
+ * Current API endpoint: GET /stores/{storeId}/tables
+ * Returns: TableResponseDto[] with { id, storeId, name, currentStatus, createdAt, updatedAt }
+ *
+ * This component requires additional fields not in the API:
+ * - tableNumber: Use 'name' field (available)
+ * - capacity: Not available in API (needs backend implementation)
+ * - currentSessionId: Not available in API (needs backend implementation)
+ * - currentOrderTotal: Not available in API (needs backend implementation)
+ *
+ * Migration steps when backend is ready:
+ * 1. Backend adds capacity, currentSessionId, currentOrderTotal to TableResponseDto
+ * 2. Replace this mock function with:
+ *    const { data: response, isLoading } = $api.useQuery(
+ *      'get', '/stores/{storeId}/tables',
+ *      { params: { path: { storeId } } }
+ *    );
+ *    const tables = response?.data ?? [];
+ */
 async function getTablesWithStatus(
-  storeId: string
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _storeId: string
 ): Promise<TableWithStatus[]> {
-  // Mock data - BE should implement this endpoint
-  // Placeholder: log storeId for debugging during development
-  if (process.env.NODE_ENV === 'development') {
-    console.debug(`[TablesView] Fetching tables for store: ${storeId}`);
-  }
+  // Returns empty array until backend provides required fields
   return [];
 }
 

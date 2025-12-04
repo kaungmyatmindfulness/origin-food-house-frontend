@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { Grid3X3, List, MoreVertical, RefreshCcw, Users } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { toast } from '@repo/ui/lib/toast';
@@ -12,16 +12,15 @@ import {
   useAuthStore,
 } from '@/features/auth/store/auth.store';
 import {
-  getTablesWithStatus,
-  updateTableStatus,
-} from '@/features/tables/services/table-state.service';
-import {
   TableStatus,
   type ViewMode,
-  type TableWithStatusDto,
+  type TableWithSessionDto,
 } from '@/features/tables/types/table-state.types';
 import { SocketProvider } from '@/utils/socket-provider';
 import { useTableSocket } from '@/features/tables/hooks/useTableSocket';
+import { $api } from '@/utils/apiFetch';
+
+import type { UpdateTableStatusDto } from '@repo/api/generated/types';
 
 import {
   Card,
@@ -64,9 +63,8 @@ function TableStateContent() {
 
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [statusFilter, setStatusFilter] = useState<TableStatus | 'all'>('all');
-  const [selectedTable, setSelectedTable] = useState<TableWithStatusDto | null>(
-    null
-  );
+  const [selectedTable, setSelectedTable] =
+    useState<TableWithSessionDto | null>(null);
   const [newStatus, setNewStatus] = useState<TableStatus | ''>('');
 
   // Status filter options (includes 'all')
@@ -99,42 +97,53 @@ function TableStateContent() {
 
   // Fetch tables with auto-refresh every 30 seconds
   const {
-    data: tables,
+    data: tablesResponse,
     isLoading,
     isError,
     refetch,
-  } = useQuery({
-    queryKey: ['tables', selectedStoreId],
-    queryFn: () => getTablesWithStatus(selectedStoreId!),
-    enabled: !!selectedStoreId,
-    refetchInterval: 30000, // 30 seconds
-  });
+  } = $api.useQuery(
+    'get',
+    '/stores/{storeId}/tables',
+    { params: { path: { storeId: selectedStoreId! } } },
+    {
+      enabled: !!selectedStoreId,
+      refetchInterval: 30000, // 30 seconds
+    }
+  );
+
+  // Extract data from wrapped response
+  // Cast to TableWithSessionDto[] since the API may include activeSession in the future
+  // Currently activeSession is always undefined (not provided by API)
+  const tables = (tablesResponse?.data ?? []) as TableWithSessionDto[];
 
   // Update status mutation
-  const updateStatusMutation = useMutation({
-    mutationFn: ({
-      tableId,
-      status,
-    }: {
-      tableId: string;
-      status: TableStatus;
-    }) => updateTableStatus(selectedStoreId!, tableId, { status }),
-    onSuccess: () => {
-      toast.success(t('statusUpdateSuccess'));
-      queryClient.invalidateQueries({ queryKey: ['tables', selectedStoreId] });
-      setSelectedTable(null);
-      setNewStatus('');
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || t('statusUpdateError'));
-    },
-  });
+  const updateStatusMutation = $api.useMutation(
+    'patch',
+    '/stores/{storeId}/tables/{tableId}/status',
+    {
+      onSuccess: () => {
+        toast.success(t('statusUpdateSuccess'));
+        queryClient.invalidateQueries({
+          queryKey: ['get', '/stores/{storeId}/tables'],
+        });
+        setSelectedTable(null);
+        setNewStatus('');
+      },
+      onError: (error: unknown) => {
+        toast.error(
+          error instanceof Error ? error.message : t('statusUpdateError')
+        );
+      },
+    }
+  );
 
   const handleStatusUpdate = () => {
-    if (!selectedTable || !newStatus) return;
+    if (!selectedTable || !newStatus || !selectedStoreId) return;
     updateStatusMutation.mutate({
-      tableId: selectedTable.id,
-      status: newStatus as TableStatus,
+      params: {
+        path: { storeId: selectedStoreId, tableId: selectedTable.id },
+      },
+      body: { status: newStatus as UpdateTableStatusDto['status'] },
     });
   };
 

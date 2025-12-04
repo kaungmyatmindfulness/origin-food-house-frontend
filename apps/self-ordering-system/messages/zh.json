@@ -1,0 +1,18 @@
+{
+  "common": {
+    "loading": "加载中...",
+    "error": "发生错误",
+    "retry": "重试"
+  },
+  "menu": {
+    "title": "菜单",
+    "addToCart": "加入购物车",
+    "outOfStock": "已售罄"
+  },
+  "cart": {
+    "title": "您的订单",
+    "empty": "购物车是空的",
+    "checkout": "下单",
+    "total": "总计"
+  }
+}

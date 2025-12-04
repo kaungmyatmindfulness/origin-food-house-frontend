@@ -32,7 +32,9 @@ type ApiPaperSize = 'COMPACT_58MM' | 'STANDARD_80MM';
 type ApiFontSize = 'SMALL' | 'MEDIUM' | 'LARGE' | 'XLARGE';
 
 /** Transform API auto-print mode to frontend value */
-function fromApiAutoPrintMode(apiValue: ApiAutoPrintMode | undefined): AutoPrintMode {
+function fromApiAutoPrintMode(
+  apiValue: ApiAutoPrintMode | undefined
+): AutoPrintMode {
   switch (apiValue) {
     case 'MANUAL':
       return 'manual';
@@ -46,7 +48,9 @@ function fromApiAutoPrintMode(apiValue: ApiAutoPrintMode | undefined): AutoPrint
 }
 
 /** Transform frontend auto-print mode to API value */
-function toApiAutoPrintMode(value: AutoPrintMode | undefined): ApiAutoPrintMode | undefined {
+function toApiAutoPrintMode(
+  value: AutoPrintMode | undefined
+): ApiAutoPrintMode | undefined {
   if (!value) return undefined;
   return value.toUpperCase() as ApiAutoPrintMode;
 }
@@ -64,7 +68,9 @@ function fromApiPaperSize(apiValue: ApiPaperSize | undefined): PaperSize {
 }
 
 /** Transform frontend paper size to API value */
-function toApiPaperSize(value: PaperSize | undefined): ApiPaperSize | undefined {
+function toApiPaperSize(
+  value: PaperSize | undefined
+): ApiPaperSize | undefined {
   if (!value) return undefined;
   return value === '58mm' ? 'COMPACT_58MM' : 'STANDARD_80MM';
 }
@@ -195,7 +201,9 @@ export function usePrintSettings(
       showLogo: apiData.showLogo ?? DEFAULT_PRINT_SETTINGS.showLogo,
       headerText: apiData.headerText ?? DEFAULT_PRINT_SETTINGS.headerText,
       footerText: apiData.footerText ?? DEFAULT_PRINT_SETTINGS.footerText,
-      paperSize: fromApiPaperSize(apiData.paperSize as ApiPaperSize | undefined),
+      paperSize: fromApiPaperSize(
+        apiData.paperSize as ApiPaperSize | undefined
+      ),
       defaultReceiptPrinter: apiData.defaultReceiptPrinter ?? undefined,
 
       // Kitchen ticket settings - transform enums from API format
@@ -272,7 +280,9 @@ export function usePrintSettings(
 
       // Transform enum fields to API uppercase format
       if (updates.autoPrintReceipt !== undefined) {
-        apiBody['autoPrintReceipt'] = toApiAutoPrintMode(updates.autoPrintReceipt);
+        apiBody['autoPrintReceipt'] = toApiAutoPrintMode(
+          updates.autoPrintReceipt
+        );
       }
       if (updates.paperSize !== undefined) {
         apiBody['paperSize'] = toApiPaperSize(updates.paperSize);

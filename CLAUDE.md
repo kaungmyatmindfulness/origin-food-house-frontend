@@ -132,11 +132,11 @@ npm run generate:api  # Regenerates packages/api/src/generated/types.gen.ts
 
 ## Important Shared Files
 
-| File                                       | Purpose                      |
-| ------------------------------------------ | ---------------------------- |
-| `packages/api/src/generated/types.gen.ts`  | Auto-generated OpenAPI types |
-| `packages/ui/src/components/`              | Shared UI components         |
-| `packages/ui/src/styles/globals.css`       | Global styles & color tokens |
+| File                                      | Purpose                      |
+| ----------------------------------------- | ---------------------------- |
+| `packages/api/src/generated/types.gen.ts` | Auto-generated OpenAPI types |
+| `packages/ui/src/components/`             | Shared UI components         |
+| `packages/ui/src/styles/globals.css`      | Global styles & color tokens |
 
 ---
 

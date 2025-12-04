@@ -5,7 +5,7 @@ import React from 'react';
 
 export function NoDashboardHeader() {
   return (
-    <header className="flex items-center justify-between border-b bg-white p-4">
+    <header className="bg-background flex items-center justify-between border-b p-4">
       <Link href="/">
         <Image
           src="/logo.svg"

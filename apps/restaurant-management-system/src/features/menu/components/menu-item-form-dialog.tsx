@@ -742,13 +742,13 @@ export function MenuItemFormDialog({
                   <Plus className="mr-1 h-4 w-4" /> Add Group
                 </Button>
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-muted-foreground dark:text-muted-foreground text-sm">
                 Define options customers can choose from, like size, toppings,
                 or preparation style.
               </p>
 
               {groupFields.length === 0 && (
-                <p className="text-sm text-gray-400 italic">
+                <p className="text-muted-foreground text-sm italic">
                   No customization groups added yet.
                 </p>
               )}
@@ -772,7 +772,7 @@ export function MenuItemFormDialog({
               control={form.control}
               name="isHidden"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4 dark:border-gray-700">
+                <FormItem className="dark:border-border flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4">
                   <FormControl>
                     {/* Use value={field.value?.toString()} if Checkbox expects string */}
                     <Checkbox

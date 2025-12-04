@@ -7,6 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 
+import { getErrorDetails } from 'src/common/utils/error.util';
 import { calculateNextSortOrder } from 'src/common/utils/sort-order.util';
 import {
   Prisma,
@@ -241,9 +242,10 @@ export class MenuService {
         );
         throw error;
       }
+      const { stack } = getErrorDetails(error);
       this.logger.error(
-        `Unexpected error creating menu item for store ${storeId}`,
-        error
+        `[createMenuItem] Unexpected error creating menu item for store ${storeId}`,
+        stack
       );
       throw new InternalServerErrorException('Failed to create menu item.');
     }
@@ -376,9 +378,10 @@ export class MenuService {
         );
         throw error;
       }
+      const { stack } = getErrorDetails(error);
       this.logger.error(
-        `Unexpected error updating menu item ${itemId} for store ${storeId}`,
-        error
+        `[updateMenuItem] Unexpected error updating menu item ${itemId} for store ${storeId}`,
+        stack
       );
       throw new InternalServerErrorException('Failed to update menu item.');
     }
@@ -445,9 +448,10 @@ export class MenuService {
         );
         throw error;
       }
+      const { stack } = getErrorDetails(error);
       this.logger.error(
-        `Unexpected error patching menu item ${itemId} for store ${storeId}`,
-        error
+        `[${method}] Unexpected error patching menu item ${itemId} for store ${storeId}`,
+        stack
       );
       throw new InternalServerErrorException('Failed to patch menu item.');
     }
@@ -519,9 +523,10 @@ export class MenuService {
         );
         throw error;
       }
+      const { stack } = getErrorDetails(error);
       this.logger.error(
-        `Unexpected error deleting menu item ${itemId} for store ${storeId}`,
-        error
+        `[deleteMenuItem] Unexpected error deleting menu item ${itemId} for store ${storeId}`,
+        stack
       );
       throw new InternalServerErrorException('Failed to delete menu item.');
     }

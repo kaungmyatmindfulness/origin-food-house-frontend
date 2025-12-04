@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Bell, ChevronDown, User as UserIcon, LogOut } from 'lucide-react';
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+
 import {
   useAuthStore,
   selectSelectedStoreId,
@@ -13,10 +13,7 @@ import {
   logoutFromAuth0,
   isAuth0Authenticated,
 } from '@/features/auth/services/auth0.service';
-import { getCurrentUser } from '@/features/user/services/user.service';
-import { getStoreDetails } from '@/features/store/services/store.service';
-import { userKeys } from '@/features/user/queries/user.keys';
-import { storeKeys } from '@/features/store/queries/store.keys';
+import { $api } from '@/utils/apiFetch';
 import { NotificationPopover } from './notification-popover';
 import { Popover, PopoverTrigger } from '@repo/ui/components/popover';
 import { Button } from '@repo/ui/components/button';
@@ -31,22 +28,45 @@ import {
 import { Badge } from '@repo/ui/components/badge';
 import { getInitials } from '@/utils/string-utils';
 
+import type { CurrentUserData } from '@/features/user/types/user.types';
+import type { GetStoreDetailsResponseDto } from '@/features/store/types/store.types';
+
 export function DashboardHeader() {
   const { clearAuth } = useAuthStore();
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const { data: currentUser } = useQuery({
-    queryKey: userKeys.currentUser(selectedStoreId ?? undefined),
-    queryFn: () => getCurrentUser(selectedStoreId ?? undefined),
-    enabled: !!selectedStoreId,
-  });
+  /**
+   * Fetch current user data with store context.
+   *
+   * Note: Using type cast because the API returns additional fields (userStores, selectedStoreRole)
+   * that are not yet documented in the OpenAPI spec.
+   * TODO: Remove cast once backend adds these fields to UserProfileResponseDto.
+   */
+  const { data: currentUserResponse } = $api.useQuery(
+    'get',
+    '/users/me',
+    { params: { query: { storeId: selectedStoreId ?? undefined } } },
+    { enabled: !!selectedStoreId }
+  );
+  const currentUser = currentUserResponse?.data as CurrentUserData | undefined;
 
-  const { data: currentStore } = useQuery({
-    queryKey: storeKeys.detail(selectedStoreId ?? ''),
-    queryFn: () => getStoreDetails(selectedStoreId ?? ''),
-    enabled: !!selectedStoreId,
-  });
+  /**
+   * Fetch store details for header display.
+   *
+   * Note: Using type cast because the API returns additional fields (logoUrl, coverImageUrl, tier)
+   * that are not yet documented in the OpenAPI spec.
+   * TODO: Remove cast once backend adds these fields to GetStoreDetailsResponseDto.
+   */
+  const { data: currentStoreResponse } = $api.useQuery(
+    'get',
+    '/stores/{id}',
+    { params: { path: { id: selectedStoreId! } } },
+    { enabled: !!selectedStoreId }
+  );
+  const currentStore = currentStoreResponse?.data as
+    | GetStoreDetailsResponseDto
+    | undefined;
 
   async function handleLogout() {
     if (isLoggingOut) return;

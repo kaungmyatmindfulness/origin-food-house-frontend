@@ -84,15 +84,15 @@ export default function Auth0CallbackPage() {
   }, [router, queryClient]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+    <div className="bg-muted flex min-h-screen items-center justify-center">
       <div className="w-full max-w-md space-y-6 text-center">
         {isProcessing && (
           <>
-            <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-indigo-600"></div>
-            <h2 className="text-xl font-semibold text-gray-800">
+            <div className="border-border border-t-primary mx-auto h-12 w-12 animate-spin rounded-full border-4"></div>
+            <h2 className="text-foreground text-xl font-semibold">
               Completing authentication...
             </h2>
-            <p className="text-sm text-gray-500">
+            <p className="text-muted-foreground text-sm">
               Please wait while we set up your session.
             </p>
           </>

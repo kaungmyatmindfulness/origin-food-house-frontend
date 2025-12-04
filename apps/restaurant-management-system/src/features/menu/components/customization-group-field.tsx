@@ -45,7 +45,7 @@ export function CustomizationGroupField({
     form.watch(`customizationGroups.${groupIndex}.options`)?.length ?? 0;
 
   return (
-    <div className="rounded-md border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/30">
+    <div className="bg-muted dark:border-border dark:bg-muted/30 rounded-md border p-4">
       <div className="mb-3 flex items-center justify-between">
         <FormField
           control={control}
@@ -93,7 +93,7 @@ export function CustomizationGroupField({
       <div className="space-y-3">
         <FormLabel className="text-sm font-medium">Options</FormLabel>
         {optionFields.length === 0 && (
-          <p className="text-xs text-gray-400 italic">
+          <p className="text-muted-foreground text-xs italic">
             Add at least one option.
           </p>
         )}
@@ -186,7 +186,7 @@ export function CustomizationGroupField({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-5 w-5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                      className="text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground h-5 w-5"
                     >
                       <HelpCircle className="h-3 w-3" />
                     </Button>
@@ -229,7 +229,7 @@ export function CustomizationGroupField({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-5 w-5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                      className="text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground h-5 w-5"
                     >
                       <HelpCircle className="h-3 w-3" />
                     </Button>

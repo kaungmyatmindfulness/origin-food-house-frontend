@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@repo/ui/lib/toast';
 
 import { loginWithStoreAuth0 } from '@/features/auth/services/auth0.service';
@@ -15,15 +17,10 @@ import {
 } from '@/features/auth/store/auth.store';
 import { StoreList } from '@/features/store/components/store-list';
 import { StoreListSkeleton } from '@/features/store/components/store-list-skeleton';
-import { getCurrentUser } from '@/features/user/services/user.service';
+import { $api, apiClient, unwrapApiResponseAs } from '@/utils/apiFetch';
 import { Button } from '@repo/ui/components/button';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import type { CurrentUserData } from '@/features/user/types/user.types';
-const currentUserQueryKey = (storeId?: string | null) => [
-  'currentUser',
-  { storeId: storeId ?? 'context-free' },
-];
 
 export default function ChooseStorePage() {
   const t = useTranslations('store.choose');
@@ -34,17 +31,25 @@ export default function ChooseStorePage() {
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
   const setSelectedStore = useAuthStore((state) => state.setSelectedStore);
 
+  /**
+   * Fetch current user data to get their available stores.
+   *
+   * Note: Using type cast because the API returns additional fields (userStores, selectedStoreRole)
+   * that are not yet documented in the OpenAPI spec.
+   * TODO: Remove cast once backend adds these fields to UserProfileResponseDto.
+   */
   const {
-    data: user,
+    data: userResponse,
     isLoading: isUserLoading,
     isError: isUserError,
-    error: userError,
     isSuccess: isUserSuccess,
-  } = useQuery({
-    queryKey: currentUserQueryKey(),
-    queryFn: () => getCurrentUser(selectedStoreId || undefined),
-    retry: 1,
-  });
+  } = $api.useQuery(
+    'get',
+    '/users/me',
+    { params: { query: { storeId: selectedStoreId ?? undefined } } },
+    { retry: 1 }
+  );
+  const user = userResponse?.data as CurrentUserData | undefined;
 
   useEffect(() => {
     if (isUserLoading) return;
@@ -56,16 +61,7 @@ export default function ChooseStorePage() {
         return;
       }
     }
-  }, [
-    user,
-    isUserLoading,
-    isUserError,
-    isUserSuccess,
-    userError,
-    selectedStoreId,
-    router,
-    t,
-  ]);
+  }, [user, isUserLoading, isUserSuccess, router, t]);
 
   const chooseStoreMutation = useMutation({
     mutationFn: (storeId: string) => loginWithStoreAuth0({ storeId }),
@@ -74,16 +70,18 @@ export default function ChooseStorePage() {
 
       setSelectedStore(storeId);
 
+      // Refetch user with new store context to get updated role
       let updatedUser: CurrentUserData | null = null;
       try {
-        updatedUser = await queryClient.fetchQuery<
-          CurrentUserData | null,
-          Error
-        >({
-          queryKey: currentUserQueryKey(storeId),
-          queryFn: () => getCurrentUser(storeId),
-          staleTime: 0,
+        const result = await apiClient.GET('/users/me', {
+          params: { query: { storeId } },
         });
+        updatedUser = unwrapApiResponseAs<CurrentUserData>(
+          result,
+          'Failed to refresh session'
+        );
+        // Invalidate queries so they refetch with new store context
+        queryClient.invalidateQueries({ queryKey: ['get', '/users/me'] });
       } catch {
         toast.error(t('sessionRefreshFailed'));
       }

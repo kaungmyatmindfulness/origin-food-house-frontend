@@ -9,6 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
+import { getErrorDetails } from 'src/common/utils/error.util';
 import { Role, User } from 'src/generated/prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -134,8 +135,9 @@ export class AuthService {
     userId: string,
     storeId: string
   ): Promise<string> {
+    const method = this.generateAccessTokenWithStore.name;
     this.logger.log(
-      `Attempting to generate store-context token for User ID: ${userId}, Store ID: ${storeId}`
+      `[${method}] Attempting to generate store-context token for User ID: ${userId}, Store ID: ${storeId}`
     );
     const memberships = await this.userService.getUserStores(userId); // Reuse existing UserService method
     if (!memberships) {
@@ -170,7 +172,7 @@ export class AuthService {
       jwtVersion: user?.jwtVersion ?? 0,
     };
     this.logger.log(
-      `Generating store-context access token for User ID: ${userId}, Store ID: ${storeId}, Role: ${membership.role}, JWT version: ${payload.jwtVersion}`
+      `[${method}] Generating store-context access token for User ID: ${userId}, Store ID: ${storeId}, Role: ${membership.role}, JWT version: ${payload.jwtVersion}`
     );
     return this.jwtService.sign(payload, {
       expiresIn: this.JWT_EXPIRATION_TIME,
@@ -181,11 +183,13 @@ export class AuthService {
    * Validates an Auth0 token and returns user information
    */
   async validateAuth0Token(token: string): Promise<Auth0TokenPayload> {
+    const method = this.validateAuth0Token.name;
     try {
       const decoded = await this.auth0Service.validateToken(token);
       return decoded;
     } catch (error) {
-      this.logger.error('Failed to validate Auth0 token', error);
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to validate Auth0 token`, stack);
       throw new UnauthorizedException('Invalid Auth0 token');
     }
   }
@@ -250,7 +254,8 @@ export class AuthService {
       );
       return user;
     } catch (error) {
-      this.logger.error('Failed to sync Auth0 user', error);
+      const { stack } = getErrorDetails(error);
+      this.logger.error('[syncAuth0User] Failed to sync Auth0 user', stack);
       throw new InternalServerErrorException('Failed to sync user from Auth0');
     }
   }
@@ -259,10 +264,12 @@ export class AuthService {
    * Gets user information from Auth0 access token
    */
   async getAuth0UserInfo(accessToken: string): Promise<Auth0UserInfo> {
+    const method = this.getAuth0UserInfo.name;
     try {
       return await this.auth0Service.getUserInfo(accessToken);
     } catch (error) {
-      this.logger.error('Failed to get Auth0 user info', error);
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to get Auth0 user info`, stack);
       throw new UnauthorizedException(
         'Failed to get user information from Auth0'
       );

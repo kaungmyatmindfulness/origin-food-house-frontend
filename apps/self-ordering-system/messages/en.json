@@ -1,0 +1,18 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Try again"
+  },
+  "menu": {
+    "title": "Menu",
+    "addToCart": "Add to Cart",
+    "outOfStock": "Out of Stock"
+  },
+  "cart": {
+    "title": "Your Order",
+    "empty": "Your cart is empty",
+    "checkout": "Place Order",
+    "total": "Total"
+  }
+}

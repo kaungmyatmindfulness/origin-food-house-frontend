@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Application providers for the Admin Platform.
+ * Application providers for the Self-Ordering System.
  * Configured for SSR with React Query for server state management.
  */
 import {

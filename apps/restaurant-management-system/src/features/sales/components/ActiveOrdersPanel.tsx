@@ -18,18 +18,33 @@ import { OrderCard } from './OrderCard';
 import type { OrderResponseDto } from '@repo/api/generated/types';
 
 /**
- * Fetches active orders for a store.
- * Active orders are those with status: PENDING, PREPARING, READY, or SERVED
+ * TODO: Migrate to $api.useQuery when backend implements store orders endpoint
  *
- * TODO: Implement proper API endpoint - BE developer should implement:
+ * Required API endpoint (not yet implemented):
  * GET /stores/{storeId}/orders?status=PENDING,PREPARING,READY,SERVED
  *
- * For now, returns empty array until API is ready.
+ * Current available endpoints:
+ * - /active-table-sessions/{sessionId}/orders - Orders by session
+ * - /stores/{storeId}/kitchen/orders - Kitchen orders (may work for this use case)
+ * - /orders - All orders (no store filter)
+ *
+ * When endpoint is ready, replace with:
+ *   const { data: response, isLoading } = $api.useQuery(
+ *     'get', '/stores/{storeId}/orders',
+ *     {
+ *       params: {
+ *         path: { storeId },
+ *         query: { status: 'PENDING,PREPARING,READY,SERVED' }
+ *       }
+ *     }
+ *   );
+ *   const orders = response?.data ?? [];
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function getActiveOrders(_storeId: string): Promise<OrderResponseDto[]> {
-  // NOTE FOR BE DEVELOPER: Implement GET /stores/{storeId}/orders?status=PENDING,PREPARING,READY,SERVED
-  // This should return orders that are not COMPLETED or CANCELLED
+async function getActiveOrders(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _storeId: string
+): Promise<OrderResponseDto[]> {
+  // Returns empty array until backend implements store orders endpoint
   return [];
 }
 

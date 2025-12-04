@@ -58,7 +58,7 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
   const renderModalContent = () => {
     if (isLoading) {
       return (
-        <div className="flex min-h-[200px] items-center justify-center text-gray-500">
+        <div className="text-muted-foreground flex min-h-[200px] items-center justify-center">
           <Loader2 className="mr-2 h-8 w-8 animate-spin" />
           <span>Loading item details...</span>
         </div>
@@ -88,7 +88,7 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
 
     if (isSuccess && !item) {
       return (
-        <div className="flex min-h-[200px] flex-col items-center justify-center px-4 text-center text-gray-500">
+        <div className="text-muted-foreground flex min-h-[200px] flex-col items-center justify-center px-4 text-center">
           <AlertCircle className="mb-2 h-8 w-8" />
           <p className="font-semibold">Item Not Found</p>
           <p className="text-sm">The requested item could not be found.</p>
@@ -131,7 +131,7 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
             <p className="text-primary dark:text-primary-light text-lg font-medium">
               {formatCurrency(item.basePrice)}
               {item.customizationGroups?.length > 0 && (
-                <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                <span className="text-muted-foreground dark:text-muted-foreground text-sm font-normal">
                   (base price)
                 </span>
               )}
@@ -141,37 +141,37 @@ export function ItemModal({ id, open, onClose }: ItemModalProps) {
           {description && (
             <DialogDescription
               id="item-modal-description"
-              className="mb-4 text-left text-sm text-gray-700 dark:text-gray-300"
+              className="text-foreground dark:text-foreground mb-4 text-left text-sm"
             >
               {description}
             </DialogDescription>
           )}
 
           {item.customizationGroups && item.customizationGroups.length > 0 && (
-            <div className="mt-3 space-y-4 border-t pt-3 dark:border-gray-600">
-              <h3 className="text-sm font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-400">
+            <div className="dark:border-border mt-3 space-y-4 border-t pt-3">
+              <h3 className="text-muted-foreground dark:text-muted-foreground text-sm font-semibold tracking-wide uppercase">
                 Available Options
               </h3>
               {item.customizationGroups.map((group) => (
                 <div key={group.id}>
-                  <p className="mb-1 text-sm font-medium text-gray-800 dark:text-gray-200">
+                  <p className="text-foreground dark:text-foreground mb-1 text-sm font-medium">
                     {group.name}
                   </p>
                   <ul className="list-none space-y-0.5 pl-1">
                     {group.customizationOptions.map((option) => (
                       <li
                         key={option.id}
-                        className="flex justify-between text-sm text-gray-600 dark:text-gray-300"
+                        className="text-muted-foreground dark:text-muted-foreground flex justify-between text-sm"
                       >
                         <span>{option.name}</span>
 
                         {parseFloat(String(option.additionalPrice ?? '0')) >
                         0 ? (
-                          <span className="ml-2 text-gray-500 dark:text-gray-400">
+                          <span className="text-muted-foreground dark:text-muted-foreground ml-2">
                             + {formatCurrency(option.additionalPrice)}
                           </span>
                         ) : (
-                          <span className="ml-2 text-gray-500 dark:text-gray-400">
+                          <span className="text-muted-foreground dark:text-muted-foreground ml-2">
                             (Free)
                           </span>
                         )}
