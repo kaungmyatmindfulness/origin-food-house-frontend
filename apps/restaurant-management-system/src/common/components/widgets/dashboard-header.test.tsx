@@ -108,10 +108,10 @@ describe('DashboardHeader', () => {
       expect(link).toContainElement(logo);
     });
 
-    it('should link to /hub-sales', () => {
+    it('should link to /hub/sales', () => {
       render(<DashboardHeader />);
       const link = screen.getByRole('link');
-      expect(link).toHaveAttribute('href', '/hub-sales');
+      expect(link).toHaveAttribute('href', '/hub/sales');
     });
 
     it('should have correct styling classes', () => {

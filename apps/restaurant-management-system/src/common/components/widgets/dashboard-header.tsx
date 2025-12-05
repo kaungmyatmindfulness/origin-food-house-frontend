@@ -96,7 +96,7 @@ export function DashboardHeader() {
       <header className="bg-background fixed top-0 right-0 left-0 z-50 flex h-15 items-center justify-between border-b px-4 shadow-sm md:px-6">
         {/* Left: Logo + Store Info */}
         <div className="flex items-center gap-4">
-          <Link href="/hub-sales">
+          <Link href="/hub/sales">
             <Image
               src="/logo.svg"
               alt="Logo"

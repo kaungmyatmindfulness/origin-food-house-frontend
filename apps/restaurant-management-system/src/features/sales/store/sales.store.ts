@@ -137,11 +137,13 @@ export const useSalesStore = create<SalesState & SalesActions>()(
       })),
       {
         name: 'sales-storage',
+        // Only persist UI preferences, NOT session-specific data
+        // activeSessionId should NOT be persisted - it causes stale cart API calls
+        // when switching between Quick Sale (local cart) and Table Sale (server cart)
         partialize: (state) => ({
           activeView: state.activeView,
-          activeSessionId: state.activeSessionId,
+          // sessionType is fine to persist as a user preference
           sessionType: state.sessionType,
-          selectedTableId: state.selectedTableId,
         }),
       }
     ),

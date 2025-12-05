@@ -55,7 +55,10 @@ export function LanguageSwitcher({
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align={collapsed ? 'center' : 'end'} side={isCompact ? 'bottom' : 'top'}>
+      <DropdownMenuContent
+        align={collapsed ? 'center' : 'end'}
+        side={isCompact ? 'bottom' : 'top'}
+      >
         {locales.map((loc) => (
           <DropdownMenuItem
             key={loc}
