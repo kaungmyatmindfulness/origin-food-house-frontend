@@ -15,7 +15,6 @@ export { QuickSaleCartPanel } from './QuickSaleCartPanel';
 export { QuickSaleView } from './QuickSaleView';
 export { ReceiptPanel } from './ReceiptPanel';
 export { SalesMenuItemCard } from './SalesMenuItemCard';
-export { SaveIndicator } from './SaveIndicator';
 export { SessionTypePills } from './SessionTypePills';
 export { StartSessionDialog } from './StartSessionDialog';
 export { TableCard } from './TableCard';

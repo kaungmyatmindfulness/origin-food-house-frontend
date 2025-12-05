@@ -132,6 +132,45 @@
     "emptyState": {
       "title": "Start Your Order",
       "description": "Select items from the menu to add to your cart"
+    },
+    "stash": {
+      "stashOrder": "Stash Order",
+      "viewStashed": "View Stashed Orders",
+      "dialogTitle": "Stash Order",
+      "dialogDescription": "Save this order to continue later. You can add an optional note to help identify it.",
+      "noteLabel": "Note (optional)",
+      "notePlaceholder": "e.g., Customer waiting, Phone order",
+      "characters": "characters",
+      "cancel": "Cancel",
+      "stashButton": "Stash Order",
+      "orderStashed": "Order stashed successfully",
+      "orderRestored": "Order restored successfully",
+      "ordersMerged": "Orders merged successfully",
+      "currentStashedAndRestored": "Current order stashed, previous order restored",
+      "orderDeleted": "Stashed order deleted",
+      "restoreError": "Failed to restore order",
+      "noNote": "No note",
+      "item": "item",
+      "items": "items",
+      "delete": "Delete"
+    },
+    "stashedOrders": {
+      "title": "Stashed Orders",
+      "description": "Tap an order to restore it to your cart",
+      "emptyTitle": "No Stashed Orders",
+      "emptyDescription": "Stash orders when you need to pause and serve another customer",
+      "viewStashed": "View Stashed Orders"
+    },
+    "restoreConflict": {
+      "title": "Cart Has Items",
+      "description": "Your cart has {currentCount} {currentItems}. How would you like to restore the stashed order with {stashedCount} {stashedItems}?",
+      "replaceTitle": "Replace Current Cart",
+      "replaceDescription": "Clear current items and restore stashed order",
+      "mergeTitle": "Merge Orders",
+      "mergeDescription": "Add stashed items to current cart",
+      "stashFirstTitle": "Stash Current First",
+      "stashFirstDescription": "Save current cart to stash, then restore",
+      "cancel": "Cancel"
     }
   }
 }

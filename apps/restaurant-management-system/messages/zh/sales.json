@@ -132,6 +132,45 @@
     "emptyState": {
       "title": "开始点单",
       "description": "从菜单中选择商品添加到购物车"
+    },
+    "stash": {
+      "stashOrder": "暂存订单",
+      "viewStashed": "查看暂存订单",
+      "dialogTitle": "暂存订单",
+      "dialogDescription": "保存此订单以便稍后继续。您可以添加备注以便识别。",
+      "noteLabel": "备注（可选）",
+      "notePlaceholder": "例如：顾客等待中、电话订单",
+      "characters": "字符",
+      "cancel": "取消",
+      "stashButton": "暂存订单",
+      "orderStashed": "订单已成功暂存",
+      "orderRestored": "订单已成功恢复",
+      "ordersMerged": "订单已成功合并",
+      "currentStashedAndRestored": "当前订单已暂存，之前的订单已恢复",
+      "orderDeleted": "暂存订单已删除",
+      "restoreError": "恢复订单失败",
+      "noNote": "无备注",
+      "item": "件商品",
+      "items": "件商品",
+      "delete": "删除"
+    },
+    "stashedOrders": {
+      "title": "暂存订单",
+      "description": "点击订单即可恢复到购物车",
+      "emptyTitle": "没有暂存订单",
+      "emptyDescription": "当您需要暂停服务其他顾客时，可以暂存订单",
+      "viewStashed": "查看暂存订单"
+    },
+    "restoreConflict": {
+      "title": "购物车中有商品",
+      "description": "您的购物车中有 {currentCount} {currentItems}。您想如何恢复包含 {stashedCount} {stashedItems} 的暂存订单？",
+      "replaceTitle": "替换当前购物车",
+      "replaceDescription": "清空当前商品并恢复暂存订单",
+      "mergeTitle": "合并订单",
+      "mergeDescription": "将暂存商品添加到当前购物车",
+      "stashFirstTitle": "先暂存当前订单",
+      "stashFirstDescription": "将当前购物车保存到暂存，然后恢复",
+      "cancel": "取消"
     }
   }
 }

@@ -132,6 +132,45 @@
     "emptyState": {
       "title": "เริ่มออเดอร์ของคุณ",
       "description": "เลือกรายการจากเมนูเพื่อเพิ่มลงตะกร้า"
+    },
+    "stash": {
+      "stashOrder": "พักออเดอร์",
+      "viewStashed": "ดูออเดอร์ที่พักไว้",
+      "dialogTitle": "พักออเดอร์",
+      "dialogDescription": "บันทึกออเดอร์นี้เพื่อดำเนินการต่อภายหลัง คุณสามารถเพิ่มหมายเหตุเพื่อช่วยระบุได้",
+      "noteLabel": "หมายเหตุ (ถ้ามี)",
+      "notePlaceholder": "เช่น ลูกค้ารอ, ออเดอร์โทรศัพท์",
+      "characters": "ตัวอักษร",
+      "cancel": "ยกเลิก",
+      "stashButton": "พักออเดอร์",
+      "orderStashed": "พักออเดอร์สำเร็จ",
+      "orderRestored": "กู้คืนออเดอร์สำเร็จ",
+      "ordersMerged": "รวมออเดอร์สำเร็จ",
+      "currentStashedAndRestored": "พักออเดอร์ปัจจุบันและกู้คืนออเดอร์ก่อนหน้าแล้ว",
+      "orderDeleted": "ลบออเดอร์ที่พักไว้แล้ว",
+      "restoreError": "กู้คืนออเดอร์ล้มเหลว",
+      "noNote": "ไม่มีหมายเหตุ",
+      "item": "รายการ",
+      "items": "รายการ",
+      "delete": "ลบ"
+    },
+    "stashedOrders": {
+      "title": "ออเดอร์ที่พักไว้",
+      "description": "แตะออเดอร์เพื่อกู้คืนลงตะกร้า",
+      "emptyTitle": "ไม่มีออเดอร์ที่พักไว้",
+      "emptyDescription": "พักออเดอร์เมื่อคุณต้องหยุดพักเพื่อบริการลูกค้าอื่น",
+      "viewStashed": "ดูออเดอร์ที่พักไว้"
+    },
+    "restoreConflict": {
+      "title": "ตะกร้ามีสินค้า",
+      "description": "ตะกร้าของคุณมี {currentCount} {currentItems} คุณต้องการกู้คืนออเดอร์ที่พักไว้ซึ่งมี {stashedCount} {stashedItems} อย่างไร?",
+      "replaceTitle": "แทนที่ตะกร้าปัจจุบัน",
+      "replaceDescription": "ล้างรายการปัจจุบันและกู้คืนออเดอร์ที่พักไว้",
+      "mergeTitle": "รวมออเดอร์",
+      "mergeDescription": "เพิ่มรายการที่พักไว้ลงตะกร้าปัจจุบัน",
+      "stashFirstTitle": "พักออเดอร์ปัจจุบันก่อน",
+      "stashFirstDescription": "บันทึกตะกร้าปัจจุบันไว้ก่อนแล้วกู้คืน",
+      "cancel": "ยกเลิก"
     }
   }
 }
