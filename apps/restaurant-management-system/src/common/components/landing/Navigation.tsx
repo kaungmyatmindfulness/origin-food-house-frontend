@@ -76,7 +76,7 @@ export function Navigation() {
             >
               {t('testimonials')}
             </button>
-            <LanguageSwitcher />
+            <LanguageSwitcher size="compact" />
             <Button
               size="lg"
               className="bg-amber-600 hover:bg-amber-700"
@@ -88,7 +88,7 @@ export function Navigation() {
 
           {/* Mobile Menu Button */}
           <div className="flex items-center space-x-4 md:hidden">
-            <LanguageSwitcher />
+            <LanguageSwitcher size="compact" />
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-gray-700 transition-colors hover:text-amber-600"
