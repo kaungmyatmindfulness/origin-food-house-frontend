@@ -80,7 +80,13 @@ export function errorToastMiddleware(): Middleware {
       return response;
     },
     async onError({ error }) {
-      // Network errors
+      // Skip toast for intentionally aborted requests (e.g., React Strict Mode,
+      // component unmount, navigation). These are not real errors.
+      if (error instanceof Error && error.name === 'AbortError') {
+        return error;
+      }
+
+      // Network errors (connection failed, timeout, etc.)
       toast.error('Network error', {
         description:
           error instanceof Error ? error.message : 'Failed to connect to API',

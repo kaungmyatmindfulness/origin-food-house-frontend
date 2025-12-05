@@ -5,6 +5,8 @@
  * Uses openapi-fetch for type-safe API calls and openapi-react-query for React Query integration.
  */
 
+import { QueryClient } from '@tanstack/react-query';
+
 import {
   createApiClient,
   createApiQueryClient,
@@ -14,7 +16,6 @@ import {
 
 import { useAuthStore } from '@/features/auth/store/auth.store';
 
-// Re-export error utilities and response helpers
 export {
   FetchError,
   NetworkError,
@@ -75,14 +76,12 @@ export function unwrapApiResponseAs<T>(
     throw new ApiError(errorMessage, response.status);
   }
 
-  // Handle wrapped response structure: { status, data, message }
   const wrappedData = data as {
     status?: string;
     data?: unknown;
     message?: unknown;
   };
 
-  // Check if the API response indicates an error
   if (wrappedData.status === 'error') {
     const message =
       typeof wrappedData.message === 'string'
@@ -91,7 +90,6 @@ export function unwrapApiResponseAs<T>(
     throw new ApiError(message, response.status);
   }
 
-  // Extract the nested data
   const innerData = wrappedData.data;
 
   if (innerData === null || innerData === undefined) {
@@ -142,7 +140,7 @@ export const apiClient = createApiClient({
  *
  * @example
  * ```ts
- * // In a component:
+ *
  * const { data, isLoading } = $api.useQuery('get', '/stores/{storeId}/categories', {
  *   params: { path: { storeId } }
  * });
@@ -152,3 +150,52 @@ export const apiClient = createApiClient({
  * ```
  */
 export const $api = createApiQueryClient(apiClient);
+
+/**
+ * Creates QueryClient with offline-first configuration for RMS.
+ *
+ * This is centralized here to ensure both the QueryClientProvider and $api hooks
+ * use the same configuration. The client is created as a singleton for the browser.
+ */
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000,
+        gcTime: 30 * 60 * 1000,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
+        refetchOnMount: false,
+        retry: (failureCount) => {
+          return (
+            typeof navigator !== 'undefined' &&
+            navigator.onLine &&
+            failureCount < 2
+          );
+        },
+        networkMode: 'offlineFirst',
+      },
+      mutations: {
+        retry: 0,
+
+        networkMode: 'offlineFirst',
+      },
+    },
+  });
+}
+
+let browserQueryClient: QueryClient | undefined = undefined;
+
+/**
+ * Returns the singleton QueryClient instance.
+ * Creates a new instance on the server (for SSR isolation).
+ * Reuses the same instance in the browser.
+ */
+export function getQueryClient() {
+  if (typeof window === 'undefined') {
+    return makeQueryClient();
+  } else {
+    if (!browserQueryClient) browserQueryClient = makeQueryClient();
+    return browserQueryClient;
+  }
+}

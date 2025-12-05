@@ -1,19 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from '@repo/ui/lib/toast';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import {
   useAuthStore,
   selectSelectedStoreId,
   selectIsAuthenticated,
 } from '@/features/auth/store/auth.store';
-import { getCurrentUser } from '@/features/user/services/user.service';
 import type { CurrentUserData } from '@/features/user/types/user.types';
 
-import { ApiError, UnauthorizedError } from '@/utils/apiFetch';
+import { $api, ApiError, UnauthorizedError } from '@/utils/apiFetch';
 import { ROUTES, ERROR_MESSAGES } from '@/common/constants/routes';
 
 interface UseProtectedOptions {
@@ -57,62 +56,62 @@ export function useProtected(
   const selectedStoreId = useAuthStore(selectSelectedStoreId);
   const isAuthenticated = useAuthStore(selectIsAuthenticated);
 
-  const [isMounted, setIsMounted] = useState(false);
-
   const needsRoleCheck = Array.isArray(allowedRoles) && allowedRoles.length > 0;
 
-  const queryKey = [
-    'currentUser',
-    'protectedCheck',
-    { storeId: needsRoleCheck ? selectedStoreId : 'none' },
-  ];
+  const canFetch = !needsRoleCheck || !!selectedStoreId;
 
   const {
-    data: user,
+    data: userResponse,
     isLoading: isUserQueryLoading,
     isError: isUserQueryError,
     error: userQueryError,
     isSuccess: isUserQuerySuccess,
-  } = useQuery<CurrentUserData | null, Error>({
-    queryKey: queryKey,
-    queryFn: async () => {
-      if (needsRoleCheck && !selectedStoreId) {
-        throw new Error(ERROR_MESSAGES.STORE.REQUIRED_FOR_ROLE_CHECK);
-      }
-      return getCurrentUser(
-        needsRoleCheck ? selectedStoreId || undefined : undefined
-      );
+  } = $api.useQuery(
+    'get',
+    '/users/me',
+    {
+      params: {
+        query: {
+          storeId: needsRoleCheck ? (selectedStoreId ?? undefined) : undefined,
+        },
+      },
     },
-    enabled: isMounted,
-  });
+    {
+      enabled: canFetch,
+    }
+  );
 
-  const isLoading = !isMounted || isUserQueryLoading;
-  const isFinished = isMounted && !isUserQueryLoading;
+  const user = userResponse?.data as CurrentUserData | undefined;
+
+  const isLoading = isUserQueryLoading;
+  const isFinished = !isUserQueryLoading;
+
+  useEffect(() => {
+    if (needsRoleCheck && !selectedStoreId) {
+      toast.warning(ERROR_MESSAGES.AUTH.STORE_REQUIRED);
+      onRedirect?.();
+      router.replace(ROUTES.STORE_CHOOSE);
+    }
+  }, [needsRoleCheck, selectedStoreId, onRedirect, router]);
 
   useEffect(() => {
     if (!isFinished) {
       return;
     }
 
-    if (isUserQueryError) {
+    if (isUserQueryError && userQueryError) {
       console.error('useProtected: User query failed.', userQueryError);
       onRedirect?.();
 
-      if (userQueryError instanceof UnauthorizedError) {
+      const error = userQueryError as unknown;
+
+      if (error instanceof UnauthorizedError) {
         useAuthStore.getState().setAuthenticated(false);
         queryClient.clear();
         router.replace(loginRedirectTo);
-      } else if (
-        userQueryError instanceof ApiError &&
-        userQueryError.status === 403
-      ) {
+      } else if (error instanceof ApiError && error.status === 403) {
         toast.error(ERROR_MESSAGES.AUTH.PERMISSION_DENIED);
         router.replace(unauthorizedRedirectTo);
-      } else if (
-        userQueryError.message === ERROR_MESSAGES.STORE.REQUIRED_FOR_ROLE_CHECK
-      ) {
-        toast.warning(ERROR_MESSAGES.AUTH.STORE_REQUIRED);
-        router.replace(ROUTES.STORE_CHOOSE);
       } else {
         router.replace(loginRedirectTo);
       }
@@ -174,22 +173,11 @@ export function useProtected(
   ]);
 
   useEffect(() => {
-    if (isMounted && isFinished && !isAuthenticated) {
+    if (isFinished && !isAuthenticated) {
       queryClient.clear();
       router.replace(loginRedirectTo);
     }
-  }, [
-    isMounted,
-    isFinished,
-    isAuthenticated,
-    loginRedirectTo,
-    queryClient,
-    router,
-  ]);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  }, [isFinished, isAuthenticated, loginRedirectTo, queryClient, router]);
 
   return { isLoading, isFinished };
 }
