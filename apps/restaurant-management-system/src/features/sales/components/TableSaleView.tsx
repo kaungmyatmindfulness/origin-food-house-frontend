@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from '@repo/ui/lib/toast';
 
+import { Button } from '@repo/ui/components/button';
 import { Card, CardContent } from '@repo/ui/components/card';
 
 import { TablesView } from './TablesView';
@@ -88,7 +89,12 @@ export function TableSaleView({ storeId }: TableSaleViewProps) {
   });
 
   // Fetch order data for payment/receipt panels
-  const { data: orderResponse, isLoading: isLoadingOrder } = $api.useQuery(
+  const {
+    data: orderResponse,
+    isLoading: isLoadingOrder,
+    error: orderError,
+    refetch: refetchOrder,
+  } = $api.useQuery(
     'get',
     '/orders/{orderId}',
     {
@@ -106,6 +112,11 @@ export function TableSaleView({ storeId }: TableSaleViewProps) {
 
   const currentOrder = orderResponse?.data ?? null;
 
+  // Handle retry fetching order
+  const handleRetryFetchOrder = () => {
+    void refetchOrder();
+  };
+
   // Handle table session start
   const handleTableSessionStart = (sessionId: string, tableId: string) => {
     setSelectedTable(tableId);
@@ -122,6 +133,7 @@ export function TableSaleView({ storeId }: TableSaleViewProps) {
         menuItemId: item.id,
         quantity: 1,
       });
+      toast.success(t('itemAddedToCart'), { description: item.name });
     }
   };
 
@@ -219,11 +231,36 @@ export function TableSaleView({ storeId }: TableSaleViewProps) {
 
     switch (activePanel) {
       case 'payment':
+        // Error state for order fetch
+        if (orderError) {
+          return (
+            <Card className="flex h-full flex-col">
+              <CardContent className="flex flex-1 items-center justify-center">
+                <div className="text-center">
+                  <p className="text-destructive mb-4">
+                    {t('failedToLoadOrder')}
+                  </p>
+                  <div className="flex justify-center gap-3">
+                    <Button variant="outline" onClick={handlePaymentBack}>
+                      {t('backToCart')}
+                    </Button>
+                    <Button onClick={handleRetryFetchOrder}>
+                      {t('retry')}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        }
         if (!currentOrderId || isLoadingOrder) {
           return (
             <Card className="flex h-full flex-col">
               <CardContent className="flex flex-1 items-center justify-center">
-                <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
+                <div className="text-center">
+                  <Loader2 className="text-muted-foreground mx-auto mb-4 h-12 w-12 animate-spin" />
+                  <p className="text-muted-foreground">{t('loadingPayment')}</p>
+                </div>
               </CardContent>
             </Card>
           );
@@ -238,11 +275,36 @@ export function TableSaleView({ storeId }: TableSaleViewProps) {
         );
 
       case 'receipt': {
+        // Error state for order fetch
+        if (orderError) {
+          return (
+            <Card className="flex h-full flex-col">
+              <CardContent className="flex flex-1 items-center justify-center">
+                <div className="text-center">
+                  <p className="text-destructive mb-4">
+                    {t('failedToLoadOrder')}
+                  </p>
+                  <div className="flex justify-center gap-3">
+                    <Button variant="outline" onClick={handleNewOrder}>
+                      {t('newOrder')}
+                    </Button>
+                    <Button onClick={handleRetryFetchOrder}>
+                      {t('retry')}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        }
         if (!currentOrderId || !currentOrder || isLoadingOrder) {
           return (
             <Card className="flex h-full flex-col">
               <CardContent className="flex flex-1 items-center justify-center">
-                <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
+                <div className="text-center">
+                  <Loader2 className="text-muted-foreground mx-auto mb-4 h-12 w-12 animate-spin" />
+                  <p className="text-muted-foreground">{t('loadingReceipt')}</p>
+                </div>
               </CardContent>
             </Card>
           );
@@ -266,12 +328,12 @@ export function TableSaleView({ storeId }: TableSaleViewProps) {
       {/* Main content area - 60/40 split */}
       <div className="flex flex-1 flex-col gap-4 overflow-hidden lg:flex-row">
         {/* Left panel - Tables or Menu (60%) */}
-        <div className="min-h-[400px] min-w-0 flex-1 overflow-hidden lg:flex-[3]">
+        <div className="min-h-96 min-w-0 flex-1 overflow-hidden lg:flex-[3]">
           {renderLeftPanel()}
         </div>
 
         {/* Right panel - Cart/Payment/Receipt (40%) */}
-        <div className="min-h-[400px] min-w-0 flex-1 lg:flex-[2]">
+        <div className="min-h-96 min-w-0 flex-1 lg:flex-[2]">
           {renderRightPanel()}
         </div>
       </div>

@@ -127,8 +127,14 @@ export function PaymentPanel({
     <Card className="flex h-full flex-col">
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={onBack}>
-            <ArrowLeft className="h-4 w-4" />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-11 w-11"
+            onClick={onBack}
+            aria-label={t('backToCart')}
+          >
+            <ArrowLeft className="h-5 w-5" />
           </Button>
           <CardTitle className="text-lg">{t('payment')}</CardTitle>
         </div>
@@ -177,7 +183,7 @@ export function PaymentPanel({
                     <Button
                       key={amt}
                       variant="outline"
-                      size="sm"
+                      className="h-11"
                       onClick={() => setAmountTendered(amt.toString())}
                     >
                       {formatCurrency(amt)}

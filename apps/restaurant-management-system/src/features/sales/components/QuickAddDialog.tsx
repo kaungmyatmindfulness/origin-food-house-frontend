@@ -199,16 +199,24 @@ export function QuickAddDialog({
                 <Button
                   variant="outline"
                   size="icon"
+                  className="h-11 w-11"
                   onClick={handleDecrement}
                   disabled={quantity <= 1}
+                  aria-label={t('decreaseQuantity', { itemName: item.name })}
                 >
-                  <Minus className="h-4 w-4" />
+                  <Minus className="h-5 w-5" />
                 </Button>
                 <span className="w-12 text-center text-lg font-semibold">
                   {quantity}
                 </span>
-                <Button variant="outline" size="icon" onClick={handleIncrement}>
-                  <Plus className="h-4 w-4" />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-11 w-11"
+                  onClick={handleIncrement}
+                  aria-label={t('increaseQuantity', { itemName: item.name })}
+                >
+                  <Plus className="h-5 w-5" />
                 </Button>
               </div>
             </div>

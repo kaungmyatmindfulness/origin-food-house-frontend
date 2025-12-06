@@ -171,6 +171,14 @@
       "stashFirstTitle": "พักออเดอร์ปัจจุบันก่อน",
       "stashFirstDescription": "บันทึกตะกร้าปัจจุบันไว้ก่อนแล้วกู้คืน",
       "cancel": "ยกเลิก"
-    }
+    },
+    "loadingPayment": "กำลังโหลดการชำระเงิน...",
+    "loadingReceipt": "กำลังโหลดใบเสร็จ...",
+    "failedToLoadOrder": "โหลดออเดอร์ไม่สำเร็จ",
+    "backToCart": "กลับไปตะกร้า",
+    "retry": "ลองอีกครั้ง",
+    "increaseQuantity": "เพิ่มจำนวน {itemName}",
+    "decreaseQuantity": "ลดจำนวน {itemName}",
+    "removeItem": "ลบ {itemName} ออกจากตะกร้า"
   }
 }

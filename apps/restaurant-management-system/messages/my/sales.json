@@ -171,6 +171,14 @@
       "stashFirstTitle": "လက်ရှိကို အရင်သိမ်းရန်",
       "stashFirstDescription": "လက်ရှိဈေးခြင်းကို သိမ်းပြီး ပြန်ထုတ်ရန်",
       "cancel": "မလုပ်တော့ပါ"
-    }
+    },
+    "loadingPayment": "ငွေပေးချေမှု ဖွင့်နေသည်...",
+    "loadingReceipt": "ပြေစာ ဖွင့်နေသည်...",
+    "failedToLoadOrder": "အော်ဒါ ဖွင့်ခြင်း မအောင်မြင်ပါ",
+    "backToCart": "ဈေးခြင်းသို့ ပြန်သွားရန်",
+    "retry": "ထပ်ကြိုးစားရန်",
+    "increaseQuantity": "{itemName} အရေအတွက် တိုးရန်",
+    "decreaseQuantity": "{itemName} အရေအတွက် လျှော့ရန်",
+    "removeItem": "{itemName} ကို ဈေးခြင်းမှ ဖယ်ရှားရန်"
   }
 }

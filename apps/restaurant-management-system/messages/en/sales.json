@@ -171,6 +171,14 @@
       "stashFirstTitle": "Stash Current First",
       "stashFirstDescription": "Save current cart to stash, then restore",
       "cancel": "Cancel"
-    }
+    },
+    "loadingPayment": "Loading payment...",
+    "loadingReceipt": "Loading receipt...",
+    "failedToLoadOrder": "Failed to load order",
+    "backToCart": "Back to cart",
+    "retry": "Retry",
+    "increaseQuantity": "Increase quantity of {itemName}",
+    "decreaseQuantity": "Decrease quantity of {itemName}",
+    "removeItem": "Remove {itemName} from cart"
   }
 }

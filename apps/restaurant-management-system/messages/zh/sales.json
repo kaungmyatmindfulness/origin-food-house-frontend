@@ -171,6 +171,14 @@
       "stashFirstTitle": "先暂存当前订单",
       "stashFirstDescription": "将当前购物车保存到暂存，然后恢复",
       "cancel": "取消"
-    }
+    },
+    "loadingPayment": "正在加载付款...",
+    "loadingReceipt": "正在加载收据...",
+    "failedToLoadOrder": "加载订单失败",
+    "backToCart": "返回购物车",
+    "retry": "重试",
+    "increaseQuantity": "增加 {itemName} 的数量",
+    "decreaseQuantity": "减少 {itemName} 的数量",
+    "removeItem": "从购物车移除 {itemName}"
   }
 }

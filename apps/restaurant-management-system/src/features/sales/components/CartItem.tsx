@@ -81,6 +81,7 @@ export function CartItem({
           className="h-11 w-11 active:scale-95"
           onClick={handleDecrement}
           disabled={disabled || item.quantity <= 1}
+          aria-label={t('decreaseQuantity', { itemName: item.menuItemName })}
         >
           <Minus className="h-5 w-5" />
         </Button>
@@ -93,6 +94,7 @@ export function CartItem({
           className="h-11 w-11 active:scale-95"
           onClick={handleIncrement}
           disabled={disabled}
+          aria-label={t('increaseQuantity', { itemName: item.menuItemName })}
         >
           <Plus className="h-5 w-5" />
         </Button>
@@ -109,6 +111,7 @@ export function CartItem({
           className="text-destructive hover:text-destructive hover:bg-destructive/10 h-11 w-11 active:scale-95"
           onClick={handleRemove}
           disabled={disabled}
+          aria-label={t('removeItem', { itemName: item.menuItemName })}
         >
           <Trash2 className="h-5 w-5" />
         </Button>
