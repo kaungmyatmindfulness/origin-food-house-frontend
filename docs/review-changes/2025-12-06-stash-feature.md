@@ -7,24 +7,25 @@
 ## Overview
 
 This review covers the implementation of an order stashing feature that allows POS staff to temporarily save (stash) cart orders and restore them later. This is a common POS workflow for handling situations like:
+
 - Customer stepping away temporarily
 - Phone orders that need to wait
 - Switching between multiple customer orders
 
 ### Files Changed
 
-| File | Change Type | Lines |
-|------|-------------|-------|
-| `QuickSaleCartPanel.tsx` | Modified | +189 lines |
-| `SaveIndicator.tsx` | Deleted | -123 lines |
-| `index.ts` | Modified | -1 line |
-| `StashDialog.tsx` | New | 122 lines |
-| `StashedOrdersSheet.tsx` | New | 111 lines |
-| `StashedOrderCard.tsx` | New | 92 lines |
-| `RestoreConflictDialog.tsx` | New | 125 lines |
-| `stash.store.ts` | New | 176 lines |
-| `useStashStore.ts` | New | 72 lines |
-| `messages/*/sales.json` | Modified | +38 lines each (4 files) |
+| File                        | Change Type | Lines                    |
+| --------------------------- | ----------- | ------------------------ |
+| `QuickSaleCartPanel.tsx`    | Modified    | +189 lines               |
+| `SaveIndicator.tsx`         | Deleted     | -123 lines               |
+| `index.ts`                  | Modified    | -1 line                  |
+| `StashDialog.tsx`           | New         | 122 lines                |
+| `StashedOrdersSheet.tsx`    | New         | 111 lines                |
+| `StashedOrderCard.tsx`      | New         | 92 lines                 |
+| `RestoreConflictDialog.tsx` | New         | 125 lines                |
+| `stash.store.ts`            | New         | 176 lines                |
+| `useStashStore.ts`          | New         | 72 lines                 |
+| `messages/*/sales.json`     | Modified    | +38 lines each (4 files) |
 
 ---
 
@@ -75,9 +76,11 @@ This review covers the implementation of an order stashing feature that allows P
 ### Potential Issues
 
 1. **Memory Leak in Store Instance Cache** (`useStashStore.ts:18`):
+
    ```typescript
    const storeInstances = new Map<string, StashStore>();
    ```
+
    Store instances are never removed from the Map. If a user switches between many stores, instances accumulate. Consider using WeakRef or cleanup on unmount.
 
 2. **Missing Error Handling**: `restoreOrder` returns `null` on failure but the consumer (`handleRestoreOrder`) doesn't handle this case gracefully - it just silently fails to show the toast.
@@ -94,26 +97,26 @@ This review covers the implementation of an order stashing feature that allows P
 
 ### P1 - Should Fix
 
-| Issue | Location | Description |
-|-------|----------|-------------|
+| Issue                       | Location                         | Description                                                                         |
+| --------------------------- | -------------------------------- | ----------------------------------------------------------------------------------- |
 | Duplicate restoration logic | `QuickSaleCartPanel.tsx:195-240` | The `addItem` loop is repeated 3 times in switch cases. Extract to helper function. |
-| Missing null check | `QuickSaleCartPanel.tsx:165-175` | `handleRestoreOrder` doesn't show error toast when `restoreOrder` fails |
-| Unused ref | `useStashStore.ts:44-45` | `storeIdRef` is set but never read |
+| Missing null check          | `QuickSaleCartPanel.tsx:165-175` | `handleRestoreOrder` doesn't show error toast when `restoreOrder` fails             |
+| Unused ref                  | `useStashStore.ts:44-45`         | `storeIdRef` is set but never read                                                  |
 
 ### P2 - Nice to Fix
 
-| Issue | Location | Description |
-|-------|----------|-------------|
-| Magic number | `StashDialog.tsx:29` | `MAX_NOTE_LENGTH = 50` should be in constants file |
-| Console.warn usage | `stash.store.ts:89,121` | Consider using proper logging pattern |
-| Type export not used | `stash.store.ts:165` | `StashStore` type is defined but selectors could use explicit typing |
+| Issue                | Location                | Description                                                          |
+| -------------------- | ----------------------- | -------------------------------------------------------------------- |
+| Magic number         | `StashDialog.tsx:29`    | `MAX_NOTE_LENGTH = 50` should be in constants file                   |
+| Console.warn usage   | `stash.store.ts:89,121` | Consider using proper logging pattern                                |
+| Type export not used | `stash.store.ts:165`    | `StashStore` type is defined but selectors could use explicit typing |
 
 ### P3 - Optional
 
-| Issue | Location | Description |
-|-------|----------|-------------|
-| Store cache cleanup | `useStashStore.ts:18` | Consider cleanup mechanism for store instances |
-| Accessibility | `StashedOrderCard.tsx:44-48` | Card uses onClick for restore - consider adding keyboard handler |
+| Issue               | Location                     | Description                                                      |
+| ------------------- | ---------------------------- | ---------------------------------------------------------------- |
+| Store cache cleanup | `useStashStore.ts:18`        | Consider cleanup mechanism for store instances                   |
+| Accessibility       | `StashedOrderCard.tsx:44-48` | Card uses onClick for restore - consider adding keyboard handler |
 
 ---
 
@@ -148,6 +151,7 @@ This review covers the implementation of an order stashing feature that allows P
 ### High Priority
 
 1. **Extract Item Restoration Helper** (`QuickSaleCartPanel.tsx`):
+
    ```typescript
    const restoreItemsToCart = useCallback(
      (items: DraftCartItem[]) => {
@@ -168,16 +172,22 @@ This review covers the implementation of an order stashing feature that allows P
    ```
 
 2. **Add Error Handling for Failed Restore**:
+
    ```typescript
-   const handleRestoreOrder = useCallback((id: string) => {
-     // ... existing logic
-     const restoredItems = restoreOrder(id);
-     if (!restoredItems) {
-       toast.error(t('stash.restoreError')); // Add translation
-       return;
-     }
-     // ... continue
-   }, [/* deps */]);
+   const handleRestoreOrder = useCallback(
+     (id: string) => {
+       // ... existing logic
+       const restoredItems = restoreOrder(id);
+       if (!restoredItems) {
+         toast.error(t('stash.restoreError')); // Add translation
+         return;
+       }
+       // ... continue
+     },
+     [
+       /* deps */
+     ]
+   );
    ```
 
 3. **Remove Unused Ref** (`useStashStore.ts:44-45`):
@@ -190,6 +200,7 @@ This review covers the implementation of an order stashing feature that allows P
 ### Medium Priority
 
 4. **Create Constants File** (`features/sales/constants/stash.constants.ts`):
+
    ```typescript
    export const MAX_STASH_NOTE_LENGTH = 50;
    export const MAX_STASHED_ORDERS = 15;
@@ -209,11 +220,12 @@ This review covers the implementation of an order stashing feature that allows P
 ### Low Priority
 
 6. **Use structuredClone** (`stash.store.ts`):
+
    ```typescript
    // Replace:
-   items: JSON.parse(JSON.stringify(items))
+   items: JSON.parse(JSON.stringify(items));
    // With:
-   items: structuredClone(items)
+   items: structuredClone(items);
    ```
 
 7. **Extract Stash Handlers to Custom Hook**: Create `useStashActions.ts` to handle stash/restore/conflict logic, keeping `QuickSaleCartPanel` focused on rendering.
@@ -224,16 +236,17 @@ This review covers the implementation of an order stashing feature that allows P
 
 **Overall Assessment:** Good implementation with proper patterns
 
-| Aspect | Rating |
-|--------|--------|
-| Code Quality | 4/5 |
-| Architecture | 4/5 |
-| Type Safety | 5/5 |
-| i18n | 5/5 |
-| Touch Accessibility | 5/5 |
-| Error Handling | 3/5 |
+| Aspect              | Rating |
+| ------------------- | ------ |
+| Code Quality        | 4/5    |
+| Architecture        | 4/5    |
+| Type Safety         | 5/5    |
+| i18n                | 5/5    |
+| Touch Accessibility | 5/5    |
+| Error Handling      | 3/5    |
 
 The stash feature is well-implemented following project conventions. The main concerns are:
+
 1. Duplicate code that should be extracted
 2. Missing error handling for edge cases
 3. Minor cleanup items (unused ref, magic numbers)

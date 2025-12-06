@@ -14,6 +14,7 @@ npm run build        # Build succeeds
 ```
 
 RMS-specific:
+
 ```bash
 npm test --workspace=@app/restaurant-management-system
 ```
@@ -60,11 +61,15 @@ const user = useAuthStore((state) => state.user);
 
 ```typescript
 // ❌ BAD
-if (items.length > 50) { toast.warning('Too many'); }
+if (items.length > 50) {
+  toast.warning('Too many');
+}
 
 // ✅ GOOD
 const MAX_ITEMS_PER_ORDER = 50;
-if (items.length > MAX_ITEMS_PER_ORDER) { toast.warning(`Max ${MAX_ITEMS_PER_ORDER}`); }
+if (items.length > MAX_ITEMS_PER_ORDER) {
+  toast.warning(`Max ${MAX_ITEMS_PER_ORDER}`);
+}
 ```
 
 ### 3. Deeply Nested Conditionals
@@ -83,11 +88,15 @@ return <Button />;
 
 ```typescript
 // ❌ BAD
-function handleError(error: any) { console.error(error.message); }
+function handleError(error: any) {
+  console.error(error.message);
+}
 
 // ✅ GOOD
 function handleError(error: unknown) {
-  if (error instanceof Error) { console.error(error.message); }
+  if (error instanceof Error) {
+    console.error(error.message);
+  }
 }
 ```
 
@@ -95,7 +104,10 @@ function handleError(error: unknown) {
 
 ```typescript
 // ❌ BAD
-interface Category { id: string; name: string; }
+interface Category {
+  id: string;
+  name: string;
+}
 
 // ✅ GOOD - Direct import
 import type { CategoryResponseDto } from '@repo/api/generated/types';
@@ -168,7 +180,9 @@ const categories = response?.data ?? [];
 export function Card({ data }: { data: CardData }) {}
 
 // ✅ GOOD
-interface CardProps { data: CardData; }
+interface CardProps {
+  data: CardData;
+}
 export function Card({ data }: CardProps) {}
 ```
 

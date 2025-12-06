@@ -92,14 +92,16 @@ const { data } = useQuery({
 // features/menu/queries/menu.keys.ts
 export const menuKeys = {
   all: ['menu'] as const,
-  categories: (storeId: string) => [...menuKeys.all, 'categories', { storeId }] as const,
-  category: (storeId: string, categoryId: string) => [...menuKeys.categories(storeId), categoryId] as const,
+  categories: (storeId: string) =>
+    [...menuKeys.all, 'categories', { storeId }] as const,
+  category: (storeId: string, categoryId: string) =>
+    [...menuKeys.categories(storeId), categoryId] as const,
   items: (storeId: string) => [...menuKeys.all, 'items', { storeId }] as const,
 };
 
 // Usage
-queryClient.invalidateQueries({ queryKey: menuKeys.all });  // All menu data
-queryClient.invalidateQueries({ queryKey: menuKeys.categories(storeId) });  // Specific store
+queryClient.invalidateQueries({ queryKey: menuKeys.all }); // All menu data
+queryClient.invalidateQueries({ queryKey: menuKeys.categories(storeId) }); // Specific store
 ```
 
 ---
@@ -127,11 +129,15 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         selectedStoreId: null,
         isAuthenticated: false,
 
-        setSelectedStore: (id) => set((draft) => { draft.selectedStoreId = id; }),
-        clearAuth: () => set((draft) => {
-          draft.selectedStoreId = null;
-          draft.isAuthenticated = false;
-        }),
+        setSelectedStore: (id) =>
+          set((draft) => {
+            draft.selectedStoreId = id;
+          }),
+        clearAuth: () =>
+          set((draft) => {
+            draft.selectedStoreId = null;
+            draft.isAuthenticated = false;
+          }),
       })),
       { name: 'auth-storage' }
     ),
@@ -140,8 +146,10 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 );
 
 // ALWAYS export selectors
-export const selectSelectedStoreId = (state: AuthState) => state.selectedStoreId;
-export const selectIsAuthenticated = (state: AuthState) => state.isAuthenticated;
+export const selectSelectedStoreId = (state: AuthState) =>
+  state.selectedStoreId;
+export const selectIsAuthenticated = (state: AuthState) =>
+  state.isAuthenticated;
 
 // Usage
 const storeId = useAuthStore(selectSelectedStoreId);
@@ -324,9 +332,12 @@ const totalPrice = useMemo(
 );
 
 // Memoize callbacks passed to children
-const handleDelete = useCallback((id: string) => {
-  deleteItem(id);
-}, [deleteItem]);
+const handleDelete = useCallback(
+  (id: string) => {
+    deleteItem(id);
+  },
+  [deleteItem]
+);
 ```
 
 ### Query Stale Time
@@ -335,13 +346,13 @@ const handleDelete = useCallback((id: string) => {
 // Rarely changing data - longer stale time
 const { data } = useQuery({
   queryKey: ['stores'],
-  staleTime: 5 * 60 * 1000,  // 5 minutes
+  staleTime: 5 * 60 * 1000, // 5 minutes
 });
 
 // Frequently changing data - shorter stale time
 const { data } = useQuery({
   queryKey: ['orders'],
-  staleTime: 30 * 1000,  // 30 seconds
+  staleTime: 30 * 1000, // 30 seconds
 });
 ```
 
@@ -372,7 +383,9 @@ const mutation = useMutation({
     const previousItems = queryClient.getQueryData(menuKeys.items(storeId));
 
     queryClient.setQueryData(menuKeys.items(storeId), (old) =>
-      old?.map((item) => item.id === variables.id ? { ...item, ...variables } : item)
+      old?.map((item) =>
+        item.id === variables.id ? { ...item, ...variables } : item
+      )
     );
 
     return { previousItems };

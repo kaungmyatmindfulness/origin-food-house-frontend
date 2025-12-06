@@ -22,12 +22,12 @@ This guide covers REST conventions, Swagger decorators, OpenAPI type safety, and
 
 ### HTTP Methods
 
-| Method | Purpose | Example |
-|--------|---------|---------|
-| GET | Read | `GET /stores/:id` |
-| POST | Create | `POST /stores` |
-| PATCH | Partial update | `PATCH /stores/:id` |
-| DELETE | Soft delete | `DELETE /stores/:id` |
+| Method | Purpose        | Example              |
+| ------ | -------------- | -------------------- |
+| GET    | Read           | `GET /stores/:id`    |
+| POST   | Create         | `POST /stores`       |
+| PATCH  | Partial update | `PATCH /stores/:id`  |
+| DELETE | Soft delete    | `DELETE /stores/:id` |
 
 ```typescript
 // INCORRECT - Verbs in URLs
@@ -92,40 +92,40 @@ Use the API CRUD decorators from `src/common/decorators/api-crud.decorator.ts`:
 
 ### Error Response Decorators
 
-| Decorator | Includes | Use Case |
-|-----------|----------|----------|
-| `ApiStandardErrors()` | 400, 401, 403 | Authenticated endpoints |
+| Decorator             | Includes           | Use Case                     |
+| --------------------- | ------------------ | ---------------------------- |
+| `ApiStandardErrors()` | 400, 401, 403      | Authenticated endpoints      |
 | `ApiResourceErrors()` | 400, 401, 403, 404 | Accessing specific resources |
-| `ApiCreateErrors()` | 400, 401, 403, 409 | POST create |
-| `ApiDeleteErrors()` | 400, 401, 403, 404 | DELETE |
+| `ApiCreateErrors()`   | 400, 401, 403, 409 | POST create                  |
+| `ApiDeleteErrors()`   | 400, 401, 403, 404 | DELETE                       |
 
 ### Authentication Decorators
 
-| Decorator | Use Case |
-|-----------|----------|
-| `ApiAuth()` | Simple auth (no role check) |
-| `ApiAuthWithRoles()` | Role-based access |
+| Decorator            | Use Case                    |
+| -------------------- | --------------------------- |
+| `ApiAuth()`          | Simple auth (no role check) |
+| `ApiAuthWithRoles()` | Role-based access           |
 
 ### CRUD Decorators (Top-level)
 
-| Decorator | HTTP | Includes |
-|-----------|------|----------|
-| `ApiGetAll<T>(model, name)` | GET list | Operation, success (array) |
-| `ApiGetOne<T>(model, name)` | GET single | Operation, id param, 404 |
-| `ApiCreate<T>(model, name)` | POST | Auth, 201, create errors |
-| `ApiPatch<T>(model, name)` | PATCH | Auth, id param, errors |
-| `ApiDelete(name)` | DELETE | Auth, id param, errors |
-| `ApiDeleteNoContent(name)` | DELETE 204 | Same with 204 |
+| Decorator                   | HTTP       | Includes                   |
+| --------------------------- | ---------- | -------------------------- |
+| `ApiGetAll<T>(model, name)` | GET list   | Operation, success (array) |
+| `ApiGetOne<T>(model, name)` | GET single | Operation, id param, 404   |
+| `ApiCreate<T>(model, name)` | POST       | Auth, 201, create errors   |
+| `ApiPatch<T>(model, name)`  | PATCH      | Auth, id param, errors     |
+| `ApiDelete(name)`           | DELETE     | Auth, id param, errors     |
+| `ApiDeleteNoContent(name)`  | DELETE 204 | Same with 204              |
 
 ### Store-Nested Decorators
 
-| Decorator | Description |
-|-----------|-------------|
-| `ApiStoreGetAll<T>` | + storeId param |
-| `ApiStoreGetOne<T>` | + storeId param |
-| `ApiStoreCreate<T>` | + storeId param |
-| `ApiStorePatch<T>` | + storeId param |
-| `ApiStoreDelete` | + storeId param |
+| Decorator                 | Description     |
+| ------------------------- | --------------- |
+| `ApiStoreGetAll<T>`       | + storeId param |
+| `ApiStoreGetOne<T>`       | + storeId param |
+| `ApiStoreCreate<T>`       | + storeId param |
+| `ApiStorePatch<T>`        | + storeId param |
+| `ApiStoreDelete`          | + storeId param |
 | `ApiStoreDeleteNoContent` | + storeId param |
 
 ### Usage Examples
@@ -183,10 +183,10 @@ async approve(@Param("id") id: string) {}
 
 ```typescript
 interface ApiCrudOptions {
-  summary?: string;           // Override summary
-  description?: string;       // Override success description
-  roles?: string;             // Add roles to summary
-  idDescription?: string;     // Custom ID param description
+  summary?: string; // Override summary
+  description?: string; // Override success description
+  roles?: string; // Add roles to summary
+  idDescription?: string; // Custom ID param description
   storeIdDescription?: string;
 }
 ```
@@ -194,6 +194,7 @@ interface ApiCrudOptions {
 ### When to Use Raw Decorators
 
 Use raw Swagger decorators for:
+
 - Custom `@ApiBody` with examples
 - Complex `@ApiQuery` parameters
 - File upload endpoints (`@ApiConsumes`)
@@ -237,17 +238,26 @@ const document = SwaggerModule.createDocument(app, config, {
 ```typescript
 // BAD - Same name in different modules
 // src/category/dto/category-response.dto.ts
-export class CategoryResponseDto { /* with menuItems */ }
+export class CategoryResponseDto {
+  /* with menuItems */
+}
 
 // src/menu/dto/category-response.dto.ts
-export class CategoryResponseDto { /* without menuItems */ }  // CONFLICT!
+export class CategoryResponseDto {
+  /* without menuItems */
+} // CONFLICT!
 
 // GOOD - Unique names
-export class CategoryResponseDto { /* full */ }        // category module
-export class MenuCategoryDto { /* simplified */ }      // menu module
+export class CategoryResponseDto {
+  /* full */
+} // category module
+export class MenuCategoryDto {
+  /* simplified */
+} // menu module
 ```
 
 **Naming rules:**
+
 - PREFIX with module name when DTOs serve different purposes
 - CHECK before creating: `grep -r "class YourDtoName" src/`
 - REUSE existing DTOs when schema is identical
@@ -294,6 +304,7 @@ async updatePrintSettings(storeId: string, dto: UpdatePrintSettingsDto): Promise
 ```
 
 **When to use:**
+
 - GET uses `findUnique` → may return null
 - UPDATE uses `upsert` → always returns data
 
@@ -357,11 +368,11 @@ metadata?: { width: number; height: number; format: string };
 
 ### Patterns to Avoid
 
-| Pattern | Problem | Solution |
-|---------|---------|----------|
-| `additionalProperties: true` | No type info | Use `{ $ref: "..." }` |
-| `type: "object"` alone | No properties | Add `properties` or `additionalProperties` |
-| `Record<string, any>` | any propagates | Define explicit value DTO |
+| Pattern                      | Problem        | Solution                                   |
+| ---------------------------- | -------------- | ------------------------------------------ |
+| `additionalProperties: true` | No type info   | Use `{ $ref: "..." }`                      |
+| `type: "object"` alone       | No properties  | Add `properties` or `additionalProperties` |
+| `Record<string, any>`        | any propagates | Define explicit value DTO                  |
 
 ### Registration Requirement
 
@@ -372,7 +383,7 @@ extraModels: [
   BusinessHoursSlotDto,
   SpecialHoursEntryDto,
   // ...
-]
+];
 ```
 
 ### Exception: StandardApiResponse.data
@@ -413,6 +424,7 @@ export class CartGateway implements OnGatewayConnection {
 ```
 
 **Rules:**
+
 - ALWAYS validate authentication in `handleConnection`
 - ALWAYS disconnect unauthenticated clients
 - ALWAYS validate DTOs for WebSocket messages

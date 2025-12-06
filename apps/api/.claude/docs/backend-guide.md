@@ -7,6 +7,7 @@ This consolidated guide covers TypeScript rules, NestJS architecture, Prisma 7, 
 ## TypeScript Strictness
 
 **Rules:**
+
 - NEVER use `any` type
 - NEVER use non-null assertion (`!`) without null check first
 - ALWAYS use optional chaining (`?.`) and nullish coalescing (`??`)
@@ -56,6 +57,7 @@ async findUser(id: string): Promise<User> {
 ```
 
 **Rules:**
+
 - ALWAYS use NestJS exception classes (`NotFoundException`, `BadRequestException`, etc.)
 - ALWAYS prefix logs with `[${method}]` using `const method = this.methodName.name`
 - ALWAYS use `getErrorDetails(error)` utility for error logging
@@ -114,7 +116,7 @@ async createUser(
 export class OrderService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly authService: AuthService,
+    private readonly authService: AuthService
   ) {}
 }
 
@@ -152,7 +154,10 @@ import { Pool } from 'pg';
 import { PrismaClient } from 'src/generated/prisma/client';
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+export class PrismaService
+  extends PrismaClient
+  implements OnModuleInit, OnModuleDestroy
+{
   constructor(configService: ConfigService) {
     const connectionString = configService.get<string>('DATABASE_URL');
     const pool = new Pool({ connectionString });
@@ -160,8 +165,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     super({ adapter });
   }
 
-  async onModuleInit() { await this.$connect(); }
-  async onModuleDestroy() { await this.$disconnect(); }
+  async onModuleInit() {
+    await this.$connect();
+  }
+  async onModuleDestroy() {
+    await this.$disconnect();
+  }
 }
 ```
 
@@ -173,7 +182,10 @@ import { defineConfig, env } from 'prisma/config';
 
 export default defineConfig({
   schema: 'prisma/schema.prisma',
-  migrations: { path: 'prisma/migrations', seed: 'ts-node --transpile-only prisma/seed.ts' },
+  migrations: {
+    path: 'prisma/migrations',
+    seed: 'ts-node --transpile-only prisma/seed.ts',
+  },
   datasource: { url: env('DATABASE_URL') },
 });
 ```
@@ -202,6 +214,7 @@ model Order {
 ```
 
 **Rules:**
+
 - ALWAYS use `uuid(7)` for primary keys
 - ALWAYS use `Decimal` for monetary values (not Float)
 - ALWAYS use `deletedAt: DateTime?` for soft deletes
@@ -290,13 +303,13 @@ await this.checkStoreMembership(userId, storeId);
 
 ### RBAC (5 Roles)
 
-| Role | Access |
-|------|--------|
-| OWNER | Full access |
-| ADMIN | Store settings, menu, users |
-| CHEF | Menu, orders (view/update status) |
-| CASHIER | Orders, payments |
-| SERVER | Create orders, tables |
+| Role    | Access                            |
+| ------- | --------------------------------- |
+| OWNER   | Full access                       |
+| ADMIN   | Store settings, menu, users       |
+| CHEF    | Menu, orders (view/update status) |
+| CASHIER | Orders, payments                  |
+| SERVER  | Create orders, tables             |
 
 ```typescript
 // Verify role before privileged operations
@@ -312,7 +325,7 @@ Store base paths (NOT URLs) in database:
 // Frontend constructs: baseUrl + path + "-medium.webp"
 
 await this.prisma.menuItem.create({
-  data: { imagePath: uploadResult.basePath },  // Just base path
+  data: { imagePath: uploadResult.basePath }, // Just base path
 });
 ```
 
@@ -326,26 +339,27 @@ Use `@IsImagePath()` validator for input DTOs.
 
 ```typescript
 export class CreateMenuItemDto {
-  @ApiProperty({ description: "Menu item name", example: "Margherita Pizza" })
+  @ApiProperty({ description: 'Menu item name', example: 'Margherita Pizza' })
   @IsString()
   @IsNotEmpty()
   @MinLength(1)
   @MaxLength(100)
-  @Transform(({ value }: { value: string }) => value?.trim())  // Sanitize
+  @Transform(({ value }: { value: string }) => value?.trim()) // Sanitize
   name: string;
 
-  @ApiProperty({ description: "Price", example: 12.99 })
+  @ApiProperty({ description: 'Price', example: 12.99 })
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)
   price: number;
 
-  @ApiProperty({ description: "Store UUID" })
+  @ApiProperty({ description: 'Store UUID' })
   @IsUUID()
   storeId: string;
 }
 ```
 
 **Rules:**
+
 - ALWAYS use class-validator decorators
 - ALWAYS add `@ApiProperty` for Swagger docs
 - ALWAYS validate lengths, ranges, UUIDs
@@ -430,8 +444,8 @@ import { PrismaService } from '../../prisma/prisma.service';
 ### ESLint Rules
 
 ```typescript
-const value = config ?? 'default';         // Nullish coalescing (not ||)
-const name = user?.profile?.name;          // Optional chaining
-await this.service.doSomething();          // No floating promises
-const message = `User ${userId} created`;  // Template literals
+const value = config ?? 'default'; // Nullish coalescing (not ||)
+const name = user?.profile?.name; // Optional chaining
+await this.service.doSomething(); // No floating promises
+const message = `User ${userId} created`; // Template literals
 ```

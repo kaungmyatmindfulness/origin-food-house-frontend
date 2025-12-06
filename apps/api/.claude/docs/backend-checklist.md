@@ -71,6 +71,7 @@ CORS_ORIGIN=http://localhost:3001,http://localhost:3002
 ```
 
 **NEVER:**
+
 - Commit `.env` files
 - Use `process.env.VARIABLE` directly (use `ConfigService`)
 - Use JWT secrets < 32 characters
@@ -137,7 +138,9 @@ await this.prisma.user.findUnique({ where: { email: userEmail } });
 await this.prisma.$queryRaw`SELECT * FROM users WHERE email = ${email}`;
 
 // DANGEROUS - Never do this
-await this.prisma.$queryRawUnsafe(`SELECT * FROM users WHERE email = '${email}'`);
+await this.prisma.$queryRawUnsafe(
+  `SELECT * FROM users WHERE email = '${email}'`
+);
 ```
 
 ### File Upload Validation
@@ -305,7 +308,9 @@ describe('StoreService', () => {
   describe('createStore', () => {
     it('should create store in transaction', async () => {
       const dto: CreateStoreDto = { name: 'Test Store', slug: 'test-store' };
-      prismaMock.$transaction.mockImplementation((callback) => callback(prismaMock));
+      prismaMock.$transaction.mockImplementation((callback) =>
+        callback(prismaMock)
+      );
 
       const result = await service.createStore('user-123', dto);
 
@@ -316,17 +321,21 @@ describe('StoreService', () => {
     it('should throw BadRequestException for duplicate slug', async () => {
       prismaMock.$transaction.mockRejectedValue(
         new Prisma.PrismaClientKnownRequestError('Unique constraint', {
-          code: 'P2002', clientVersion: '7.0.0',
+          code: 'P2002',
+          clientVersion: '7.0.0',
         })
       );
 
-      await expect(service.createStore('user-123', dto)).rejects.toThrow(BadRequestException);
+      await expect(service.createStore('user-123', dto)).rejects.toThrow(
+        BadRequestException
+      );
     });
   });
 });
 ```
 
 **Testing rules:**
+
 - Mock Prisma with `createPrismaMock()` helper
 - Test success AND error cases
 - Test transaction rollback

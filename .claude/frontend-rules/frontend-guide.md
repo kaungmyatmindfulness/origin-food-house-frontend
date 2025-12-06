@@ -66,6 +66,7 @@ import type { CategoryResponseDto } from '@repo/api/generated/types';
 ```
 
 **Exception:** Feature type files may contain:
+
 - Frontend-only UI state types (`SalesView = 'quick-sale' | 'tables'`)
 - Runtime enums needed for `Object.values()`
 - Type extensions for missing API fields (with TODO)
@@ -83,7 +84,10 @@ const categories = response?.data ?? [];
 ### Use Type Imports
 
 ```typescript
-import type { CategoryResponseDto, CreateCategoryDto } from '@repo/api/generated/types';
+import type {
+  CategoryResponseDto,
+  CreateCategoryDto,
+} from '@repo/api/generated/types';
 ```
 
 ---
@@ -135,7 +139,11 @@ interface CategoryCardProps {
   isLoading?: boolean;
 }
 
-export function CategoryCard({ category, onEdit, isLoading = false }: CategoryCardProps) {}
+export function CategoryCard({
+  category,
+  onEdit,
+  isLoading = false,
+}: CategoryCardProps) {}
 
 // ❌ WRONG - Inline type
 export function CategoryCard({ category }: { category: CategoryResponseDto }) {}
@@ -150,9 +158,9 @@ interface MenuPageProps {
 }
 
 export default function MenuPage({ params }: MenuPageProps) {
-  const { slug } = use(params);  // Client component
+  const { slug } = use(params); // Client component
   // OR
-  const { slug } = await params;  // Server component
+  const { slug } = await params; // Server component
 }
 ```
 
@@ -186,14 +194,14 @@ onSuccess: (_data, variables) => {
 
 **ALWAYS use tokens from `globals.css`:**
 
-| Token | Usage |
-|-------|-------|
-| `background` | Page backgrounds |
-| `foreground` | Primary text |
-| `muted-foreground` | Secondary text |
-| `primary` | Brand color, CTAs |
-| `destructive` | Delete, errors |
-| `border` | Borders |
+| Token              | Usage             |
+| ------------------ | ----------------- |
+| `background`       | Page backgrounds  |
+| `foreground`       | Primary text      |
+| `muted-foreground` | Secondary text    |
+| `primary`          | Brand color, CTAs |
+| `destructive`      | Delete, errors    |
+| `border`           | Borders           |
 
 ```typescript
 // ✅ CORRECT - Semantic tokens
@@ -267,13 +275,13 @@ import type { CategoryResponseDto } from '@repo/api/generated/types';
 
 ## Important Files
 
-| File | Purpose |
-|------|---------|
-| `apps/*/src/utils/apiFetch.ts` | API client config |
-| `packages/api/src/generated/types.gen.ts` | Auto-generated types |
-| `packages/ui/src/components/` | Shared components |
-| `messages/[locale]/*.json` | Translations |
-| `packages/ui/src/styles/globals.css` | Global styles & tokens |
+| File                                      | Purpose                |
+| ----------------------------------------- | ---------------------- |
+| `apps/*/src/utils/apiFetch.ts`            | API client config      |
+| `packages/api/src/generated/types.gen.ts` | Auto-generated types   |
+| `packages/ui/src/components/`             | Shared components      |
+| `messages/[locale]/*.json`                | Translations           |
+| `packages/ui/src/styles/globals.css`      | Global styles & tokens |
 
 ---
 
