@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useMutation } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
@@ -15,19 +14,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@repo/ui/components/dialog';
-import { Input } from '@repo/ui/components/input';
-import { Label } from '@repo/ui/components/label';
 
 // TODO: Import from tables service when available
 // NOTE FOR BE: Implement POST /stores/{storeId}/tables/{tableId}/sessions
 async function startTableSession(
   storeId: string,
-  tableId: string,
-  guestCount: number
-): Promise<{ id: string; tableId: string; guestCount: number }> {
-  console.log('startTableSession called:', { storeId, tableId, guestCount });
+  tableId: string
+): Promise<{ id: string; tableId: string }> {
+  console.log('startTableSession called:', { storeId, tableId });
   // Mock response - BE should implement this
-  return { id: `session-${Date.now()}`, tableId, guestCount };
+  return { id: `session-${Date.now()}`, tableId };
 }
 
 interface StartSessionDialogProps {
@@ -49,15 +45,13 @@ export function StartSessionDialog({
   onSessionStarted,
 }: StartSessionDialogProps) {
   const t = useTranslations('sales');
-  const [guestCount, setGuestCount] = useState(1);
 
   const startSessionMutation = useMutation({
-    mutationFn: () => startTableSession(storeId, table!.id, guestCount),
+    mutationFn: () => startTableSession(storeId, table!.id),
     onSuccess: (session) => {
       toast.success(t('sessionStarted'));
       onSessionStarted(session.id);
       onOpenChange(false);
-      setGuestCount(1);
     },
     onError: (error) => {
       toast.error(t('failedToStartSession'), {
@@ -85,18 +79,6 @@ export function StartSessionDialog({
               {table.tableNumber}
             </p>
           </div>
-
-          {/* Guest count */}
-          <div className="space-y-2">
-            <Label htmlFor="guestCount">{t('guestCount')}</Label>
-            <Input
-              id="guestCount"
-              type="number"
-              min={1}
-              value={guestCount}
-              onChange={(e) => setGuestCount(parseInt(e.target.value) || 1)}
-            />
-          </div>
         </div>
 
         <DialogFooter>
@@ -109,7 +91,7 @@ export function StartSessionDialog({
           </Button>
           <Button
             onClick={() => startSessionMutation.mutate()}
-            disabled={startSessionMutation.isPending || guestCount < 1}
+            disabled={startSessionMutation.isPending}
           >
             {startSessionMutation.isPending ? (
               <>

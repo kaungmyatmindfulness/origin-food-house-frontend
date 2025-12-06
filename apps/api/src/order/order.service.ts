@@ -332,7 +332,6 @@ export class OrderService {
               sessionType: dto.sessionType,
               customerName: dto.customerName,
               customerPhone: dto.customerPhone,
-              guestCount: 1,
             }
           );
 

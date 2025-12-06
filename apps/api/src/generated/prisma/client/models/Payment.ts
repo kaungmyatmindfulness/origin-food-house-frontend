@@ -30,14 +30,12 @@ export type PaymentAvgAggregateOutputType = {
   amount: runtime.Decimal | null;
   amountTendered: runtime.Decimal | null;
   change: runtime.Decimal | null;
-  guestNumber: number | null;
 };
 
 export type PaymentSumAggregateOutputType = {
   amount: runtime.Decimal | null;
   amountTendered: runtime.Decimal | null;
   change: runtime.Decimal | null;
-  guestNumber: number | null;
 };
 
 export type PaymentMinAggregateOutputType = {
@@ -50,7 +48,6 @@ export type PaymentMinAggregateOutputType = {
   transactionId: string | null;
   notes: string | null;
   splitType: string | null;
-  guestNumber: number | null;
   deletedAt: Date | null;
   createdAt: Date | null;
   updatedAt: Date | null;
@@ -66,7 +63,6 @@ export type PaymentMaxAggregateOutputType = {
   transactionId: string | null;
   notes: string | null;
   splitType: string | null;
-  guestNumber: number | null;
   deletedAt: Date | null;
   createdAt: Date | null;
   updatedAt: Date | null;
@@ -83,7 +79,6 @@ export type PaymentCountAggregateOutputType = {
   notes: number;
   splitType: number;
   splitMetadata: number;
-  guestNumber: number;
   deletedAt: number;
   createdAt: number;
   updatedAt: number;
@@ -94,14 +89,12 @@ export type PaymentAvgAggregateInputType = {
   amount?: true;
   amountTendered?: true;
   change?: true;
-  guestNumber?: true;
 };
 
 export type PaymentSumAggregateInputType = {
   amount?: true;
   amountTendered?: true;
   change?: true;
-  guestNumber?: true;
 };
 
 export type PaymentMinAggregateInputType = {
@@ -114,7 +107,6 @@ export type PaymentMinAggregateInputType = {
   transactionId?: true;
   notes?: true;
   splitType?: true;
-  guestNumber?: true;
   deletedAt?: true;
   createdAt?: true;
   updatedAt?: true;
@@ -130,7 +122,6 @@ export type PaymentMaxAggregateInputType = {
   transactionId?: true;
   notes?: true;
   splitType?: true;
-  guestNumber?: true;
   deletedAt?: true;
   createdAt?: true;
   updatedAt?: true;
@@ -147,7 +138,6 @@ export type PaymentCountAggregateInputType = {
   notes?: true;
   splitType?: true;
   splitMetadata?: true;
-  guestNumber?: true;
   deletedAt?: true;
   createdAt?: true;
   updatedAt?: true;
@@ -258,7 +248,6 @@ export type PaymentGroupByOutputType = {
   notes: string | null;
   splitType: string | null;
   splitMetadata: runtime.JsonValue | null;
-  guestNumber: number | null;
   deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -315,7 +304,6 @@ export type PaymentWhereInput = {
   notes?: Prisma.StringNullableFilter<'Payment'> | string | null;
   splitType?: Prisma.StringNullableFilter<'Payment'> | string | null;
   splitMetadata?: Prisma.JsonNullableFilter<'Payment'>;
-  guestNumber?: Prisma.IntNullableFilter<'Payment'> | number | null;
   deletedAt?: Prisma.DateTimeNullableFilter<'Payment'> | Date | string | null;
   createdAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
@@ -333,7 +321,6 @@ export type PaymentOrderByWithRelationInput = {
   notes?: Prisma.SortOrderInput | Prisma.SortOrder;
   splitType?: Prisma.SortOrderInput | Prisma.SortOrder;
   splitMetadata?: Prisma.SortOrderInput | Prisma.SortOrder;
-  guestNumber?: Prisma.SortOrderInput | Prisma.SortOrder;
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -374,7 +361,6 @@ export type PaymentWhereUniqueInput = Prisma.AtLeast<
     notes?: Prisma.StringNullableFilter<'Payment'> | string | null;
     splitType?: Prisma.StringNullableFilter<'Payment'> | string | null;
     splitMetadata?: Prisma.JsonNullableFilter<'Payment'>;
-    guestNumber?: Prisma.IntNullableFilter<'Payment'> | number | null;
     deletedAt?: Prisma.DateTimeNullableFilter<'Payment'> | Date | string | null;
     createdAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
@@ -397,7 +383,6 @@ export type PaymentOrderByWithAggregationInput = {
   notes?: Prisma.SortOrderInput | Prisma.SortOrder;
   splitType?: Prisma.SortOrderInput | Prisma.SortOrder;
   splitMetadata?: Prisma.SortOrderInput | Prisma.SortOrder;
-  guestNumber?: Prisma.SortOrderInput | Prisma.SortOrder;
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -451,10 +436,6 @@ export type PaymentScalarWhereWithAggregatesInput = {
     | string
     | null;
   splitMetadata?: Prisma.JsonNullableWithAggregatesFilter<'Payment'>;
-  guestNumber?:
-    | Prisma.IntNullableWithAggregatesFilter<'Payment'>
-    | number
-    | null;
   deletedAt?:
     | Prisma.DateTimeNullableWithAggregatesFilter<'Payment'>
     | Date
@@ -479,7 +460,6 @@ export type PaymentCreateInput = {
   notes?: string | null;
   splitType?: string | null;
   splitMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
-  guestNumber?: number | null;
   deletedAt?: Date | string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -502,7 +482,6 @@ export type PaymentUncheckedCreateInput = {
   notes?: string | null;
   splitType?: string | null;
   splitMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
-  guestNumber?: number | null;
   deletedAt?: Date | string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -540,7 +519,6 @@ export type PaymentUpdateInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   splitType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   splitMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
-  guestNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   deletedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -584,7 +562,6 @@ export type PaymentUncheckedUpdateInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   splitType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   splitMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
-  guestNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   deletedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -610,7 +587,6 @@ export type PaymentCreateManyInput = {
   notes?: string | null;
   splitType?: string | null;
   splitMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
-  guestNumber?: number | null;
   deletedAt?: Date | string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -648,7 +624,6 @@ export type PaymentUpdateManyMutationInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   splitType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   splitMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
-  guestNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   deletedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -691,7 +666,6 @@ export type PaymentUncheckedUpdateManyInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   splitType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   splitMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
-  guestNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   deletedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -722,7 +696,6 @@ export type PaymentCountOrderByAggregateInput = {
   notes?: Prisma.SortOrder;
   splitType?: Prisma.SortOrder;
   splitMetadata?: Prisma.SortOrder;
-  guestNumber?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -732,7 +705,6 @@ export type PaymentAvgOrderByAggregateInput = {
   amount?: Prisma.SortOrder;
   amountTendered?: Prisma.SortOrder;
   change?: Prisma.SortOrder;
-  guestNumber?: Prisma.SortOrder;
 };
 
 export type PaymentMaxOrderByAggregateInput = {
@@ -745,7 +717,6 @@ export type PaymentMaxOrderByAggregateInput = {
   transactionId?: Prisma.SortOrder;
   notes?: Prisma.SortOrder;
   splitType?: Prisma.SortOrder;
-  guestNumber?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -761,7 +732,6 @@ export type PaymentMinOrderByAggregateInput = {
   transactionId?: Prisma.SortOrder;
   notes?: Prisma.SortOrder;
   splitType?: Prisma.SortOrder;
-  guestNumber?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -771,7 +741,6 @@ export type PaymentSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder;
   amountTendered?: Prisma.SortOrder;
   change?: Prisma.SortOrder;
-  guestNumber?: Prisma.SortOrder;
 };
 
 export type PaymentCreateNestedManyWithoutOrderInput = {
@@ -887,7 +856,6 @@ export type PaymentCreateWithoutOrderInput = {
   notes?: string | null;
   splitType?: string | null;
   splitMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
-  guestNumber?: number | null;
   deletedAt?: Date | string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -908,7 +876,6 @@ export type PaymentUncheckedCreateWithoutOrderInput = {
   notes?: string | null;
   splitType?: string | null;
   splitMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
-  guestNumber?: number | null;
   deletedAt?: Date | string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -990,7 +957,6 @@ export type PaymentScalarWhereInput = {
   notes?: Prisma.StringNullableFilter<'Payment'> | string | null;
   splitType?: Prisma.StringNullableFilter<'Payment'> | string | null;
   splitMetadata?: Prisma.JsonNullableFilter<'Payment'>;
-  guestNumber?: Prisma.IntNullableFilter<'Payment'> | number | null;
   deletedAt?: Prisma.DateTimeNullableFilter<'Payment'> | Date | string | null;
   createdAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
@@ -1011,7 +977,6 @@ export type PaymentCreateManyOrderInput = {
   notes?: string | null;
   splitType?: string | null;
   splitMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
-  guestNumber?: number | null;
   deletedAt?: Date | string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1049,7 +1014,6 @@ export type PaymentUpdateWithoutOrderInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   splitType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   splitMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
-  guestNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   deletedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -1091,7 +1055,6 @@ export type PaymentUncheckedUpdateWithoutOrderInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   splitType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   splitMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
-  guestNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   deletedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -1133,7 +1096,6 @@ export type PaymentUncheckedUpdateManyWithoutOrderInput = {
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   splitType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   splitMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
-  guestNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   deletedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
@@ -1158,7 +1120,6 @@ export type PaymentSelect<
     notes?: boolean;
     splitType?: boolean;
     splitMetadata?: boolean;
-    guestNumber?: boolean;
     deletedAt?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
@@ -1182,7 +1143,6 @@ export type PaymentSelectCreateManyAndReturn<
     notes?: boolean;
     splitType?: boolean;
     splitMetadata?: boolean;
-    guestNumber?: boolean;
     deletedAt?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
@@ -1206,7 +1166,6 @@ export type PaymentSelectUpdateManyAndReturn<
     notes?: boolean;
     splitType?: boolean;
     splitMetadata?: boolean;
-    guestNumber?: boolean;
     deletedAt?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
@@ -1226,7 +1185,6 @@ export type PaymentSelectScalar = {
   notes?: boolean;
   splitType?: boolean;
   splitMetadata?: boolean;
-  guestNumber?: boolean;
   deletedAt?: boolean;
   createdAt?: boolean;
   updatedAt?: boolean;
@@ -1246,7 +1204,6 @@ export type PaymentOmit<
   | 'notes'
   | 'splitType'
   | 'splitMetadata'
-  | 'guestNumber'
   | 'deletedAt'
   | 'createdAt'
   | 'updatedAt',
@@ -1291,7 +1248,6 @@ export type $PaymentPayload<
       notes: string | null;
       splitType: string | null;
       splitMetadata: runtime.JsonValue | null;
-      guestNumber: number | null;
       deletedAt: Date | null;
       createdAt: Date;
       updatedAt: Date;
@@ -1911,7 +1867,6 @@ export interface PaymentFieldRefs {
   readonly notes: Prisma.FieldRef<'Payment', 'String'>;
   readonly splitType: Prisma.FieldRef<'Payment', 'String'>;
   readonly splitMetadata: Prisma.FieldRef<'Payment', 'Json'>;
-  readonly guestNumber: Prisma.FieldRef<'Payment', 'Int'>;
   readonly deletedAt: Prisma.FieldRef<'Payment', 'DateTime'>;
   readonly createdAt: Prisma.FieldRef<'Payment', 'DateTime'>;
   readonly updatedAt: Prisma.FieldRef<'Payment', 'DateTime'>;

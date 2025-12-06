@@ -40,9 +40,6 @@ export class SessionResponseDto {
   })
   customerPhone: string | null;
 
-  @ApiProperty({ description: 'Number of guests' })
-  guestCount: number;
-
   @ApiProperty({ type: Date, description: 'Closed timestamp', nullable: true })
   closedAt: Date | null;
 

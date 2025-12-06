@@ -756,10 +756,11 @@ export class PaymentService {
             amountTendered,
             change,
             transactionId: dto.transactionId,
-            notes: `Split payment - Guest ${dto.guestNumber}`,
+            notes: dto.guestNumber
+              ? `Split payment - Guest ${dto.guestNumber}`
+              : 'Split payment',
             splitType: dto.splitType,
             splitMetadata: dto.splitMetadata as Prisma.InputJsonValue,
-            guestNumber: dto.guestNumber,
           },
         });
 

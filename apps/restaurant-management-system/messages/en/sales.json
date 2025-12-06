@@ -73,7 +73,6 @@
     "tapToStartOrder": "Tap to start order",
     "startSession": "Start Session",
     "startSessionDesc": "Start a new dining session for Table {tableNumber}",
-    "guestCount": "Number of Guests",
     "cancel": "Cancel",
     "starting": "Starting...",
     "startOrder": "Start Order",

@@ -1,14 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsOptional, Min } from 'class-validator';
-
+/**
+ * DTO for joining a table session.
+ * Currently no additional data is required, but the DTO
+ * is kept for future extensibility (e.g., customer preferences).
+ */
 export class JoinSessionDto {
-  @ApiProperty({
-    description: 'Number of guests in the session',
-    example: 4,
-    required: false,
-  })
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  guestCount?: number;
+  // Reserved for future use
 }

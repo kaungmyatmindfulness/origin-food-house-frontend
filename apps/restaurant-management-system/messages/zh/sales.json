@@ -73,7 +73,6 @@
     "tapToStartOrder": "点击开始点单",
     "startSession": "开始用餐",
     "startSessionDesc": "为{tableNumber}号桌开始新的用餐会话",
-    "guestCount": "用餐人数",
     "cancel": "取消",
     "starting": "正在开始...",
     "startOrder": "开始点单",

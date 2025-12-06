@@ -35,7 +35,6 @@ export enum TableStatus {
 export interface TableWithSessionDto extends TableResponseDto {
   activeSession?: {
     id: string;
-    guestCount: number;
     customerName?: string;
     createdAt: string;
   };

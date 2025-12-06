@@ -352,7 +352,6 @@ model ActiveTableSession {
   tableId       String?
   sessionType   SessionType   @default(TABLE)
   status        SessionStatus @default(ACTIVE)
-  guestCount    Int           @default(1)
   sessionToken  String        @unique
   customerName  String?
   customerPhone String?
@@ -516,7 +515,6 @@ model Payment {
 
   splitType     String?
   splitMetadata Json?
-  guestNumber   Int?
   deletedAt     DateTime?
 
   order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
@@ -528,7 +526,6 @@ model Payment {
   @@index([transactionId])
   @@index([orderId, paymentMethod])
   @@index([deletedAt])
-  @@index([orderId, guestNumber])
 }
 
 model Refund {

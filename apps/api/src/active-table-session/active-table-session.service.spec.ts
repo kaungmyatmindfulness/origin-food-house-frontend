@@ -81,7 +81,6 @@ describe('ActiveTableSessionService', () => {
       tableId: null,
       sessionType: SessionType.COUNTER,
       sessionToken: mockSessionToken,
-      guestCount: 1,
       customerName: null,
       customerPhone: null,
       status: SessionStatus.ACTIVE,
@@ -98,7 +97,6 @@ describe('ActiveTableSessionService', () => {
       it('should create a counter session successfully', async () => {
         const dto: CreateManualSessionDto = {
           sessionType: SessionType.COUNTER,
-          guestCount: 2,
         };
 
         authService.checkStorePermission.mockResolvedValue(undefined);
@@ -137,7 +135,6 @@ describe('ActiveTableSessionService', () => {
             storeId: mockStoreId,
             tableId: null,
             sessionType: SessionType.COUNTER,
-            guestCount: 2,
             status: SessionStatus.ACTIVE,
           }),
         });
@@ -158,7 +155,6 @@ describe('ActiveTableSessionService', () => {
           sessionType: SessionType.COUNTER,
           customerName: 'John Doe',
           customerPhone: '+1234567890',
-          guestCount: 1,
         };
 
         authService.checkStorePermission.mockResolvedValue(undefined);
@@ -210,7 +206,6 @@ describe('ActiveTableSessionService', () => {
           sessionType: SessionType.PHONE,
           customerName: 'Jane Smith',
           customerPhone: '+9876543210',
-          guestCount: 3,
         };
 
         authService.checkStorePermission.mockResolvedValue(undefined);
@@ -223,7 +218,6 @@ describe('ActiveTableSessionService', () => {
           sessionType: SessionType.PHONE,
           customerName: 'Jane Smith',
           customerPhone: '+9876543210',
-          guestCount: 3,
         };
 
         const mockTx = {
@@ -249,7 +243,6 @@ describe('ActiveTableSessionService', () => {
         expect(result.sessionType).toBe(SessionType.PHONE);
         expect(result.customerName).toBe('Jane Smith');
         expect(result.customerPhone).toBe('+9876543210');
-        expect(result.guestCount).toBe(3);
       });
     });
 
@@ -258,7 +251,6 @@ describe('ActiveTableSessionService', () => {
         const dto: CreateManualSessionDto = {
           sessionType: SessionType.TAKEOUT,
           customerName: 'Bob Wilson',
-          guestCount: 1,
         };
 
         authService.checkStorePermission.mockResolvedValue(undefined);
@@ -301,7 +293,6 @@ describe('ActiveTableSessionService', () => {
       it('should reject TABLE sessionType', async () => {
         const dto: CreateManualSessionDto = {
           sessionType: SessionType.TABLE,
-          guestCount: 2,
         };
 
         authService.checkStorePermission.mockResolvedValue(undefined);
@@ -315,38 +306,6 @@ describe('ActiveTableSessionService', () => {
         ).rejects.toThrow(
           'Cannot create manual session with type TABLE. Use join-by-table endpoint instead.'
         );
-      });
-
-      it('should default guestCount to 1 if not provided', async () => {
-        const dto: CreateManualSessionDto = {
-          sessionType: SessionType.COUNTER,
-        };
-
-        authService.checkStorePermission.mockResolvedValue(undefined);
-        cartService.createCartForSession.mockResolvedValue(
-          mockCart as unknown as Cart
-        );
-
-        const mockTx = {
-          activeTableSession: {
-            create: jest.fn().mockResolvedValue(mockCreatedSession),
-          },
-        };
-        prismaService.$transaction.mockImplementation(async (callback: any) =>
-          callback(mockTx)
-        );
-
-        prismaService.activeTableSession.findUnique.mockResolvedValue(
-          mockSessionWithCart as any
-        );
-
-        await service.createManualSession(mockUserId, mockStoreId, dto);
-
-        expect(mockTx.activeTableSession.create).toHaveBeenCalledWith({
-          data: expect.objectContaining({
-            guestCount: 1,
-          }),
-        });
       });
     });
 

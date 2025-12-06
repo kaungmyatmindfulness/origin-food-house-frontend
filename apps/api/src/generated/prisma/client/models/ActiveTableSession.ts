@@ -20,18 +20,8 @@ export type ActiveTableSessionModel =
 
 export type AggregateActiveTableSession = {
   _count: ActiveTableSessionCountAggregateOutputType | null;
-  _avg: ActiveTableSessionAvgAggregateOutputType | null;
-  _sum: ActiveTableSessionSumAggregateOutputType | null;
   _min: ActiveTableSessionMinAggregateOutputType | null;
   _max: ActiveTableSessionMaxAggregateOutputType | null;
-};
-
-export type ActiveTableSessionAvgAggregateOutputType = {
-  guestCount: number | null;
-};
-
-export type ActiveTableSessionSumAggregateOutputType = {
-  guestCount: number | null;
 };
 
 export type ActiveTableSessionMinAggregateOutputType = {
@@ -40,7 +30,6 @@ export type ActiveTableSessionMinAggregateOutputType = {
   tableId: string | null;
   sessionType: $Enums.SessionType | null;
   status: $Enums.SessionStatus | null;
-  guestCount: number | null;
   sessionToken: string | null;
   customerName: string | null;
   customerPhone: string | null;
@@ -55,7 +44,6 @@ export type ActiveTableSessionMaxAggregateOutputType = {
   tableId: string | null;
   sessionType: $Enums.SessionType | null;
   status: $Enums.SessionStatus | null;
-  guestCount: number | null;
   sessionToken: string | null;
   customerName: string | null;
   customerPhone: string | null;
@@ -70,7 +58,6 @@ export type ActiveTableSessionCountAggregateOutputType = {
   tableId: number;
   sessionType: number;
   status: number;
-  guestCount: number;
   sessionToken: number;
   customerName: number;
   customerPhone: number;
@@ -80,21 +67,12 @@ export type ActiveTableSessionCountAggregateOutputType = {
   _all: number;
 };
 
-export type ActiveTableSessionAvgAggregateInputType = {
-  guestCount?: true;
-};
-
-export type ActiveTableSessionSumAggregateInputType = {
-  guestCount?: true;
-};
-
 export type ActiveTableSessionMinAggregateInputType = {
   id?: true;
   storeId?: true;
   tableId?: true;
   sessionType?: true;
   status?: true;
-  guestCount?: true;
   sessionToken?: true;
   customerName?: true;
   customerPhone?: true;
@@ -109,7 +87,6 @@ export type ActiveTableSessionMaxAggregateInputType = {
   tableId?: true;
   sessionType?: true;
   status?: true;
-  guestCount?: true;
   sessionToken?: true;
   customerName?: true;
   customerPhone?: true;
@@ -124,7 +101,6 @@ export type ActiveTableSessionCountAggregateInputType = {
   tableId?: true;
   sessionType?: true;
   status?: true;
-  guestCount?: true;
   sessionToken?: true;
   customerName?: true;
   customerPhone?: true;
@@ -177,18 +153,6 @@ export type ActiveTableSessionAggregateArgs<
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    *
-   * Select which fields to average
-   **/
-  _avg?: ActiveTableSessionAvgAggregateInputType;
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   *
-   * Select which fields to sum
-   **/
-  _sum?: ActiveTableSessionSumAggregateInputType;
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   *
    * Select which fields to find the minimum value
    **/
   _min?: ActiveTableSessionMinAggregateInputType;
@@ -227,8 +191,6 @@ export type ActiveTableSessionGroupByArgs<
   take?: number;
   skip?: number;
   _count?: ActiveTableSessionCountAggregateInputType | true;
-  _avg?: ActiveTableSessionAvgAggregateInputType;
-  _sum?: ActiveTableSessionSumAggregateInputType;
   _min?: ActiveTableSessionMinAggregateInputType;
   _max?: ActiveTableSessionMaxAggregateInputType;
 };
@@ -239,7 +201,6 @@ export type ActiveTableSessionGroupByOutputType = {
   tableId: string | null;
   sessionType: $Enums.SessionType;
   status: $Enums.SessionStatus;
-  guestCount: number;
   sessionToken: string;
   customerName: string | null;
   customerPhone: string | null;
@@ -247,8 +208,6 @@ export type ActiveTableSessionGroupByOutputType = {
   createdAt: Date;
   updatedAt: Date;
   _count: ActiveTableSessionCountAggregateOutputType | null;
-  _avg: ActiveTableSessionAvgAggregateOutputType | null;
-  _sum: ActiveTableSessionSumAggregateOutputType | null;
   _min: ActiveTableSessionMinAggregateOutputType | null;
   _max: ActiveTableSessionMaxAggregateOutputType | null;
 };
@@ -285,7 +244,6 @@ export type ActiveTableSessionWhereInput = {
   status?:
     | Prisma.EnumSessionStatusFilter<'ActiveTableSession'>
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFilter<'ActiveTableSession'> | number;
   sessionToken?: Prisma.StringFilter<'ActiveTableSession'> | string;
   customerName?:
     | Prisma.StringNullableFilter<'ActiveTableSession'>
@@ -320,7 +278,6 @@ export type ActiveTableSessionOrderByWithRelationInput = {
   tableId?: Prisma.SortOrderInput | Prisma.SortOrder;
   sessionType?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
-  guestCount?: Prisma.SortOrder;
   sessionToken?: Prisma.SortOrder;
   customerName?: Prisma.SortOrderInput | Prisma.SortOrder;
   customerPhone?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -352,7 +309,6 @@ export type ActiveTableSessionWhereUniqueInput = Prisma.AtLeast<
     status?:
       | Prisma.EnumSessionStatusFilter<'ActiveTableSession'>
       | $Enums.SessionStatus;
-    guestCount?: Prisma.IntFilter<'ActiveTableSession'> | number;
     customerName?:
       | Prisma.StringNullableFilter<'ActiveTableSession'>
       | string
@@ -391,7 +347,6 @@ export type ActiveTableSessionOrderByWithAggregationInput = {
   tableId?: Prisma.SortOrderInput | Prisma.SortOrder;
   sessionType?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
-  guestCount?: Prisma.SortOrder;
   sessionToken?: Prisma.SortOrder;
   customerName?: Prisma.SortOrderInput | Prisma.SortOrder;
   customerPhone?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -399,10 +354,8 @@ export type ActiveTableSessionOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   _count?: Prisma.ActiveTableSessionCountOrderByAggregateInput;
-  _avg?: Prisma.ActiveTableSessionAvgOrderByAggregateInput;
   _max?: Prisma.ActiveTableSessionMaxOrderByAggregateInput;
   _min?: Prisma.ActiveTableSessionMinOrderByAggregateInput;
-  _sum?: Prisma.ActiveTableSessionSumOrderByAggregateInput;
 };
 
 export type ActiveTableSessionScalarWhereWithAggregatesInput = {
@@ -425,7 +378,6 @@ export type ActiveTableSessionScalarWhereWithAggregatesInput = {
   status?:
     | Prisma.EnumSessionStatusWithAggregatesFilter<'ActiveTableSession'>
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntWithAggregatesFilter<'ActiveTableSession'> | number;
   sessionToken?:
     | Prisma.StringWithAggregatesFilter<'ActiveTableSession'>
     | string;
@@ -456,7 +408,6 @@ export type ActiveTableSessionCreateInput = {
   id?: string;
   sessionType?: $Enums.SessionType;
   status?: $Enums.SessionStatus;
-  guestCount?: number;
   sessionToken: string;
   customerName?: string | null;
   customerPhone?: string | null;
@@ -475,7 +426,6 @@ export type ActiveTableSessionUncheckedCreateInput = {
   tableId?: string | null;
   sessionType?: $Enums.SessionType;
   status?: $Enums.SessionStatus;
-  guestCount?: number;
   sessionToken: string;
   customerName?: string | null;
   customerPhone?: string | null;
@@ -494,7 +444,6 @@ export type ActiveTableSessionUpdateInput = {
   status?:
     | Prisma.EnumSessionStatusFieldUpdateOperationsInput
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFieldUpdateOperationsInput | number;
   sessionToken?: Prisma.StringFieldUpdateOperationsInput | string;
   customerName?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -527,7 +476,6 @@ export type ActiveTableSessionUncheckedUpdateInput = {
   status?:
     | Prisma.EnumSessionStatusFieldUpdateOperationsInput
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFieldUpdateOperationsInput | number;
   sessionToken?: Prisma.StringFieldUpdateOperationsInput | string;
   customerName?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -554,7 +502,6 @@ export type ActiveTableSessionCreateManyInput = {
   tableId?: string | null;
   sessionType?: $Enums.SessionType;
   status?: $Enums.SessionStatus;
-  guestCount?: number;
   sessionToken: string;
   customerName?: string | null;
   customerPhone?: string | null;
@@ -571,7 +518,6 @@ export type ActiveTableSessionUpdateManyMutationInput = {
   status?:
     | Prisma.EnumSessionStatusFieldUpdateOperationsInput
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFieldUpdateOperationsInput | number;
   sessionToken?: Prisma.StringFieldUpdateOperationsInput | string;
   customerName?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -600,7 +546,6 @@ export type ActiveTableSessionUncheckedUpdateManyInput = {
   status?:
     | Prisma.EnumSessionStatusFieldUpdateOperationsInput
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFieldUpdateOperationsInput | number;
   sessionToken?: Prisma.StringFieldUpdateOperationsInput | string;
   customerName?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -635,7 +580,6 @@ export type ActiveTableSessionCountOrderByAggregateInput = {
   tableId?: Prisma.SortOrder;
   sessionType?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
-  guestCount?: Prisma.SortOrder;
   sessionToken?: Prisma.SortOrder;
   customerName?: Prisma.SortOrder;
   customerPhone?: Prisma.SortOrder;
@@ -644,17 +588,12 @@ export type ActiveTableSessionCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder;
 };
 
-export type ActiveTableSessionAvgOrderByAggregateInput = {
-  guestCount?: Prisma.SortOrder;
-};
-
 export type ActiveTableSessionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder;
   storeId?: Prisma.SortOrder;
   tableId?: Prisma.SortOrder;
   sessionType?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
-  guestCount?: Prisma.SortOrder;
   sessionToken?: Prisma.SortOrder;
   customerName?: Prisma.SortOrder;
   customerPhone?: Prisma.SortOrder;
@@ -669,17 +608,12 @@ export type ActiveTableSessionMinOrderByAggregateInput = {
   tableId?: Prisma.SortOrder;
   sessionType?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
-  guestCount?: Prisma.SortOrder;
   sessionToken?: Prisma.SortOrder;
   customerName?: Prisma.SortOrder;
   customerPhone?: Prisma.SortOrder;
   closedAt?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
-};
-
-export type ActiveTableSessionSumOrderByAggregateInput = {
-  guestCount?: Prisma.SortOrder;
 };
 
 export type ActiveTableSessionScalarRelationFilter = {
@@ -978,7 +912,6 @@ export type ActiveTableSessionCreateWithoutStoreInput = {
   id?: string;
   sessionType?: $Enums.SessionType;
   status?: $Enums.SessionStatus;
-  guestCount?: number;
   sessionToken: string;
   customerName?: string | null;
   customerPhone?: string | null;
@@ -995,7 +928,6 @@ export type ActiveTableSessionUncheckedCreateWithoutStoreInput = {
   tableId?: string | null;
   sessionType?: $Enums.SessionType;
   status?: $Enums.SessionStatus;
-  guestCount?: number;
   sessionToken: string;
   customerName?: string | null;
   customerPhone?: string | null;
@@ -1066,7 +998,6 @@ export type ActiveTableSessionScalarWhereInput = {
   status?:
     | Prisma.EnumSessionStatusFilter<'ActiveTableSession'>
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFilter<'ActiveTableSession'> | number;
   sessionToken?: Prisma.StringFilter<'ActiveTableSession'> | string;
   customerName?:
     | Prisma.StringNullableFilter<'ActiveTableSession'>
@@ -1089,7 +1020,6 @@ export type ActiveTableSessionCreateWithoutTableInput = {
   id?: string;
   sessionType?: $Enums.SessionType;
   status?: $Enums.SessionStatus;
-  guestCount?: number;
   sessionToken: string;
   customerName?: string | null;
   customerPhone?: string | null;
@@ -1106,7 +1036,6 @@ export type ActiveTableSessionUncheckedCreateWithoutTableInput = {
   storeId: string;
   sessionType?: $Enums.SessionType;
   status?: $Enums.SessionStatus;
-  guestCount?: number;
   sessionToken: string;
   customerName?: string | null;
   customerPhone?: string | null;
@@ -1164,7 +1093,6 @@ export type ActiveTableSessionCreateWithoutCartInput = {
   id?: string;
   sessionType?: $Enums.SessionType;
   status?: $Enums.SessionStatus;
-  guestCount?: number;
   sessionToken: string;
   customerName?: string | null;
   customerPhone?: string | null;
@@ -1182,7 +1110,6 @@ export type ActiveTableSessionUncheckedCreateWithoutCartInput = {
   tableId?: string | null;
   sessionType?: $Enums.SessionType;
   status?: $Enums.SessionStatus;
-  guestCount?: number;
   sessionToken: string;
   customerName?: string | null;
   customerPhone?: string | null;
@@ -1228,7 +1155,6 @@ export type ActiveTableSessionUpdateWithoutCartInput = {
   status?:
     | Prisma.EnumSessionStatusFieldUpdateOperationsInput
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFieldUpdateOperationsInput | number;
   sessionToken?: Prisma.StringFieldUpdateOperationsInput | string;
   customerName?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -1260,7 +1186,6 @@ export type ActiveTableSessionUncheckedUpdateWithoutCartInput = {
   status?:
     | Prisma.EnumSessionStatusFieldUpdateOperationsInput
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFieldUpdateOperationsInput | number;
   sessionToken?: Prisma.StringFieldUpdateOperationsInput | string;
   customerName?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -1284,7 +1209,6 @@ export type ActiveTableSessionCreateWithoutOrdersInput = {
   id?: string;
   sessionType?: $Enums.SessionType;
   status?: $Enums.SessionStatus;
-  guestCount?: number;
   sessionToken: string;
   customerName?: string | null;
   customerPhone?: string | null;
@@ -1302,7 +1226,6 @@ export type ActiveTableSessionUncheckedCreateWithoutOrdersInput = {
   tableId?: string | null;
   sessionType?: $Enums.SessionType;
   status?: $Enums.SessionStatus;
-  guestCount?: number;
   sessionToken: string;
   customerName?: string | null;
   customerPhone?: string | null;
@@ -1348,7 +1271,6 @@ export type ActiveTableSessionUpdateWithoutOrdersInput = {
   status?:
     | Prisma.EnumSessionStatusFieldUpdateOperationsInput
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFieldUpdateOperationsInput | number;
   sessionToken?: Prisma.StringFieldUpdateOperationsInput | string;
   customerName?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -1380,7 +1302,6 @@ export type ActiveTableSessionUncheckedUpdateWithoutOrdersInput = {
   status?:
     | Prisma.EnumSessionStatusFieldUpdateOperationsInput
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFieldUpdateOperationsInput | number;
   sessionToken?: Prisma.StringFieldUpdateOperationsInput | string;
   customerName?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -1405,7 +1326,6 @@ export type ActiveTableSessionCreateManyStoreInput = {
   tableId?: string | null;
   sessionType?: $Enums.SessionType;
   status?: $Enums.SessionStatus;
-  guestCount?: number;
   sessionToken: string;
   customerName?: string | null;
   customerPhone?: string | null;
@@ -1422,7 +1342,6 @@ export type ActiveTableSessionUpdateWithoutStoreInput = {
   status?:
     | Prisma.EnumSessionStatusFieldUpdateOperationsInput
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFieldUpdateOperationsInput | number;
   sessionToken?: Prisma.StringFieldUpdateOperationsInput | string;
   customerName?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -1453,7 +1372,6 @@ export type ActiveTableSessionUncheckedUpdateWithoutStoreInput = {
   status?:
     | Prisma.EnumSessionStatusFieldUpdateOperationsInput
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFieldUpdateOperationsInput | number;
   sessionToken?: Prisma.StringFieldUpdateOperationsInput | string;
   customerName?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -1483,7 +1401,6 @@ export type ActiveTableSessionUncheckedUpdateManyWithoutStoreInput = {
   status?:
     | Prisma.EnumSessionStatusFieldUpdateOperationsInput
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFieldUpdateOperationsInput | number;
   sessionToken?: Prisma.StringFieldUpdateOperationsInput | string;
   customerName?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -1507,7 +1424,6 @@ export type ActiveTableSessionCreateManyTableInput = {
   storeId: string;
   sessionType?: $Enums.SessionType;
   status?: $Enums.SessionStatus;
-  guestCount?: number;
   sessionToken: string;
   customerName?: string | null;
   customerPhone?: string | null;
@@ -1524,7 +1440,6 @@ export type ActiveTableSessionUpdateWithoutTableInput = {
   status?:
     | Prisma.EnumSessionStatusFieldUpdateOperationsInput
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFieldUpdateOperationsInput | number;
   sessionToken?: Prisma.StringFieldUpdateOperationsInput | string;
   customerName?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -1555,7 +1470,6 @@ export type ActiveTableSessionUncheckedUpdateWithoutTableInput = {
   status?:
     | Prisma.EnumSessionStatusFieldUpdateOperationsInput
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFieldUpdateOperationsInput | number;
   sessionToken?: Prisma.StringFieldUpdateOperationsInput | string;
   customerName?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -1585,7 +1499,6 @@ export type ActiveTableSessionUncheckedUpdateManyWithoutTableInput = {
   status?:
     | Prisma.EnumSessionStatusFieldUpdateOperationsInput
     | $Enums.SessionStatus;
-  guestCount?: Prisma.IntFieldUpdateOperationsInput | number;
   sessionToken?: Prisma.StringFieldUpdateOperationsInput | string;
   customerName?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -1652,7 +1565,6 @@ export type ActiveTableSessionSelect<
     tableId?: boolean;
     sessionType?: boolean;
     status?: boolean;
-    guestCount?: boolean;
     sessionToken?: boolean;
     customerName?: boolean;
     customerPhone?: boolean;
@@ -1680,7 +1592,6 @@ export type ActiveTableSessionSelectCreateManyAndReturn<
     tableId?: boolean;
     sessionType?: boolean;
     status?: boolean;
-    guestCount?: boolean;
     sessionToken?: boolean;
     customerName?: boolean;
     customerPhone?: boolean;
@@ -1703,7 +1614,6 @@ export type ActiveTableSessionSelectUpdateManyAndReturn<
     tableId?: boolean;
     sessionType?: boolean;
     status?: boolean;
-    guestCount?: boolean;
     sessionToken?: boolean;
     customerName?: boolean;
     customerPhone?: boolean;
@@ -1722,7 +1632,6 @@ export type ActiveTableSessionSelectScalar = {
   tableId?: boolean;
   sessionType?: boolean;
   status?: boolean;
-  guestCount?: boolean;
   sessionToken?: boolean;
   customerName?: boolean;
   customerPhone?: boolean;
@@ -1740,7 +1649,6 @@ export type ActiveTableSessionOmit<
   | 'tableId'
   | 'sessionType'
   | 'status'
-  | 'guestCount'
   | 'sessionToken'
   | 'customerName'
   | 'customerPhone'
@@ -1794,7 +1702,6 @@ export type $ActiveTableSessionPayload<
       tableId: string | null;
       sessionType: $Enums.SessionType;
       status: $Enums.SessionStatus;
-      guestCount: number;
       sessionToken: string;
       customerName: string | null;
       customerPhone: string | null;
@@ -2471,7 +2378,6 @@ export interface ActiveTableSessionFieldRefs {
   readonly tableId: Prisma.FieldRef<'ActiveTableSession', 'String'>;
   readonly sessionType: Prisma.FieldRef<'ActiveTableSession', 'SessionType'>;
   readonly status: Prisma.FieldRef<'ActiveTableSession', 'SessionStatus'>;
-  readonly guestCount: Prisma.FieldRef<'ActiveTableSession', 'Int'>;
   readonly sessionToken: Prisma.FieldRef<'ActiveTableSession', 'String'>;
   readonly customerName: Prisma.FieldRef<'ActiveTableSession', 'String'>;
   readonly customerPhone: Prisma.FieldRef<'ActiveTableSession', 'String'>;

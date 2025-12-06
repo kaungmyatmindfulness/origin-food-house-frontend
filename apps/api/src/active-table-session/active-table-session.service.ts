@@ -39,7 +39,6 @@ export interface QuickSaleSessionInput {
   sessionType: SessionType;
   customerName?: string;
   customerPhone?: string;
-  guestCount?: number;
 }
 
 @Injectable()
@@ -66,7 +65,7 @@ export class ActiveTableSessionService {
    */
   async joinByTable(
     tableId: string,
-    dto: JoinSessionDto
+    _dto: JoinSessionDto
   ): Promise<ActiveTableSession> {
     const method = this.joinByTable.name;
 
@@ -97,14 +96,12 @@ export class ActiveTableSessionService {
 
       // Create new session
       const sessionToken = this.generateSessionToken();
-      const guestCount = dto.guestCount ?? 1;
 
       const session = await this.prisma.activeTableSession.create({
         data: {
           storeId: table.storeId,
           tableId,
           sessionToken,
-          guestCount,
           status: SessionStatus.ACTIVE,
         },
       });
@@ -164,7 +161,6 @@ export class ActiveTableSessionService {
 
       // Generate session token
       const sessionToken = this.generateSessionToken();
-      const guestCount = dto.guestCount ?? 1;
 
       this.logger.log(
         `[${method}] Creating manual ${dto.sessionType} session for store ${storeId}`
@@ -179,7 +175,6 @@ export class ActiveTableSessionService {
             tableId: null, // Manual sessions have no table
             sessionType: dto.sessionType,
             sessionToken,
-            guestCount,
             customerName: dto.customerName,
             customerPhone: dto.customerPhone,
             status: SessionStatus.ACTIVE,
@@ -381,10 +376,6 @@ export class ActiveTableSessionService {
       // Build update data
       const updateData: Prisma.ActiveTableSessionUpdateInput = {};
 
-      if (dto.guestCount !== undefined) {
-        updateData.guestCount = dto.guestCount;
-      }
-
       if (dto.status !== undefined) {
         updateData.status = dto.status;
 
@@ -519,7 +510,6 @@ export class ActiveTableSessionService {
         tableId: null, // Quick sale sessions have no table
         sessionType: input.sessionType,
         sessionToken,
-        guestCount: input.guestCount ?? 1,
         customerName: input.customerName,
         customerPhone: input.customerPhone,
         status: SessionStatus.ACTIVE,
