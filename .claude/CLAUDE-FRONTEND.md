@@ -92,22 +92,10 @@ User-initiated navigation?
 
 ## Detailed Documentation
 
-The following documents contain comprehensive frontend patterns:
+The following consolidated guides cover all frontend patterns and conventions:
 
-@frontend-rules/architecture.md
+@frontend-rules/frontend-guide.md
 
-@frontend-rules/code-quality.md
+@frontend-rules/frontend-patterns.md
 
-@frontend-rules/navigation-patterns.md
-
-@frontend-rules/props-conventions.md
-
-@frontend-rules/design-system.md
-
-@frontend-rules/patterns.md
-
-@frontend-rules/i18n.md
-
-@frontend-rules/anti-patterns.md
-
-@frontend-rules/workflows.md
+@frontend-rules/frontend-checklist.md

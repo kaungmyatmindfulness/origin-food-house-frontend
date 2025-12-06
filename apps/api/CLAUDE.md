@@ -49,26 +49,10 @@ npm run build               # 5. Build succeeds
 
 ## Detailed Documentation
 
-The following sections import detailed documentation for specific topics:
+The following consolidated guides cover all backend patterns and conventions:
 
-@.claude/docs/development-commands.md
+@.claude/docs/backend-guide.md
 
-@.claude/docs/clean-code-rules.md
+@.claude/docs/backend-api-patterns.md
 
-@.claude/docs/api-documentation.md
-
-@.claude/docs/prisma-7-guide.md
-
-@.claude/docs/nestjs-architecture.md
-
-@.claude/docs/architecture-patterns.md
-
-@.claude/docs/security-patterns.md
-
-@.claude/docs/code-style.md
-
-@.claude/docs/database-best-practices.md
-
-@.claude/docs/performance-guide.md
-
-@.claude/docs/quality-checklists.md
+@.claude/docs/backend-checklist.md
