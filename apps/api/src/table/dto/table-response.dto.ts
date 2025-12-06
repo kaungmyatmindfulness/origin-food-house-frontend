@@ -17,6 +17,7 @@ export class TableResponseDto {
   currentStatus: TableStatus;
 
   @ApiPropertyOptional({
+    type: 'string',
     format: 'uuid',
     nullable: true,
     description: 'ID of the currently active session for this table, if any',

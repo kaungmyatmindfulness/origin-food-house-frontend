@@ -23,7 +23,7 @@ describe('TableService', () => {
   let prismaService: PrismaMock;
   let authService: jest.Mocked<AuthService>;
   let tableGateway: jest.Mocked<TableGateway>;
-  let _tierService: jest.Mocked<TierService>;
+  // TierService is injected but not directly tested in these unit tests
 
   const mockUserId = 'user-123';
   const mockStoreId = 'store-123';
@@ -89,7 +89,7 @@ describe('TableService', () => {
     prismaService = module.get(PrismaService);
     authService = module.get(AuthService);
     tableGateway = module.get(TableGateway);
-    _tierService = module.get(TierService);
+    module.get(TierService); // Ensure TierService is properly injected
 
     jest.clearAllMocks();
   });
