@@ -14,6 +14,7 @@ import {
   isAuth0Authenticated,
 } from '@/features/auth/services/auth0.service';
 import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 import { NotificationPopover } from './notification-popover';
 import { Popover, PopoverTrigger } from '@repo/ui/components/popover';
 import { Button } from '@repo/ui/components/button';
@@ -45,7 +46,7 @@ export function DashboardHeader() {
    */
   const { data: currentUserResponse } = $api.useQuery(
     'get',
-    '/users/me',
+    API_PATHS.userProfile,
     { params: { query: { storeId: selectedStoreId ?? undefined } } },
     { enabled: !!selectedStoreId }
   );
@@ -60,7 +61,7 @@ export function DashboardHeader() {
    */
   const { data: currentStoreResponse } = $api.useQuery(
     'get',
-    '/stores/{id}',
+    API_PATHS.store,
     { params: { path: { id: selectedStoreId! } } },
     { enabled: !!selectedStoreId }
   );

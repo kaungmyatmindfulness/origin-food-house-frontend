@@ -18,6 +18,7 @@ import {
 import { StoreList } from '@/features/store/components/store-list';
 import { StoreListSkeleton } from '@/features/store/components/store-list-skeleton';
 import { $api, apiClient, unwrapApiResponseAs } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 import { Button } from '@repo/ui/components/button';
 
 import type { CurrentUserData } from '@/features/user/types/user.types';
@@ -45,7 +46,7 @@ export default function ChooseStorePage() {
     isSuccess: isUserSuccess,
   } = $api.useQuery(
     'get',
-    '/users/me',
+    API_PATHS.userProfile,
     { params: { query: { storeId: selectedStoreId ?? undefined } } },
     { retry: 1 }
   );
@@ -73,7 +74,7 @@ export default function ChooseStorePage() {
       // Refetch user with new store context to get updated role
       let updatedUser: CurrentUserData | null = null;
       try {
-        const result = await apiClient.GET('/users/me', {
+        const result = await apiClient.GET(API_PATHS.userProfile, {
           params: { query: { storeId } },
         });
         updatedUser = unwrapApiResponseAs<CurrentUserData>(
@@ -81,7 +82,9 @@ export default function ChooseStorePage() {
           'Failed to refresh session'
         );
         // Invalidate queries so they refetch with new store context
-        queryClient.invalidateQueries({ queryKey: ['get', '/users/me'] });
+        queryClient.invalidateQueries({
+          queryKey: ['get', API_PATHS.userProfile],
+        });
       } catch {
         toast.error(t('sessionRefreshFailed'));
       }

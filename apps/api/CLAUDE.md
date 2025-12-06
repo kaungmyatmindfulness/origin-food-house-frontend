@@ -13,6 +13,64 @@ Origin Food House Backend is a **multi-tenant restaurant management platform** b
 
 ---
 
+## API Route Structure
+
+All routes are versioned with `/api/v1` prefix and organized by app namespace:
+
+```
+/api/v1/
+├── rms/                    # RMS-specific (JWT auth)
+│   ├── cart/               # Staff cart operations
+│   ├── orders/             # Staff order management
+│   └── sessions/           # Table session management
+├── sos/                    # SOS-specific (Session Token auth)
+│   ├── cart/               # Customer cart operations
+│   ├── menu/               # Customer menu browsing
+│   └── orders/             # Customer order placement
+├── admin/                  # Admin Platform (JWT + Platform Admin)
+│   ├── stores/             # Store verification
+│   ├── users/              # User management
+│   └── payments/           # Payment verification
+├── stores/{storeId}/       # Shared store routes (JWT auth)
+│   ├── categories/
+│   ├── menu-items/
+│   ├── tables/
+│   └── orders/
+└── auth/                   # Authentication routes
+```
+
+### Module Organization
+
+```
+src/
+├── rms/                    # RMS-specific modules
+│   ├── rms-cart/
+│   ├── rms-order/
+│   └── rms-session/
+├── sos/                    # SOS-specific modules
+│   ├── sos-cart/
+│   ├── sos-menu/
+│   └── sos-order/
+├── admin/                  # Admin Platform modules
+├── common/
+│   └── context/
+│       └── app-context.service.ts  # Request-scoped app detection
+├── store/                  # Shared store management
+├── menu/                   # Shared menu operations
+└── order/                  # Shared order operations
+```
+
+### App Context Detection
+
+The `AppContextService` detects which app is making requests:
+
+```typescript
+// Automatic detection from route prefix or X-App-Context header
+const appContext = this.appContextService.getAppContext(); // 'rms' | 'sos' | 'admin'
+```
+
+---
+
 ## Quick Reference
 
 ### Essential Commands

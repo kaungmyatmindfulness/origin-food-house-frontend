@@ -25,7 +25,7 @@ import type {
 export async function getCategories(
   storeId: string
 ): Promise<CategoryResponseDto[]> {
-  const result = await apiClient.GET('/stores/{storeId}/categories', {
+  const result = await apiClient.GET('/api/v1/stores/{storeId}/categories', {
     params: { path: { storeId } },
   });
 
@@ -44,7 +44,7 @@ export async function createCategory(
   storeId: string,
   categoryData: CreateCategoryDto
 ): Promise<CategoryBasicResponseDto> {
-  const result = await apiClient.POST('/stores/{storeId}/categories', {
+  const result = await apiClient.POST('/api/v1/stores/{storeId}/categories', {
     params: { path: { storeId } },
     body: categoryData,
   });
@@ -66,10 +66,13 @@ export async function updateCategory(
   categoryId: string,
   categoryData: UpdateCategoryDto
 ): Promise<CategoryBasicResponseDto> {
-  const result = await apiClient.PATCH('/stores/{storeId}/categories/{id}', {
-    params: { path: { storeId, id: categoryId } },
-    body: categoryData,
-  });
+  const result = await apiClient.PATCH(
+    '/api/v1/stores/{storeId}/categories/{id}',
+    {
+      params: { path: { storeId, id: categoryId } },
+      body: categoryData,
+    }
+  );
 
   return unwrapApiResponse(result, 'Failed to update category');
 }
@@ -87,7 +90,7 @@ export async function deleteCategory(
   categoryId: string
 ): Promise<CategoryDeletedResponseDto> {
   const { data, error, response } = await apiClient.DELETE(
-    '/stores/{storeId}/categories/{id}',
+    '/api/v1/stores/{storeId}/categories/{id}',
     {
       params: { path: { storeId, id: categoryId } },
     }
@@ -115,7 +118,7 @@ export async function sortCategories(
   payload: SortCategoriesPayloadDto
 ): Promise<void> {
   const { error, response } = await apiClient.PATCH(
-    '/stores/{storeId}/categories/sort',
+    '/api/v1/stores/{storeId}/categories/sort',
     {
       params: { path: { storeId } },
       body: payload,

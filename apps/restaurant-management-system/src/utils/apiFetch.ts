@@ -52,8 +52,10 @@ import { ApiError } from '@repo/api/utils/apiFetch';
  *
  * @example
  * ```typescript
+ * import { API_PATHS } from '@/utils/api-paths';
+ *
  * export async function getStoreDetails(id: string): Promise<GetStoreDetailsResponseDto> {
- *   const result = await apiClient.GET('/stores/{id}', { params: { path: { id } } });
+ *   const result = await apiClient.GET(API_PATHS.store, { params: { path: { id } } });
  *   return unwrapApiResponseAs<GetStoreDetailsResponseDto>(result, 'Failed to fetch store');
  * }
  * ```
@@ -123,15 +125,23 @@ const authMiddleware = createAuthMiddleware(() => {
 /**
  * Type-safe fetch client for the RMS API.
  *
+ * Includes X-App-Context header to identify requests from the RMS app,
+ * enabling app-specific routing on the backend (e.g., /api/v1/rms/* routes).
+ *
  * @example
  * ```ts
- * const { data, error } = await apiClient.GET('/stores/{storeId}/categories', {
+ * import { API_PATHS } from '@/utils/api-paths';
+ *
+ * const { data, error } = await apiClient.GET(API_PATHS.categories, {
  *   params: { path: { storeId } }
  * });
  * ```
  */
 export const apiClient = createApiClient({
   baseUrl: baseUrl ?? '',
+  headers: {
+    'X-App-Context': 'rms',
+  },
   middleware: [authMiddleware, errorToastMiddleware()],
 });
 
@@ -140,12 +150,13 @@ export const apiClient = createApiClient({
  *
  * @example
  * ```ts
+ * import { API_PATHS } from '@/utils/api-paths';
  *
- * const { data, isLoading } = $api.useQuery('get', '/stores/{storeId}/categories', {
+ * const { data, isLoading } = $api.useQuery('get', API_PATHS.categories, {
  *   params: { path: { storeId } }
  * });
  *
- * const mutation = $api.useMutation('post', '/stores/{storeId}/categories');
+ * const mutation = $api.useMutation('post', API_PATHS.categories);
  * mutation.mutate({ params: { path: { storeId } }, body: { name: 'New Category' } });
  * ```
  */

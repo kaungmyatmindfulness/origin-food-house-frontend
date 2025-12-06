@@ -50,7 +50,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UseTierLimit } from '../common/decorators/tier-limit.decorator';
 import { TierLimitGuard } from '../common/guards/tier-limit.guard';
 
-@ApiTags('Stores / Tables')
+@ApiTags('Shared / Tables')
 @Controller('stores/:storeId/tables')
 @ApiExtraModels(
   StandardApiResponse,

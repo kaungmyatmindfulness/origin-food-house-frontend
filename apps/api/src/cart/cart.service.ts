@@ -10,6 +10,11 @@ import {
 
 import { Decimal } from 'src/common/types/decimal.type';
 import { Cart, Prisma, Role, SessionStatus } from 'src/generated/prisma/client';
+import {
+  SosCartResponseDto,
+  SosCartItemResponseDto,
+  SosCartItemCustomizationDto,
+} from 'src/sos/dto';
 
 import { AuthService } from '../auth/auth.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -617,5 +622,228 @@ export class CartService {
       `[${method}] Created cart ${cart.id} for session ${sessionId}`
     );
     return cart;
+  }
+
+  // ============================================================================
+  // APP-SPECIFIC METHODS
+  // ============================================================================
+
+  /**
+   * Get cart for customer (SOS app)
+   * Returns minimal cart info optimized for customer view.
+   *
+   * @param sessionId - Session UUID
+   * @param sessionToken - Session token to validate ownership
+   * @returns SosCartResponseDto with customer-facing cart details
+   */
+  async getCartForCustomer(
+    sessionId: string,
+    sessionToken: string
+  ): Promise<SosCartResponseDto> {
+    const method = this.getCartForCustomer.name;
+    this.logger.log(`[${method}] Fetching cart for session ${sessionId}`);
+
+    try {
+      // Validate session token
+      const session = await this.prisma.activeTableSession.findUnique({
+        where: { id: sessionId },
+      });
+
+      if (!session) {
+        throw new NotFoundException('Session not found');
+      }
+
+      if (session.sessionToken !== sessionToken) {
+        this.logger.warn(
+          `[${method}] Invalid session token for session ${sessionId}`
+        );
+        throw new ForbiddenException('Invalid session token');
+      }
+
+      if (session.status !== SessionStatus.ACTIVE) {
+        throw new BadRequestException('Session is not active');
+      }
+
+      // Get or create cart with simplified includes
+      // Note: CartItemCustomization stores optionName and additionalPrice directly,
+      // so we don't need complex nested includes for customization groups
+      let cart = await this.prisma.cart.findUnique({
+        where: { sessionId },
+        include: {
+          items: {
+            include: {
+              menuItem: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+              customizations: {
+                include: {
+                  customizationOption: {
+                    include: {
+                      customizationGroup: {
+                        select: {
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            orderBy: { createdAt: 'asc' },
+          },
+        },
+      });
+
+      cart ??= await this.prisma.cart.create({
+        data: {
+          sessionId,
+          storeId: session.storeId,
+          subTotal: new Decimal('0'),
+        },
+        include: {
+          items: {
+            include: {
+              menuItem: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+              customizations: {
+                include: {
+                  customizationOption: {
+                    include: {
+                      customizationGroup: {
+                        select: {
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            orderBy: { createdAt: 'asc' },
+          },
+        },
+      });
+
+      return this.mapToSosCartResponse(cart);
+    } catch (error) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof ForbiddenException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
+      }
+
+      this.logger.error(
+        `[${method}] Failed to get cart for customer`,
+        error instanceof Error ? error.stack : String(error)
+      );
+      throw new InternalServerErrorException('Failed to retrieve cart');
+    }
+  }
+
+  /**
+   * Map cart to SosCartResponseDto
+   * @private
+   */
+  private mapToSosCartResponse(
+    cart: Prisma.CartGetPayload<{
+      include: {
+        items: {
+          include: {
+            menuItem: {
+              select: {
+                id: true;
+                name: true;
+              };
+            };
+            customizations: {
+              include: {
+                customizationOption: {
+                  include: {
+                    customizationGroup: {
+                      select: {
+                        name: true;
+                      };
+                    };
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
+    }>
+  ): SosCartResponseDto {
+    const items: SosCartItemResponseDto[] = cart.items.map((item) => {
+      // Calculate unit price (base + customizations)
+      let unitPrice = new Decimal(item.basePrice);
+      for (const customization of item.customizations) {
+        if (customization.additionalPrice) {
+          unitPrice = unitPrice.add(new Decimal(customization.additionalPrice));
+        }
+      }
+
+      // Calculate subtotal
+      const subtotal = unitPrice.mul(item.quantity);
+
+      // Map customizations - use stored optionName and look up group name
+      const customizations: SosCartItemCustomizationDto[] =
+        item.customizations.map((c) => {
+          const groupName =
+            c.customizationOption?.customizationGroup?.name ?? '';
+          const optionName = c.optionName ?? c.customizationOption?.name ?? '';
+          const price = c.additionalPrice
+            ? new Decimal(c.additionalPrice).toFixed(2)
+            : '0.00';
+          return {
+            name: groupName,
+            selectedOption: optionName,
+            additionalPrice: price,
+          };
+        });
+
+      // Validate menuItemId is present - if null, it indicates a data integrity issue
+      if (!item.menuItemId) {
+        this.logger.error(
+          `[mapToSosCartResponse] Cart item ${item.id} has null menuItemId - data integrity issue`
+        );
+        throw new InternalServerErrorException(
+          'Cart contains invalid item - please remove and re-add items'
+        );
+      }
+
+      return {
+        id: item.id,
+        menuItemId: item.menuItemId,
+        menuItemName: item.menuItemName ?? item.menuItem?.name ?? '',
+        quantity: item.quantity,
+        unitPrice: unitPrice.toFixed(2),
+        subtotal: subtotal.toFixed(2),
+        specialInstructions: item.notes ?? null,
+        customizations,
+      };
+    });
+
+    // Calculate total item count and subtotal
+    const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+    const subtotal = items.reduce(
+      (sum, item) => sum + parseFloat(item.subtotal),
+      0
+    );
+
+    return {
+      sessionId: cart.sessionId,
+      items,
+      subtotal: subtotal.toFixed(2),
+      itemCount,
+    };
   }
 }

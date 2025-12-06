@@ -9,8 +9,13 @@ import {
 
 import { CategoryResponseDto } from 'src/category/dto/category-response.dto';
 import { StandardErrorHandler } from 'src/common/decorators/standard-error-handler.decorator';
+import {
+  BaseTranslationResponseDto,
+  TranslationMap,
+} from 'src/common/dto/translation.dto';
 import { calculateNextSortOrder } from 'src/common/utils/sort-order.util';
 import { Prisma, Category, Role } from 'src/generated/prisma/client';
+import { SosCategoryResponseDto, SosMenuItemSimpleDto } from 'src/sos/dto';
 
 import { AuthService } from '../auth/auth.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -788,5 +793,136 @@ export class CategoryService {
       `[${method}] Created ${categoryMap.size} categories with translations`
     );
     return categoryMap;
+  }
+
+  /**
+   * ============================================================================
+   * SOS (SELF-ORDERING SYSTEM) METHODS
+   * ============================================================================
+   */
+
+  /**
+   * Get categories for customer (SOS app).
+   * Returns simplified category list with menu items for menu browsing.
+   * Only includes visible categories and available menu items.
+   *
+   * @param storeId - Store UUID to fetch categories for
+   * @returns Array of categories with simplified menu items
+   * @throws {NotFoundException} If store not found
+   */
+  async findAllForCustomer(storeId: string): Promise<SosCategoryResponseDto[]> {
+    const method = this.findAllForCustomer.name;
+    this.logger.log(`[${method}] Fetching categories for store ${storeId}`);
+
+    // Verify store exists
+    const storeExists = await this.prisma.store.count({
+      where: { id: storeId },
+    });
+    if (storeExists === 0) {
+      throw new NotFoundException(`Store with ID ${storeId} not found.`);
+    }
+
+    const categories = await this.prisma.category.findMany({
+      where: {
+        storeId,
+        deletedAt: null,
+      },
+      orderBy: { sortOrder: 'asc' },
+      include: {
+        translations: {
+          select: {
+            locale: true,
+            name: true,
+          },
+        },
+        menuItems: {
+          where: {
+            deletedAt: null,
+            isHidden: false, // Only visible items
+            isOutOfStock: false, // Only available items
+          },
+          orderBy: { sortOrder: 'asc' },
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            basePrice: true,
+            imagePath: true,
+            isOutOfStock: true,
+            isHidden: true,
+            translations: {
+              select: {
+                locale: true,
+                name: true,
+                description: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // Filter out categories with no visible items
+    const categoriesWithItems = categories.filter(
+      (cat) => cat.menuItems.length > 0
+    );
+
+    this.logger.log(
+      `[${method}] Found ${categoriesWithItems.length} categories with visible items for store ${storeId}`
+    );
+
+    return categoriesWithItems.map((cat) => this.mapToSosCategoryResponse(cat));
+  }
+
+  /**
+   * Maps a Prisma Category result to SosCategoryResponseDto.
+   * Converts to customer-facing format with simplified menu items.
+   */
+  private mapToSosCategoryResponse(
+    category: Category & {
+      translations: Array<{ locale: string; name: string }>;
+      menuItems: Array<{
+        id: string;
+        name: string;
+        description: string | null;
+        basePrice: Prisma.Decimal | null;
+        imagePath: string | null;
+        isOutOfStock: boolean;
+        isHidden: boolean;
+        translations: Array<{
+          locale: string;
+          name: string;
+          description: string | null;
+        }>;
+      }>;
+    }
+  ): SosCategoryResponseDto {
+    // Build translations map
+    const translations: TranslationMap<BaseTranslationResponseDto> =
+      category.translations.reduce((acc, t) => {
+        acc[t.locale as 'en' | 'zh' | 'my' | 'th'] = {
+          locale: t.locale as 'en' | 'zh' | 'my' | 'th',
+          name: t.name,
+        };
+        return acc;
+      }, {} as TranslationMap<BaseTranslationResponseDto>);
+
+    // Map menu items to simplified DTOs
+    const items: SosMenuItemSimpleDto[] = category.menuItems.map((item) => ({
+      id: item.id,
+      name: item.name,
+      price: item.basePrice?.toString() ?? '0',
+      imagePath: item.imagePath,
+      isAvailable: !item.isOutOfStock && !item.isHidden,
+      description: item.description,
+    }));
+
+    return {
+      id: category.id,
+      name: category.name,
+      translations:
+        Object.keys(translations).length > 0 ? translations : undefined,
+      items,
+    };
   }
 }

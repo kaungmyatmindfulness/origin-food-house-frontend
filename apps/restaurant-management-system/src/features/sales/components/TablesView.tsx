@@ -9,6 +9,7 @@ import { TableCard } from './TableCard';
 import { StartSessionDialog } from './StartSessionDialog';
 import { useSalesStore } from '@/features/sales/store/sales.store';
 import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 
 import type { TableStatus as ApiTableStatus } from '@repo/api/generated/types';
 
@@ -64,7 +65,7 @@ export function TablesView({ storeId, onTableSessionStart }: TablesViewProps) {
   // Fetch tables from API and transform to UI format
   const { data: response, isLoading } = $api.useQuery(
     'get',
-    '/stores/{storeId}/tables',
+    API_PATHS.tables,
     { params: { path: { storeId } } },
     { enabled: !!storeId, staleTime: 30 * 1000 }
   );

@@ -2,7 +2,13 @@
 
 # Script to fetch OpenAPI spec from backend and generate TypeScript types
 # Uses openapi-typescript for type generation
-# Usage: npm run generate (from packages/api or root with workspace flag)
+# Usage: npm run generate:api (from root)
+#
+# Prerequisites:
+#   - Backend API running at http://localhost:3000
+#   - Swagger docs at /api-docs-json
+#
+# Note: API paths include /api/v1 prefix (full versioned routes)
 
 set -e
 
@@ -187,12 +193,19 @@ categories = {
     'Ownership Transfer': [],
     'Business Hours': [],
     'Tax and Service Charge': [],
+    'SOS (Customer)': [],
+    'RMS (Staff)': [],
     'Other': [],
 }
 
 def categorize_schema(name):
     name_lower = name.lower()
-    if 'session' in name_lower:
+    # App-specific DTOs (SOS = customer-facing, RMS = staff-facing)
+    if name_lower.startswith('sos'):
+        return 'SOS (Customer)'
+    elif name_lower.startswith('rms'):
+        return 'RMS (Staff)'
+    elif 'session' in name_lower:
         return 'Session'
     elif 'orderitem' in name_lower or (name_lower.startswith('order') and 'item' in name_lower):
         return 'Order'

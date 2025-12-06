@@ -22,7 +22,7 @@ export async function getAllTables(
   storeId: string
 ): Promise<TableResponseDto[]> {
   const { data, error, response } = await apiClient.GET(
-    '/stores/{storeId}/tables',
+    '/api/v1/stores/{storeId}/tables',
     {
       params: { path: { storeId } },
     }
@@ -57,7 +57,7 @@ export async function syncTables(
   payload: BatchUpsertTableDto
 ): Promise<TableResponseDto[]> {
   const { data, error, response } = await apiClient.PUT(
-    '/stores/{storeId}/tables/batch-sync',
+    '/api/v1/stores/{storeId}/tables/batch-sync',
     {
       params: { path: { storeId } },
       body: payload,

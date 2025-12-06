@@ -31,6 +31,7 @@ import {
   useAuthStore,
 } from '@/features/auth/store/auth.store';
 import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 
 import type { CreateManualSessionDto } from '@repo/api/generated/types';
 
@@ -68,7 +69,7 @@ export function ManualOrderDialog({
   // Create manual session mutation using $api
   const createSessionMutation = $api.useMutation(
     'post',
-    '/active-table-sessions/manual',
+    API_PATHS.sessionManual,
     {
       onSuccess: (response) => {
         const session = response.data;

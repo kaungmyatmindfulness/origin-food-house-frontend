@@ -19,6 +19,7 @@ import { CartItem } from './CartItem';
 import { CartTotals } from './CartTotals';
 
 import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 import { salesKeys } from '@/features/sales/queries/sales.keys';
 
 interface CartPanelProps {
@@ -37,7 +38,7 @@ export function CartPanel({ sessionId, onCheckout }: CartPanelProps) {
     error,
   } = $api.useQuery(
     'get',
-    '/cart',
+    API_PATHS.cart,
     { params: { query: { sessionId: sessionId ?? '' } } },
     {
       enabled: !!sessionId,
@@ -49,37 +50,29 @@ export function CartPanel({ sessionId, onCheckout }: CartPanelProps) {
   const cart = cartResponse?.data ?? null;
 
   // Remove item mutation
-  const removeItemMutation = $api.useMutation(
-    'delete',
-    '/cart/items/{cartItemId}',
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: salesKeys.cart(sessionId!) });
-        toast.success(t('itemRemoved'));
-      },
-      onError: (err: unknown) => {
-        toast.error(t('failedToRemoveItem'), {
-          description: err instanceof Error ? err.message : undefined,
-        });
-      },
-    }
-  );
+  const removeItemMutation = $api.useMutation('delete', API_PATHS.cartItem, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: salesKeys.cart(sessionId!) });
+      toast.success(t('itemRemoved'));
+    },
+    onError: (err: unknown) => {
+      toast.error(t('failedToRemoveItem'), {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    },
+  });
 
   // Update quantity mutation
-  const updateQuantityMutation = $api.useMutation(
-    'patch',
-    '/cart/items/{cartItemId}',
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: salesKeys.cart(sessionId!) });
-      },
-      onError: (err: unknown) => {
-        toast.error(t('failedToUpdateItem'), {
-          description: err instanceof Error ? err.message : undefined,
-        });
-      },
-    }
-  );
+  const updateQuantityMutation = $api.useMutation('patch', API_PATHS.cartItem, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: salesKeys.cart(sessionId!) });
+    },
+    onError: (err: unknown) => {
+      toast.error(t('failedToUpdateItem'), {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    },
+  });
 
   // Handle quantity update
   const handleUpdateQuantity = (itemId: string, quantity: number) => {

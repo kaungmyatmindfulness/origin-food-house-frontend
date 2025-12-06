@@ -27,6 +27,7 @@ import { Input } from '@repo/ui/components/input';
 import { Switch } from '@repo/ui/components/switch';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient, ApiError } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 
 const dayHoursSchema = z.object({
   closed: z.boolean(),
@@ -96,7 +97,7 @@ export function BusinessHoursTab({
   >({
     mutationFn: async (formData: BusinessHoursFormData) => {
       const { data, error, response } = await apiClient.PATCH(
-        '/stores/{id}/settings/business-hours',
+        API_PATHS.storeSettingsBusinessHours,
         {
           params: { path: { id: storeId } },
           body: formData,

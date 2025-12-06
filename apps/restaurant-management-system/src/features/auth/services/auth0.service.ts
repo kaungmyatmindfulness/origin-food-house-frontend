@@ -9,6 +9,7 @@ import type { User } from '@auth0/auth0-spa-js';
 
 import { getAuth0Client } from '@/lib/auth0';
 import { apiClient, ApiError, unwrapApiResponseAs } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 
 import type { ChooseStoreDto } from '@repo/api/generated/types';
 import type { StandardApiResponse } from '@repo/api/types/api.types';
@@ -60,7 +61,7 @@ export async function handleAuth0Callback(): Promise<AccessTokenData> {
   const auth0Token = await auth0Client.getTokenSilently();
 
   // Use direct fetch since this is an unauthenticated request with Auth0 token
-  const fetchResponse = await fetch(`${baseUrl}/auth/auth0/validate`, {
+  const fetchResponse = await fetch(`${baseUrl}/api/v1/auth/auth0/validate`, {
     method: 'POST',
     credentials: 'include',
     headers: {
@@ -137,7 +138,7 @@ export async function logoutFromAuth0(returnToUrl?: string): Promise<void> {
 
     // Clear backend session (endpoint not in OpenAPI spec)
     // Use direct fetch since this is a simple POST without response handling
-    await fetch(`${baseUrl}/auth/logout`, {
+    await fetch(`${baseUrl}/api/v1/auth/logout`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -167,7 +168,7 @@ export async function logoutFromAuth0(returnToUrl?: string): Promise<void> {
 export async function loginWithStoreAuth0(
   storeData: ChooseStoreDto
 ): Promise<AccessTokenData> {
-  const result = await apiClient.POST('/auth/login/store', {
+  const result = await apiClient.POST(API_PATHS.loginWithStore, {
     body: storeData,
   });
 

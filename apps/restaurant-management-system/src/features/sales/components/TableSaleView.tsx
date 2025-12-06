@@ -20,6 +20,7 @@ import { useSalesCart } from '../hooks';
 import { useSalesStore } from '../store/sales.store';
 import { salesKeys } from '../queries/sales.keys';
 import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 import { transformOrderToReceiptData } from '../utils/transform-order-to-receipt';
 
 import type { MenuItemResponseDto } from '@repo/api/generated/types';
@@ -69,7 +70,7 @@ export function TableSaleView({ storeId }: TableSaleViewProps) {
   } = useSalesCart({ storeId });
 
   // Checkout mutation
-  const checkoutMutation = $api.useMutation('post', '/orders/checkout', {
+  const checkoutMutation = $api.useMutation('post', API_PATHS.ordersCheckout, {
     onSuccess: (response) => {
       const order = response.data;
       if (order) {
@@ -96,7 +97,7 @@ export function TableSaleView({ storeId }: TableSaleViewProps) {
     refetch: refetchOrder,
   } = $api.useQuery(
     'get',
-    '/orders/{orderId}',
+    API_PATHS.order,
     {
       params: {
         path: { orderId: currentOrderId ?? '', id: currentOrderId ?? '' },

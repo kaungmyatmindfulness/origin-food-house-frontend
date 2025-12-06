@@ -138,6 +138,44 @@ app/
 
 ## RMS-Specific Patterns
 
+### API_PATHS Constant Pattern
+
+RMS uses centralized `API_PATHS` for all API route management:
+
+```typescript
+// src/utils/api-paths.ts
+export const API_PATHS = {
+  // RMS-specific routes (staff operations)
+  cart: '/api/v1/rms/cart' as const,
+  rmsOrders: '/api/v1/rms/orders' as const,
+  rmsSession: '/api/v1/rms/sessions/{sessionId}' as const,
+
+  // Shared store routes
+  categories: '/api/v1/stores/{storeId}/categories' as const,
+  menuItems: '/api/v1/stores/{storeId}/menu-items' as const,
+  tables: '/api/v1/stores/{storeId}/tables' as const,
+
+  // Generic routes
+  order: '/api/v1/orders/{orderId}' as const,
+  recordPayment: '/api/v1/payments/orders/{orderId}' as const,
+} as const;
+
+// Usage in components
+import { API_PATHS } from '@/utils/api-paths';
+
+const { data } = $api.useQuery('get', API_PATHS.categories, {
+  params: { path: { storeId } },
+});
+
+const mutation = $api.useMutation('post', API_PATHS.cart);
+```
+
+**Rules:**
+
+- ✅ Import from `API_PATHS` - single source of truth
+- ✅ Use `as const` for type safety with `$api` hooks
+- ❌ Don't hardcode paths in components
+
 ### Auth Store Selectors
 
 ```typescript

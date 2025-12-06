@@ -23,7 +23,7 @@ import type { CurrentUserData, UserStoreRole } from '../types/user.types';
 export async function registerUser(
   userData: CreateUserDto
 ): Promise<UserProfileResponseDto> {
-  const result = await apiClient.POST('/users/register', {
+  const result = await apiClient.POST('/api/v1/users/register', {
     body: userData,
   });
 
@@ -43,7 +43,7 @@ export async function registerUser(
 export async function addUserToStore(
   userData: AddUserToStoreDto
 ): Promise<unknown> {
-  const result = await apiClient.POST('/users/add-to-store', {
+  const result = await apiClient.POST('/api/v1/users/add-to-store', {
     body: userData,
   });
 
@@ -58,7 +58,7 @@ export async function addUserToStore(
  * @throws {ApiError} If the request fails
  */
 export async function getUserStores(userId: string): Promise<UserStoreRole[]> {
-  const result = await apiClient.GET('/users/{id}/stores', {
+  const result = await apiClient.GET('/api/v1/users/{id}/stores', {
     params: { path: { id: userId } },
   });
 
@@ -78,7 +78,7 @@ export async function getUserStores(userId: string): Promise<UserStoreRole[]> {
 export async function getCurrentUser(
   storeId?: string
 ): Promise<CurrentUserData> {
-  const result = await apiClient.GET('/users/me', {
+  const result = await apiClient.GET('/api/v1/users/me', {
     params: { query: { storeId } },
   });
 

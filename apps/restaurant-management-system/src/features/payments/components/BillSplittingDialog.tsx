@@ -40,6 +40,7 @@ import { Badge } from '@repo/ui/components/badge';
 import { Alert, AlertDescription } from '@repo/ui/components/alert';
 
 import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 
 import type {
   OrderResponseDto,
@@ -168,40 +169,36 @@ export function BillSplittingDialog({
   };
 
   // Payment recording mutation using $api
-  const paymentMutation = $api.useMutation(
-    'post',
-    '/payments/orders/{orderId}',
-    {
-      onSuccess: () => {
-        if (currentDinerIndex === null) return;
+  const paymentMutation = $api.useMutation('post', API_PATHS.recordPayment, {
+    onSuccess: () => {
+      if (currentDinerIndex === null) return;
 
-        const dinerIndex = currentDinerIndex;
-        const newDiners = [...diners];
-        if (newDiners[dinerIndex]) {
-          newDiners[dinerIndex].paid = true;
-        }
-        setDiners(newDiners);
+      const dinerIndex = currentDinerIndex;
+      const newDiners = [...diners];
+      if (newDiners[dinerIndex]) {
+        newDiners[dinerIndex].paid = true;
+      }
+      setDiners(newDiners);
 
-        toast.success(t('paymentRecorded', { diner: dinerIndex + 1 }));
+      toast.success(t('paymentRecorded', { diner: dinerIndex + 1 }));
 
-        // Check if all diners paid
-        const allPaid = newDiners.every((d) => d.paid);
-        if (allPaid) {
-          queryClient.invalidateQueries({ queryKey: ['orders'] });
-          queryClient.invalidateQueries({ queryKey: ['payments', orderId] });
-          toast.success(t('allPaymentsRecorded'));
-          setTimeout(() => {
-            onOpenChange(false);
-          }, 1000);
-        } else {
-          setCurrentDinerIndex(null);
-        }
-      },
-      onError: () => {
-        toast.error(t('paymentFailed'));
-      },
-    }
-  );
+      // Check if all diners paid
+      const allPaid = newDiners.every((d) => d.paid);
+      if (allPaid) {
+        queryClient.invalidateQueries({ queryKey: ['orders'] });
+        queryClient.invalidateQueries({ queryKey: ['payments', orderId] });
+        toast.success(t('allPaymentsRecorded'));
+        setTimeout(() => {
+          onOpenChange(false);
+        }, 1000);
+      } else {
+        setCurrentDinerIndex(null);
+      }
+    },
+    onError: () => {
+      toast.error(t('paymentFailed'));
+    },
+  });
 
   // Start recording payments
   const handleProceedToPayments = () => {

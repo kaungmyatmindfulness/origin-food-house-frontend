@@ -56,7 +56,7 @@ import { SortCategoriesPayloadDto } from './dto/sort-categories-payload.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@ApiTags('Stores / Categories')
+@ApiTags('Shared / Categories')
 @Controller('stores/:storeId/categories')
 @ApiExtraModels(
   StandardApiResponse,

@@ -18,6 +18,7 @@ import { useQuickSaleCartStore } from '../store/quick-sale-cart.store';
 import { useSalesStore } from '../store/sales.store';
 import { salesKeys } from '../queries/sales.keys';
 import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 import { transformOrderToReceiptData } from '../utils/transform-order-to-receipt';
 
 import type { MenuItemResponseDto } from '@repo/api/generated/types';
@@ -77,7 +78,7 @@ export function QuickSaleView({ storeId }: QuickSaleViewProps) {
   // Fetch order data for payment/receipt panels
   const { data: orderResponse, isLoading: isLoadingOrder } = $api.useQuery(
     'get',
-    '/orders/{orderId}',
+    API_PATHS.order,
     {
       params: {
         path: { orderId: currentOrderId ?? '', id: currentOrderId ?? '' },

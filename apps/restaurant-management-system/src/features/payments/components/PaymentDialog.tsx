@@ -6,6 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { DollarSign, CreditCard, AlertCircle } from 'lucide-react';
 
 import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 
 import type {
   OrderResponseDto,
@@ -89,7 +90,7 @@ export function PaymentDialog({
   // Record payment mutation using $api
   const recordPaymentMutation = $api.useMutation(
     'post',
-    '/payments/orders/{orderId}',
+    API_PATHS.recordPayment,
     {
       onSuccess: () => {
         toast.success(t('paymentRecorded'), {

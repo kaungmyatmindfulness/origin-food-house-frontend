@@ -152,7 +152,7 @@ export function usePrintSettings(
     refetch,
   } = $api.useQuery(
     'get',
-    '/stores/{id}/settings/print-settings',
+    '/api/v1/stores/{id}/settings/print-settings',
     {
       params: { path: { id: storeId ?? '' } },
     },
@@ -166,7 +166,7 @@ export function usePrintSettings(
   // Note: API uses {id} parameter, not {storeId}
   const updateMutation = $api.useMutation(
     'patch',
-    '/stores/{id}/settings/print-settings',
+    '/api/v1/stores/{id}/settings/print-settings',
     {
       onSuccess: () => {
         toast.success(t('settings.saved'));

@@ -8,7 +8,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import {
@@ -23,15 +23,16 @@ import { SubscriptionService } from 'src/subscription/services/subscription.serv
 import {
   PaymentActionResponseDto,
   PaymentDetailResponseDto,
-  PaymentResponseDto,
+  AdminPaymentListItemDto,
 } from '../dto/admin-payment-response.dto';
 import { GetPaymentQueueDto } from '../dto/get-payment-queue.dto';
-import { RejectPaymentDto } from '../dto/reject-payment.dto';
-import { VerifyPaymentDto } from '../dto/verify-payment.dto';
+import { AdminRejectPaymentDto } from '../dto/reject-payment.dto';
+import { AdminVerifyPaymentDto } from '../dto/verify-payment.dto';
 import { PlatformAdminGuard } from '../guards/platform-admin.guard';
 import { AdminAuditInterceptor } from '../interceptors/admin-audit.interceptor';
 
-@ApiTags('Admin - Payment Management')
+@ApiTags('Admin / Payments')
+@ApiBearerAuth()
 @Controller('admin/payments')
 @UseGuards(JwtAuthGuard, PlatformAdminGuard)
 @UseInterceptors(AdminAuditInterceptor)
@@ -40,7 +41,7 @@ export class AdminPaymentController {
 
   @Get()
   @ApiAuthWithRoles()
-  @ApiGetAll(PaymentResponseDto, 'payment requests', {
+  @ApiGetAll(AdminPaymentListItemDto, 'payment requests', {
     summary: 'Get payment queue',
     description: 'Payment queue retrieved successfully',
   })
@@ -68,7 +69,7 @@ export class AdminPaymentController {
   })
   async verifyPayment(
     @Param('id') id: string,
-    @Body() dto: VerifyPaymentDto,
+    @Body() dto: AdminVerifyPaymentDto,
     @GetUser('sub') userId: string
   ): Promise<unknown> {
     return await this.subscriptionService.verifyPaymentRequest(
@@ -85,7 +86,7 @@ export class AdminPaymentController {
   })
   async rejectPayment(
     @Param('id') id: string,
-    @Body() dto: RejectPaymentDto,
+    @Body() dto: AdminRejectPaymentDto,
     @GetUser('sub') userId: string
   ): Promise<unknown> {
     return await this.subscriptionService.rejectPaymentRequest(

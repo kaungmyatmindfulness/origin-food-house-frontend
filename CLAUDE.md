@@ -115,6 +115,48 @@ npm run generate:api  # Regenerates packages/api/src/generated/types.gen.ts
 
 ---
 
+## API Route Structure
+
+All API routes use the `/api/v1` prefix with app-specific namespacing:
+
+| Prefix            | App            | Authentication       | Description                     |
+| ----------------- | -------------- | -------------------- | ------------------------------- |
+| `/api/v1/rms/`    | RMS (Staff)    | JWT                  | Staff cart, orders, sessions    |
+| `/api/v1/sos/`    | SOS (Customer) | Session Token        | Customer cart, menu, orders     |
+| `/api/v1/admin/`  | Admin Platform | JWT + Platform Admin | Platform administration         |
+| `/api/v1/stores/` | Shared         | JWT                  | Store management, menu, tables  |
+| `/api/v1/`        | Generic        | Varies               | Auth, payments, backward compat |
+
+### App Context Detection
+
+The backend uses `AppContextService` to detect which app is making requests:
+
+- **Header:** `X-App-Context: rms | sos | admin`
+- **Route prefix:** Automatically inferred from `/rms/`, `/sos/`, `/admin/` paths
+
+### Frontend API_PATHS Pattern
+
+RMS uses centralized `API_PATHS` constants for route management:
+
+```typescript
+// apps/restaurant-management-system/src/utils/api-paths.ts
+export const API_PATHS = {
+  // RMS-specific routes
+  cart: '/api/v1/rms/cart' as const,
+  rmsOrders: '/api/v1/rms/orders' as const,
+  rmsSession: '/api/v1/rms/sessions/{sessionId}' as const,
+
+  // Shared store routes
+  categories: '/api/v1/stores/{storeId}/categories' as const,
+  menuItems: '/api/v1/stores/{storeId}/menu-items' as const,
+} as const;
+
+// Usage in components
+$api.useQuery('get', API_PATHS.categories, { params: { path: { storeId } } });
+```
+
+---
+
 ## File Naming Conventions
 
 **These conventions apply across all packages:**

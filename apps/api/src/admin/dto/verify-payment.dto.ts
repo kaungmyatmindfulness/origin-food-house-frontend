@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, MaxLength } from 'class-validator';
 
-export class VerifyPaymentDto {
+export class AdminVerifyPaymentDto {
   @ApiPropertyOptional({
     description: 'Admin note for the verification',
     example: 'Payment receipt verified against bank statement',

@@ -30,7 +30,7 @@ import type { OrderResponseDto } from '@repo/api/generated/types';
  *
  * When endpoint is ready, replace with:
  *   const { data: response, isLoading } = $api.useQuery(
- *     'get', '/stores/{storeId}/orders',
+ *     'get', '/api/v1/stores/{storeId}/orders',
  *     {
  *       params: {
  *         path: { storeId },

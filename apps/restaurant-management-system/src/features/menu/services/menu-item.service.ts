@@ -25,7 +25,7 @@ export async function getStoreMenuItems(
   storeId: string
 ): Promise<MenuItemResponseDto[]> {
   const { data, error, response } = await apiClient.GET(
-    '/stores/{storeId}/menu-items',
+    '/api/v1/stores/{storeId}/menu-items',
     {
       params: { path: { storeId } },
     }
@@ -53,7 +53,7 @@ export async function createMenuItem(
   storeId: string,
   itemData: CreateMenuItemDto
 ): Promise<MenuItemResponseDto> {
-  const result = await apiClient.POST('/stores/{storeId}/menu-items', {
+  const result = await apiClient.POST('/api/v1/stores/{storeId}/menu-items', {
     params: { path: { storeId } },
     body: itemData,
   });
@@ -74,7 +74,7 @@ export async function getMenuItemById(
   id: string
 ): Promise<MenuItemResponseDto> {
   const { data, error, response } = await apiClient.GET(
-    '/stores/{storeId}/menu-items/{id}',
+    '/api/v1/stores/{storeId}/menu-items/{id}',
     {
       params: { path: { storeId, id } },
     }
@@ -105,7 +105,7 @@ export async function updateMenuItem(
   itemData: UpdateMenuItemDto
 ): Promise<MenuItemResponseDto> {
   const { data, error, response } = await apiClient.PUT(
-    '/stores/{storeId}/menu-items/{id}',
+    '/api/v1/stores/{storeId}/menu-items/{id}',
     {
       params: { path: { storeId, id } },
       body: itemData,
@@ -135,7 +135,7 @@ export async function deleteMenuItem(
   id: string
 ): Promise<MenuItemDeletedResponseDto> {
   const { data, error, response } = await apiClient.DELETE(
-    '/stores/{storeId}/menu-items/{id}',
+    '/api/v1/stores/{storeId}/menu-items/{id}',
     {
       params: { path: { storeId, id } },
     }
@@ -168,7 +168,7 @@ export async function toggleMenuItemOutOfStock(
   const patchData: PatchMenuItemDto = { isOutOfStock };
 
   const { data, error, response } = await apiClient.PATCH(
-    '/stores/{storeId}/menu-items/{id}',
+    '/api/v1/stores/{storeId}/menu-items/{id}',
     {
       params: { path: { storeId, id } },
       body: patchData,

@@ -52,7 +52,7 @@ import { InviteOrAssignRoleDto } from './dto/invite-or-assign-role.dto';
 import { StoreService } from './store.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@ApiTags('Stores')
+@ApiTags('Shared / Stores')
 @Controller('stores')
 @ApiExtraModels(
   StandardApiResponse,

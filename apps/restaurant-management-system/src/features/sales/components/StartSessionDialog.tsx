@@ -16,6 +16,7 @@ import {
 } from '@repo/ui/components/dialog';
 
 import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 
 interface StartSessionDialogProps {
   open: boolean;
@@ -40,7 +41,7 @@ export function StartSessionDialog({
 
   const startSessionMutation = $api.useMutation(
     'post',
-    '/stores/{storeId}/tables/{tableId}/sessions',
+    API_PATHS.tableSession,
     {
       onSuccess: (response) => {
         const session = response.data;
@@ -48,7 +49,7 @@ export function StartSessionDialog({
           toast.success(t('sessionStarted'));
           // Invalidate tables query to refresh the table status
           queryClient.invalidateQueries({
-            queryKey: ['get', '/stores/{storeId}/tables'],
+            queryKey: ['get', API_PATHS.tables],
           });
           onSessionStarted(session.id);
           onOpenChange(false);

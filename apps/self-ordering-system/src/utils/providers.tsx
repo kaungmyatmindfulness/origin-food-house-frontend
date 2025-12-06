@@ -3,41 +3,13 @@
 /**
  * Application providers for the Self-Ordering System.
  * Configured for SSR with React Query for server state management.
+ *
+ * Uses the centralized QueryClient configuration from apiFetch.ts
+ * to ensure consistent settings between the provider and $api hooks.
  */
-import {
-  isServer,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 
-function makeQueryClient() {
-  return new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 60 * 1000, // 1 minute
-        gcTime: 5 * 60 * 1000, // 5 minutes
-        refetchOnWindowFocus: false,
-        retry: 1,
-      },
-      mutations: {
-        retry: 0,
-      },
-    },
-  });
-}
-
-let browserQueryClient: QueryClient | undefined = undefined;
-
-function getQueryClient() {
-  if (isServer) {
-    // Server: always make a new query client
-    return makeQueryClient();
-  } else {
-    // Browser: make a new query client if we don't already have one
-    if (!browserQueryClient) browserQueryClient = makeQueryClient();
-    return browserQueryClient;
-  }
-}
+import { getQueryClient } from '@/utils/apiFetch';
 
 interface ProvidersProps {
   children: React.ReactNode;

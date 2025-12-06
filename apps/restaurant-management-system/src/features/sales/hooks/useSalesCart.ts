@@ -54,7 +54,7 @@ export function useSalesCart({
   // Create session mutation using $api
   const createSessionMutation = $api.useMutation(
     'post',
-    '/active-table-sessions/manual',
+    '/api/v1/active-table-sessions/manual',
     {
       onSuccess: (response) => {
         const session = response.data;
@@ -69,7 +69,7 @@ export function useSalesCart({
   );
 
   // Add to cart mutation using $api
-  const addToCartMutation = $api.useMutation('post', '/cart/items', {
+  const addToCartMutation = $api.useMutation('post', '/api/v1/cart/items', {
     onSuccess: (_data, variables) => {
       const sessionId = variables.params?.query?.sessionId;
       if (sessionId) {

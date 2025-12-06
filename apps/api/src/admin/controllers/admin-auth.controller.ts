@@ -1,5 +1,5 @@
 import { Controller, Post, Get, Body, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import {
   ApiAuthWithRoles,
@@ -15,7 +15,8 @@ import { ValidateAdminTokenDto } from '../dto/validate-admin-token.dto';
 import { PlatformAdminGuard } from '../guards/platform-admin.guard';
 import { AdminAuthService } from '../services/admin-auth.service';
 
-@ApiTags('Admin Authentication')
+@ApiTags('Admin / Auth')
+@ApiBearerAuth()
 @Controller('admin/auth')
 export class AdminAuthController {
   constructor(private readonly adminAuthService: AdminAuthService) {}

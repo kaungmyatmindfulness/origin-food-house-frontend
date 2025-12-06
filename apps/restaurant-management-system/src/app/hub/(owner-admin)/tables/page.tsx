@@ -19,6 +19,7 @@ import {
 import { SocketProvider } from '@/utils/socket-provider';
 import { useTableSocket } from '@/features/tables/hooks/useTableSocket';
 import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 
 import type { UpdateTableStatusDto } from '@repo/api/generated/types';
 
@@ -103,7 +104,7 @@ function TableStateContent() {
     refetch,
   } = $api.useQuery(
     'get',
-    '/stores/{storeId}/tables',
+    API_PATHS.tables,
     { params: { path: { storeId: selectedStoreId! } } },
     {
       enabled: !!selectedStoreId,
@@ -119,12 +120,12 @@ function TableStateContent() {
   // Update status mutation
   const updateStatusMutation = $api.useMutation(
     'patch',
-    '/stores/{storeId}/tables/{tableId}/status',
+    API_PATHS.tableStatus,
     {
       onSuccess: () => {
         toast.success(t('statusUpdateSuccess'));
         queryClient.invalidateQueries({
-          queryKey: ['get', '/stores/{storeId}/tables'],
+          queryKey: ['get', API_PATHS.tables],
         });
         setSelectedTable(null);
         setNewStatus('');

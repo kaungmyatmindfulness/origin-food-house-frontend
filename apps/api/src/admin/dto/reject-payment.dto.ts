@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 
-export class RejectPaymentDto {
+export class AdminRejectPaymentDto {
   @ApiProperty({
     description: 'Reason for rejecting the payment request',
     example: 'Payment proof does not match the amount specified',

@@ -14,6 +14,7 @@ import { CategoryModule } from 'src/category/category.module';
 import { CacheModule } from 'src/common/cache/cache.module';
 import { UnusedImageCleanupService } from 'src/common/cleanup/unused-image-cleanup.service';
 import { CommonModule } from 'src/common/common.module';
+import { AppContextModule } from 'src/common/context/app-context.module';
 import { LoggerMiddleware } from 'src/common/middleware/logger.middleware';
 import { EmailModule } from 'src/email/email.module';
 import { JobsModule } from 'src/jobs/jobs.module';
@@ -23,6 +24,8 @@ import { OrderModule } from 'src/order/order.module';
 import { PaymentModule } from 'src/payment/payment.module';
 import { RedisModule } from 'src/redis/redis.module';
 import { ReportModule } from 'src/report/report.module';
+import { RmsModule } from 'src/rms/rms.module';
+import { SosModule } from 'src/sos/sos.module';
 import { StoreModule } from 'src/store/store.module';
 import { SubscriptionModule } from 'src/subscription/subscription.module';
 import { TableModule } from 'src/table/table.module';
@@ -46,6 +49,7 @@ import { PrismaService } from './prisma/prisma.service';
     }),
     ScheduleModule.forRoot(),
     EventEmitterModule.forRoot(),
+    AppContextModule, // Global app context detection module
     CacheModule, // Global Redis caching module
     ActiveTableSessionModule,
     AdminModule,
@@ -62,6 +66,8 @@ import { PrismaService } from './prisma/prisma.service';
     PaymentModule,
     RedisModule,
     ReportModule,
+    RmsModule,
+    SosModule,
     StoreModule,
     SubscriptionModule,
     TableModule,
@@ -82,6 +88,7 @@ import { PrismaService } from './prisma/prisma.service';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
+    // Apply logger middleware to all routes
     consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }

@@ -172,7 +172,9 @@ export class SubscriptionEmailService {
   }
 
   private loadTemplates(): void {
-    const templateDir = path.join(__dirname, 'templates');
+    // Use process.cwd() to get project root, then navigate to src/email/templates
+    // This works in both dev (ts-node) and prod (compiled) environments
+    const templateDir = path.join(process.cwd(), 'src', 'email', 'templates');
     const templateFiles = [
       'payment-request-created.hbs',
       'payment-proof-uploaded.hbs',

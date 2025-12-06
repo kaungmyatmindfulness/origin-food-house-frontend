@@ -28,6 +28,7 @@ import {
 import { Textarea } from '@repo/ui/components/textarea';
 
 import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 import { formatCurrency } from '@/utils/formatting';
 
 import type { RecordPaymentDto } from '@repo/api/generated/types';
@@ -88,19 +89,15 @@ export function PaymentPanel({
   );
 
   // Record payment mutation using $api
-  const paymentMutation = $api.useMutation(
-    'post',
-    '/payments/orders/{orderId}',
-    {
-      onSuccess: () => {
-        toast.success(t('paymentSuccessful'));
-        onPaymentSuccess();
-      },
-      onError: () => {
-        toast.error(t('paymentFailed'));
-      },
-    }
-  );
+  const paymentMutation = $api.useMutation('post', API_PATHS.recordPayment, {
+    onSuccess: () => {
+      toast.success(t('paymentSuccessful'));
+      onPaymentSuccess();
+    },
+    onError: () => {
+      toast.error(t('paymentFailed'));
+    },
+  });
 
   const handleSubmit = () => {
     if (paymentMethod === 'CASH' && !isValidTendered) {

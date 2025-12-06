@@ -26,9 +26,9 @@ export class PaymentStoreInfoDto {
 }
 
 /**
- * Payment request list item response
+ * Payment request list item response for admin panel
  */
-export class PaymentResponseDto {
+export class AdminPaymentListItemDto {
   @ApiProperty({ description: 'Payment request ID' })
   id: string;
 

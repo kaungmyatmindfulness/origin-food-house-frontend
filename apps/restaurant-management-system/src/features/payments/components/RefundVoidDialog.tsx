@@ -44,6 +44,7 @@ import { Textarea } from '@repo/ui/components/textarea';
 import { Alert, AlertDescription } from '@repo/ui/components/alert';
 
 import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 
 import type { CreateRefundDto } from '@repo/api/generated/types';
 
@@ -125,24 +126,20 @@ export function RefundVoidDialog({
   const voidReason = voidForm.watch('reason');
 
   // Refund mutation using $api
-  const refundMutation = $api.useMutation(
-    'post',
-    '/payments/orders/{orderId}/refunds',
-    {
-      onSuccess: () => {
-        toast.success(t('refundSuccess'));
-        queryClient.invalidateQueries({ queryKey: ['orders'] });
-        queryClient.invalidateQueries({ queryKey: ['payments', orderId] });
-        onOpenChange(false);
-      },
-      onError: () => {
-        toast.error(t('refundFailed'));
-      },
-    }
-  );
+  const refundMutation = $api.useMutation('post', API_PATHS.orderRefunds, {
+    onSuccess: () => {
+      toast.success(t('refundSuccess'));
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      queryClient.invalidateQueries({ queryKey: ['payments', orderId] });
+      onOpenChange(false);
+    },
+    onError: () => {
+      toast.error(t('refundFailed'));
+    },
+  });
 
   // Void mutation using $api
-  const voidMutation = $api.useMutation('patch', '/orders/{orderId}/status', {
+  const voidMutation = $api.useMutation('patch', API_PATHS.orderStatus, {
     onSuccess: () => {
       toast.success(t('voidSuccess'));
       queryClient.invalidateQueries({ queryKey: ['orders'] });

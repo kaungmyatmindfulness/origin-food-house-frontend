@@ -143,16 +143,40 @@ app/[locale]/
 
 ## SOS-Specific Patterns
 
-### No Authentication
+### API Route Structure
 
-SOS doesn't use user authentication. Instead, it uses **session tokens** to associate carts with tables:
+SOS uses the `/api/v1/sos/` namespace for customer-facing operations:
+
+```
+/api/v1/sos/
+├── cart/           # Customer cart operations
+├── menu/           # Menu browsing
+├── orders/         # Order placement
+└── sessions/       # Session management
+```
+
+### Session Token Authentication
+
+SOS doesn't use JWT authentication. Instead, it uses **session tokens** for guest ordering:
 
 ```typescript
 // Session store manages table/cart association
 import { useSessionStore } from '@/features/session/store/session.store';
 
 const sessionToken = useSessionStore((state) => state.sessionToken);
+
+// API calls include session token in header
+const { data } = $api.useQuery('get', '/api/v1/sos/cart', {
+  // Session token automatically attached by apiFetch
+});
 ```
+
+**Authentication flow:**
+
+1. Customer scans QR code → `POST /api/v1/sos/sessions/join`
+2. Server returns session token
+3. Token stored in `sessionStore` and included in subsequent requests
+4. All SOS routes validate session token (not JWT)
 
 ### Real-Time Cart Sync
 

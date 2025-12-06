@@ -31,7 +31,7 @@ interface StoreCreatedResponse {
 export async function getStoreDetails(
   id: string
 ): Promise<GetStoreDetailsResponseDto> {
-  const result = await apiClient.GET('/stores/{id}', {
+  const result = await apiClient.GET('/api/v1/stores/{id}', {
     params: { path: { id } },
   });
 
@@ -54,13 +54,16 @@ export async function updateStoreInformation(
   storeIdQuery: string,
   storeData: UpdateStoreInformationDto
 ): Promise<void> {
-  const { error, response } = await apiClient.PUT('/stores/{id}/information', {
-    params: {
-      path: { id },
-      query: { storeId: storeIdQuery },
-    },
-    body: storeData,
-  });
+  const { error, response } = await apiClient.PUT(
+    '/api/v1/stores/{id}/information',
+    {
+      params: {
+        path: { id },
+        query: { storeId: storeIdQuery },
+      },
+      body: storeData,
+    }
+  );
 
   if (error) {
     throw new ApiError(
@@ -82,7 +85,7 @@ export async function updateStoreSettings(
   id: string,
   storeData: UpdateStoreSettingDto
 ): Promise<StoreSettingResponseDto> {
-  const result = await apiClient.PUT('/stores/{id}/settings', {
+  const result = await apiClient.PUT('/api/v1/stores/{id}/settings', {
     params: { path: { id } },
     body: storeData,
   });
@@ -103,7 +106,7 @@ export async function updateStoreSettings(
 export async function createStore(
   storeData: CreateStoreDto
 ): Promise<StoreCreatedResponse> {
-  const result = await apiClient.POST('/stores', {
+  const result = await apiClient.POST('/api/v1/stores', {
     body: storeData,
   });
 

@@ -7,13 +7,20 @@ import cookieParser from 'cookie-parser';
 import { SessionCreatedResponseDto } from 'src/active-table-session/dto/session-created-response.dto';
 import { SessionResponseDto } from 'src/active-table-session/dto/session-response.dto';
 import {
+  AdminOrderAnalyticsDto,
+  AdminOrderItemResponseDto,
+  AdminOrderResponseDto,
+  AdminOrderStoreInfoDto,
+} from 'src/admin/dto/admin-order-response.dto';
+import {
+  AdminPaymentListItemDto,
   PaymentActionResponseDto as AdminPaymentActionResponseDto,
   PaymentDetailResponseDto as AdminPaymentDetailResponseDto,
-  PaymentResponseDto as AdminPaymentResponseDto,
   PaymentStoreInfoDto,
 } from 'src/admin/dto/admin-payment-response.dto';
 import { AdminPermissionsResponseDto } from 'src/admin/dto/admin-permissions-response.dto';
 import { AdminProfileResponseDto } from 'src/admin/dto/admin-profile-response.dto';
+import { AdminSessionResponseDto } from 'src/admin/dto/admin-session-response.dto';
 import {
   AdminInfoDto,
   AdminStoreCountsDto,
@@ -49,6 +56,12 @@ import {
   CartItemResponseDto,
   CartResponseDto,
 } from 'src/cart/dto/cart-response.dto';
+import {
+  CartItemBaseResponseDto,
+  CategoryBaseResponseDto,
+  MenuItemBaseResponseDto,
+  OrderBaseResponseDto,
+} from 'src/common/dto/base';
 import {
   PaginatedResponseDto,
   PaginationMeta,
@@ -89,6 +102,18 @@ import {
 } from 'src/report/dto/popular-items.dto';
 import { SalesSummaryDto } from 'src/report/dto/sales-summary.dto';
 import {
+  SosCartItemCustomizationDto,
+  SosCartItemResponseDto,
+  SosCartResponseDto,
+  SosCategoryResponseDto,
+  SosCustomizationGroupDto,
+  SosCustomizationOptionDto,
+  SosMenuItemResponseDto,
+  SosMenuItemSimpleDto,
+  SosOrderItemResponseDto,
+  SosOrderResponseDto,
+} from 'src/sos/dto';
+import {
   BusinessHoursDto,
   DayHoursDto,
   SpecialHoursEntryDto,
@@ -112,6 +137,126 @@ import {
 
 import { AppModule } from './app.module';
 
+/**
+ * Extra models for Swagger document generation.
+ * All DTOs used with getSchemaPath() must be registered here.
+ */
+const extraModels = [
+  // Common
+  StandardApiResponse,
+  StandardApiErrorDetails,
+  PaginatedResponseDto,
+  PaginationMeta,
+  // Session
+  SessionCreatedResponseDto,
+  SessionResponseDto,
+  // Cart
+  CartResponseDto,
+  CartItemResponseDto,
+  CartItemCustomizationResponseDto,
+  // Order
+  OrderResponseDto,
+  OrderItemResponseDto,
+  OrderItemCustomizationResponseDto,
+  KitchenOrderResponseDto,
+  // Payment (Order Payments)
+  PaymentResponseDto,
+  RefundResponseDto,
+  // Admin Auth
+  ValidateAdminResponseDto,
+  AdminUserResponseDto,
+  AdminProfileResponseDto,
+  AdminPermissionsResponseDto,
+  // Admin Store Management
+  AdminStoreResponseDto,
+  StoreDetailResponseDto,
+  StoreActionResponseDto,
+  StoreAnalyticsResponseDto,
+  AdminStoreInformationDto,
+  AdminStoreSubscriptionDto,
+  AdminStoreTierDto,
+  AdminStoreCountsDto,
+  AdminInfoDto,
+  SuspensionHistoryItemDto,
+  // Admin User Management
+  AdminUserListResponseDto,
+  UserDetailResponseDto,
+  UserActionResponseDto,
+  UserActivityResponseDto,
+  UserStoreInfoDto,
+  UserStoreDetailsDto,
+  UserStoreAssociationDto,
+  UserCountsDto,
+  UserAdminInfoDto,
+  UserSuspensionHistoryItemDto,
+  ActivityUserInfoDto,
+  // Admin Payment Management
+  AdminPaymentListItemDto,
+  AdminPaymentDetailResponseDto,
+  AdminPaymentActionResponseDto,
+  PaymentStoreInfoDto,
+  // Admin Order Management
+  AdminOrderResponseDto,
+  AdminOrderItemResponseDto,
+  AdminOrderAnalyticsDto,
+  AdminOrderStoreInfoDto,
+  // Admin Session Management
+  AdminSessionResponseDto,
+  // Reports
+  SalesSummaryDto,
+  PaymentBreakdownDto,
+  PaymentMethodBreakdownDto,
+  PopularItemsDto,
+  PopularItemDto,
+  OrderStatusReportDto,
+  OrderStatusCountDto,
+  // Store
+  GetStoreDetailsResponseDto,
+  StoreInformationResponseDto,
+  StoreSettingResponseDto,
+  GetPrintSettingResponseDto,
+  UpdatePrintSettingResponseDto,
+  // Store - Business Hours (typed value DTOs)
+  BusinessHoursDto,
+  DayHoursDto,
+  SpecialHoursEntryDto,
+  // Subscription
+  SubscriptionResponseDto,
+  TrialEligibilityResponseDto,
+  TrialInfoResponseDto,
+  PaymentRequestResponseDto,
+  RefundRequestResponseDto,
+  OwnershipTransferResponseDto,
+  // Subscription - Bank Transfer (typed value DTO)
+  BankTransferDetailsDto,
+  // Payment - Split Types (typed value DTOs)
+  SplitMetadataDto,
+  EvenSplitDataDto,
+  ByItemSplitDataDto,
+  CustomSplitDataDto,
+  // Audit Log - Details (typed value DTO)
+  AuditLogDetailsDto,
+  // Upload - Image Metadata (typed value DTOs)
+  VersionMetadataDto,
+  ImageMetadataDto,
+  // Base DTOs
+  OrderBaseResponseDto,
+  CategoryBaseResponseDto,
+  MenuItemBaseResponseDto,
+  CartItemBaseResponseDto,
+  // SOS DTOs (Self-Ordering System)
+  SosOrderResponseDto,
+  SosOrderItemResponseDto,
+  SosCategoryResponseDto,
+  SosMenuItemSimpleDto,
+  SosMenuItemResponseDto,
+  SosCustomizationGroupDto,
+  SosCustomizationOptionDto,
+  SosCartResponseDto,
+  SosCartItemResponseDto,
+  SosCartItemCustomizationDto,
+];
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -123,22 +268,26 @@ async function bootstrap() {
     'https://origin-food-house.com'
   );
 
-  if (nodeEnv === 'dev') {
-    app.enableCors({
-      origin: ['http://localhost:3001', 'http://localhost:3002'],
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-      credentials: true,
-    });
-  } else {
-    app.enableCors({
-      origin: corsOrigin,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-      credentials: true,
-    });
-  }
+  // Set global API prefix for all routes
+  app.setGlobalPrefix('api/v1');
+
+  // Configure CORS
+  const corsConfig = {
+    origin: nodeEnv === 'dev' ? true : corsOrigin.split(','),
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'x-session-token',
+      'X-App-Context',
+    ],
+    exposedHeaders: ['X-App-Context', 'Deprecation', 'Sunset', 'Link'],
+  };
+
+  app.enableCors(corsConfig);
 
   app.use(cookieParser());
-  // app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -150,8 +299,9 @@ async function bootstrap() {
     })
   );
 
+  // Swagger API documentation
   const config = new DocumentBuilder()
-    .setTitle('Restaurant API')
+    .setTitle('Origin Food House API')
     .setDescription(
       'API documentation for the Restaurant Management & Ordering system'
     )
@@ -159,100 +309,8 @@ async function bootstrap() {
     .addBearerAuth()
     .setOpenAPIVersion('3.1.0')
     .build();
-  const document = SwaggerModule.createDocument(app, config, {
-    extraModels: [
-      // Common
-      StandardApiResponse,
-      StandardApiErrorDetails,
-      PaginatedResponseDto,
-      PaginationMeta,
-      // Session
-      SessionCreatedResponseDto,
-      SessionResponseDto,
-      // Cart
-      CartResponseDto,
-      CartItemResponseDto,
-      CartItemCustomizationResponseDto,
-      // Order
-      OrderResponseDto,
-      OrderItemResponseDto,
-      OrderItemCustomizationResponseDto,
-      KitchenOrderResponseDto,
-      // Payment (Order Payments)
-      PaymentResponseDto,
-      RefundResponseDto,
-      // Admin Auth
-      ValidateAdminResponseDto,
-      AdminUserResponseDto,
-      AdminProfileResponseDto,
-      AdminPermissionsResponseDto,
-      // Admin Store Management
-      AdminStoreResponseDto,
-      StoreDetailResponseDto,
-      StoreActionResponseDto,
-      StoreAnalyticsResponseDto,
-      AdminStoreInformationDto,
-      AdminStoreSubscriptionDto,
-      AdminStoreTierDto,
-      AdminStoreCountsDto,
-      AdminInfoDto,
-      SuspensionHistoryItemDto,
-      // Admin User Management
-      AdminUserListResponseDto,
-      UserDetailResponseDto,
-      UserActionResponseDto,
-      UserActivityResponseDto,
-      UserStoreInfoDto,
-      UserStoreDetailsDto,
-      UserStoreAssociationDto,
-      UserCountsDto,
-      UserAdminInfoDto,
-      UserSuspensionHistoryItemDto,
-      ActivityUserInfoDto,
-      // Admin Payment Management
-      AdminPaymentResponseDto,
-      AdminPaymentDetailResponseDto,
-      AdminPaymentActionResponseDto,
-      PaymentStoreInfoDto,
-      // Reports
-      SalesSummaryDto,
-      PaymentBreakdownDto,
-      PaymentMethodBreakdownDto,
-      PopularItemsDto,
-      PopularItemDto,
-      OrderStatusReportDto,
-      OrderStatusCountDto,
-      // Store
-      GetStoreDetailsResponseDto,
-      StoreInformationResponseDto,
-      StoreSettingResponseDto,
-      GetPrintSettingResponseDto,
-      UpdatePrintSettingResponseDto,
-      // Store - Business Hours (typed value DTOs)
-      BusinessHoursDto,
-      DayHoursDto,
-      SpecialHoursEntryDto,
-      // Subscription
-      SubscriptionResponseDto,
-      TrialEligibilityResponseDto,
-      TrialInfoResponseDto,
-      PaymentRequestResponseDto,
-      RefundRequestResponseDto,
-      OwnershipTransferResponseDto,
-      // Subscription - Bank Transfer (typed value DTO)
-      BankTransferDetailsDto,
-      // Payment - Split Types (typed value DTOs)
-      SplitMetadataDto,
-      EvenSplitDataDto,
-      ByItemSplitDataDto,
-      CustomSplitDataDto,
-      // Audit Log - Details (typed value DTO)
-      AuditLogDetailsDto,
-      // Upload - Image Metadata (typed value DTOs)
-      VersionMetadataDto,
-      ImageMetadataDto,
-    ],
-  });
+
+  const document = SwaggerModule.createDocument(app, config, { extraModels });
   SwaggerModule.setup('api-docs', app, document, {
     jsonDocumentUrl: '/api-docs-json',
   });

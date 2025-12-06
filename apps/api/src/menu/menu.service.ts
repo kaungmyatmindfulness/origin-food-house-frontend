@@ -7,6 +7,10 @@ import {
   Logger,
 } from '@nestjs/common';
 
+import {
+  TranslationMap,
+  TranslationWithDescriptionResponseDto,
+} from 'src/common/dto/translation.dto';
 import { getErrorDetails } from 'src/common/utils/error.util';
 import { calculateNextSortOrder } from 'src/common/utils/sort-order.util';
 import {
@@ -16,6 +20,11 @@ import {
   RoutingArea,
   CustomizationGroup as PrismaCustomizationGroup,
 } from 'src/generated/prisma/client';
+import {
+  SosMenuItemResponseDto,
+  SosCustomizationGroupDto,
+  SosCustomizationOptionDto,
+} from 'src/sos/dto';
 
 import { AuditLogService } from '../audit-log/audit-log.service';
 import { AuthService } from '../auth/auth.service';
@@ -1268,5 +1277,153 @@ export class MenuService {
     this.logger.log(
       `[${method}] Created ${customizationGroups.length} customization groups`
     );
+  }
+
+  /**
+   * ============================================================================
+   * SOS (SELF-ORDERING SYSTEM) METHODS
+   * ============================================================================
+   */
+
+  /**
+   * Get menu item details for customer (SOS app).
+   * Returns full item details with customization options for ordering.
+   * Only returns visible, non-deleted items.
+   *
+   * @param menuItemId - Menu item UUID to fetch
+   * @param storeId - Store UUID to verify ownership
+   * @returns Menu item with customization groups
+   * @throws {NotFoundException} If menu item not found or hidden
+   */
+  async findOneForCustomer(
+    menuItemId: string,
+    storeId: string
+  ): Promise<SosMenuItemResponseDto> {
+    const method = this.findOneForCustomer.name;
+    this.logger.log(
+      `[${method}] Fetching menu item ${menuItemId} for customer`
+    );
+
+    const menuItem = await this.prisma.menuItem.findFirst({
+      where: {
+        id: menuItemId,
+        storeId,
+        deletedAt: null,
+        isHidden: false,
+      },
+      include: {
+        translations: {
+          select: {
+            locale: true,
+            name: true,
+            description: true,
+          },
+        },
+        customizationGroups: {
+          orderBy: { name: 'asc' },
+          include: {
+            translations: {
+              select: {
+                locale: true,
+                name: true,
+              },
+            },
+            customizationOptions: {
+              orderBy: { sortOrder: 'asc' },
+              include: {
+                translations: {
+                  select: {
+                    locale: true,
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!menuItem) {
+      throw new NotFoundException(
+        `Menu item ${menuItemId} not found or is not available`
+      );
+    }
+
+    this.logger.log(
+      `[${method}] Found menu item ${menuItemId} with ${menuItem.customizationGroups.length} customization groups`
+    );
+
+    return this.mapToSosMenuItemResponse(menuItem);
+  }
+
+  /**
+   * Maps a Prisma MenuItem result to SosMenuItemResponseDto.
+   * Converts to customer-facing format with customization groups.
+   */
+  private mapToSosMenuItemResponse(
+    menuItem: MenuItem & {
+      translations: Array<{
+        locale: string;
+        name: string;
+        description: string | null;
+      }>;
+      customizationGroups: Array<{
+        id: string;
+        name: string;
+        minSelectable: number;
+        maxSelectable: number;
+        translations: Array<{ locale: string; name: string }>;
+        customizationOptions: Array<{
+          id: string;
+          name: string;
+          additionalPrice: Prisma.Decimal | null;
+          translations: Array<{ locale: string; name: string }>;
+        }>;
+      }>;
+    }
+  ): SosMenuItemResponseDto {
+    // Build translations map
+    const translations: TranslationMap<TranslationWithDescriptionResponseDto> =
+      menuItem.translations.reduce((acc, t) => {
+        acc[t.locale as 'en' | 'zh' | 'my' | 'th'] = {
+          locale: t.locale as 'en' | 'zh' | 'my' | 'th',
+          name: t.name,
+          description: t.description,
+        };
+        return acc;
+      }, {} as TranslationMap<TranslationWithDescriptionResponseDto>);
+
+    // Map customization groups
+    const customizations: SosCustomizationGroupDto[] =
+      menuItem.customizationGroups.map((group) => {
+        const options: SosCustomizationOptionDto[] =
+          group.customizationOptions.map((opt) => ({
+            id: opt.id,
+            name: opt.name,
+            additionalPrice: opt.additionalPrice?.toString() ?? '0',
+          }));
+
+        return {
+          id: group.id,
+          name: group.name,
+          isRequired: group.minSelectable > 0,
+          maxSelections: group.maxSelectable,
+          options,
+        };
+      });
+
+    return {
+      id: menuItem.id,
+      name: menuItem.name,
+      price: menuItem.basePrice?.toString() ?? '0',
+      imagePath: menuItem.imagePath,
+      isAvailable: !menuItem.isOutOfStock && !menuItem.isHidden,
+      description: menuItem.description,
+      categoryId: menuItem.categoryId,
+      customizations: customizations.length > 0 ? customizations : undefined,
+      translations:
+        Object.keys(translations).length > 0 ? translations : undefined,
+    };
   }
 }

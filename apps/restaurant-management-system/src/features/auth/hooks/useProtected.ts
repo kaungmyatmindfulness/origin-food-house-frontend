@@ -13,6 +13,7 @@ import {
 import type { CurrentUserData } from '@/features/user/types/user.types';
 
 import { $api, ApiError, UnauthorizedError } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 import { ROUTES, ERROR_MESSAGES } from '@/common/constants/routes';
 
 interface UseProtectedOptions {
@@ -68,7 +69,7 @@ export function useProtected(
     isSuccess: isUserQuerySuccess,
   } = $api.useQuery(
     'get',
-    '/users/me',
+    API_PATHS.userProfile,
     {
       params: {
         query: {

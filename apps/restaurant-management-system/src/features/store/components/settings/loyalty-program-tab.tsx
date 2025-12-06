@@ -28,6 +28,7 @@ import { Switch } from '@repo/ui/components/switch';
 import { Alert, AlertDescription, AlertTitle } from '@repo/ui/components/alert';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient, ApiError } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 
 const loyaltyProgramSchema = z.object({
   enabled: z.boolean(),
@@ -121,7 +122,7 @@ export function LoyaltyProgramTab({
       }
 
       const { data, error, response } = await apiClient.PATCH(
-        '/stores/{id}/settings/loyalty-rules',
+        API_PATHS.storeSettingsLoyaltyRules,
         {
           params: { path: { id: storeId } },
           // Cast apiData since we conditionally build it and API expects all fields

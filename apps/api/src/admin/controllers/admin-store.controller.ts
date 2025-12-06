@@ -8,7 +8,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import {
@@ -37,7 +37,8 @@ import { PlatformAdminGuard } from '../guards/platform-admin.guard';
 import { AdminAuditInterceptor } from '../interceptors/admin-audit.interceptor';
 import { AdminStoreService } from '../services/admin-store.service';
 
-@ApiTags('Admin - Store Management')
+@ApiTags('Admin / Stores')
+@ApiBearerAuth()
 @Controller('admin/stores')
 @UseGuards(JwtAuthGuard, PlatformAdminGuard)
 @UseInterceptors(AdminAuditInterceptor)

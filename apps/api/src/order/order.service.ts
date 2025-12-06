@@ -8,6 +8,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
+import {
+  AdminOrderResponseDto,
+  AdminOrderAnalyticsDto,
+  AdminOrderStoreInfoDto,
+  AdminOrderItemResponseDto,
+} from 'src/admin/dto/admin-order-response.dto';
 import { Decimal } from 'src/common/types/decimal.type';
 import { getErrorDetails } from 'src/common/utils/error.util';
 import {
@@ -17,6 +23,7 @@ import {
   Role,
   SessionType,
 } from 'src/generated/prisma/client';
+import { SosOrderResponseDto, SosOrderItemResponseDto } from 'src/sos/dto';
 
 import { ApplyDiscountDto } from './dto/apply-discount.dto';
 import { CheckoutCartDto } from './dto/checkout-cart.dto';
@@ -1279,5 +1286,290 @@ export class OrderService {
       [SessionType.TAKEOUT]: 'Takeout',
     };
     return labels[sessionType] ?? 'Counter';
+  }
+
+  // ============================================================================
+  // APP-SPECIFIC METHODS
+  // ============================================================================
+
+  /**
+   * Get order for customer (SOS app)
+   * Returns minimal order info without sensitive data like payments or internal notes.
+   *
+   * @param orderId - Order UUID
+   * @param sessionToken - Session token to validate ownership
+   * @returns SosOrderResponseDto with customer-facing order details
+   */
+  async findOneForCustomer(
+    orderId: string,
+    sessionToken: string
+  ): Promise<SosOrderResponseDto> {
+    const method = this.findOneForCustomer.name;
+    this.logger.log(`[${method}] Fetching order ${orderId} for customer`);
+
+    try {
+      const order = await this.prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          session: true,
+          orderItems: {
+            include: {
+              menuItem: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!order) {
+        throw new NotFoundException(`Order ${orderId} not found`);
+      }
+
+      // Validate session token matches the order's session
+      if (order.session?.sessionToken !== sessionToken) {
+        this.logger.warn(
+          `[${method}] Invalid session token for order ${orderId}`
+        );
+        throw new ForbiddenException('Access denied to this order');
+      }
+
+      return this.mapToSosOrderResponse(order);
+    } catch (error) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof ForbiddenException
+      ) {
+        throw error;
+      }
+
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to get order for customer`, stack);
+      throw new InternalServerErrorException('Failed to retrieve order');
+    }
+  }
+
+  /**
+   * Map order to SosOrderResponseDto
+   * @private
+   */
+  private mapToSosOrderResponse(
+    order: Prisma.OrderGetPayload<{
+      include: {
+        session: true;
+        orderItems: {
+          include: {
+            menuItem: {
+              select: {
+                id: true;
+                name: true;
+              };
+            };
+          };
+        };
+      };
+    }>
+  ): SosOrderResponseDto {
+    const items: SosOrderItemResponseDto[] = order.orderItems.map((item) => {
+      const unitPrice = new Decimal(item.price);
+      // If finalPrice is not set, calculate from price * quantity
+      const subtotal = item.finalPrice
+        ? new Decimal(item.finalPrice)
+        : unitPrice.mul(item.quantity);
+      return {
+        id: item.id,
+        name: item.menuItem?.name ?? 'Unknown Item',
+        quantity: item.quantity,
+        unitPrice: unitPrice.toFixed(2),
+        subtotal: subtotal.toFixed(2),
+        specialInstructions: item.notes ?? null,
+      };
+    });
+
+    return {
+      id: order.id,
+      orderNumber: order.orderNumber,
+      status: order.status,
+      grandTotal: new Decimal(order.grandTotal).toFixed(2),
+      createdAt: order.createdAt,
+      items,
+      estimatedTime: null, // Can be calculated based on kitchen settings
+      tableNumber: order.tableName ?? null,
+    };
+  }
+
+  /**
+   * Get order for admin with analytics
+   * Returns full order details including store info and analytics for platform administration.
+   *
+   * @param orderId - Order UUID
+   * @returns AdminOrderResponseDto with analytics data
+   */
+  async findOneForAdmin(orderId: string): Promise<AdminOrderResponseDto> {
+    const method = this.findOneForAdmin.name;
+    this.logger.log(`[${method}] Fetching order ${orderId} for admin`);
+
+    try {
+      const order = await this.prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          store: {
+            include: {
+              information: true,
+            },
+          },
+          orderItems: {
+            include: {
+              menuItem: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+          payments: true,
+          refunds: true,
+        },
+      });
+
+      if (!order) {
+        throw new NotFoundException(`Order ${orderId} not found`);
+      }
+
+      return this.mapToAdminOrderResponse(order);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to get order for admin`, stack);
+      throw new InternalServerErrorException('Failed to retrieve order');
+    }
+  }
+
+  /**
+   * Map order to AdminOrderResponseDto
+   * @private
+   */
+  private mapToAdminOrderResponse(
+    order: Prisma.OrderGetPayload<{
+      include: {
+        store: {
+          include: {
+            information: true;
+          };
+        };
+        orderItems: {
+          include: {
+            menuItem: {
+              select: {
+                id: true;
+                name: true;
+              };
+            };
+          };
+        };
+        payments: true;
+        refunds: true;
+      };
+    }>
+  ): AdminOrderResponseDto {
+    // Calculate payment status
+    const totalPaid = (order.payments ?? []).reduce(
+      (sum, payment) => sum.add(new Decimal(payment.amount)),
+      new Decimal('0')
+    );
+
+    const totalRefunded = (order.refunds ?? []).reduce(
+      (sum, refund) => sum.add(new Decimal(refund.amount)),
+      new Decimal('0')
+    );
+
+    const netPaid = totalPaid.sub(totalRefunded);
+    const grandTotal = new Decimal(order.grandTotal);
+    const remainingBalance = grandTotal.sub(netPaid);
+    const isPaidInFull = netPaid.greaterThanOrEqualTo(grandTotal);
+
+    // Calculate analytics
+    const itemCount = order.orderItems.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    );
+    const subtotal = new Decimal(order.subTotal);
+    const averageItemPrice =
+      itemCount > 0 ? subtotal.div(itemCount).toFixed(2) : '0.00';
+
+    // Calculate time analytics (if order has status timestamps)
+    // For now, return null as we'd need status history to calculate accurately
+    const prepareTimeMinutes: number | null = null;
+    const totalTimeMinutes: number | null = null;
+
+    // Build store info
+    const store: AdminOrderStoreInfoDto = {
+      id: order.store.id,
+      name: order.store.information?.name ?? '',
+      slug: order.store.slug,
+    };
+
+    // Build order items
+    const items: AdminOrderItemResponseDto[] = order.orderItems.map((item) => {
+      const unitPrice = new Decimal(item.price);
+      // If finalPrice is not set, calculate from price * quantity
+      const subtotal = item.finalPrice
+        ? new Decimal(item.finalPrice)
+        : unitPrice.mul(item.quantity);
+      return {
+        id: item.id,
+        menuItemId: item.menuItemId,
+        menuItemName: item.menuItem?.name ?? 'Unknown Item',
+        quantity: item.quantity,
+        unitPrice: unitPrice.toFixed(2),
+        subtotal: subtotal.toFixed(2),
+      };
+    });
+
+    // Build analytics
+    const analytics: AdminOrderAnalyticsDto = {
+      prepareTimeMinutes,
+      totalTimeMinutes,
+      itemCount,
+      averageItemPrice,
+      discountApplied: order.discountAmount
+        ? new Decimal(order.discountAmount).toFixed(2)
+        : null,
+      discountReason: order.discountReason ?? null,
+    };
+
+    return {
+      id: order.id,
+      orderNumber: order.orderNumber,
+      storeId: order.storeId,
+      store,
+      sessionId: order.sessionId,
+      tableName: order.tableName,
+      status: order.status,
+      orderType: order.orderType,
+      items,
+      subtotal: new Decimal(order.subTotal).toFixed(2),
+      taxAmount: new Decimal(order.vatAmount).toFixed(2),
+      serviceCharge: new Decimal(order.serviceChargeAmount).toFixed(2),
+      grandTotal: new Decimal(order.grandTotal).toFixed(2),
+      discountType: order.discountType ?? null,
+      discountAmount: order.discountAmount
+        ? new Decimal(order.discountAmount).toFixed(2)
+        : null,
+      totalPaid: totalPaid.toFixed(2),
+      remainingBalance: remainingBalance.toFixed(2),
+      isPaidInFull,
+      paidAt: order.paidAt,
+      analytics,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
+    };
   }
 }

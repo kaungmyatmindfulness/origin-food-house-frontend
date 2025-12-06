@@ -61,7 +61,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UseTierLimit } from '../common/decorators/tier-limit.decorator';
 import { TierLimitGuard } from '../common/guards/tier-limit.guard';
 
-@ApiTags('Stores / Menu Items')
+@ApiTags('Shared / Menu Items')
 @Controller('stores/:storeId/menu-items')
 @ApiExtraModels(
   MenuItemDeletedResponseDto,
@@ -342,7 +342,7 @@ export class MenuController {
 /**
  * Controller for customization group and option translations
  */
-@ApiTags('Stores / Menu - Customizations')
+@ApiTags('Shared / Customizations')
 @Controller('stores/:storeId/customizations')
 export class CustomizationController {
   private readonly logger = new Logger(CustomizationController.name);

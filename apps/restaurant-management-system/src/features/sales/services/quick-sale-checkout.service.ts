@@ -89,7 +89,7 @@ export async function quickSaleCheckout(
   const orderType = getOrderTypeFromSessionType(sessionType);
 
   const { data, error, response } = await apiClient.POST(
-    '/orders/quick-checkout',
+    '/api/v1/orders/quick-checkout',
     {
       body: {
         storeId,
