@@ -24,6 +24,7 @@ import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { PaginatedResponseDto } from 'src/common/dto/paginated-response.dto';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { StandardApiResponse } from 'src/common/dto/standard-api-response.dto';
+import { AddOrderItemsDto } from 'src/order/dto/add-order-items.dto';
 import { ApplyDiscountDto } from 'src/order/dto/apply-discount.dto';
 import { OrderResponseDto } from 'src/order/dto/order-response.dto';
 import { QuickSaleCheckoutDto } from 'src/order/dto/quick-sale-checkout.dto';
@@ -122,6 +123,34 @@ export class RmsOrderController {
     @Param('orderId') orderId: string
   ): Promise<StandardApiResponse<OrderResponseDto>> {
     const order = await this.orderService.findOne(orderId);
+    return StandardApiResponse.success(order);
+  }
+
+  /**
+   * Add items to an existing order
+   * Used when customers order additional items during their meal.
+   */
+  @Post(':orderId/items')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Add items to order',
+    description:
+      'Add additional items to an existing order. ' +
+      'Only works for orders in PENDING or PREPARING status. ' +
+      'Updates order totals and broadcasts to kitchen display.',
+  })
+  @ApiAuth()
+  @ApiUuidParam('orderId', 'Order ID')
+  @ApiSuccessResponse(OrderResponseDto, {
+    description: 'Items added successfully',
+  })
+  @ApiResourceErrors()
+  async addItems(
+    @GetUser('sub') userId: string,
+    @Param('orderId') orderId: string,
+    @Body() dto: AddOrderItemsDto
+  ): Promise<StandardApiResponse<OrderResponseDto>> {
+    const order = await this.orderService.addItemsToOrder(orderId, dto, userId);
     return StandardApiResponse.success(order);
   }
 

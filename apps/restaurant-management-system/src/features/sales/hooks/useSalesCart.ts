@@ -5,6 +5,7 @@ import { toast } from '@repo/ui/lib/toast';
 import { useTranslations } from 'next-intl';
 
 import { $api } from '@/utils/apiFetch';
+import { API_PATHS } from '@/utils/api-paths';
 import { useSalesStore } from '@/features/sales/store/sales.store';
 import { salesKeys } from '@/features/sales/queries/sales.keys';
 
@@ -51,10 +52,11 @@ export function useSalesCart({
   const sessionType = useSalesStore((state) => state.sessionType);
   const setActiveSession = useSalesStore((state) => state.setActiveSession);
 
-  // Create session mutation using $api
+  // Create session mutation using RMS-specific endpoint
+  // POST /api/v1/rms/sessions creates manual sessions for walk-ins/counter orders
   const createSessionMutation = $api.useMutation(
     'post',
-    '/api/v1/active-table-sessions/manual',
+    API_PATHS.rmsSessions,
     {
       onSuccess: (response) => {
         const session = response.data;
@@ -68,8 +70,8 @@ export function useSalesCart({
     }
   );
 
-  // Add to cart mutation using $api
-  const addToCartMutation = $api.useMutation('post', '/api/v1/cart/items', {
+  // Add to cart mutation using RMS-specific endpoint (JWT authenticated)
+  const addToCartMutation = $api.useMutation('post', API_PATHS.cartItems, {
     onSuccess: (_data, variables) => {
       const sessionId = variables.params?.query?.sessionId;
       if (sessionId) {

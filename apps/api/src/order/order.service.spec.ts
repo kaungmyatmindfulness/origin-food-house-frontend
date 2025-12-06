@@ -1052,7 +1052,20 @@ describe('OrderService', () => {
         include: {
           orderItems: {
             include: {
-              customizations: true,
+              menuItem: {
+                select: { name: true },
+              },
+              customizations: {
+                include: {
+                  customizationOption: {
+                    include: {
+                      customizationGroup: {
+                        select: { name: true },
+                      },
+                    },
+                  },
+                },
+              },
             },
           },
           payments: true,

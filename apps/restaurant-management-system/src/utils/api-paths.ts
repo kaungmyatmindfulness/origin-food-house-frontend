@@ -63,9 +63,10 @@ export const API_PATHS = {
   cartItem: '/api/v1/rms/cart/items/{cartItemId}' as const,
 
   // Active Table Sessions (RMS-specific routes)
+  // POST /rms/sessions creates manual sessions (walk-ins/counter orders)
+  // GET /rms/sessions lists active sessions
   rmsSessions: '/api/v1/rms/sessions' as const,
   rmsSession: '/api/v1/rms/sessions/{sessionId}' as const,
-  rmsSessionManual: '/api/v1/rms/sessions/manual' as const,
   rmsSessionClose: '/api/v1/rms/sessions/{sessionId}/close' as const,
 
   // Orders (RMS-specific routes)
@@ -74,6 +75,7 @@ export const API_PATHS = {
   rmsOrdersQuickCheckout: '/api/v1/rms/orders/quick-checkout' as const,
   rmsOrder: '/api/v1/rms/orders/{orderId}' as const,
   rmsOrderStatus: '/api/v1/rms/orders/{orderId}/status' as const,
+  rmsOrderItems: '/api/v1/rms/orders/{orderId}/items' as const,
 
   // Orders (shared store routes)
   storeOrders: '/api/v1/stores/{storeId}/orders' as const,

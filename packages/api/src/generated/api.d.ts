@@ -1774,6 +1774,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/rms/orders/{orderId}/items': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Add items to order
+     * @description Add additional items to an existing order. Only works for orders in PENDING or PREPARING status. Updates order totals and broadcasts to kitchen display.
+     */
+    post: operations['RmsOrderController_addItems'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/rms/orders/{orderId}/status': {
     parameters: {
       query?: never;
@@ -4538,6 +4558,34 @@ export interface components {
        */
       transactionId?: string;
     };
+    AddOrderItemDto: {
+      /**
+       * @description Menu item ID
+       * @example 550e8400-e29b-41d4-a716-446655440000
+       */
+      menuItemId: string;
+      /**
+       * @description Quantity of the item
+       * @example 2
+       */
+      quantity: number;
+      /**
+       * @description Array of customization option IDs
+       * @example [
+       *       "550e8400-e29b-41d4-a716-446655440001"
+       *     ]
+       */
+      customizationOptionIds?: string[];
+      /**
+       * @description Notes for the item
+       * @example No onions
+       */
+      notes?: string;
+    };
+    AddOrderItemsDto: {
+      /** @description Array of items to add to the order */
+      items: components['schemas']['AddOrderItemDto'][];
+    };
     StoreInformationResponseDto: {
       /** Format: uuid */
       id: string;
@@ -5495,11 +5543,17 @@ export interface components {
     OrderItemCustomizationResponseDto: {
       id: string;
       customizationOptionId: string;
+      /** @description Option name (populated when fetching full order details) */
+      optionName?: string | null;
+      /** @description Group name (populated when fetching full order details) */
+      groupName?: string | null;
       finalPrice: string | null;
     };
     OrderItemResponseDto: {
       id: string;
       menuItemId: string | null;
+      /** @description Menu item name (populated when fetching full order details) */
+      menuItemName?: string | null;
       price: string;
       quantity: number;
       finalPrice: string | null;
@@ -13117,6 +13171,69 @@ export interface operations {
             /** @example null */
             errors?: unknown[] | null;
             /** @example Order retrieved successfully */
+            message?: string;
+          };
+        };
+      };
+      /** @description Invalid input data */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Authentication required */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Insufficient permissions */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Resource not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  RmsOrderController_addItems: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Order ID */
+        orderId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AddOrderItemsDto'];
+      };
+    };
+    responses: {
+      /** @description Items added successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StandardApiResponse'] & {
+            /** @example success */
+            status?: string;
+            data?: components['schemas']['OrderResponseDto'];
+            /** @example null */
+            errors?: unknown[] | null;
+            /** @example Items added successfully */
             message?: string;
           };
         };

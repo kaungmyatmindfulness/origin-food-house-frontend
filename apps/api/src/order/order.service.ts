@@ -25,6 +25,7 @@ import {
 } from 'src/generated/prisma/client';
 import { SosOrderResponseDto, SosOrderItemResponseDto } from 'src/sos/dto';
 
+import { AddOrderItemsDto, AddOrderItemDto } from './dto/add-order-items.dto';
 import { ApplyDiscountDto } from './dto/apply-discount.dto';
 import { CheckoutCartDto } from './dto/checkout-cart.dto';
 import { KdsQueryDto } from './dto/kds-query.dto';
@@ -540,7 +541,20 @@ export class OrderService {
         include: {
           orderItems: {
             include: {
-              customizations: true,
+              menuItem: {
+                select: { name: true },
+              },
+              customizations: {
+                include: {
+                  customizationOption: {
+                    include: {
+                      customizationGroup: {
+                        select: { name: true },
+                      },
+                    },
+                  },
+                },
+              },
             },
           },
           payments: true,
@@ -553,12 +567,12 @@ export class OrderService {
       }
 
       // Calculate payment status inline (optimize to avoid double query)
-      const totalPaid = (order.payments || []).reduce(
+      const totalPaid = (order.payments ?? []).reduce(
         (sum, payment) => sum.add(new Decimal(payment.amount)),
         new Decimal('0')
       );
 
-      const totalRefunded = (order.refunds || []).reduce(
+      const totalRefunded = (order.refunds ?? []).reduce(
         (sum, refund) => sum.add(new Decimal(refund.amount)),
         new Decimal('0')
       );
@@ -568,12 +582,52 @@ export class OrderService {
       const remainingBalance = grandTotal.sub(netPaid);
       const isPaidInFull = netPaid.greaterThanOrEqualTo(grandTotal);
 
+      // Map order items with menu item name and customization details
+      const orderItems = order.orderItems.map((item) => ({
+        id: item.id,
+        menuItemId: item.menuItemId,
+        menuItemName: item.menuItem?.name ?? null,
+        price: item.price,
+        quantity: item.quantity,
+        finalPrice: item.finalPrice,
+        notes: item.notes,
+        customizations: item.customizations.map((c) => ({
+          id: c.id,
+          customizationOptionId: c.customizationOptionId,
+          optionName: c.customizationOption?.name ?? null,
+          groupName: c.customizationOption?.customizationGroup?.name ?? null,
+          finalPrice: c.finalPrice,
+        })),
+      }));
+
       return {
-        ...order,
+        id: order.id,
+        orderNumber: order.orderNumber,
+        storeId: order.storeId,
+        sessionId: order.sessionId,
+        tableName: order.tableName,
+        status: order.status,
+        orderType: order.orderType,
+        paidAt: order.paidAt,
+        subTotal: order.subTotal,
+        vatRateSnapshot: order.vatRateSnapshot,
+        serviceChargeRateSnapshot: order.serviceChargeRateSnapshot,
+        vatAmount: order.vatAmount,
+        serviceChargeAmount: order.serviceChargeAmount,
+        grandTotal: order.grandTotal,
+        discountType: order.discountType,
+        discountValue: order.discountValue,
+        discountAmount: order.discountAmount,
+        discountReason: order.discountReason,
+        discountAppliedBy: order.discountAppliedBy,
+        discountAppliedAt: order.discountAppliedAt,
         totalPaid: totalPaid.toFixed(2),
         remainingBalance: remainingBalance.toFixed(2),
         isPaidInFull,
-      } as OrderResponseDto;
+        orderItems,
+        createdAt: order.createdAt,
+        updatedAt: order.updatedAt,
+      };
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -1286,6 +1340,289 @@ export class OrderService {
       [SessionType.TAKEOUT]: 'Takeout',
     };
     return labels[sessionType] ?? 'Counter';
+  }
+
+  /**
+   * Add items to an existing order
+   * Used when customers order additional items during their meal.
+   *
+   * @param orderId - Order UUID
+   * @param dto - Items to add
+   * @param userId - Authenticated user ID
+   * @returns Updated order with new items
+   */
+  async addItemsToOrder(
+    orderId: string,
+    dto: AddOrderItemsDto,
+    userId: string
+  ): Promise<OrderResponseDto> {
+    const method = this.addItemsToOrder.name;
+    this.logger.log(
+      `[${method}] Adding ${dto.items.length} items to order ${orderId}`
+    );
+
+    try {
+      // Get order with session and store info
+      const order = await this.prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          session: {
+            include: {
+              table: true,
+            },
+          },
+          store: {
+            include: {
+              setting: true,
+            },
+          },
+        },
+      });
+
+      if (!order) {
+        throw new NotFoundException('Order not found');
+      }
+
+      // Validate order status - can only add items to pending or preparing orders
+      if (
+        order.status !== OrderStatus.PENDING &&
+        order.status !== OrderStatus.PREPARING
+      ) {
+        throw new BadRequestException(
+          `Cannot add items to order with status ${order.status}`
+        );
+      }
+
+      // Validate staff permission
+      await this.authService.checkStorePermission(userId, order.storeId, [
+        Role.OWNER,
+        Role.ADMIN,
+        Role.SERVER,
+        Role.CASHIER,
+      ]);
+
+      // Fetch all menu items with their customization options
+      const menuItemIds = dto.items.map((item) => item.menuItemId);
+      const menuItems = await this.prisma.menuItem.findMany({
+        where: {
+          id: { in: menuItemIds },
+          storeId: order.storeId,
+          deletedAt: null,
+        },
+        include: {
+          customizationGroups: {
+            include: {
+              customizationOptions: true,
+            },
+          },
+        },
+      });
+
+      // Validate all menu items exist
+      if (menuItems.length !== menuItemIds.length) {
+        const foundIds = new Set(menuItems.map((m) => m.id));
+        const missingIds = menuItemIds.filter((id) => !foundIds.has(id));
+        throw new NotFoundException(
+          `Menu items not found: ${missingIds.join(', ')}`
+        );
+      }
+
+      // Get VAT and service charge rates from store settings
+      const vatRate = order.vatRateSnapshot ?? new Decimal('0');
+      const serviceChargeRate =
+        order.serviceChargeRateSnapshot ?? new Decimal('0');
+
+      // Add items in a transaction
+      await this.prisma.$transaction(async (tx) => {
+        // Calculate new items and their totals
+        const { orderItemsData, subTotal: addedSubtotal } =
+          this.calculateOrderItemsFromDto(dto.items, menuItems);
+
+        // Create order items
+        for (const itemData of orderItemsData) {
+          const orderItem = await tx.orderItem.create({
+            data: {
+              orderId: order.id,
+              menuItemId: itemData.menuItemId,
+              price: itemData.price,
+              quantity: itemData.quantity,
+              finalPrice: itemData.finalPrice,
+              notes: itemData.notes,
+            },
+          });
+
+          // Create order item customizations
+          if (itemData.customizations.length > 0) {
+            await tx.orderItemCustomization.createMany({
+              data: itemData.customizations.map((c) => ({
+                orderItemId: orderItem.id,
+                customizationOptionId: c.optionId,
+                finalPrice: c.totalPrice,
+              })),
+            });
+          }
+        }
+
+        // Update order totals
+        const newSubTotal = new Decimal(order.subTotal).add(addedSubtotal);
+        const newVatAmount = newSubTotal.mul(vatRate);
+        const newServiceChargeAmount = newSubTotal.mul(serviceChargeRate);
+
+        // Account for any existing discount
+        let discountAmount = new Decimal('0');
+        if (order.discountAmount) {
+          if (
+            order.discountType === DiscountType.PERCENTAGE &&
+            order.discountValue
+          ) {
+            // Recalculate percentage discount based on new subtotal
+            discountAmount = newSubTotal
+              .mul(new Decimal(order.discountValue))
+              .dividedBy(100);
+          } else {
+            // Fixed discount remains the same
+            discountAmount = new Decimal(order.discountAmount);
+          }
+        }
+
+        const newGrandTotal = newSubTotal
+          .sub(discountAmount)
+          .add(newVatAmount)
+          .add(newServiceChargeAmount);
+
+        await tx.order.update({
+          where: { id: order.id },
+          data: {
+            subTotal: newSubTotal,
+            vatAmount: newVatAmount,
+            serviceChargeAmount: newServiceChargeAmount,
+            discountAmount: discountAmount.isZero() ? null : discountAmount,
+            grandTotal: newGrandTotal,
+          },
+        });
+
+        this.logger.log(
+          `[${method}] Added ${dto.items.length} items to order ${orderId}. New subtotal: ${newSubTotal.toFixed(2)}`
+        );
+      });
+
+      // Broadcast update to kitchen screens
+      await this.kitchenGateway.broadcastNewOrder(order.storeId, order.id);
+
+      // Return updated order
+      return await this.findOne(orderId);
+    } catch (error) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException ||
+        error instanceof ForbiddenException
+      ) {
+        throw error;
+      }
+
+      const { stack } = getErrorDetails(error);
+      this.logger.error(`[${method}] Failed to add items to order`, stack);
+      throw new InternalServerErrorException('Failed to add items to order');
+    }
+  }
+
+  /**
+   * Calculate order items from AddOrderItemDto array
+   * Similar to calculateOrderItems but uses AddOrderItemDto
+   * @private
+   */
+  private calculateOrderItemsFromDto(
+    draftItems: AddOrderItemDto[],
+    menuItems: Array<{
+      id: string;
+      basePrice: Prisma.Decimal;
+      customizationGroups: Array<{
+        customizationOptions: Array<{
+          id: string;
+          additionalPrice: Prisma.Decimal | null;
+        }>;
+      }>;
+    }>
+  ): {
+    orderItemsData: Array<{
+      menuItemId: string;
+      price: Decimal;
+      quantity: number;
+      finalPrice: Decimal;
+      notes?: string;
+      customizations: Array<{
+        optionId: string;
+        totalPrice: Decimal;
+      }>;
+    }>;
+    subTotal: Decimal;
+  } {
+    const menuItemMap = new Map(menuItems.map((m) => [m.id, m]));
+    let subTotal = new Decimal('0');
+    const orderItemsData: Array<{
+      menuItemId: string;
+      price: Decimal;
+      quantity: number;
+      finalPrice: Decimal;
+      notes?: string;
+      customizations: Array<{
+        optionId: string;
+        totalPrice: Decimal;
+      }>;
+    }> = [];
+
+    for (const draftItem of draftItems) {
+      const menuItem = menuItemMap.get(draftItem.menuItemId);
+      if (!menuItem) {
+        continue; // Already validated above
+      }
+
+      // Build option price map
+      const optionPriceMap = new Map<string, Decimal>();
+      for (const group of menuItem.customizationGroups) {
+        for (const option of group.customizationOptions) {
+          optionPriceMap.set(
+            option.id,
+            option.additionalPrice
+              ? new Decimal(option.additionalPrice.toString())
+              : new Decimal('0')
+          );
+        }
+      }
+
+      // Calculate item price with customizations
+      let itemPrice = new Decimal(menuItem.basePrice.toString());
+      const customizations: Array<{
+        optionId: string;
+        totalPrice: Decimal;
+      }> = [];
+
+      if (draftItem.customizationOptionIds) {
+        for (const optionId of draftItem.customizationOptionIds) {
+          const additionalPrice =
+            optionPriceMap.get(optionId) ?? new Decimal('0');
+          itemPrice = itemPrice.add(additionalPrice);
+          customizations.push({
+            optionId,
+            totalPrice: additionalPrice.mul(draftItem.quantity),
+          });
+        }
+      }
+
+      const finalPrice = itemPrice.mul(draftItem.quantity);
+      subTotal = subTotal.add(finalPrice);
+
+      orderItemsData.push({
+        menuItemId: draftItem.menuItemId,
+        price: itemPrice,
+        quantity: draftItem.quantity,
+        finalPrice,
+        notes: draftItem.notes,
+        customizations,
+      });
+    }
+
+    return { orderItemsData, subTotal };
   }
 
   // ============================================================================

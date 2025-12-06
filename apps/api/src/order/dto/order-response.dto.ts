@@ -14,6 +14,22 @@ export class OrderItemCustomizationResponseDto {
   @ApiProperty()
   customizationOptionId: string;
 
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'Option name (populated when fetching full order details)',
+    required: false,
+  })
+  optionName?: string | null;
+
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'Group name (populated when fetching full order details)',
+    required: false,
+  })
+  groupName?: string | null;
+
   @ApiProperty({ type: String, nullable: true })
   finalPrice: Decimal | null;
 }
@@ -24,6 +40,14 @@ export class OrderItemResponseDto {
 
   @ApiProperty({ type: String, nullable: true })
   menuItemId: string | null;
+
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'Menu item name (populated when fetching full order details)',
+    required: false,
+  })
+  menuItemName?: string | null;
 
   @ApiProperty({ type: String })
   price: Decimal;

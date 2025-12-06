@@ -175,6 +175,17 @@
     "retry": "ထပ်ကြိုးစားရန်",
     "increaseQuantity": "{itemName} အရေအတွက် တိုးရန်",
     "decreaseQuantity": "{itemName} အရေအတွက် လျှော့ရန်",
-    "removeItem": "{itemName} ကို ဈေးခြင်းမှ ဖယ်ရှားရန်"
+    "removeItem": "{itemName} ကို ဈေးခြင်းမှ ဖယ်ရှားရန်",
+    "selectTableToStart": "အော်ဒါစတင်ရန် စားပွဲရွေးပါ",
+    "additionalItems": "ထပ်ထည့်မည့်ပစ္စည်းများ",
+    "tableNumber": "စားပွဲ {number}",
+    "sendToKitchen": "မီးဖိုချောင်သို့ ပို့ရန်",
+    "sending": "ပို့နေသည်...",
+    "noItemsInOrder": "ဤအော်ဒါတွင် ပစ္စည်းမရှိပါ",
+    "addMoreItems": "ပစ္စည်းထပ်ထည့်ရန်",
+    "proceedToPayment": "ငွေပေးချေမှုသို့ ဆက်သွားရန်",
+    "itemsAddedToOrder": "ပစ္စည်းများကို အော်ဒါထဲ ထည့်ပြီးပါပြီ",
+    "failedToAddItemsToOrder": "ပစ္စည်းများ အော်ဒါထဲ ထည့်ခြင်း မအောင်မြင်ပါ",
+    "noActiveOrder": "အော်ဒါ မတွေ့ပါ"
   }
 }

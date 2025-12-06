@@ -175,6 +175,17 @@
     "retry": "Retry",
     "increaseQuantity": "Increase quantity of {itemName}",
     "decreaseQuantity": "Decrease quantity of {itemName}",
-    "removeItem": "Remove {itemName} from cart"
+    "removeItem": "Remove {itemName} from cart",
+    "selectTableToStart": "Select a table to start an order",
+    "additionalItems": "Additional Items",
+    "tableNumber": "Table {number}",
+    "sendToKitchen": "Send to Kitchen",
+    "sending": "Sending...",
+    "noItemsInOrder": "No items in this order",
+    "addMoreItems": "Add More Items",
+    "proceedToPayment": "Proceed to Payment",
+    "itemsAddedToOrder": "Items added to order",
+    "failedToAddItemsToOrder": "Failed to add items to order",
+    "noActiveOrder": "No active order found"
   }
 }

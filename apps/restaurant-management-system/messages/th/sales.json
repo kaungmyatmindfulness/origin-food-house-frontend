@@ -175,6 +175,17 @@
     "retry": "ลองอีกครั้ง",
     "increaseQuantity": "เพิ่มจำนวน {itemName}",
     "decreaseQuantity": "ลดจำนวน {itemName}",
-    "removeItem": "ลบ {itemName} ออกจากตะกร้า"
+    "removeItem": "ลบ {itemName} ออกจากตะกร้า",
+    "selectTableToStart": "เลือกโต๊ะเพื่อเริ่มออเดอร์",
+    "additionalItems": "รายการเพิ่มเติม",
+    "tableNumber": "โต๊ะ {number}",
+    "sendToKitchen": "ส่งไปครัว",
+    "sending": "กำลังส่ง...",
+    "noItemsInOrder": "ไม่มีรายการในออเดอร์นี้",
+    "addMoreItems": "เพิ่มรายการ",
+    "proceedToPayment": "ดำเนินการชำระเงิน",
+    "itemsAddedToOrder": "เพิ่มรายการในออเดอร์แล้ว",
+    "failedToAddItemsToOrder": "เพิ่มรายการในออเดอร์ไม่สำเร็จ",
+    "noActiveOrder": "ไม่พบออเดอร์ที่ใช้งานอยู่"
   }
 }

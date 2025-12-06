@@ -21,6 +21,8 @@ export type StartTableSessionResponseDto =
 export type UpdateSessionDto = Schemas['UpdateSessionDto'];
 
 // Order DTOs
+export type AddOrderItemDto = Schemas['AddOrderItemDto'];
+export type AddOrderItemsDto = Schemas['AddOrderItemsDto'];
 export type AdminOrderAnalyticsDto = Schemas['AdminOrderAnalyticsDto'];
 export type AdminOrderItemResponseDto = Schemas['AdminOrderItemResponseDto'];
 export type AdminOrderResponseDto = Schemas['AdminOrderResponseDto'];

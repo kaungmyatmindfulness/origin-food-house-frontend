@@ -175,6 +175,17 @@
     "retry": "重试",
     "increaseQuantity": "增加 {itemName} 的数量",
     "decreaseQuantity": "减少 {itemName} 的数量",
-    "removeItem": "从购物车移除 {itemName}"
+    "removeItem": "从购物车移除 {itemName}",
+    "selectTableToStart": "选择餐桌开始点单",
+    "additionalItems": "追加菜品",
+    "tableNumber": "{number}号桌",
+    "sendToKitchen": "发送到厨房",
+    "sending": "发送中...",
+    "noItemsInOrder": "此订单中没有菜品",
+    "addMoreItems": "追加菜品",
+    "proceedToPayment": "前往付款",
+    "itemsAddedToOrder": "菜品已添加到订单",
+    "failedToAddItemsToOrder": "添加菜品到订单失败",
+    "noActiveOrder": "未找到有效订单"
   }
 }
