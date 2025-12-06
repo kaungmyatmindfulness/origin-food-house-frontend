@@ -114,6 +114,8 @@ describe('TableService', () => {
         ...mockTable,
         name: createDto.name,
       } as any);
+      // Mock for session enrichment
+      prismaService.activeTableSession.findFirst.mockResolvedValue(null);
 
       const result = await service.createTable(
         mockUserId,
@@ -164,6 +166,7 @@ describe('TableService', () => {
       ];
       prismaService.store.count.mockResolvedValue(1);
       prismaService.table.findMany.mockResolvedValue(mockTables as any);
+      prismaService.activeTableSession.findMany.mockResolvedValue([]);
 
       const result = await service.findAllByStore(mockStoreId);
 
@@ -171,6 +174,9 @@ describe('TableService', () => {
       expect(result[0].name).toBe('T-1');
       expect(result[1].name).toBe('T-2');
       expect(result[2].name).toBe('T-10');
+      // Verify enriched fields are present
+      expect(result[0].currentSessionId).toBeNull();
+      expect(result[0].currentOrderTotal).toBeNull();
     });
 
     it('should throw NotFoundException if store not found', async () => {
@@ -184,6 +190,7 @@ describe('TableService', () => {
     it('should return empty array if no tables exist', async () => {
       prismaService.store.count.mockResolvedValue(1);
       prismaService.table.findMany.mockResolvedValue([]);
+      prismaService.activeTableSession.findMany.mockResolvedValue([]);
 
       const result = await service.findAllByStore(mockStoreId);
 
@@ -194,10 +201,16 @@ describe('TableService', () => {
   describe('findOne', () => {
     it('should return table if it belongs to store', async () => {
       prismaService.table.findFirstOrThrow.mockResolvedValue(mockTable as any);
+      prismaService.activeTableSession.findFirst.mockResolvedValue(null);
 
       const result = await service.findOne(mockStoreId, mockTableId);
 
-      expect(result).toEqual(mockTable);
+      // Result should include enriched fields
+      expect(result).toEqual({
+        ...mockTable,
+        currentSessionId: null,
+        currentOrderTotal: null,
+      });
       expect(prismaService.table.findFirstOrThrow).toHaveBeenCalledWith({
         where: { id: mockTableId, storeId: mockStoreId, deletedAt: null },
       });
@@ -237,6 +250,8 @@ describe('TableService', () => {
         ...mockTable,
         name: updateDto.name,
       } as any);
+      // Mock for session enrichment
+      prismaService.activeTableSession.findFirst.mockResolvedValue(null);
 
       const result = await service.updateTable(
         mockUserId,
@@ -333,6 +348,8 @@ describe('TableService', () => {
         { id: 'table-1', name: 'T-1' },
         { id: 'table-2', name: 'T-2' },
       ] as any);
+      // Mock for session enrichment
+      prismaService.activeTableSession.findMany.mockResolvedValue([]);
 
       const result = await service.syncTables(mockUserId, mockStoreId, syncDto);
 
@@ -390,6 +407,8 @@ describe('TableService', () => {
     beforeEach(() => {
       authService.checkStorePermission.mockResolvedValue(undefined);
       prismaService.table.findFirstOrThrow.mockResolvedValue(mockTable as any);
+      // Mock for session enrichment
+      prismaService.activeTableSession.findFirst.mockResolvedValue(null);
     });
 
     it('should update table status successfully', async () => {

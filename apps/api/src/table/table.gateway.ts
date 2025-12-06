@@ -11,7 +11,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-import { Table } from 'src/generated/prisma/client';
+import { TableWithSessionInfo } from './table.service';
 
 /**
  * WebSocket Gateway for real-time table status synchronization
@@ -102,7 +102,7 @@ export class TableGateway implements OnGatewayConnection, OnGatewayDisconnect {
    * Broadcast table status update to all staff in a store
    * This is called by TableService when table status changes
    */
-  broadcastTableStatusUpdate(storeId: string, table: Table) {
+  broadcastTableStatusUpdate(storeId: string, table: TableWithSessionInfo) {
     const method = 'broadcastTableStatusUpdate';
 
     this.logger.log(
@@ -116,7 +116,7 @@ export class TableGateway implements OnGatewayConnection, OnGatewayDisconnect {
   /**
    * Broadcast table creation to all staff in a store
    */
-  broadcastTableCreated(storeId: string, table: Table) {
+  broadcastTableCreated(storeId: string, table: TableWithSessionInfo) {
     const method = 'broadcastTableCreated';
 
     this.logger.log(
@@ -142,7 +142,7 @@ export class TableGateway implements OnGatewayConnection, OnGatewayDisconnect {
   /**
    * Broadcast table update (name change) to all staff in a store
    */
-  broadcastTableUpdated(storeId: string, table: Table) {
+  broadcastTableUpdated(storeId: string, table: TableWithSessionInfo) {
     const method = 'broadcastTableUpdated';
 
     this.logger.log(

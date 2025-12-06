@@ -6,9 +6,17 @@ import {
   InternalServerErrorException, // Keep for re-throwing truly unexpected errors
   Logger,
 } from '@nestjs/common';
+import { Decimal } from 'decimal.js';
 
 import { StandardErrorHandler } from 'src/common/decorators/standard-error-handler.decorator';
-import { Role, Table, Prisma, TableStatus } from 'src/generated/prisma/client';
+import {
+  Role,
+  Table,
+  Prisma,
+  TableStatus,
+  SessionStatus,
+  OrderStatus,
+} from 'src/generated/prisma/client';
 
 import { AuthService } from '../auth/auth.service'; // Assuming AuthService provides checkStorePermission
 import { PrismaService } from '../prisma/prisma.service';
@@ -24,6 +32,17 @@ import { TableGateway } from './table.gateway';
  * Used in transaction callbacks to ensure type safety
  */
 type TransactionClient = Prisma.TransactionClient;
+
+/**
+ * Table entity enriched with active session information.
+ * Used for API responses that need currentSessionId and currentOrderTotal.
+ */
+export interface TableWithSessionInfo extends Table {
+  /** ID of the currently active session for this table, if any */
+  currentSessionId: string | null;
+  /** Total amount of all unpaid orders for the current session (as decimal string) */
+  currentOrderTotal: string | null;
+}
 
 /**
  * Natural sort comparator function for strings containing numbers.
@@ -110,13 +129,112 @@ export class TableService {
     }
   }
 
+  /**
+   * Enriches a single table with active session information.
+   * Queries for the active session and sums unpaid order totals.
+   */
+  private async enrichTableWithSessionInfo(
+    table: Table
+  ): Promise<TableWithSessionInfo> {
+    const activeSession = await this.prisma.activeTableSession.findFirst({
+      where: {
+        tableId: table.id,
+        status: SessionStatus.ACTIVE,
+      },
+      select: {
+        id: true,
+        orders: {
+          where: {
+            status: { notIn: [OrderStatus.CANCELLED] },
+            paidAt: null,
+          },
+          select: { grandTotal: true },
+        },
+      },
+    });
+
+    let currentOrderTotal: string | null = null;
+    if (activeSession?.orders && activeSession.orders.length > 0) {
+      const total = activeSession.orders.reduce((sum, order) => {
+        return sum.plus(new Decimal(order.grandTotal.toString()));
+      }, new Decimal(0));
+      currentOrderTotal = total.toFixed(2);
+    }
+
+    return {
+      ...table,
+      currentSessionId: activeSession?.id ?? null,
+      currentOrderTotal,
+    };
+  }
+
+  /**
+   * Enriches multiple tables with active session information in batch.
+   * More efficient than calling enrichTableWithSessionInfo for each table.
+   */
+  private async enrichTablesWithSessionInfo(
+    tables: Table[]
+  ): Promise<TableWithSessionInfo[]> {
+    if (tables.length === 0) return [];
+
+    const tableIds = tables.map((t) => t.id);
+
+    // Fetch all active sessions for these tables in one query
+    const activeSessions = await this.prisma.activeTableSession.findMany({
+      where: {
+        tableId: { in: tableIds },
+        status: SessionStatus.ACTIVE,
+      },
+      select: {
+        id: true,
+        tableId: true,
+        orders: {
+          where: {
+            status: { notIn: [OrderStatus.CANCELLED] },
+            paidAt: null,
+          },
+          select: { grandTotal: true },
+        },
+      },
+    });
+
+    // Create a map for quick lookup: tableId -> session info
+    const sessionMap = new Map<
+      string,
+      { id: string; orderTotal: string | null }
+    >();
+    for (const session of activeSessions) {
+      // Skip sessions without tableId (shouldn't happen since we filter by tableId)
+      if (!session.tableId) continue;
+
+      let orderTotal: string | null = null;
+      if (session.orders && session.orders.length > 0) {
+        const total = session.orders.reduce((sum, order) => {
+          return sum.plus(new Decimal(order.grandTotal.toString()));
+        }, new Decimal(0));
+        orderTotal = total.toFixed(2);
+      }
+      sessionMap.set(session.tableId, { id: session.id, orderTotal });
+    }
+
+    // Enrich each table with session info
+    return tables.map((table) => {
+      const sessionInfo = sessionMap.get(table.id);
+      return {
+        ...table,
+        currentSessionId: sessionInfo?.id ?? null,
+        currentOrderTotal: sessionInfo?.orderTotal ?? null,
+      };
+    });
+  }
+
   /** Creates a single table */
   @StandardErrorHandler('create table')
   async createTable(
     userId: string,
     storeId: string,
     dto: CreateTableDto
-  ): Promise<Table> {
+  ): Promise<TableWithSessionInfo> {
     await this.authService.checkStorePermission(userId, storeId, [
       Role.OWNER,
       Role.ADMIN,
@@ -131,20 +249,23 @@ export class TableService {
         `Table "${table.name}" (ID: ${table.id}) created in Store ${storeId}`
       );
 
-      // Broadcast table creation to all staff in store
-      this.tableGateway.broadcastTableCreated(storeId, table);
-
       return table;
     });
 
     // Track usage after successful creation (invalidates cache)
     await this.tierService.invalidateUsageCache(storeId);
 
-    return newTable;
+    // Enrich with session info (new table will have null session)
+    const enrichedTable = await this.enrichTableWithSessionInfo(newTable);
+
+    // Broadcast table creation to all staff in store
+    this.tableGateway.broadcastTableCreated(storeId, enrichedTable);
+
+    return enrichedTable;
   }
 
   /** Finds all tables for a store, sorted naturally by name */
-  async findAllByStore(storeId: string): Promise<Table[]> {
+  async findAllByStore(storeId: string): Promise<TableWithSessionInfo[]> {
     // Public access - no auth check. Check if store exists for better 404.
     const storeExists = await this.prisma.store.count({
       where: { id: storeId },
@@ -157,20 +278,42 @@ export class TableService {
     });
     // Apply natural sort
     tables.sort((a, b) => naturalCompare(a.name || '', b.name || ''));
+
+    // Enrich with session info
+    const enrichedTables = await this.enrichTablesWithSessionInfo(tables);
+
     this.logger.log(
-      `Found and sorted ${tables.length} active tables for Store ${storeId}`
+      `Found and sorted ${enrichedTables.length} active tables for Store ${storeId}`
     );
-    return tables;
+    return enrichedTables;
   }
 
-  /** Finds a single active table ensuring it belongs to the store and is not deleted */
-  @StandardErrorHandler('find table')
-  async findOne(storeId: string, tableId: string): Promise<Table> {
-    // Use findFirstOrThrow for combined check (includes soft delete filter)
+  /**
+   * Internal method for finding a table without session enrichment.
+   * Used by update/delete methods that don't need session info.
+   */
+  private async findOneInternal(
+    storeId: string,
+    tableId: string
+  ): Promise<Table> {
     const table = await this.prisma.table.findFirstOrThrow({
       where: { id: tableId, storeId, deletedAt: null },
     });
     return table;
+  }
+
+  /** Finds a single active table ensuring it belongs to the store and is not deleted */
+  @StandardErrorHandler('find table')
+  async findOne(
+    storeId: string,
+    tableId: string
+  ): Promise<TableWithSessionInfo> {
+    // Use findFirstOrThrow for combined check (includes soft delete filter)
+    const table = await this.prisma.table.findFirstOrThrow({
+      where: { id: tableId, storeId, deletedAt: null },
+    });
+    // Enrich with session info
+    return await this.enrichTableWithSessionInfo(table);
   }
 
   /** Updates a single table's name */
@@ -179,33 +322,38 @@ export class TableService {
     storeId: string,
     tableId: string,
     dto: UpdateTableDto
-  ): Promise<Table> {
+  ): Promise<TableWithSessionInfo> {
     await this.authService.checkStorePermission(userId, storeId, [
       Role.OWNER,
       Role.ADMIN,
     ]);
-    // Ensure table exists in this store (findOne handles NotFound)
-    await this.findOne(storeId, tableId);
+    // Ensure table exists in this store (findOneInternal handles NotFound)
+    await this.findOneInternal(storeId, tableId);
 
     try {
-      return await this.prisma.$transaction(async (tx) => {
+      const updatedTable = await this.prisma.$transaction(async (tx) => {
         // Check for name conflict only if name is provided in DTO
         if (dto.name) {
           await this.checkDuplicateTableName(tx, storeId, dto.name, tableId); // Exclude self
         }
-        const updatedTable = await tx.table.update({
-          where: { id: tableId }, // Already verified it belongs to store via findOne
+        const table = await tx.table.update({
+          where: { id: tableId }, // Already verified it belongs to store via findOneInternal
           data: { name: dto.name }, // Prisma ignores undefined name
         });
         this.logger.log(
           `Table ${tableId} updated successfully by User ${userId}`
         );
 
-        // Broadcast table update to all staff in store
-        this.tableGateway.broadcastTableUpdated(storeId, updatedTable);
-
-        return updatedTable;
+        return table;
       });
+
+      // Enrich with session info
+      const enrichedTable = await this.enrichTableWithSessionInfo(updatedTable);
+
+      // Broadcast table update to all staff in store
+      this.tableGateway.broadcastTableUpdated(storeId, enrichedTable);
+
+      return enrichedTable;
     } catch (error) {
       if (error instanceof BadRequestException) throw error; // Re-throw validation error
       if (
@@ -220,7 +368,7 @@ export class TableService {
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2025'
       ) {
-        // Should be caught by findOne, but handle defensively
+        // Should be caught by findOneInternal, but handle defensively
         throw new NotFoundException(
           `Table with ID ${tableId} not found during update.`
         );
@@ -247,7 +395,7 @@ export class TableService {
       Role.ADMIN,
     ]);
     // Ensure table exists and is not already deleted
-    await this.findOne(storeId, tableId);
+    await this.findOneInternal(storeId, tableId);
 
     try {
       await this.prisma.table.update({
@@ -290,7 +438,7 @@ export class TableService {
     userId: string,
     storeId: string,
     dto: BatchUpsertTableDto
-  ): Promise<Table[]> {
+  ): Promise<TableWithSessionInfo[]> {
     const method = this.syncTables.name;
     this.logger.log(
       `[${method}] User ${userId} syncing tables for Store ${storeId} with ${dto.tables.length} items.`
@@ -405,10 +553,14 @@ export class TableService {
         { maxWait: 15000, timeout: 30000 }
       ); // End transaction
 
+      // Enrich with session info
+      const enrichedTables =
+        await this.enrichTablesWithSessionInfo(finalTables);
+
       this.logger.log(
-        `[${method}] Successfully synchronized ${finalTables.length} tables for Store ${storeId}`
+        `[${method}] Successfully synchronized ${enrichedTables.length} tables for Store ${storeId}`
       );
-      return finalTables;
+      return enrichedTables;
     } catch (error) {
       if (
         error instanceof BadRequestException ||
@@ -450,7 +602,7 @@ export class TableService {
     storeId: string,
     tableId: string,
     dto: UpdateTableStatusDto
-  ): Promise<Table> {
+  ): Promise<TableWithSessionInfo> {
     const method = this.updateTableStatus.name;
     this.logger.log(
       `[${method}] User ${userId} updating table ${tableId} status to ${dto.status}`
@@ -464,8 +616,8 @@ export class TableService {
     ]);
 
     try {
-      // Find the table to get current status
-      const table = await this.findOne(storeId, tableId);
+      // Find the table to get current status (internal - no enrichment needed for validation)
+      const table = await this.findOneInternal(storeId, tableId);
 
       // Validate state transition
       this.validateTableStatusTransition(table.currentStatus, dto.status);
@@ -480,10 +632,13 @@ export class TableService {
         `[${method}] Table ${tableId} status updated from ${table.currentStatus} to ${dto.status}`
       );
 
-      // Broadcast status update to all staff in store
-      this.tableGateway.broadcastTableStatusUpdate(storeId, updatedTable);
+      // Enrich with session info
+      const enrichedTable = await this.enrichTableWithSessionInfo(updatedTable);
 
-      return updatedTable;
+      // Broadcast status update to all staff in store
+      this.tableGateway.broadcastTableStatusUpdate(storeId, enrichedTable);
+
+      return enrichedTable;
     } catch (error) {
       if (
         error instanceof BadRequestException ||
