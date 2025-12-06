@@ -2,15 +2,21 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useQuery } from '@tanstack/react-query';
 
 import { Skeleton } from '@repo/ui/components/skeleton';
 
 import { TableCard } from './TableCard';
 import { StartSessionDialog } from './StartSessionDialog';
 import { useSalesStore } from '@/features/sales/store/sales.store';
-import { salesKeys } from '@/features/sales/queries/sales.keys';
+import { $api } from '@/utils/apiFetch';
 
+import type { TableStatus as ApiTableStatus } from '@repo/api/generated/types';
+
+/**
+ * UI-specific table status that maps from API status.
+ * The API uses: VACANT | SEATED | ORDERING | SERVED | READY_TO_PAY
+ * The UI simplifies to: AVAILABLE | OCCUPIED | RESERVED | CLEANING
+ */
 type TableStatus = 'AVAILABLE' | 'OCCUPIED' | 'RESERVED' | 'CLEANING';
 
 interface TableWithStatus {
@@ -23,32 +29,22 @@ interface TableWithStatus {
 }
 
 /**
- * TODO: Migrate to $api.useQuery when backend extends TableResponseDto
- *
- * Current API endpoint: GET /stores/{storeId}/tables
- * Returns: TableResponseDto[] with { id, storeId, name, currentStatus, createdAt, updatedAt }
- *
- * This component requires additional fields not in the API:
- * - tableNumber: Use 'name' field (available)
- * - capacity: Not available in API (needs backend implementation)
- * - currentSessionId: Not available in API (needs backend implementation)
- * - currentOrderTotal: Not available in API (needs backend implementation)
- *
- * Migration steps when backend is ready:
- * 1. Backend adds capacity, currentSessionId, currentOrderTotal to TableResponseDto
- * 2. Replace this mock function with:
- *    const { data: response, isLoading } = $api.useQuery(
- *      'get', '/stores/{storeId}/tables',
- *      { params: { path: { storeId } } }
- *    );
- *    const tables = response?.data ?? [];
+ * Maps API table status to UI status for display purposes.
+ * VACANT -> AVAILABLE (table is free)
+ * SEATED/ORDERING/SERVED/READY_TO_PAY -> OCCUPIED (table has customers)
  */
-async function getTablesWithStatus(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _storeId: string
-): Promise<TableWithStatus[]> {
-  // Returns empty array until backend provides required fields
-  return [];
+function mapApiStatusToUIStatus(apiStatus: ApiTableStatus): TableStatus {
+  switch (apiStatus) {
+    case 'VACANT':
+      return 'AVAILABLE';
+    case 'SEATED':
+    case 'ORDERING':
+    case 'SERVED':
+    case 'READY_TO_PAY':
+      return 'OCCUPIED';
+    default:
+      return 'AVAILABLE';
+  }
 }
 
 interface TablesViewProps {
@@ -66,14 +62,27 @@ export function TablesView({ storeId, onTableSessionStart }: TablesViewProps) {
   const [selectedTableForSession, setSelectedTableForSession] =
     useState<TableWithStatus | null>(null);
 
-  const { data: tables, isLoading } = useQuery({
-    queryKey: salesKeys.tables(storeId),
-    queryFn: () => getTablesWithStatus(storeId),
-    staleTime: 30 * 1000,
-  });
+  // Fetch tables from API and transform to UI format
+  const { data: response, isLoading } = $api.useQuery(
+    'get',
+    '/stores/{storeId}/tables',
+    { params: { path: { storeId } } },
+    { enabled: !!storeId, staleTime: 30 * 1000 }
+  );
+
+  // Transform API response to UI format
+  // TODO: Backend should add capacity, currentSessionId, currentOrderTotal to TableResponseDto
+  const tables: TableWithStatus[] = (response?.data ?? []).map((table) => ({
+    id: table.id,
+    tableNumber: table.name,
+    capacity: 4, // Default capacity until backend provides this
+    status: mapApiStatusToUIStatus(table.currentStatus),
+    currentSessionId: null, // TODO: Backend to provide active session ID
+    currentOrderTotal: undefined, // TODO: Backend to provide order total
+  }));
 
   const handleTableSelect = (tableId: string) => {
-    const table = tables?.find((t) => t.id === tableId);
+    const table = tables.find((tbl) => tbl.id === tableId);
     if (!table) return;
 
     if (table.status === 'AVAILABLE') {
