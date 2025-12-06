@@ -98,7 +98,6 @@ export function ManualOrderDialog({
       sessionType,
       customerName: values.customerName || undefined,
       customerPhone: values.customerPhone || undefined,
-      guestCount: values.guestCount,
     };
 
     await createSessionMutation.mutateAsync({

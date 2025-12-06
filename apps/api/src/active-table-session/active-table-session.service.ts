@@ -41,6 +41,20 @@ export interface QuickSaleSessionInput {
   customerPhone?: string;
 }
 
+/**
+ * Result type for startTableSession
+ * Contains session info plus the table name for display
+ */
+export interface StartTableSessionResult {
+  id: string;
+  tableId: string;
+  tableName: string;
+  storeId: string;
+  sessionType: SessionType;
+  status: SessionStatus;
+  createdAt: Date;
+}
+
 @Injectable()
 export class ActiveTableSessionService {
   private readonly logger = new Logger(ActiveTableSessionService.name);
@@ -468,6 +482,136 @@ export class ActiveTableSessionService {
         error instanceof Error ? error.stack : String(error)
       );
       throw new InternalServerErrorException('Failed to close session');
+    }
+  }
+
+  /**
+   * ============================================================================
+   * RMS TABLE SESSION METHODS (Staff-initiated)
+   * ============================================================================
+   */
+
+  /**
+   * Start a new session for a table when staff clicks on an AVAILABLE table in RMS.
+   * - Validates user has access to the store
+   * - Validates table exists and belongs to the store
+   * - Checks table is VACANT (no active session)
+   * - Creates new ActiveTableSession
+   * - Updates table status to SEATED
+   * - Creates empty cart for the session
+   *
+   * @param userId - User ID (from JWT)
+   * @param storeId - Store UUID
+   * @param tableId - Table UUID
+   * @returns Created session with table info
+   * @throws NotFoundException if store or table not found
+   * @throws ConflictException if table already has an active session
+   * @throws ForbiddenException if user doesn't have store access
+   */
+  async startTableSession(
+    userId: string,
+    storeId: string,
+    tableId: string
+  ): Promise<StartTableSessionResult> {
+    const method = this.startTableSession.name;
+
+    try {
+      // Validate permissions - OWNER, ADMIN, SERVER, CASHIER can start sessions
+      await this.authService.checkStorePermission(userId, storeId, [
+        Role.OWNER,
+        Role.ADMIN,
+        Role.SERVER,
+        Role.CASHIER,
+      ]);
+
+      // Validate table exists and belongs to the store
+      const table = await this.prisma.table.findFirst({
+        where: {
+          id: tableId,
+          storeId,
+          deletedAt: null,
+        },
+      });
+
+      if (!table) {
+        throw new NotFoundException(
+          `Table with ID ${tableId} not found in store ${storeId}`
+        );
+      }
+
+      // Check if table already has an active session
+      const existingSession = await this.prisma.activeTableSession.findFirst({
+        where: {
+          tableId,
+          status: SessionStatus.ACTIVE,
+        },
+      });
+
+      if (existingSession) {
+        throw new ConflictException(
+          `Table ${table.name} already has an active session`
+        );
+      }
+
+      // Generate session token
+      const sessionToken = this.generateSessionToken();
+
+      this.logger.log(
+        `[${method}] Starting table session for table ${table.name} (${tableId}) in store ${storeId}`
+      );
+
+      // Create session, update table status, and create cart in a transaction
+      const session = await this.prisma.$transaction(async (tx) => {
+        // Create the session
+        const newSession = await tx.activeTableSession.create({
+          data: {
+            storeId,
+            tableId,
+            sessionType: SessionType.TABLE,
+            sessionToken,
+            status: SessionStatus.ACTIVE,
+          },
+        });
+
+        // Update table status to SEATED
+        await tx.table.update({
+          where: { id: tableId },
+          data: { currentStatus: 'SEATED' },
+        });
+
+        // Create empty cart for the session
+        await this.cartService.createCartForSession(tx, newSession.id, storeId);
+
+        this.logger.log(
+          `[${method}] Created session ${newSession.id} for table ${table.name} with cart`
+        );
+
+        return newSession;
+      });
+
+      return {
+        id: session.id,
+        tableId: session.tableId!,
+        tableName: table.name,
+        storeId: session.storeId,
+        sessionType: session.sessionType,
+        status: session.status,
+        createdAt: session.createdAt,
+      };
+    } catch (error) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof ConflictException ||
+        error instanceof ForbiddenException
+      ) {
+        throw error;
+      }
+
+      this.logger.error(
+        `[${method}] Failed to start table session for table ${tableId} in store ${storeId}`,
+        error instanceof Error ? error.stack : String(error)
+      );
+      throw new InternalServerErrorException('Failed to start table session');
     }
   }
 

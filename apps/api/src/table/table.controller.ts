@@ -19,8 +19,10 @@ import {
   ApiExtraModels,
   ApiBody,
   ApiOperation,
+  ApiResponse,
 } from '@nestjs/swagger';
 
+import { ActiveTableSessionService } from 'src/active-table-session/active-table-session.service';
 import { RequestWithUser } from 'src/auth/types';
 import {
   ApiStoreGetAll,
@@ -37,6 +39,7 @@ import { StandardApiResponse } from 'src/common/dto/standard-api-response.dto';
 
 import { BatchUpsertTableDto } from './dto/batch-upsert-table.dto';
 import { CreateTableDto } from './dto/create-table.dto';
+import { StartTableSessionResponseDto } from './dto/start-table-session-response.dto';
 import { TableDeletedResponseDto } from './dto/table-deleted-response.dto';
 import { TableResponseDto } from './dto/table-response.dto';
 import { UpdateTableStatusDto } from './dto/update-table-status.dto';
@@ -56,12 +59,16 @@ import { TierLimitGuard } from '../common/guards/tier-limit.guard';
   TableDeletedResponseDto,
   BatchUpsertTableDto,
   UpsertTableDto,
-  UpdateTableStatusDto
+  UpdateTableStatusDto,
+  StartTableSessionResponseDto
 )
 export class TableController {
   private readonly logger = new Logger(TableController.name);
 
-  constructor(private readonly tableService: TableService) {}
+  constructor(
+    private readonly tableService: TableService,
+    private readonly activeTableSessionService: ActiveTableSessionService
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, TierLimitGuard)
@@ -217,6 +224,50 @@ export class TableController {
     return StandardApiResponse.success(
       updatedTable,
       'Table status updated successfully.'
+    );
+  }
+
+  @Post(':tableId/sessions')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @ApiAuthWithRoles()
+  @ApiOperation({
+    summary: 'Start a new table session (OWNER/ADMIN/SERVER/CASHIER)',
+    description:
+      'Creates a new ordering session for a table when staff clicks on an AVAILABLE table. ' +
+      'The table must be VACANT (no active session). ' +
+      'Creates session, updates table status to SEATED, and creates empty cart.',
+  })
+  @ApiUuidParam('storeId', 'ID (UUID) of the store')
+  @ApiUuidParam('tableId', 'ID (UUID) of the table to start session for')
+  @ApiSuccessResponse(StartTableSessionResponseDto, {
+    status: HttpStatus.CREATED,
+    description: 'Session started successfully',
+  })
+  @ApiResponse({ status: 404, description: 'Table or store not found' })
+  @ApiResponse({
+    status: 409,
+    description: 'Table already has an active session',
+  })
+  async startTableSession(
+    @Req() req: RequestWithUser,
+    @Param('storeId', ParseUUIDPipe) storeId: string,
+    @Param('tableId', ParseUUIDPipe) tableId: string
+  ): Promise<StandardApiResponse<StartTableSessionResponseDto>> {
+    const userId = req.user.sub;
+    this.logger.log(
+      `User ${userId} starting session for table ${tableId} in Store ${storeId}`
+    );
+
+    const session = await this.activeTableSessionService.startTableSession(
+      userId,
+      storeId,
+      tableId
+    );
+
+    return StandardApiResponse.success(
+      session,
+      'Session started successfully.'
     );
   }
 

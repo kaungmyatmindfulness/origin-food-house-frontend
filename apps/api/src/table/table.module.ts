@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
+import { ActiveTableSessionModule } from 'src/active-table-session/active-table-session.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 import { TableController } from './table.controller';
@@ -10,7 +11,7 @@ import { AuthModule } from '../auth/auth.module';
 import { TierModule } from '../tier/tier.module';
 
 @Module({
-  imports: [AuthModule, ConfigModule, TierModule],
+  imports: [AuthModule, ConfigModule, TierModule, ActiveTableSessionModule],
   controllers: [TableController],
   providers: [TableService, TableGateway, PrismaService],
   exports: [TableService, TableGateway],

@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useMutation } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { toast } from '@repo/ui/lib/toast';
 
@@ -15,16 +15,7 @@ import {
   DialogTitle,
 } from '@repo/ui/components/dialog';
 
-// TODO: Import from tables service when available
-// NOTE FOR BE: Implement POST /stores/{storeId}/tables/{tableId}/sessions
-async function startTableSession(
-  storeId: string,
-  tableId: string
-): Promise<{ id: string; tableId: string }> {
-  console.log('startTableSession called:', { storeId, tableId });
-  // Mock response - BE should implement this
-  return { id: `session-${Date.now()}`, tableId };
-}
+import { $api } from '@/utils/apiFetch';
 
 interface StartSessionDialogProps {
   open: boolean;
@@ -45,20 +36,44 @@ export function StartSessionDialog({
   onSessionStarted,
 }: StartSessionDialogProps) {
   const t = useTranslations('sales');
+  const queryClient = useQueryClient();
 
-  const startSessionMutation = useMutation({
-    mutationFn: () => startTableSession(storeId, table!.id),
-    onSuccess: (session) => {
-      toast.success(t('sessionStarted'));
-      onSessionStarted(session.id);
-      onOpenChange(false);
-    },
-    onError: (error) => {
-      toast.error(t('failedToStartSession'), {
-        description: error instanceof Error ? error.message : undefined,
-      });
-    },
-  });
+  const startSessionMutation = $api.useMutation(
+    'post',
+    '/stores/{storeId}/tables/{tableId}/sessions',
+    {
+      onSuccess: (response) => {
+        const session = response.data;
+        if (session) {
+          toast.success(t('sessionStarted'));
+          // Invalidate tables query to refresh the table status
+          queryClient.invalidateQueries({
+            queryKey: ['get', '/stores/{storeId}/tables'],
+          });
+          onSessionStarted(session.id);
+          onOpenChange(false);
+        }
+      },
+      onError: (error: unknown) => {
+        toast.error(t('failedToStartSession'), {
+          description: error instanceof Error ? error.message : undefined,
+        });
+      },
+    }
+  );
+
+  const handleStartSession = () => {
+    if (!table) return;
+
+    startSessionMutation.mutate({
+      params: {
+        path: {
+          storeId,
+          tableId: table.id,
+        },
+      },
+    });
+  };
 
   if (!table) return null;
 
@@ -90,7 +105,7 @@ export function StartSessionDialog({
             {t('cancel')}
           </Button>
           <Button
-            onClick={() => startSessionMutation.mutate()}
+            onClick={handleStartSession}
             disabled={startSessionMutation.isPending}
           >
             {startSessionMutation.isPending ? (

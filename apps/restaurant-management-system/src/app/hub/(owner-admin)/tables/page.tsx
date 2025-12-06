@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useQueryClient } from '@tanstack/react-query';
-import { Grid3X3, List, MoreVertical, RefreshCcw, Users } from 'lucide-react';
+import { Grid3X3, List, MoreVertical, RefreshCcw } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { toast } from '@repo/ui/lib/toast';
 
@@ -300,12 +300,6 @@ function TableStateContent() {
               <CardContent>
                 {table.activeSession ? (
                   <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Users className="text-muted-foreground h-4 w-4" />
-                      <span>
-                        {table.activeSession.guestCount} {t('guests')}
-                      </span>
-                    </div>
                     {table.activeSession.customerName && (
                       <p className="text-muted-foreground">
                         {table.activeSession.customerName}
@@ -348,10 +342,6 @@ function TableStateContent() {
                     </div>
                     {table.activeSession ? (
                       <div className="text-muted-foreground flex items-center gap-4 text-sm">
-                        <span className="flex items-center gap-1">
-                          <Users className="h-4 w-4" />
-                          {table.activeSession.guestCount}
-                        </span>
                         {table.activeSession.customerName && (
                           <span>{table.activeSession.customerName}</span>
                         )}
