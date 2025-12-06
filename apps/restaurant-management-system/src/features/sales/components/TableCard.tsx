@@ -1,7 +1,6 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Users } from 'lucide-react';
 
 import { Card, CardContent } from '@repo/ui/components/card';
 import { cn } from '@repo/ui/lib/utils';
@@ -15,7 +14,6 @@ interface TableCardProps {
   table: {
     id: string;
     tableNumber: string;
-    capacity: number;
     status: TableStatus;
     currentSessionId?: string | null;
     currentOrderTotal?: number;
@@ -46,17 +44,9 @@ export function TableCard({
       <CardContent className="p-4">
         {/* Table number and status */}
         <div className="mb-3 flex items-start justify-between">
-          <div>
-            <h3 className="text-foreground text-2xl font-bold">
-              {table.tableNumber}
-            </h3>
-            <div className="text-muted-foreground mt-1 flex items-center gap-1 text-sm">
-              <Users className="h-4 w-4" />
-              <span>
-                {table.capacity} {t('seats')}
-              </span>
-            </div>
-          </div>
+          <h3 className="text-foreground text-2xl font-bold">
+            {table.tableNumber}
+          </h3>
           <TableStatusBadge status={table.status} />
         </div>
 

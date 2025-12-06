@@ -5,7 +5,6 @@
     "qrCode": "คิวอาร์โค้ด",
     "tableName": "ชื่อโต๊ะ",
     "tableNumber": "หมายเลขโต๊ะ",
-    "capacity": "จำนวนที่นั่ง",
     "status": "สถานะ",
     "available": "ว่าง",
     "occupied": "ไม่ว่าง",

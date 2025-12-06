@@ -22,7 +22,6 @@ type TableStatus = 'AVAILABLE' | 'OCCUPIED' | 'RESERVED' | 'CLEANING';
 interface TableWithStatus {
   id: string;
   tableNumber: string;
-  capacity: number;
   status: TableStatus;
   currentSessionId?: string | null;
   currentOrderTotal?: number;
@@ -71,11 +70,10 @@ export function TablesView({ storeId, onTableSessionStart }: TablesViewProps) {
   );
 
   // Transform API response to UI format
-  // TODO: Backend should add capacity, currentSessionId, currentOrderTotal to TableResponseDto
+  // TODO: Backend should add currentSessionId, currentOrderTotal to TableResponseDto
   const tables: TableWithStatus[] = (response?.data ?? []).map((table) => ({
     id: table.id,
     tableNumber: table.name,
-    capacity: 4, // Default capacity until backend provides this
     status: mapApiStatusToUIStatus(table.currentStatus),
     currentSessionId: null, // TODO: Backend to provide active session ID
     currentOrderTotal: undefined, // TODO: Backend to provide order total

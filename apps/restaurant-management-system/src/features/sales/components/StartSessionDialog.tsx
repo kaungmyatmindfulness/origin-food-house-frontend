@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useMutation } from '@tanstack/react-query';
-import { Loader2, Users } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { toast } from '@repo/ui/lib/toast';
 
 import { Button } from '@repo/ui/components/button';
@@ -37,7 +37,6 @@ interface StartSessionDialogProps {
   table: {
     id: string;
     tableNumber: string;
-    capacity: number;
   } | null;
   onSessionStarted: (sessionId: string) => void;
 }
@@ -85,12 +84,6 @@ export function StartSessionDialog({
             <p className="text-foreground text-3xl font-bold">
               {table.tableNumber}
             </p>
-            <div className="text-muted-foreground mt-1 flex items-center justify-center gap-1">
-              <Users className="h-4 w-4" />
-              <span>
-                {t('capacity')}: {table.capacity}
-              </span>
-            </div>
           </div>
 
           {/* Guest count */}
@@ -100,13 +93,9 @@ export function StartSessionDialog({
               id="guestCount"
               type="number"
               min={1}
-              max={table.capacity}
               value={guestCount}
               onChange={(e) => setGuestCount(parseInt(e.target.value) || 1)}
             />
-            <p className="text-muted-foreground text-xs">
-              {t('maxGuests', { max: table.capacity })}
-            </p>
           </div>
         </div>
 

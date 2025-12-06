@@ -5,7 +5,6 @@
     "qrCode": "二维码",
     "tableName": "桌位名称",
     "tableNumber": "桌号",
-    "capacity": "容量",
     "status": "状态",
     "available": "可用",
     "occupied": "占用",
