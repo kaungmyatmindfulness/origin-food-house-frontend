@@ -28,12 +28,16 @@ RMS uses `output: 'export'` for Tauri desktop bundling. **All pages must be clie
 ```typescript
 'use client';
 import { $api } from '@/utils/apiFetch';
-import { useAuthStore, selectSelectedStoreId } from '@/features/auth/store/auth.store';
+import {
+  useAuthStore,
+  selectSelectedStoreId,
+} from '@/features/auth/store/auth.store';
 
 export default function MenuPage() {
   const storeId = useAuthStore(selectSelectedStoreId);
   const { data: response, isLoading } = $api.useQuery(
-    'get', '/stores/{storeId}/categories',
+    'get',
+    '/stores/{storeId}/categories',
     { params: { path: { storeId: storeId ?? '' } } },
     { enabled: !!storeId }
   );
@@ -57,12 +61,12 @@ export default function MenuPage() {
 
 ### Touch Target Sizes
 
-| Element | Minimum | Tailwind |
-|---------|---------|----------|
-| Buttons | 44px height | `h-11` or larger |
-| Icon buttons | 44x44px | `h-11 w-11` |
-| List items | 44px height | `min-h-11` |
-| Inputs | 44px height | `h-11` or `h-12` |
+| Element      | Minimum     | Tailwind         |
+| ------------ | ----------- | ---------------- |
+| Buttons      | 44px height | `h-11` or larger |
+| Icon buttons | 44x44px     | `h-11 w-11`      |
+| List items   | 44px height | `min-h-11`       |
+| Inputs       | 44px height | `h-11` or `h-12` |
 
 ### Key Rules
 
@@ -104,11 +108,11 @@ const locale = useLocaleStore(selectLocale);
 
 ## Role-Based Access
 
-| Role | Access |
-|------|--------|
-| Owner | Full access |
+| Role  | Access                        |
+| ----- | ----------------------------- |
+| Owner | Full access                   |
 | Admin | Menu, tables, orders, kitchen |
-| Staff | Sales page only |
+| Staff | Sales page only               |
 
 ```typescript
 const { isLoading } = useProtected({
@@ -177,10 +181,10 @@ jest.mock('@/utils/apiFetch', () => ({
 
 ## Key Files
 
-| File | Purpose |
-|------|---------|
-| `next.config.js` | Static export config |
-| `src/utils/apiFetch.ts` | API client with auth |
-| `src/utils/network-provider.tsx` | Offline detection |
-| `src/i18n/locale.store.ts` | Client-side locale |
-| `src/features/auth/store/auth.store.ts` | Auth state |
+| File                                    | Purpose              |
+| --------------------------------------- | -------------------- |
+| `next.config.js`                        | Static export config |
+| `src/utils/apiFetch.ts`                 | API client with auth |
+| `src/utils/network-provider.tsx`        | Offline detection    |
+| `src/i18n/locale.store.ts`              | Client-side locale   |
+| `src/features/auth/store/auth.store.ts` | Auth state           |
