@@ -24,7 +24,7 @@ interface TableWithStatus {
   tableNumber: string;
   status: TableStatus;
   currentSessionId?: string | null;
-  currentOrderTotal?: number;
+  currentOrderTotal?: string | null;
 }
 
 /**
@@ -70,13 +70,12 @@ export function TablesView({ storeId, onTableSessionStart }: TablesViewProps) {
   );
 
   // Transform API response to UI format
-  // TODO: Backend should add currentSessionId, currentOrderTotal to TableResponseDto
   const tables: TableWithStatus[] = (response?.data ?? []).map((table) => ({
     id: table.id,
     tableNumber: table.name,
     status: mapApiStatusToUIStatus(table.currentStatus),
-    currentSessionId: null, // TODO: Backend to provide active session ID
-    currentOrderTotal: undefined, // TODO: Backend to provide order total
+    currentSessionId: table.currentSessionId ?? null,
+    currentOrderTotal: table.currentOrderTotal ?? null,
   }));
 
   const handleTableSelect = (tableId: string) => {

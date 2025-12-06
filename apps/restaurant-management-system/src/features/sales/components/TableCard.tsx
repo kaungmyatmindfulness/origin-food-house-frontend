@@ -16,7 +16,7 @@ interface TableCardProps {
     tableNumber: string;
     status: TableStatus;
     currentSessionId?: string | null;
-    currentOrderTotal?: number;
+    currentOrderTotal?: string | null;
   };
   onSelect: (tableId: string) => void;
   isSelected?: boolean;
@@ -30,7 +30,10 @@ export function TableCard({
   const t = useTranslations('sales');
 
   const isAvailable = table.status === 'AVAILABLE';
-  const hasOrder = table.currentOrderTotal && table.currentOrderTotal > 0;
+  const orderTotal = table.currentOrderTotal
+    ? parseFloat(table.currentOrderTotal)
+    : 0;
+  const hasOrder = orderTotal > 0;
 
   return (
     <Card
@@ -55,7 +58,7 @@ export function TableCard({
           <div className="border-t pt-3">
             <p className="text-muted-foreground text-xs">{t('currentOrder')}</p>
             <p className="text-primary text-lg font-bold">
-              {formatCurrency(table.currentOrderTotal)}
+              {formatCurrency(orderTotal)}
             </p>
           </div>
         )}
